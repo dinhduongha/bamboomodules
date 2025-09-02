@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,334 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("analytic", Depends = new[] { "base", "mail", "uom" })]
     public class AnalyticMixinAppService : ApplicationService, IAnalyticMixinAppService
     {
-
-        public AnalyticMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public AnalyticMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionAddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_add_from_catalog(self):
+            // """ Will open the catalog view """
+            // move = self.env['account.move'].browse(self.env.context.get('order_id'))
+            // return move.action_add_from_catalog()
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def action_add_from_catalog(self):
+            // order = self.env['purchase.order'].browse(self.env.context.get('order_id'))
+            // return order.with_context(child_field='order_line').action_add_from_catalog()
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
+            // def action_add_from_catalog(self):
+            // order = self.env['sale.order'].browse(self.env.context.get('order_id'))
+            // return order.with_context(child_field='order_line').action_add_from_catalog()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionApproveDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_approve_duplicates(self):
+            // root = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
+            // for expense in self.duplicate_expense_ids:
+            //     expense.message_post(
+            //         body=_('%(user)s confirms this expense is not a duplicate with similar expense.', user=self.env.user.name),
+            //         author_id=root,
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_archive(self):
+            // res = super().action_archive()
+            // filtered_workcenters = ", ".join(workcenter.name for workcenter in self.filtered('routing_line_ids'))
+            // if filtered_workcenters:
+            //     return {
+            //         'type': 'ir.actions.client',
+            //         'tag': 'display_notification',
+            //         'params': {
+            //         'title': _("Note that archived work center(s): '%s' is/are still linked to active Bill of Materials, which means that operations can still be planned on it/them. "
+            //                    "To prevent this, deletion of the work center is recommended instead.", filtered_workcenters),
+            //         'type': 'warning',
+            //         'sticky': True,  #True/False will display for few seconds if false
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //         },
+            //     }
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAutomaticEntryAsync<TEntity>(IEnumerable<TEntity> entities, object default_action) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_automatic_entry(self, default_action=None):
+            // action = self.env['ir.actions.act_window']._for_xml_id('account.account_automatic_entry_wizard_action')
+            // # Force the values of the move line in the context to avoid issues
+            // ctx = dict(self.env.context)
+            // ctx.pop('active_id', None)
+            // ctx.pop('default_journal_id', None)
+            // ctx['active_ids'] = self.ids
+            // ctx['active_model'] = 'account.move.line'
+            // if default_action:
+            //     ctx['default_action'] = default_action
+            // action['context'] = ctx
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGetAttachmentViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_get_attachment_view(self):
+            // self.ensure_one()
+            // res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
+            // res.update({
+            //     'domain': [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)],
+            //     'context': {'default_res_model': 'hr.expense', 'default_res_id': self.id},
+            // })
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_open_business_doc(self):
+            // return self.move_id.action_open_business_doc()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def action_open_order(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'purchase.order',
+            //     'res_id': self.order_id.id,
+            //     'view_mode': 'form',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPaymentItemsRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_payment_items_register_payment(self):
+            // return self.action_register_payment(ctx={'default_group_payment': True})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPurchaseHistoryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
+            // def action_purchase_history(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
+            // action['domain'] = [('state', 'in', ['purchase', 'done']), ('product_id', '=', self.product_id.id)]
+            // action['display_name'] = _("Purchase History for %s", self.product_id.display_name)
+            // action['context'] = {
+            //     'search_default_partner_id': self.partner_id.id
+            // }
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionReadDistributionModelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_distribution_model.py) ---
+            // def action_read_distribution_model(self):
+            // self.ensure_one()
+            // return {
+            //     'name': self.display_name,
+            //     'type': 'ir.actions.act_window',
+            //     'view_type': 'form',
+            //     'view_mode': 'form',
+            //     'res_model': 'account.analytic.distribution.model',
+            //     'res_id': self.id,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities, object ctx) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_register_payment(self, ctx=None):
+            // ''' Open the account.payment.register wizard to pay the selected journal items.
+            // :return: An action opening the account.payment.register wizard.
+            // '''
+            // context = {
+            //     'active_model': 'account.move.line',
+            //     'active_ids': self.ids,
+            // }
+            // if ctx:
+            //     context.update(ctx)
+            // return {
+            //     'name': _('Pay'),
+            //     'res_model': 'account.payment.register',
+            //     'view_mode': 'form',
+            //     'views': [[False, 'form']],
+            //     'context': context,
+            //     'target': 'new',
+            //     'type': 'ir.actions.act_window',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowOperationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_show_operations(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.actions']._for_xml_id('mrp.mrp_routing_action')
+            // action['domain'] = [('workcenter_id', '=', self.id)]
+            // action['context'] = {
+            //     'default_workcenter_id': self.id,
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowSameReceiptExpenseIdsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_show_same_receipt_expense_ids(self):
+            // self.ensure_one()
+            // return self.same_receipt_expense_ids._get_records_action(
+            //     name=_("Expenses with a similar receipt to %(other_expense_name)s", other_expense_name=self.name),
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSplitWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_split_wizard(self):
+            // self.ensure_one()
+            // splits = self.env['hr.expense.split'].create(self._get_split_values())
+            // 
+            // wizard = self.env['hr.expense.split.wizard'].create({
+            //     'expense_split_line_ids': splits.ids,
+            //     'expense_id': self.id,
+            // })
+            // return {
+            //     'name': _('Expense split'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'views': [[False, "form"]],
+            //     'res_model': 'hr.expense.split.wizard',
+            //     'res_id': wizard.id,
+            //     'target': 'new',
+            //     'context': self.env.context,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSubmitExpensesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_submit_expenses(self):
+            // sheets = self._create_sheets_from_expense()
+            // return {
+            //     'name': _('New Expense Reports'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'hr.expense.sheet',
+            //     'context': self.env.context,
+            //     'views': [[False, "list"], [False, "form"]] if len(sheets) > 1 else [[False, "form"]],
+            //     'domain': [('id', 'in', sheets.ids)],
+            //     'res_id': sheets.id if len(sheets) == 1 else False,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnreconcileMatchEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
+            // def action_unreconcile_match_entries(self):
+            // """ This method will do the unreconcile action in the list view of the moves """
+            // active_ids = self._context.get('active_ids')
+            // if active_ids:
+            //     move_lines = self.env['account.move.line'].browse(active_ids)._all_reconciled_lines()
+            //     move_lines.remove_move_reconcile()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
+            // def action_view_sheet(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'views': [[False, "form"]],
+            //     'res_model': 'hr.expense.sheet',
+            //     'target': 'current',
+            //     'res_id': self.sheet_id.id
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionWorkOrderAlternativesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_work_order_alternatives(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_workorder_todo")
+            // action['domain'] = ['|', ('workcenter_id', 'in', self.alternative_workcenter_ids.ids),
+            //                     ('workcenter_id.alternative_workcenter_ids', '=', self.id)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionWorkOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_work_order(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
+            // return action
+            */
+            return default;
         }
 
         public async Task<TEntity> AddExchangeDifferenceCashBasisValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object exchange_diff_vals) where TEntity : IEntity<Guid>, IAnalyticMixinable
@@ -231,26 +557,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> AddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_add_from_catalog(self):
-            // """ Will open the catalog view """
-            // move = self.env['account.move'].browse(self.env.context.get('order_id'))
-            // return move.action_add_from_catalog()
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def action_add_from_catalog(self):
-            // order = self.env['purchase.order'].browse(self.env.context.get('order_id'))
-            // return order.with_context(child_field='order_line').action_add_from_catalog()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def action_add_from_catalog(self):
-            // order = self.env['sale.order'].browse(self.env.context.get('order_id'))
-            // return order.with_context(child_field='order_line').action_add_from_catalog()
-            */
-            return default;
-        }
-
         public async Task<TEntity> AddPrecomputedValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -314,45 +620,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ApproveDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_approve_duplicates(self):
-            // root = self.env['ir.model.data']._xmlid_to_res_id("base.partner_root")
-            // for expense in self.duplicate_expense_ids:
-            //     expense.message_post(
-            //         body=_('%(user)s confirms this expense is not a duplicate with similar expense.', user=self.env.user.name),
-            //         author_id=root,
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_archive(self):
-            // res = super().action_archive()
-            // filtered_workcenters = ", ".join(workcenter.name for workcenter in self.filtered('routing_line_ids'))
-            // if filtered_workcenters:
-            //     return {
-            //         'type': 'ir.actions.client',
-            //         'tag': 'display_notification',
-            //         'params': {
-            //         'title': _("Note that archived work center(s): '%s' is/are still linked to active Bill of Materials, which means that operations can still be planned on it/them. "
-            //                    "To prevent this, deletion of the work center is recommended instead.", filtered_workcenters),
-            //         'type': 'warning',
-            //         'sticky': True,  #True/False will display for few seconds if false
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //         },
-            //     }
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> AttachDocumentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -360,26 +627,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def attach_document(self, **kwargs):
             // """When an attachment is uploaded as a receipt, set it as the main attachment."""
             // self._message_set_main_attachment_id(self.env["ir.attachment"].browse(kwargs['attachment_ids'][-1:]), force=True)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AutomaticEntryAsync<TEntity>(IEnumerable<TEntity> entities, object default_action) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_automatic_entry(self, default_action=None):
-            // action = self.env['ir.actions.act_window']._for_xml_id('account.account_automatic_entry_wizard_action')
-            // # Force the values of the move line in the context to avoid issues
-            // ctx = dict(self.env.context)
-            // ctx.pop('active_id', None)
-            // ctx.pop('default_journal_id', None)
-            // ctx['active_ids'] = self.ids
-            // ctx['active_model'] = 'account.move.line'
-            // if default_action:
-            //     ctx['default_action'] = default_action
-            // action['context'] = ctx
-            // return action
             */
             return default;
         }
@@ -875,14 +1122,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     account = expense.product_id.product_tmpl_id._get_product_accounts()['expense']
             //     if account:
             //         expense.account_id = account
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_account_id(self):
-            // """
-            // If there is an account set on the withholding_tax_base_account_id, this field will be invisible and use that
-            // account as default value.
-            // """
-            // for line in self:
-            //     line.account_id = line.account_id or line.company_id.withholding_tax_base_account_id
             */
             return default;
         }
@@ -904,18 +1143,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_amount(self):
-            // """
-            // Compute the tax amount by multiplying the original tax amount (amount in currency, at the time of creation) by
-            // a ratio calculated from the current base amount and the original base amount.
-            // """
-            // for line in self:
-            //     line_curr = line.comodel_currency_id
-            //     if line.original_base_amount:
-            //         line.amount = line_curr.round(line.original_tax_amount * line.base_amount / line.original_base_amount)
-            //     else:
-            //         line.amount = 0.0
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _compute_amount(self):
             // for line in self:
@@ -1152,25 +1379,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeBaseAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_base_amount(self):
-            // """
-            // Computation of the base amount is done by using a paid factor.
-            // This factor is unused on payments, but used for lines on the register payment wizard in order to dynamically
-            // support installments, early payment discounts,...
-            // """
-            // for line in self:
-            //     line_curr = line.comodel_currency_id
-            //     if line.source_currency_id:
-            //         percentage_paid_factor = line.comodel_percentage_paid_factor
-            //         line.base_amount = line_curr.round(line.original_base_amount * percentage_paid_factor)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeBlockedTimeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -1251,56 +1459,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeComodelCurrencyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_comodel_currency_id(self):
-            // raise NotImplementedError()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeComodelDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_comodel_date(self):
-            // raise NotImplementedError()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeComodelPaymentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_comodel_payment_type(self):
-            // raise NotImplementedError()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeComodelPercentagePaidFactorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_comodel_percentage_paid_factor(self):
-            // self.comodel_percentage_paid_factor = 1.0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeCompanyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_company_id(self):
-            // raise NotImplementedError()
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeCostsHourAccountIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -1358,9 +1516,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for expense in self:
             //     if expense.product_has_cost and expense.state in {'draft', 'reported'}:
             //         expense.currency_id = expense.company_currency_id
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_currency_id(self):
-            // raise NotImplementedError()
             */
             return default;
         }
@@ -2189,69 +2344,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeOriginalAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_original_amounts(self):
-            // """
-            // Computes the two original_xx_amount fields; that are used during computation of the withholding line base and tax
-            // amounts.
-            // These amounts correspond to the source amounts (from the payment or register payment wizard) after converting them
-            // to the line currency.
-            // """
-            // AccountTax = self.env['account.tax']
-            // for line in self:
-            //     source_curr = line.source_currency_id
-            //     company = line.company_id
-            //     date = line.comodel_date
-            //     comp_curr = line.comodel_company_currency_id
-            //     line_curr = line.comodel_currency_id
-            //     if not source_curr:
-            //         rate = 1.0
-            //         base_amount = line.base_amount
-            //         if line.tax_id:
-            //             base_line = AccountTax._prepare_base_line_for_taxes_computation(
-            //                 line,
-            //                 tax_ids=line.tax_id,
-            //                 price_unit=base_amount,
-            //                 quantity=1.0,
-            //                 currency_id=line_curr,
-            //                 calculate_withholding_taxes=True,
-            //             )
-            //             AccountTax._add_tax_details_in_base_line(base_line, company)
-            //             AccountTax._round_base_lines_tax_details([base_line], company)
-            //             tax_amount = -base_line['tax_details']['taxes_data'][0]['tax_amount_currency']
-            //         else:
-            //             tax_amount = 0.0
-            //     elif source_curr == line_curr:
-            //         rate = 1.0
-            //         base_amount = line.source_base_amount_currency
-            //         tax_amount = line.source_tax_amount_currency
-            //     elif source_curr != comp_curr and line_curr == comp_curr:
-            //         rate = self.env['res.currency']._get_conversion_rate(
-            //             from_currency=source_curr,
-            //             to_currency=comp_curr,
-            //             company=company,
-            //             date=date,
-            //         )
-            //         base_amount = line.source_base_amount_currency
-            //         tax_amount = line.source_tax_amount_currency
-            //     else:
-            //         rate = self.env['res.currency']._get_conversion_rate(
-            //             from_currency=comp_curr,
-            //             to_currency=line_curr,
-            //             company=company,
-            //             date=date,
-            //         )
-            //         base_amount = line.source_base_amount
-            //         tax_amount = line.source_tax_amount
-            //     line.original_base_amount = line_curr.round(base_amount * rate)
-            //     line.original_tax_amount = line_curr.round(tax_amount * rate)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputePartnerIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -2290,29 +2382,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         workcenter.performance = 100 * duration_expected.get(workcenter.id, 0.0) / duration[workcenter.id]
             //     else:
             //         workcenter.performance = 0.0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePlaceholderTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_placeholder_type(self):
-            // """
-            // Since the placeholder_value has to be recomputed on all lines by the comodel, we need
-            // a way to track the changed regarding the sequence and the name. Since the ORM is quite
-            // limited for such advance feature, we use a trick here: we store the current and the previous
-            // state of the placeholder to be able to detect the changes.
-            // """
-            // for line in self:
-            //     line.previous_placeholder_type = line.placeholder_type
-            //     if not line.name and line.withholding_sequence_id:
-            //         line.placeholder_type = 'given_by_sequence'
-            //     elif line.name:
-            //         line.placeholder_type = 'given_by_name'
-            //     else:
-            //         line.placeholder_type = 'not_defined'
             */
             return default;
         }
@@ -3236,16 +3305,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeTypeTaxUseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _compute_type_tax_use(self):
-            // raise NotImplementedError()
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeUntaxedAmountInvoicedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -3465,32 +3524,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // )
             // to_reset.invalidate_recordset([fname])
             // self.env.add_to_compute(field, to_reset)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConstrainsAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _constrains_account_id(self):
-            // """ The account on the line cannot be one deemed as liquidity account, otherwise it will cause issues with the final entry. """
-            // for line in self:
-            //     if line.account_id in line._get_valid_liquidity_accounts():
-            //         raise UserError(line.env._('The account "%(account_name)s" is not valid to use on withholding lines.', account_name=line.account_id.display_name))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConstrainsBaseAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _constrains_base_amount(self):
-            // """ It wouldn't make sense to register a withholding tax with no base amount. """
-            // for line in self:
-            //     if line.comodel_currency_id.compare_amounts(line.base_amount, 0) <= 0:
-            //         raise UserError(line.env._("The base amount of a withholding tax line must be above 0."))
             */
             return default;
         }
@@ -4144,22 +4177,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.payment_id:
             //     domains.append([('res_model', '=', 'account.payment'), ('res_id', '=', self.payment_id.id)])
             // return domains
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetAttachmentViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_get_attachment_view(self):
-            // self.ensure_one()
-            // res = self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
-            // res.update({
-            //     'domain': [('res_model', '=', 'hr.expense'), ('res_id', 'in', self.ids)],
-            //     'context': {'default_res_model': 'hr.expense', 'default_res_id': self.id},
-            // })
-            // return res
             */
             return default;
         }
@@ -4930,26 +4947,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.product_uom.id != self.product_id.uom_id.id:
             //     price_unit *= self.product_uom.factor / self.product_id.uom_id.factor
             // return price_unit
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetGroupingKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _get_grouping_key(self):
-            // """ Helper returning the grouping key for this line; should match what is done in _prepare_withholding_lines_commands. """
-            // self.ensure_one()
-            // # /!\ Please keep this aligned with _prepare_withholding_lines_commands to ensure correct computation.
-            // return frozendict({
-            //     'name': self.name,
-            //     'analytic_distribution': self.analytic_distribution,
-            //     'account': self.account_id.id,
-            //     'tax_id': self.tax_id.id,
-            //     'skip': False,
-            //     'currency_id': self.source_currency_id.id,
-            // })
             */
             return default;
         }
@@ -5726,17 +5723,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetValidLiquidityAccountsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _get_valid_liquidity_accounts(self):
-            // """ Get the valid liquidity accounts for the payment; we need to ensure that the line account does not match any of them. """
-            // return ()
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetViewsAsync<TEntity>(IEnumerable<TEntity> entities, object views, object options) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -5786,19 +5772,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // date_start = start_of(today + relativedelta.relativedelta(days=-7 - day_offset), 'day')
             // date_stop = end_of(today + relativedelta.relativedelta(days=27 - day_offset), 'day')
             // return week_range, date_start, date_stop
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetWithholdingTaxDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object payment_type) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _get_withholding_tax_domain(self, company, payment_type):
-            // """ Construct and return a domain that will filter withholding taxes available for this company and payment type. """
-            // filter_domain = models.check_company_domain_parent_of(self, company)
-            // payment_type = 'purchase' if payment_type == 'outbound' else 'sale'
-            // return expression.AND([filter_domain, [('type_tax_use', '=', payment_type), ('is_withholding_tax_on_payment', '=', True)]])
             */
             return default;
         }
@@ -6169,17 +6142,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> NeedUpdateWithholdingLinesPlaceholderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _need_update_withholding_lines_placeholder(self):
-            // """ Determines if the lines' placeholders needs update or not. """
-            // return self and any(line.previous_placeholder_type != line.placeholder_type for line in self)
-            */
-            return default;
-        }
-
         public async Task<TEntity> NeedsProductPriceComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6462,16 +6424,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_open_business_doc(self):
-            // return self.move_id.action_open_business_doc()
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6490,22 +6442,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_id': False,
             //     'type': 'ir.actions.act_window',
             //     'domain': [('id', 'in', move_ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def action_open_order(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'purchase.order',
-            //     'res_id': self.order_id.id,
-            //     'view_mode': 'form',
             // }
             */
             return default;
@@ -6717,16 +6653,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentItemsRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_payment_items_register_payment(self):
-            // return self.action_register_payment(ctx={'default_group_payment': True})
-            */
-            return default;
-        }
-
         public async Task<TEntity> PrepareAccountMoveLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -6847,38 +6773,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'rate': self.currency_rate,
             //         **kwargs,
             //     },
-            // )
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _prepare_base_line_for_taxes_computation(self):
-            // """
-            // Convert self to a tax base line using the correct structure needed for tax computation.
-            // This is used when preparing the journal items representing the withholding lines in the final payment entry.
-            // """
-            // self.ensure_one()
-            // company = self.company_id
-            // currency = self.comodel_currency_id
-            // conversion_date = self.comodel_date
-            // conversion_rate = self.env['res.currency']._get_conversion_rate(company.currency_id, currency, company, conversion_date)
-            // payment_type = self.comodel_payment_type
-            // sign = 1 if payment_type == 'inbound' else -1
-            // # We need to make sure that we use the actual amounts set on the line; in case of manual adjustment.
-            // manual_tax_amounts = {str(self.tax_id.id): {
-            //     'base_amount_currency': self.base_amount,
-            //     'tax_amount_currency': -self.amount,
-            // }}
-            // return self.env['account.tax']._prepare_base_line_for_taxes_computation(
-            //     self,
-            //     tax_ids=self.tax_id,
-            //     price_unit=self.base_amount,
-            //     quantity=1.0,
-            //     currency_id=currency,
-            //     rate=conversion_rate,
-            //     sign=sign,
-            //     account_id=self.account_id,
-            //     calculate_withholding_taxes=True,
-            //     manual_tax_line_name=self.name,
-            //     computation_key=str(self.id),
-            //     manual_tax_amounts=manual_tax_amounts,
             // )
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
             // def _prepare_base_line_for_taxes_computation(self):
@@ -7860,188 +7754,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareWithholdingAmlsCreateValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _prepare_withholding_amls_create_values(self):
-            // """ Prepare and return a list of values that will be used to create the journal items for the withholding lines.
-            // 
-            // For an invoice for 1000 with 10% withholding tax:
-            // Outstanding:              900.0
-            // Receivable:               -1000.0
-            // Tax withheld:             100.0
-            // WHT base:                 1000.0
-            // WHT base counterpart:     1000.0
-            // 
-            // :return: A list of dictionaries, each one being a journal item to be created.
-            // """
-            // if not self:
-            //     return []
-            // 
-            // company = self.company_id
-            // AccountTax = self.env['account.tax']
-            // 
-            // # Check names first to not consume sequences if any is missing
-            // for line in self:
-            //     if not line.name and not line.withholding_sequence_id:
-            //         raise UserError(self.env._('Please enter the withholding number for the tax %(tax_name)s', tax_name=line.tax_id.name))
-            // 
-            // # Convert them to base lines to compute the taxes.
-            // base_lines = []
-            // for line in self:
-            //     if not line.name:
-            //         line.name = line.tax_id.withholding_sequence_id.next_by_id()
-            // 
-            //     base_line = line._prepare_base_line_for_taxes_computation()
-            //     AccountTax._add_tax_details_in_base_line(base_line, company)
-            //     base_lines.append(base_line)
-            // AccountTax._round_base_lines_tax_details(base_lines, company)
-            // AccountTax._add_accounting_data_in_base_lines_tax_details(base_lines, company)
-            // tax_results = AccountTax._prepare_tax_lines(base_lines, company)
-            // 
-            // # Add the tax lines.
-            // aml_create_values_list = []
-            // for tax_line_vals in tax_results['tax_lines_to_add']:
-            //     aml_create_values_list.append({
-            //         **tax_line_vals,
-            //         'name': self.env._("WH Tax: %(name)s", name=tax_line_vals['name']),
-            //         'amount_currency': -tax_line_vals['amount_currency'],
-            //         'balance': -tax_line_vals['balance'],
-            //     })
-            // 
-            // # Aggregate the base lines.
-            // aggregated_base_lines = defaultdict(lambda: {
-            //     'names': set(),
-            //     'amount_currency': 0.0,
-            //     'balance': 0.0,
-            // })
-            // for base_line, to_update in tax_results['base_lines_to_update']:
-            //     grouping_key = frozendict({
-            //         **AccountTax._prepare_base_line_grouping_key(base_line),
-            //         'tax_tag_ids': to_update['tax_tag_ids'],
-            //     })
-            //     aggregated_amounts = aggregated_base_lines[grouping_key]
-            //     aggregated_amounts['names'].add(base_line['record'].name)
-            //     aggregated_amounts['amount_currency'] += to_update['amount_currency']
-            //     aggregated_amounts['balance'] += to_update['balance']
-            // 
-            // # Add the base lines.
-            // for grouping_key, amounts in aggregated_base_lines.items():
-            //     aml_create_values_list.append({
-            //         **grouping_key,
-            //         'name': self.env._('WH Base: %(names)s', names=', '.join(amounts['names'])),
-            //         'amount_currency': amounts['amount_currency'],
-            //         'balance': amounts['balance'],
-            //     })
-            //     aml_create_values_list.append({
-            //         **grouping_key,
-            //         'name': self.env._('WH Base Counterpart: %(names)s', names=', '.join(amounts['names'])),
-            //         'tax_ids': [],
-            //         'tax_tag_ids': [],
-            //         'analytic_distribution': None,
-            //         'amount_currency': -amounts['amount_currency'],
-            //         'balance': -amounts['balance'],
-            //     })
-            // 
-            // return aml_create_values_list
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrepareWithholdingLinesCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines, object company) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _prepare_withholding_lines_commands(self, base_lines, company):
-            // """
-            // Calculate the withholding tax amounts by using the provided tax base lines, and then compare the resulting values
-            // with the withholding line in self to determine which line should be updated, deleted or created.
-            // 
-            // :returns A list of commands that should be used to update the withholding line field in the calling model.
-            // """
-            // AccountTax = self.env['account.tax']
-            // 
-            // # The base lines completely ignore the withholding taxes.
-            // # Now, it's time to compute them.
-            // new_base_lines = []
-            // for base_line in base_lines:
-            //     new_base_lines.append(AccountTax._prepare_base_line_for_taxes_computation(
-            //         base_line,
-            //         calculate_withholding_taxes=True,
-            //         manual_tax_line_name=base_line.get('manual_tax_line_name'),
-            //         filter_tax_function=None,
-            //     ))
-            // 
-            // AccountTax._add_tax_details_in_base_lines(new_base_lines, company)
-            // AccountTax._round_base_lines_tax_details(new_base_lines, company)
-            // 
-            // # Map the existing withholding tax lines to their grouping key in order to know which line to update, create or delete.
-            // existing_withholding_line_map = self.grouped(key=lambda l: l._get_grouping_key())
-            // 
-            // def grouping_function(base_line_data, tax_data):
-            //     if not tax_data:
-            //         return None
-            //     account = company.withholding_tax_base_account_id or base_line_data['account_id']
-            //     tax = tax_data['tax']
-            //     # Note: keep this aligned with _get_grouping_key
-            //     return {
-            //         'name': base_line_data.get('manual_tax_line_name', tax.name),
-            //         'analytic_distribution': base_line_data['analytic_distribution'],
-            //         'account': account.id,
-            //         'tax_id': tax_data['tax'].id,
-            //         'skip': not tax_data['tax'].is_withholding_tax_on_payment,
-            //         'currency_id': base_line_data['currency_id'].id,
-            //     }
-            // 
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(new_base_lines, grouping_function)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // withholding_line_commands = []
-            // for grouping_key, values in values_per_grouping_key.items():
-            //     if not grouping_key or grouping_key['skip']:
-            //         continue
-            // 
-            //     existing_line = existing_withholding_line_map.get(grouping_key)
-            // 
-            //     # If we have more than one existing line matching the grouping key, we will create a new one instead.
-            //     if existing_line and len(existing_line) > 1:
-            //         for line in existing_line[1:]:
-            //             withholding_line_commands.append(Command.delete(line.id))
-            //         existing_line = existing_line[:1]
-            // 
-            //     if existing_line:
-            //         # Compute the amount for existing withholding lines when the lines are updated in the view
-            //         # We only want to recompute the tax amount
-            //         withholding_line_commands.append(Command.update(existing_line.id, {
-            //             'source_base_amount_currency': values['base_amount_currency'],
-            //             'source_base_amount': values['base_amount'],
-            //             'source_tax_amount_currency': -values['tax_amount_currency'],
-            //             'source_tax_amount': -values['tax_amount'],
-            //         }))
-            //     else:
-            //         withholding_line_commands.append(Command.create({
-            //             'name': grouping_key['name'],
-            //             'tax_id': grouping_key['tax_id'],
-            //             'analytic_distribution': grouping_key['analytic_distribution'],
-            //             'account_id': grouping_key['account'],
-            //             'source_base_amount_currency': values['base_amount_currency'],
-            //             'source_base_amount': values['base_amount'],
-            //             'source_tax_amount_currency': -values['tax_amount_currency'],
-            //             'source_tax_amount': -values['tax_amount'],
-            //             'source_tax_id': grouping_key['tax_id'],
-            //             'source_currency_id': grouping_key['currency_id'],
-            //         }))
-            // 
-            // keys_to_remove = existing_withholding_line_map.keys() - values_per_grouping_key.keys()
-            // for key in keys_to_remove:
-            //     for line in existing_withholding_line_map[key]:
-            //         withholding_line_commands.append(Command.delete(line.id))
-            // 
-            // return withholding_line_commands
-            */
-            return default;
-        }
-
         public async Task<TEntity> PreventAutomaticLineDeletionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -8083,24 +7795,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PurchaseHistoryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order_line.py) ---
-            // def action_purchase_history(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("purchase.action_purchase_history")
-            // action['domain'] = [('state', 'in', ['purchase', 'done']), ('product_id', '=', self.product_id.id)]
-            // action['display_name'] = _("Purchase History for %s", self.product_id.display_name)
-            // action['context'] = {
-            //     'search_default_partner_id': self.partner_id.id
-            // }
-            // 
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> QueryAnalyticAccountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object table) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -8110,24 +7804,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     r"""regexp_split_to_array(jsonb_path_query_array(%s, '$.keyvalue()."key"')::text, '\D+')""",
             //     self._field_to_sql(table or self._table, 'analytic_distribution'),
             // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ReadDistributionModelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_distribution_model.py) ---
-            // def action_read_distribution_model(self):
-            // self.ensure_one()
-            // return {
-            //     'name': self.display_name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_type': 'form',
-            //     'view_mode': 'form',
-            //     'res_model': 'account.analytic.distribution.model',
-            //     'res_id': self.id,
-            // }
             */
             return default;
         }
@@ -8542,33 +8218,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities, object ctx) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_register_payment(self, ctx=None):
-            // ''' Open the account.payment.register wizard to pay the selected journal items.
-            // :return: An action opening the account.payment.register wizard.
-            // '''
-            // context = {
-            //     'active_model': 'account.move.line',
-            //     'active_ids': self.ids,
-            // }
-            // if ctx:
-            //     context.update(ctx)
-            // return {
-            //     'name': _('Pay'),
-            //     'res_model': 'account.payment.register',
-            //     'view_mode': 'form',
-            //     'views': [[False, 'form']],
-            //     'context': context,
-            //     'target': 'new',
-            //     'type': 'ir.actions.act_window',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> RelatedAnalyticDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -8886,80 +8535,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ShowOperationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_show_operations(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.actions']._for_xml_id('mrp.mrp_routing_action')
-            // action['domain'] = [('workcenter_id', '=', self.id)]
-            // action['context'] = {
-            //     'default_workcenter_id': self.id,
-            // }
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowSameReceiptExpenseIdsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_show_same_receipt_expense_ids(self):
-            // self.ensure_one()
-            // return self.same_receipt_expense_ids._get_records_action(
-            //     name=_("Expenses with a similar receipt to %(other_expense_name)s", other_expense_name=self.name),
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SplitWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_split_wizard(self):
-            // self.ensure_one()
-            // splits = self.env['hr.expense.split'].create(self._get_split_values())
-            // 
-            // wizard = self.env['hr.expense.split.wizard'].create({
-            //     'expense_split_line_ids': splits.ids,
-            //     'expense_id': self.id,
-            // })
-            // return {
-            //     'name': _('Expense split'),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [[False, "form"]],
-            //     'res_model': 'hr.expense.split.wizard',
-            //     'res_id': wizard.id,
-            //     'target': 'new',
-            //     'context': self.env.context,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SubmitExpensesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_submit_expenses(self):
-            // sheets = self._create_sheets_from_expense()
-            // return {
-            //     'name': _('New Expense Reports'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.expense.sheet',
-            //     'context': self.env.context,
-            //     'views': [[False, "list"], [False, "form"]] if len(sheets) > 1 else [[False, "form"]],
-            //     'domain': [('id', 'in', sheets.ids)],
-            //     'res_id': sheets.id if len(sheets) == 1 else False,
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> SuggestQuantityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -9179,20 +8754,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UnreconcileMatchEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
-            // def action_unreconcile_match_entries(self):
-            // """ This method will do the unreconcile action in the list view of the moves """
-            // active_ids = self._context.get('active_ids')
-            // if active_ids:
-            //     move_lines = self.env['account.move.line'].browse(active_ids)._all_reconciled_lines()
-            //     move_lines.remove_move_reconcile()
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateAnalyticDistributionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
         {
             /*
@@ -9243,32 +8804,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         msg += _("Invoiced Quantity: %s", line.qty_invoiced) + Markup("<br/>")
             //     msg += Markup("</ul>")
             //     order.message_post(body=msg)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdatePlaceholdersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_withholding_line.py) ---
-            // def _update_placeholders(self):
-            // """ Update the placeholders for the lines in self; updating them sequentially so that the placeholders make sense. """
-            // lines_per_sequence = self\
-            //     .sorted()\
-            //     .grouped(lambda l: l.placeholder_type == 'given_by_sequence' and l.withholding_sequence_id)
-            // for sequence, lines in lines_per_sequence.items():
-            //     if sequence:
-            //         for i, line in enumerate(lines):
-            //             line.write({
-            //                 'placeholder_value': sequence.get_next_char(sequence.number_next_actual + i),
-            //                 'previous_placeholder_type': line.placeholder_type,
-            //             })
-            //     else:
-            //         for line in lines:
-            //             line.write({
-            //                 'placeholder_value': None,
-            //                 'previous_placeholder_type': line.placeholder_type,
-            //             })
             */
             return default;
         }
@@ -9413,48 +8948,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for plan_id in mandatory_plans_ids:
             //         if float_compare(distribution_by_root_plan.get(plan_id, 0), 100, precision_digits=decimal_precision) != 0:
             //             raise ValidationError(_("One or more lines require a 100% analytic distribution."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
-            // def action_view_sheet(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [[False, "form"]],
-            //     'res_model': 'hr.expense.sheet',
-            //     'target': 'current',
-            //     'res_id': self.sheet_id.id
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WorkOrderAlternativesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_work_order_alternatives(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_workorder_todo")
-            // action['domain'] = ['|', ('workcenter_id', 'in', self.alternative_workcenter_ids.ids),
-            //                     ('workcenter_id.alternative_workcenter_ids', '=', self.id)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WorkOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_work_order(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
-            // return action
             */
             return default;
         }

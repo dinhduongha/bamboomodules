@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Hr
 {
     public partial class HrEmployeeController
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/action-open-work-entries")]
         public async Task<IActionResult> ActionOpenWorkEntriesAsync(Guid id, [FromBody] HrEmployeeOpenWorkEntriesRequestDto input)
         {
-            var result = await _appService.OpenWorkEntriesAsync(id, input.InitialDate);
+            var result = await _appService.OpenWorkEntriesAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/fetch")]
         public async Task<IActionResult> FetchAsync(Guid id, [FromBody] HrEmployeeFetchRequestDto input)
         {
-            var result = await _appService.FetchAsync(id, input.FieldNames);
+            var result = await _appService.FetchAsync(id, input);
             return Ok(result);
         }
         
@@ -116,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/generate-work-entries")]
         public async Task<IActionResult> GenerateWorkEntriesAsync(Guid id, [FromBody] HrEmployeeGenerateWorkEntriesRequestDto input)
         {
-            var result = await _appService.GenerateWorkEntriesAsync(id, input.DateStart, input.DateStop, input.Force);
+            var result = await _appService.GenerateWorkEntriesAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-formview-action")]
         public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] HrEmployeeGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input.AccessUid);
+            var result = await _appService.GetFormviewActionAsync(id, input);
             return Ok(result);
         }
         
@@ -148,7 +149,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-formview-id")]
         public async Task<IActionResult> GetFormviewIdAsync(Guid id, [FromBody] HrEmployeeGetFormviewIdRequestDto input)
         {
-            var result = await _appService.GetFormviewIdAsync(id, input.AccessUid);
+            var result = await _appService.GetFormviewIdAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-mandatory-days")]
         public async Task<IActionResult> GetMandatoryDaysAsync(Guid id, [FromBody] HrEmployeeGetMandatoryDaysRequestDto input)
         {
-            var result = await _appService.GetMandatoryDaysAsync(id, input.StartDate, input.EndDate);
+            var result = await _appService.GetMandatoryDaysAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-mandatory-days-data")]
         public async Task<IActionResult> GetMandatoryDaysDataAsync(Guid id, [FromBody] HrEmployeeGetMandatoryDaysDataRequestDto input)
         {
-            var result = await _appService.GetMandatoryDaysDataAsync(id, input.DateStart, input.DateEnd);
+            var result = await _appService.GetMandatoryDaysDataAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-public-holidays-data")]
         public async Task<IActionResult> GetPublicHolidaysDataAsync(Guid id, [FromBody] HrEmployeeGetPublicHolidaysDataRequestDto input)
         {
-            var result = await _appService.GetPublicHolidaysDataAsync(id, input.DateStart, input.DateEnd);
+            var result = await _appService.GetPublicHolidaysDataAsync(id, input);
             return Ok(result);
         }
         
@@ -188,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-special-days-data")]
         public async Task<IActionResult> GetSpecialDaysDataAsync(Guid id, [FromBody] HrEmployeeGetSpecialDaysDataRequestDto input)
         {
-            var result = await _appService.GetSpecialDaysDataAsync(id, input.DateStart, input.DateEnd);
+            var result = await _appService.GetSpecialDaysDataAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-view")]
         public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] HrEmployeeGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input.ViewId, input.ViewType);
+            var result = await _appService.GetViewAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-views")]
         public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] HrEmployeeGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input.Views, input.Options);
+            var result = await _appService.GetViewsAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/search-fetch")]
         public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] HrEmployeeSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input.Domain, input.FieldNames, input.Offset, input.Limit, input.Order);
+            var result = await _appService.SearchFetchAsync(id, input);
             return Ok(result);
         }
         

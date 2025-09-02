@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<RestaurantFloor> DeactivateFloorAsync(Guid id, Guid session_id)
+        public async Task<RestaurantFloor> DeactivateFloorAsync(Guid id, RestaurantFloorDeactivateFloorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -80,7 +81,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RestaurantFloor> RenameFloorAsync(Guid id, object new_name)
+        public async Task<RestaurantFloor> RenameFloorAsync(Guid id, RestaurantFloorRenameFloorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---
@@ -91,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<RestaurantFloor> SyncFromUiAsync(Guid id, object name, object background_color, Guid config_id)
+        public async Task<RestaurantFloor> SyncFromUiAsync(Guid id, RestaurantFloorSyncFromUiRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_restaurant.py) ---

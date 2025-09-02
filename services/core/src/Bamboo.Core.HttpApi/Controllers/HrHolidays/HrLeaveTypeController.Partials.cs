@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
 {
     public partial class HrLeaveTypeController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrLeaveTypeCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/get-allocation-data")]
         public async Task<IActionResult> GetAllocationDataAsync(Guid id, [FromBody] HrLeaveTypeGetAllocationDataRequestDto input)
         {
-            var result = await _appService.GetAllocationDataAsync(id, input.Employees, input.Date);
+            var result = await _appService.GetAllocationDataAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/get-allocation-data-request")]
         public async Task<IActionResult> GetAllocationDataRequestAsync(Guid id, [FromBody] HrLeaveTypeGetAllocationDataRequestRequestDto input)
         {
-            var result = await _appService.GetAllocationDataRequestAsync(id, input.TargetDate, input.HiddenAllocations);
+            var result = await _appService.GetAllocationDataRequestAsync(id, input);
             return Ok(result);
         }
         

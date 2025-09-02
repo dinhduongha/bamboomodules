@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
     public class WebsiteCoverPropertiesMixinAppService : ApplicationService, IWebsiteCoverPropertiesMixinAppService
     {
-
-        public WebsiteCoverPropertiesMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public WebsiteCoverPropertiesMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ActionAddMembersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_partners, object member_status, object raise_on_access) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
@@ -92,6 +94,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionChannelEnrollAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_channel_enroll(self):
+            // template = self.env.ref('website_slides.mail_template_slide_channel_enroll', raise_if_not_found=False)
+            // return self._action_channel_open_invite_wizard(template, enroll_mode=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionChannelInviteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_channel_invite(self):
+            // template = self.env.ref('website_slides.mail_template_slide_channel_invite', raise_if_not_found=False)
+            // return self._action_channel_open_invite_wizard(template)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionChannelOpenInviteWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_template, object enroll_mode) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -128,6 +152,253 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionGenerateLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_event.py) ---
+            // def action_generate_leads(self):
+            // """ Re-generate leads based on event.lead.rules.
+            // The method is ran synchronously if there is a low amount of registrations, otherwise it
+            // goes through a CRON job that runs in batches. """
+            // 
+            // if not self.env.user.has_group('event.group_event_manager'):
+            //     raise UserError(_("Only Event Managers are allowed to re-generate all leads."))
+            // 
+            // self.ensure_one()
+            // registrations_count = self.env['event.registration'].search_count([
+            //     ('event_id', '=', self.id),
+            //     ('state', 'not in', ['draft', 'cancel']),
+            // ])
+            // 
+            // if registrations_count <= self.env['event.lead.request']._REGISTRATIONS_BATCH_SIZE:
+            //     leads = self.env['event.registration'].search([
+            //         ('event_id', '=', self.id),
+            //         ('state', 'not in', ['draft', 'cancel']),
+            //     ])._apply_lead_generation_rules()
+            //     if leads:
+            //         notification = _("Yee-ha, %(leads_count)s Leads have been created!", leads_count=len(leads))
+            //     else:
+            //         notification = _("Aww! No Leads created, check your Lead Generation Rules and try again.")
+            // else:
+            //     self.env['event.lead.request'].sudo().create({'event_id': self.id})
+            //     self.env.ref('event_crm.ir_cron_generate_leads')._trigger()
+            //     notification = _("Got it! We've noted your request. Your leads will be created soon!")
+            // 
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'info',
+            //         'sticky': False,
+            //         'message': notification,
+            //         'next': {'type': 'ir.actions.act_window_close'},  # force a form reload
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGrantAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_grant_access(self, partner_id):
+            // partner = self.env['res.partner'].browse(partner_id).exists()
+            // if partner:
+            //     if self._action_add_members(partner):
+            //         self.activity_search(
+            //             ['website_slides.mail_activity_data_access_request'],
+            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //         ).action_feedback(feedback=_('Access Granted'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInviteContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
+            // def action_invite_contacts(self):
+            // return {
+            //     'name': 'Mass Mail Invitation',
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'mailing.mailing',
+            //     'view_mode': 'form',
+            //     'target': 'current',
+            //     'context': {
+            //         'default_mailing_model_id': self.env.ref('base.model_res_partner').id,
+            //         'default_subject': _("Event: %s", self.name),
+            //     },
+            // }
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
+            // def action_invite_contacts(self):
+            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
+            // action = super(Event, self).action_invite_contacts()
+            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMassMailingAttendeesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
+            // def action_mass_mailing_attendees(self):
+            // return {
+            //     'name': 'Mass Mail Attendees',
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'mailing.mailing',
+            //     'view_mode': 'form',
+            //     'target': 'current',
+            //     'context': {
+            //         'default_mailing_model_id': self.env.ref('event.model_event_registration').id,
+            //         'default_mailing_domain': repr([('event_id', 'in', self.ids), ('state', 'not in', ['cancel', 'draft'])]),
+            //         'default_subject': _("Event: %s", self.name),
+            //     },
+            // }
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
+            // def action_mass_mailing_attendees(self):
+            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
+            // action = super(Event, self).action_mass_mailing_attendees()
+            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMassMailingTrackSpeakersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track, FILE: event_event.py) ---
+            // def action_mass_mailing_track_speakers(self):
+            // mass_mailing_action = dict(
+            //     name='Mass Mail Attendees',
+            //     type='ir.actions.act_window',
+            //     res_model='mailing.mailing',
+            //     view_mode='form',
+            //     target='current',
+            //     context=dict(
+            //         default_mailing_model_id=self.env.ref('website_event_track.model_event_track').id,
+            //         default_mailing_domain=repr([('event_id', 'in', self.ids), ('stage_id.is_cancel', '!=', True)]),
+            //         default_subject=_("Event: %s", self.name),
+            //     ),
+            // )
+            // return mass_mailing_action
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track_sms, FILE: event.py) ---
+            // def action_mass_mailing_track_speakers(self):
+            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
+            // action = super(Event, self).action_mass_mailing_track_speakers()
+            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToCompletedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_completed_members(self):
+            // return self.action_redirect_to_members('completed')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToEngagedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_engaged_members(self):
+            // return self.action_redirect_to_members('engaged')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToInvitedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_invited_members(self):
+            // return self.action_redirect_to_members('invited')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToMembersAsync<TEntity>(IEnumerable<TEntity> entities, object status_filter) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_members(self, status_filter=''):
+            // """ Redirects to attendees of the course. If status_filter is set to 'invited' /
+            // 'engaged' ('joined' + 'ongoing') / 'completed', attendees are filtered accordingly."""
+            // action_ctx = {}
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_channel_partner_action")
+            // if status_filter == 'engaged':
+            //     action_ctx['search_default_filter_joined'] = 1
+            //     action_ctx['search_default_filter_ongoing'] = 1
+            // elif status_filter:
+            //     action_ctx[f'search_default_filter_{status_filter}'] = 1
+            // action['domain'] = [('channel_id', 'in', self.ids)]
+            // action['sample'] = 1
+            // if status_filter == 'completed':
+            //     help_message = {
+            //         'header_message': _("No Attendee has completed this course yet!"),
+            //         'body_message': ""
+            //     }
+            // else:
+            //     help_message = {
+            //         'header_message': _("No Attendees Yet!"),
+            //         'body_message': _("From here you'll be able to monitor attendees and to track their progress.")
+            //     }
+            // action['help'] = Markup("""<p class="o_view_nocontent_smiling_face">%(header_message)s</p><p>%(body_message)s</p>""") % help_message
+            // if len(self) == 1:
+            //     action['display_name'] = _('Attendees of %s', self.name)
+            //     action_ctx['default_channel_id'] = self.id
+            // action['context'] = action_ctx
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRefuseAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_refuse_access(self, partner_id):
+            // partner = self.env['res.partner'].browse(partner_id).exists()
+            // if partner:
+            //     self.activity_search(
+            //         ['website_slides.mail_activity_data_access_request'],
+            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //     ).action_feedback(feedback=_('Access Refused'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRequestAccessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_request_access(self):
+            // """ Request access to the channel. Returns a dict with keys being either 'error'
+            // (specific error raised) or 'done' (request done or not). """
+            // if self.env.user._is_public():
+            //     return {'error': _('You have to sign in before')}
+            // if not self.is_published:
+            //     return {'error': _('Course not published yet')}
+            // if self.is_member:
+            //     return {'error': _('Already member')}
+            // if self.enroll == 'invite':
+            //     activities = self.sudo()._action_request_access(self.env.user.partner_id)
+            //     if activities:
+            //         return {'done': True}
+            //     return {'error': _('Already Requested')}
+            // return {'done': False}
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionRequestAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -147,6 +418,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             request_partner_id=partner.id
             //         )
             // return activities
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetDoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def action_set_done(self):
+            // """
+            // Action which will move the events
+            // into the first next (by sequence) stage defined as "Ended"
+            // (if they are not already in an ended stage)
+            // """
+            // first_ended_stage = self.env['event.stage'].search([('pipe_end', '=', True)], limit=1, order='sequence')
+            // if first_ended_stage:
+            //     self.write({'stage_id': first_ended_stage.id})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewLinkedOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_event.py) ---
+            // def action_view_linked_orders(self):
+            // """ Redirects to the orders linked to the current events """
+            // sale_order_action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
+            // sale_order_action.update({
+            //     'domain': [('state', '!=', 'cancel'), ('order_line.event_id', 'in', self.ids)],
+            //     'context': {'create': 0},
+            // })
+            // return sale_order_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_view_ratings(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
+            // action['name'] = _('Rating of %s', self.name)
+            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSlidesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_view_slides(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_slide_action")
+            // action['context'] = {
+            //     'search_default_published': 1,
+            //     'default_channel_id': self.id
+            // }
+            // action['domain'] = [('channel_id', "=", self.id), ('is_category', '=', False)]
+            // return action
             */
             return default;
         }
@@ -199,28 +532,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     tag_by_blog[blog_id] = BlogTag.browse(tag_by_blog[blog_id])
             // 
             // return tag_by_blog
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ChannelEnrollAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_channel_enroll(self):
-            // template = self.env.ref('website_slides.mail_template_slide_channel_enroll', raise_if_not_found=False)
-            // return self._action_channel_open_invite_wizard(template, enroll_mode=True)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ChannelInviteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_channel_invite(self):
-            // template = self.env.ref('website_slides.mail_template_slide_channel_invite', raise_if_not_found=False)
-            // return self._action_channel_open_invite_wizard(template)
             */
             return default;
         }
@@ -1833,52 +2144,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GenerateLeadsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event_crm, FILE: event_event.py) ---
-            // def action_generate_leads(self):
-            // """ Re-generate leads based on event.lead.rules.
-            // The method is ran synchronously if there is a low amount of registrations, otherwise it
-            // goes through a CRON job that runs in batches. """
-            // 
-            // if not self.env.user.has_group('event.group_event_manager'):
-            //     raise UserError(_("Only Event Managers are allowed to re-generate all leads."))
-            // 
-            // self.ensure_one()
-            // registrations_count = self.env['event.registration'].search_count([
-            //     ('event_id', '=', self.id),
-            //     ('state', 'not in', ['draft', 'cancel']),
-            // ])
-            // 
-            // if registrations_count <= self.env['event.lead.request']._REGISTRATIONS_BATCH_SIZE:
-            //     leads = self.env['event.registration'].search([
-            //         ('event_id', '=', self.id),
-            //         ('state', 'not in', ['draft', 'cancel']),
-            //     ])._apply_lead_generation_rules()
-            //     if leads:
-            //         notification = _("Yee-ha, %(leads_count)s Leads have been created!", leads_count=len(leads))
-            //     else:
-            //         notification = _("Aww! No Leads created, check your Lead Generation Rules and try again.")
-            // else:
-            //     self.env['event.lead.request'].sudo().create({'event_id': self.id})
-            //     self.env.ref('event_crm.ir_cron_generate_leads')._trigger()
-            //     notification = _("Got it! We've noted your request. Your leads will be created soon!")
-            // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'info',
-            //         'sticky': False,
-            //         'message': notification,
-            //         'next': {'type': 'ir.actions.act_window_close'},  # force a form reload
-            //     }
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetAccessActionInternalAsync<TEntity>(IEnumerable<TEntity> entities, object access_uid, object force_website) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -2396,22 +2661,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GrantAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_grant_access(self, partner_id):
-            // partner = self.env['res.partner'].browse(partner_id).exists()
-            // if partner:
-            //     if self._action_add_members(partner):
-            //         self.activity_search(
-            //             ['website_slides.mail_activity_data_access_request'],
-            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
-            //         ).action_feedback(feedback=_('Access Granted'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> InitColumnInternalAsync<TEntity>(IEnumerable<TEntity> entities, object column_name) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -2431,32 +2680,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         WHERE access_token IS NULL
             //     """ % {'table_name': self._table}
             //     self.env.cr.execute(query)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InviteContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
-            // def action_invite_contacts(self):
-            // return {
-            //     'name': 'Mass Mail Invitation',
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'mailing.mailing',
-            //     'view_mode': 'form',
-            //     'target': 'current',
-            //     'context': {
-            //         'default_mailing_model_id': self.env.ref('base.model_res_partner').id,
-            //         'default_subject': _("Event: %s", self.name),
-            //     },
-            // }
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
-            // def action_invite_contacts(self):
-            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_invite_contacts()
-            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
-            // return action
             */
             return default;
         }
@@ -2510,61 +2733,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
             // def _mail_get_partner_fields(self, introspect_fields=False):
             // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MassMailingAttendeesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event, FILE: event_event.py) ---
-            // def action_mass_mailing_attendees(self):
-            // return {
-            //     'name': 'Mass Mail Attendees',
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'mailing.mailing',
-            //     'view_mode': 'form',
-            //     'target': 'current',
-            //     'context': {
-            //         'default_mailing_model_id': self.env.ref('event.model_event_registration').id,
-            //         'default_mailing_domain': repr([('event_id', 'in', self.ids), ('state', 'not in', ['cancel', 'draft'])]),
-            //         'default_subject': _("Event: %s", self.name),
-            //     },
-            // }
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_sms, FILE: event.py) ---
-            // def action_mass_mailing_attendees(self):
-            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_mass_mailing_attendees()
-            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MassMailingTrackSpeakersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track, FILE: event_event.py) ---
-            // def action_mass_mailing_track_speakers(self):
-            // mass_mailing_action = dict(
-            //     name='Mass Mail Attendees',
-            //     type='ir.actions.act_window',
-            //     res_model='mailing.mailing',
-            //     view_mode='form',
-            //     target='current',
-            //     context=dict(
-            //         default_mailing_model_id=self.env.ref('website_event_track.model_event_track').id,
-            //         default_mailing_domain=repr([('event_id', 'in', self.ids), ('stage_id.is_cancel', '!=', True)]),
-            //         default_subject=_("Event: %s", self.name),
-            //     ),
-            // )
-            // return mass_mailing_action
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing_event_track_sms, FILE: event.py) ---
-            // def action_mass_mailing_track_speakers(self):
-            // # Minimal override: set form view being the one mixing sms and mail (not prioritized one)
-            // action = super(Event, self).action_mass_mailing_track_speakers()
-            // action['view_id'] = self.env.ref('mass_mailing_sms.mailing_mailing_view_form_mixed').id
-            // return action
             */
             return default;
         }
@@ -2698,87 +2866,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RedirectToCompletedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_completed_members(self):
-            // return self.action_redirect_to_members('completed')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToEngagedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_engaged_members(self):
-            // return self.action_redirect_to_members('engaged')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToInvitedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_invited_members(self):
-            // return self.action_redirect_to_members('invited')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToMembersAsync<TEntity>(IEnumerable<TEntity> entities, object status_filter) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_members(self, status_filter=''):
-            // """ Redirects to attendees of the course. If status_filter is set to 'invited' /
-            // 'engaged' ('joined' + 'ongoing') / 'completed', attendees are filtered accordingly."""
-            // action_ctx = {}
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_channel_partner_action")
-            // if status_filter == 'engaged':
-            //     action_ctx['search_default_filter_joined'] = 1
-            //     action_ctx['search_default_filter_ongoing'] = 1
-            // elif status_filter:
-            //     action_ctx[f'search_default_filter_{status_filter}'] = 1
-            // action['domain'] = [('channel_id', 'in', self.ids)]
-            // action['sample'] = 1
-            // if status_filter == 'completed':
-            //     help_message = {
-            //         'header_message': _("No Attendee has completed this course yet!"),
-            //         'body_message': ""
-            //     }
-            // else:
-            //     help_message = {
-            //         'header_message': _("No Attendees Yet!"),
-            //         'body_message': _("From here you'll be able to monitor attendees and to track their progress.")
-            //     }
-            // action['help'] = Markup("""<p class="o_view_nocontent_smiling_face">%(header_message)s</p><p>%(body_message)s</p>""") % help_message
-            // if len(self) == 1:
-            //     action['display_name'] = _('Attendees of %s', self.name)
-            //     action_ctx['default_channel_id'] = self.id
-            // action['context'] = action_ctx
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RefuseAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_refuse_access(self, partner_id):
-            // partner = self.env['res.partner'].browse(partner_id).exists()
-            // if partner:
-            //     self.activity_search(
-            //         ['website_slides.mail_activity_data_access_request'],
-            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
-            //     ).action_feedback(feedback=_('Access Refused'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemoveMembershipInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> partner_ids) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -2801,29 +2888,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     removed_channel_partner = self.env['slide.channel.partner'].sudo().search(removed_channel_partner_domain)
             //     if removed_channel_partner:
             //         removed_channel_partner.action_archive()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RequestAccessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_request_access(self):
-            // """ Request access to the channel. Returns a dict with keys being either 'error'
-            // (specific error raised) or 'done' (request done or not). """
-            // if self.env.user._is_public():
-            //     return {'error': _('You have to sign in before')}
-            // if not self.is_published:
-            //     return {'error': _('Course not published yet')}
-            // if self.is_member:
-            //     return {'error': _('Already member')}
-            // if self.enroll == 'invite':
-            //     activities = self.sudo()._action_request_access(self.env.user.partner_id)
-            //     if activities:
-            //         return {'done': True}
-            //     return {'error': _('Already Requested')}
-            // return {'done': False}
             */
             return default;
         }
@@ -3314,23 +3378,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetDoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
-            // def action_set_done(self):
-            // """
-            // Action which will move the events
-            // into the first next (by sequence) stage defined as "Ended"
-            // (if they are not already in an ended stage)
-            // """
-            // first_ended_stage = self.env['event.stage'].search([('pipe_end', '=', True)], limit=1, order='sequence')
-            // if first_ended_stage:
-            //     self.write({'stage_id': first_ended_stage.id})
-            */
-            return default;
-        }
-
         public async Task<TEntity> SetPostDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
         {
             /*
@@ -3574,51 +3621,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         event._update_website_menu_entry('location_menu', 'location_menu_ids', 'location')
             //     if event.menu_id and (not menus_update_by_field or event in menus_update_by_field.get('register_menu')):
             //         event._update_website_menu_entry('register_menu', 'register_menu_ids', 'register')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewLinkedOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: event_event.py) ---
-            // def action_view_linked_orders(self):
-            // """ Redirects to the orders linked to the current events """
-            // sale_order_action = self.env["ir.actions.actions"]._for_xml_id("sale.action_orders")
-            // sale_order_action.update({
-            //     'domain': [('state', '!=', 'cancel'), ('order_line.event_id', 'in', self.ids)],
-            //     'context': {'create': 0},
-            // })
-            // return sale_order_action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_view_ratings(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
-            // action['name'] = _('Rating of %s', self.name)
-            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSlidesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteCoverPropertiesMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_view_slides(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_slide_action")
-            // action['context'] = {
-            //     'search_default_published': 1,
-            //     'default_channel_id': self.id
-            // }
-            // action['domain'] = [('channel_id', "=", self.id), ('is_category', '=', False)]
-            // return action
             */
             return default;
         }

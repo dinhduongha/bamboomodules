@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Product
 {
     public partial class ProductProductController
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] ProductProductGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/get-product-info-pos")]
         public async Task<IActionResult> GetProductInfoPosAsync(Guid id, [FromBody] ProductProductGetProductInfoPosRequestDto input)
         {
-            var result = await _appService.GetProductInfoPosAsync(id, input.Price, input.Quantity, input.PosConfigId);
+            var result = await _appService.GetProductInfoPosAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +269,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/view-header-get")]
         public async Task<IActionResult> ViewHeaderGetAsync(Guid id, [FromBody] ProductProductViewHeaderGetRequestDto input)
         {
-            var result = await _appService.ViewHeaderGetAsync(id, input.ViewId, input.ViewType);
+            var result = await _appService.ViewHeaderGetAsync(id, input);
             return Ok(result);
         }
         

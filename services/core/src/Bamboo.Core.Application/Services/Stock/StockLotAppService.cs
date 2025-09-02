@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -428,7 +429,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLot> CopyDataAsync(Guid id, object @default)
+        public async Task<StockLot> CopyDataAsync(Guid id, StockLotCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---
@@ -515,7 +516,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockLot> GenerateLotNamesAsync(Guid id, object first_lot, object count)
+        public async Task<StockLot> GenerateLotNamesAsync(Guid id, StockLotGenerateLotNamesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_lot.py) ---

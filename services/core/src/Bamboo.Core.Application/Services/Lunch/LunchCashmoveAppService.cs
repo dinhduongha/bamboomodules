@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -33,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LunchCashmove> GetWalletBalanceAsync(Guid id, object user, object include_config)
+        public async Task<LunchCashmove> GetWalletBalanceAsync(Guid id, LunchCashmoveGetWalletBalanceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_cashmove.py) ---

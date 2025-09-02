@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.WebsiteSlides
 {
     public partial class SlideChannelController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteSlides
         [Route("{id}/action-grant-access")]
         public async Task<IActionResult> ActionGrantAccessAsync(Guid id, [FromBody] SlideChannelGrantAccessRequestDto input)
         {
-            var result = await _appService.GrantAccessAsync(id, input.PartnerId);
+            var result = await _appService.GrantAccessAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteSlides
         [Route("{id}/action-redirect-to-members")]
         public async Task<IActionResult> ActionRedirectToMembersAsync(Guid id, [FromBody] SlideChannelRedirectToMembersRequestDto input)
         {
-            var result = await _appService.RedirectToMembersAsync(id, input.StatusFilter);
+            var result = await _appService.RedirectToMembersAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteSlides
         [Route("{id}/action-refuse-access")]
         public async Task<IActionResult> ActionRefuseAccessAsync(Guid id, [FromBody] SlideChannelRefuseAccessRequestDto input)
         {
-            var result = await _appService.RefuseAccessAsync(id, input.PartnerId);
+            var result = await _appService.RefuseAccessAsync(id, input);
             return Ok(result);
         }
         
@@ -132,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteSlides
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SlideChannelCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         

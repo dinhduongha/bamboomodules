@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -295,7 +296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveType> CopyDataAsync(Guid id, object @default)
+        public async Task<HrLeaveType> CopyDataAsync(Guid id, HrLeaveTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -306,7 +307,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeaveType> GetAllocationDataAsync(Guid id, object employees, object date)
+        public async Task<HrLeaveType> GetAllocationDataAsync(Guid id, HrLeaveTypeGetAllocationDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---
@@ -461,7 +462,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeaveType> GetAllocationDataRequestAsync(Guid id, object target_date, object hidden_allocations)
+        public async Task<HrLeaveType> GetAllocationDataRequestAsync(Guid id, HrLeaveTypeGetAllocationDataRequestRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_type.py) ---

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
 {
     public partial class PosOrderController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/action-send-receipt")]
         public async Task<IActionResult> ActionSendReceiptAsync(Guid id, [FromBody] PosOrderSendReceiptRequestDto input)
         {
-            var result = await _appService.SendReceiptAsync(id, input.Email, input.TicketImage, input.BasicImage);
+            var result = await _appService.SendReceiptAsync(id, input);
             return Ok(result);
         }
         
@@ -52,15 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/action-sent-message-on-sms")]
         public async Task<IActionResult> ActionSentMessageOnSmsAsync(Guid id, [FromBody] PosOrderSentMessageOnSmsRequestDto input)
         {
-            var result = await _appService.SentMessageOnSmsAsync(id, input.Phone, input._Unnamed_, input.BasicImage);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-show-consolidated-invoice")]
-        public async Task<IActionResult> ActionShowConsolidatedInvoiceAsync(Guid id)
-        {
-            var result = await _appService.ShowConsolidatedInvoiceAsync(id);
+            var result = await _appService.SentMessageOnSmsAsync(id, input);
             return Ok(result);
         }
         
@@ -116,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/add-loyalty-history-lines")]
         public async Task<IActionResult> AddLoyaltyHistoryLinesAsync(Guid id, [FromBody] PosOrderAddLoyaltyHistoryLinesRequestDto input)
         {
-            var result = await _appService.AddLoyaltyHistoryLinesAsync(id, input.CouponData, input.CouponUpdates);
+            var result = await _appService.AddLoyaltyHistoryLinesAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/add-payment")]
         public async Task<IActionResult> AddPaymentAsync(Guid id, [FromBody] PosOrderAddPaymentRequestDto input)
         {
-            var result = await _appService.AddPaymentAsync(id, input.Data);
+            var result = await _appService.AddPaymentAsync(id, input);
             return Ok(result);
         }
         
@@ -132,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/confirm-coupon-programs")]
         public async Task<IActionResult> ConfirmCouponProgramsAsync(Guid id, [FromBody] PosOrderConfirmCouponProgramsRequestDto input)
         {
-            var result = await _appService.ConfirmCouponProgramsAsync(id, input.CouponData);
+            var result = await _appService.ConfirmCouponProgramsAsync(id, input);
             return Ok(result);
         }
         
@@ -148,31 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/get-and-set-online-payments-data")]
         public async Task<IActionResult> GetAndSetOnlinePaymentsDataAsync(Guid id, [FromBody] PosOrderGetAndSetOnlinePaymentsDataRequestDto input)
         {
-            var result = await _appService.GetAndSetOnlinePaymentsDataAsync(id, input.NextOnlinePaymentAmount);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-invoice-name")]
-        public async Task<IActionResult> GetInvoiceNameAsync(Guid id)
-        {
-            var result = await _appService.GetInvoiceNameAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-l10n-es-pos-tbai-qrurl")]
-        public async Task<IActionResult> GetL10nEsPosTbaiQrurlAsync(Guid id)
-        {
-            var result = await _appService.GetL10nEsPosTbaiQrurlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-es-tbai-retry-post")]
-        public async Task<IActionResult> L10nEsTbaiRetryPostAsync(Guid id)
-        {
-            var result = await _appService.L10nEsTbaiRetryPostAsync(id);
+            var result = await _appService.GetAndSetOnlinePaymentsDataAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/read-pos-data")]
         public async Task<IActionResult> ReadPosDataAsync(Guid id, [FromBody] PosOrderReadPosDataRequestDto input)
         {
-            var result = await _appService.ReadPosDataAsync(id, input.Data, input.ConfigId);
+            var result = await _appService.ReadPosDataAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/remove-from-ui")]
         public async Task<IActionResult> RemoveFromUiAsync(Guid id, [FromBody] PosOrderRemoveFromUiRequestDto input)
         {
-            var result = await _appService.RemoveFromUiAsync(id, input.ServerIds);
+            var result = await _appService.RemoveFromUiAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/search-paid-order-ids")]
         public async Task<IActionResult> SearchPaidOrderIdsAsync(Guid id, [FromBody] PosOrderSearchPaidOrderIdsRequestDto input)
         {
-            var result = await _appService.SearchPaidOrderIdsAsync(id, input.ConfigId, input.Domain, input.Limit, input.Offset);
+            var result = await _appService.SearchPaidOrderIdsAsync(id, input);
             return Ok(result);
         }
         
@@ -228,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/send-table-count-notification")]
         public async Task<IActionResult> SendTableCountNotificationAsync(Guid id, [FromBody] PosOrderSendTableCountNotificationRequestDto input)
         {
-            var result = await _appService.SendTableCountNotificationAsync(id, input.TableIds);
+            var result = await _appService.SendTableCountNotificationAsync(id, input);
             return Ok(result);
         }
         
@@ -236,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/sync-from-ui")]
         public async Task<IActionResult> SyncFromUiAsync(Guid id, [FromBody] PosOrderSyncFromUiRequestDto input)
         {
-            var result = await _appService.SyncFromUiAsync(id, input.Orders);
+            var result = await _appService.SyncFromUiAsync(id, input);
             return Ok(result);
         }
         
@@ -244,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/validate-coupon-programs")]
         public async Task<IActionResult> ValidateCouponProgramsAsync(Guid id, [FromBody] PosOrderValidateCouponProgramsRequestDto input)
         {
-            var result = await _appService.ValidateCouponProgramsAsync(id, input.PointChanges, input.NewCodes);
+            var result = await _appService.ValidateCouponProgramsAsync(id, input);
             return Ok(result);
         }
     }

@@ -7,10 +7,11 @@ using Volo.Abp.Domain.Entities;
 namespace Bamboo.Core.Models;
 
 //[Keyless]
-public partial class ResDevice
+public partial class ResDevice: Entity<Guid>
 {
+    [Key]
     [Column("id")]
-    public Guid? Id { get; set; }
+    public Guid Id { get => base.Id; set => base.Id = value; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

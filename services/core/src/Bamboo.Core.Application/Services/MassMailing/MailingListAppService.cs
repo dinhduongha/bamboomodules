@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -115,7 +116,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingList> CopyDataAsync(Guid id, object @default)
+        public async Task<MailingList> CopyDataAsync(Guid id, MailingListCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---
@@ -296,7 +297,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingList> MergeAsync(Guid id, object src_lists, object archive)
+        public async Task<MailingList> MergeAsync(Guid id, MailingListMergeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_list.py) ---

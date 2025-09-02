@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -483,7 +484,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailActivity> FeedbackAsync(Guid id, object feedback, List<Guid> attachment_ids)
+        public async Task<MailActivity> FeedbackAsync(Guid id, MailActivityFeedbackRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
@@ -496,7 +497,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailActivity> FeedbackScheduleNextAsync(Guid id, object feedback, List<Guid> attachment_ids)
+        public async Task<MailActivity> FeedbackScheduleNextAsync(Guid id, MailActivityFeedbackScheduleNextRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---
@@ -550,7 +551,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailActivity> GetActivityDataAsync(Guid id, object res_model, object domain, object limit, object offset, object fetch_done)
+        public async Task<MailActivity> GetActivityDataAsync(Guid id, MailActivityGetActivityDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity.py) ---

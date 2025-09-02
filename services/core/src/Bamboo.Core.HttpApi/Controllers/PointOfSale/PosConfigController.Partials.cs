@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
 {
     public partial class PosConfigController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/get-categories")]
         public async Task<IActionResult> GetCategoriesAsync(Guid id, [FromBody] PosConfigGetCategoriesRequestDto input)
         {
-            var result = await _appService.GetCategoriesAsync(id, input.Categories);
+            var result = await _appService.GetCategoriesAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/get-limited-products-loading")]
         public async Task<IActionResult> GetLimitedProductsLoadingAsync(Guid id, [FromBody] PosConfigGetLimitedProductsLoadingRequestDto input)
         {
-            var result = await _appService.GetLimitedProductsLoadingAsync(id, input.Fields);
+            var result = await _appService.GetLimitedProductsLoadingAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/get-records")]
         public async Task<IActionResult> GetRecordsAsync(Guid id, [FromBody] PosConfigGetRecordsRequestDto input)
         {
-            var result = await _appService.GetRecordsAsync(id, input.Data);
+            var result = await _appService.GetRecordsAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/notify-synchronisation")]
         public async Task<IActionResult> NotifySynchronisationAsync(Guid id, [FromBody] PosConfigNotifySynchronisationRequestDto input)
         {
-            var result = await _appService.NotifySynchronisationAsync(id, input.SessionId, input.LoginNumber, input.Records);
+            var result = await _appService.NotifySynchronisationAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/read-config-open-orders")]
         public async Task<IActionResult> ReadConfigOpenOrdersAsync(Guid id, [FromBody] PosConfigReadConfigOpenOrdersRequestDto input)
         {
-            var result = await _appService.ReadConfigOpenOrdersAsync(id, input.Domain, input.RecordIds);
+            var result = await _appService.ReadConfigOpenOrdersAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/update-customer-display")]
         public async Task<IActionResult> UpdateCustomerDisplayAsync(Guid id, [FromBody] PosConfigUpdateCustomerDisplayRequestDto input)
         {
-            var result = await _appService.UpdateCustomerDisplayAsync(id, input.Order, input.AccessToken);
+            var result = await _appService.UpdateCustomerDisplayAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/use-coupon-code")]
         public async Task<IActionResult> UseCouponCodeAsync(Guid id, [FromBody] PosConfigUseCouponCodeRequestDto input)
         {
-            var result = await _appService.UseCouponCodeAsync(id, input.Code, input.CreationDate, input.PartnerId, input.PricelistId);
+            var result = await _appService.UseCouponCodeAsync(id, input);
             return Ok(result);
         }
     }

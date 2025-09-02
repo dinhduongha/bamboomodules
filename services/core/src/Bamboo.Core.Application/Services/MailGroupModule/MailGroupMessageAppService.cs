@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -94,7 +95,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGroupMessage> CopyDataAsync(Guid id, object @default)
+        public async Task<MailGroupMessage> CopyDataAsync(Guid id, MailGroupMessageCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -222,7 +223,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailGroupMessage> ModerateBanWithCommentAsync(Guid id, object ban_subject, object ban_comment)
+        public async Task<MailGroupMessage> ModerateBanWithCommentAsync(Guid id, MailGroupMessageModerateBanWithCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---
@@ -253,7 +254,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailGroupMessage> ModerateRejectWithCommentAsync(Guid id, object reject_subject, object reject_comment)
+        public async Task<MailGroupMessage> ModerateRejectWithCommentAsync(Guid id, MailGroupMessageModerateRejectWithCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail_group, FILE: mail_group_message.py) ---

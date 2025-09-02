@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -82,7 +83,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> CheckObjectReferenceAsync(Guid id, object module, Guid xml_id, object raise_on_access_error)
+        public async Task<IrModelData> CheckObjectReferenceAsync(Guid id, IrModelDataCheckObjectReferenceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -141,7 +142,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> CopyDataAsync(Guid id, object @default)
+        public async Task<IrModelData> CopyDataAsync(Guid id, IrModelDataCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -492,7 +493,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelData> ToggleNoupdateAsync(Guid id, object model, Guid res_id)
+        public async Task<IrModelData> ToggleNoupdateAsync(Guid id, IrModelDataToggleNoupdateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---

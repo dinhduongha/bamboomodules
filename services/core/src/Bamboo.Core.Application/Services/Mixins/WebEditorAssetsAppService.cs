@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("web_editor", Depends = new[] { "bus", "web", "html_editor" })]
     public class WebEditorAssetsAppService : ApplicationService, IWebEditorAssetsAppService
     {
-
-        public WebEditorAssetsAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public WebEditorAssetsAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AddWebsiteIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IWebEditorAssetsable

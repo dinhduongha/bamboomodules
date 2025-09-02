@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Project
 {
     public partial class ProjectTaskController
@@ -156,7 +157,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectTaskCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/email-split")]
         public async Task<IActionResult> EmailSplitAsync(Guid id, [FromBody] ProjectTaskEmailSplitRequestDto input)
         {
-            var result = await _appService.EmailSplitAsync(id, input.Msg);
+            var result = await _appService.EmailSplitAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] ProjectTaskGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.Help);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/get-mention-suggestions")]
         public async Task<IActionResult> GetMentionSuggestionsAsync(Guid id, [FromBody] ProjectTaskGetMentionSuggestionsRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsAsync(id, input.Search, input.Limit);
+            var result = await _appService.GetMentionSuggestionsAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/get-unusual-days")]
         public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] ProjectTaskGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input.DateFrom, input.DateTo);
+            var result = await _appService.GetUnusualDaysAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] ProjectTaskMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.Msg, input.CustomValues);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/message-subscribe")]
         public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] ProjectTaskMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input.PartnerIds, input.SubtypeIds);
+            var result = await _appService.MessageSubscribeAsync(id, input);
             return Ok(result);
         }
         
@@ -228,7 +229,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/message-update")]
         public async Task<IActionResult> MessageUpdateAsync(Guid id, [FromBody] ProjectTaskMessageUpdateRequestDto input)
         {
-            var result = await _appService.MessageUpdateAsync(id, input.Msg, input.UpdateVals);
+            var result = await _appService.MessageUpdateAsync(id, input);
             return Ok(result);
         }
         
@@ -252,7 +253,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/rating-apply")]
         public async Task<IActionResult> RatingApplyAsync(Guid id, [FromBody] ProjectTaskRatingApplyRequestDto input)
         {
-            var result = await _appService.RatingApplyAsync(id, input.Rate, input.Token, input.Rating, input.Feedback, input.SubtypeXmlid, input.NotifyDelaySend);
+            var result = await _appService.RatingApplyAsync(id, input);
             return Ok(result);
         }
         
@@ -276,7 +277,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/stage-find")]
         public async Task<IActionResult> StageFindAsync(Guid id, [FromBody] ProjectTaskStageFindRequestDto input)
         {
-            var result = await _appService.StageFindAsync(id, input.SectionId, input.Domain, input.Order);
+            var result = await _appService.StageFindAsync(id, input);
             return Ok(result);
         }
         
@@ -284,7 +285,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/update-date-end")]
         public async Task<IActionResult> UpdateDateEndAsync(Guid id, [FromBody] ProjectTaskUpdateDateEndRequestDto input)
         {
-            var result = await _appService.UpdateDateEndAsync(id, input.StageId);
+            var result = await _appService.UpdateDateEndAsync(id, input);
             return Ok(result);
         }
     }

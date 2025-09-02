@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.MassMailing
 {
     public partial class MailingMailingController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.MassMailing
         [Route("{id}/action-fetch-favorites")]
         public async Task<IActionResult> ActionFetchFavoritesAsync(Guid id, [FromBody] MailingMailingFetchFavoritesRequestDto input)
         {
-            var result = await _appService.FetchFavoritesAsync(id, input.ExtraDomain);
+            var result = await _appService.FetchFavoritesAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.MassMailing
         [Route("{id}/action-send-mail")]
         public async Task<IActionResult> ActionSendMailAsync(Guid id, [FromBody] MailingMailingSendMailRequestDto input)
         {
-            var result = await _appService.SendMailAsync(id, input.ResIds);
+            var result = await _appService.SendMailAsync(id, input);
             return Ok(result);
         }
         
@@ -148,7 +149,7 @@ namespace Bamboo.Core.HttpApi.Controllers.MassMailing
         [Route("{id}/action-send-sms")]
         public async Task<IActionResult> ActionSendSmsAsync(Guid id, [FromBody] MailingMailingSendSmsRequestDto input)
         {
-            var result = await _appService.SendSmsAsync(id, input.ResIds);
+            var result = await _appService.SendSmsAsync(id, input);
             return Ok(result);
         }
         
@@ -292,7 +293,7 @@ namespace Bamboo.Core.HttpApi.Controllers.MassMailing
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] MailingMailingCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         

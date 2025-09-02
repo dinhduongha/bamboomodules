@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountFiscalPositionController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/adjust-vals-country-id")]
         public async Task<IActionResult> AdjustValsCountryIdAsync(Guid id, [FromBody] AccountFiscalPositionAdjustValsCountryIdRequestDto input)
         {
-            var result = await _appService.AdjustValsCountryIdAsync(id, input.Vals);
+            var result = await _appService.AdjustValsCountryIdAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/map-account")]
         public async Task<IActionResult> MapAccountAsync(Guid id, [FromBody] AccountFiscalPositionMapAccountRequestDto input)
         {
-            var result = await _appService.MapAccountAsync(id, input.Account);
+            var result = await _appService.MapAccountAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/map-tax")]
         public async Task<IActionResult> MapTaxAsync(Guid id, [FromBody] AccountFiscalPositionMapTaxRequestDto input)
         {
-            var result = await _appService.MapTaxAsync(id, input.Taxes);
+            var result = await _appService.MapTaxAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/raise-vat-error-message")]
         public async Task<IActionResult> RaiseVatErrorMessageAsync(Guid id, [FromBody] AccountFiscalPositionRaiseVatErrorMessageRequestDto input)
         {
-            var result = await _appService.RaiseVatErrorMessageAsync(id, input.Country);
+            var result = await _appService.RaiseVatErrorMessageAsync(id, input);
             return Ok(result);
         }
     }

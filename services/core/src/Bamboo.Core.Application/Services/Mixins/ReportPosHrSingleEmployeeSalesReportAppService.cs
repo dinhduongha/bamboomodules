@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("pos_hr", Depends = new[] { "point_of_sale", "hr" })]
     public class ReportPosHrSingleEmployeeSalesReportAppService : ApplicationService, IReportPosHrSingleEmployeeSalesReportAppService
     {
-
-        public ReportPosHrSingleEmployeeSalesReportAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public ReportPosHrSingleEmployeeSalesReportAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> GetDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_stop, List<Guid> config_ids, List<Guid> session_ids, Guid employee_id) where TEntity : IEntity<Guid>, IReportPosHrSingleEmployeeSalesReportable

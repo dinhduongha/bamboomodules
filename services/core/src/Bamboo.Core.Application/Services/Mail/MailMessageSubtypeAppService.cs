@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -41,7 +42,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CreateAsync(entity, fields);
         }
 
-        public async Task<MailMessageSubtype> DefaultSubtypesAsync(Guid id, object model_name)
+        public async Task<MailMessageSubtype> DefaultSubtypesAsync(Guid id, MailMessageSubtypeDefaultSubtypesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message_subtype.py) ---

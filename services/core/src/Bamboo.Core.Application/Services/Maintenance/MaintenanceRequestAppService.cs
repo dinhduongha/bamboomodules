@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -223,7 +224,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MaintenanceRequest> MessageNewAsync(Guid id, object msg, object custom_values)
+        public async Task<MaintenanceRequest> MessageNewAsync(Guid id, MaintenanceRequestMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_maintenance, FILE: equipment.py) ---

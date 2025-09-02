@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
             _spreadsheetMixinAppService = spreadsheetMixinAppService;
         }
 
-        public async Task<SpreadsheetDashboard> CopyDataAsync(Guid id, object @default)
+        public async Task<SpreadsheetDashboard> CopyDataAsync(Guid id, SpreadsheetDashboardCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard.py) ---

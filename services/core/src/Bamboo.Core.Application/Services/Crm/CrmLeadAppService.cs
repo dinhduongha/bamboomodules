@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -35,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             _utmMixinAppService = utmMixinAppService;
         }
 
-        public async Task<CrmLead> AssignGeoLocalizeAsync(Guid id, object latitude, object longitude)
+        public async Task<CrmLead> AssignGeoLocalizeAsync(Guid id, CrmLeadAssignGeoLocalizeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -87,7 +88,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> AssignPartnerAsync(Guid id, Guid partner_id)
+        public async Task<CrmLead> AssignPartnerAsync(Guid id, CrmLeadAssignPartnerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -822,7 +823,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> ConvertOpportunityAsync(Guid id, object partner, List<Guid> user_ids, Guid team_id)
+        public async Task<CrmLead> ConvertOpportunityAsync(Guid id, CrmLeadConvertOpportunityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -866,7 +867,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> CopyDataAsync(Guid id, object @default)
+        public async Task<CrmLead> CopyDataAsync(Guid id, CrmLeadCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -949,7 +950,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> CreateOppPortalAsync(Guid id, object values)
+        public async Task<CrmLead> CreateOppPortalAsync(Guid id, CrmLeadCreateOppPortalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -1228,7 +1229,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<CrmLead> GetEmptyListHelpAsync(Guid id, CrmLeadGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -1638,7 +1639,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> IapEnrichAsync(Guid id, object from_cron)
+        public async Task<CrmLead> IapEnrichAsync(Guid id, CrmLeadIapEnrichRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_enrich, FILE: crm_lead.py) ---
@@ -1808,7 +1809,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> LogMeetingAsync(Guid id, object meeting)
+        public async Task<CrmLead> LogMeetingAsync(Guid id, CrmLeadLogMeetingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -2161,7 +2162,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> MergeOpportunityAsync(Guid id, Guid user_id, Guid team_id, object auto_unlink)
+        public async Task<CrmLead> MergeOpportunityAsync(Guid id, CrmLeadMergeOpportunityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -2283,7 +2284,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> MessageNewAsync(Guid id, object msg_dict, object custom_values)
+        public async Task<CrmLead> MessageNewAsync(Guid id, CrmLeadMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -2484,7 +2485,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> PartnerDesinterestedAsync(Guid id, object comment, object contacted, object spam)
+        public async Task<CrmLead> PartnerDesinterestedAsync(Guid id, CrmLeadPartnerDesinterestedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -2514,7 +2515,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> PartnerInterestedAsync(Guid id, object comment)
+        public async Task<CrmLead> PartnerInterestedAsync(Guid id, CrmLeadPartnerInterestedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -3335,7 +3336,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> ScheduleMeetingAsync(Guid id, object smart_calendar)
+        public async Task<CrmLead> ScheduleMeetingAsync(Guid id, CrmLeadScheduleMeetingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -3371,7 +3372,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> SearchFetchAsync(Guid id, object domain, object field_names, object offset, object limit, object order)
+        public async Task<CrmLead> SearchFetchAsync(Guid id, CrmLeadSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
@@ -3840,7 +3841,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmLead> UpdateContactDetailsFromPortalAsync(Guid id, object values)
+        public async Task<CrmLead> UpdateContactDetailsFromPortalAsync(Guid id, CrmLeadUpdateContactDetailsFromPortalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -3855,7 +3856,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> UpdateLeadPortalAsync(Guid id, object values)
+        public async Task<CrmLead> UpdateLeadPortalAsync(Guid id, CrmLeadUpdateLeadPortalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: crm_lead.py) ---
@@ -3951,7 +3952,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmLead> WebsiteFormInputFilterAsync(Guid id, object request, object values)
+        public async Task<CrmLead> WebsiteFormInputFilterAsync(Guid id, CrmLeadWebsiteFormInputFilterRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_crm, FILE: crm_lead.py) ---

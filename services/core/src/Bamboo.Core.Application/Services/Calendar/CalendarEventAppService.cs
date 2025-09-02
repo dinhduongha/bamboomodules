@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -173,7 +174,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> ChangeAttendeeStatusAsync(Guid id, object status, object recurrence_update_setting)
+        public async Task<CalendarEvent> ChangeAttendeeStatusAsync(Guid id, CalendarEventChangeAttendeeStatusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1449,7 +1450,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetDisplayTimeTzAsync(Guid id, object tz)
+        public async Task<CalendarEvent> GetDisplayTimeTzAsync(Guid id, CalendarEventGetDisplayTimeTzRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1705,7 +1706,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetNextAlarmDateAsync(Guid id, object events_by_alarm)
+        public async Task<CalendarEvent> GetNextAlarmDateAsync(Guid id, CalendarEventGetNextAlarmDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -1951,7 +1952,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> GetUnusualDaysAsync(Guid id, object date_from, object date_to)
+        public async Task<CalendarEvent> GetUnusualDaysAsync(Guid id, CalendarEventGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: calendar_event.py) ---
@@ -2199,7 +2200,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CalendarEvent> JoinMeetingAsync(Guid id, Guid partner_id)
+        public async Task<CalendarEvent> JoinMeetingAsync(Guid id, CalendarEventJoinMeetingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2228,7 +2229,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CalendarEvent> MassArchiveAsync(Guid id, object recurrence_update_setting)
+        public async Task<CalendarEvent> MassArchiveAsync(Guid id, CalendarEventMassArchiveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
@@ -2274,7 +2275,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CalendarEvent> MassDeletionAsync(Guid id, object recurrence_update_setting)
+        public async Task<CalendarEvent> MassDeletionAsync(Guid id, CalendarEventMassDeletionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---

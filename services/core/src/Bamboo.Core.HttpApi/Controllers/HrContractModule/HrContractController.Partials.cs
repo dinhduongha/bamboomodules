@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrContractModule
 {
     public partial class HrContractController
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrContractModule
         [Route("{id}/generate-work-entries")]
         public async Task<IActionResult> GenerateWorkEntriesAsync(Guid id, [FromBody] HrContractGenerateWorkEntriesRequestDto input)
         {
-            var result = await _appService.GenerateWorkEntriesAsync(id, input.DateStart, input.DateStop, input.Force);
+            var result = await _appService.GenerateWorkEntriesAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrContractModule
         [Route("{id}/get-attribute")]
         public async Task<IActionResult> GetAttributeAsync(Guid id, [FromBody] HrContractGetAttributeRequestDto input)
         {
-            var result = await _appService.GetAttributeAsync(id, input.Code, input.Attribute);
+            var result = await _appService.GetAttributeAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrContractModule
         [Route("{id}/set-attribute-value")]
         public async Task<IActionResult> SetAttributeValueAsync(Guid id, [FromBody] HrContractSetAttributeValueRequestDto input)
         {
-            var result = await _appService.SetAttributeValueAsync(id, input.Code, input.Active);
+            var result = await _appService.SetAttributeValueAsync(id, input);
             return Ok(result);
         }
         

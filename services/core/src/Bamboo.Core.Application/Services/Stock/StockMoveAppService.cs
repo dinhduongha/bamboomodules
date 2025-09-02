@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1420,40 +1421,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockMove> ComputeL10nInEwaybillPriceUnitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: stock_move.py) ---
-            // def _compute_l10n_in_ewaybill_price_unit(self):
-            // for line in self:
-            //     if line.l10n_in_ewaybill_id.state == 'pending' and line.picking_id.country_code == 'IN':
-            //         line.ewaybill_price_unit = line._l10n_in_get_product_price_unit()
-            */
-            return default;
-        }
-
-        protected async Task<StockMove> ComputeL10nInTaxIdsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: stock_move.py) ---
-            // def _compute_l10n_in_tax_ids(self):
-            // for line in self:
-            //     if line.l10n_in_ewaybill_id.state == 'pending' and line.picking_id.country_code == 'IN':
-            //         taxes_details = line._l10n_in_get_product_tax()
-            //         taxes = taxes_details['taxes']
-            //         if taxes_details['is_from_order']:
-            //             # Don't map taxes if they are from sale/purchase order
-            //             line.ewaybill_tax_ids = taxes
-            //         else:
-            //             if fiscal_position := line.l10n_in_ewaybill_id.fiscal_position_id:
-            //                 taxes = fiscal_position.map_tax(taxes)
-            //             line.ewaybill_tax_ids = taxes.filtered_domain(
-            //                 self.env['account.tax']._check_company_domain(self.company_id)
-            //             )
-            */
-            return default;
-        }
-
         protected async Task<StockMove> ComputeLocationDestIdInternalAsync()
         {
             /*
@@ -1959,7 +1926,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMove> CopyDataAsync(Guid id, object @default)
+        public async Task<StockMove> CopyDataAsync(Guid id, StockMoveCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: stock_move.py) ---
@@ -2462,7 +2429,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMove> GenerateLotLineValsAsync(Guid id, object context, object mode, object first_lot, object count, object lot_text)
+        public async Task<StockMove> GenerateLotLineValsAsync(Guid id, StockMoveGenerateLotLineValsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move.py) ---
@@ -4335,84 +4302,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<StockMove> L10nInGetProductPriceUnitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_purchase_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_price_unit(self):
-            // self.ensure_one()
-            // if line_id := self.purchase_line_id:
-            //     if qty := line_id.product_qty:
-            //         company_id = line_id.company_id
-            //         return line_id.currency_id._convert(
-            //             line_id.product_uom._compute_price(line_id.price_subtotal / qty, self.product_uom),
-            //             company_id.currency_id,
-            //             company_id,
-            //             self.date,
-            //             round=False
-            //         )
-            //     return 0.00
-            // return super()._l10n_in_get_product_price_unit()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_price_unit(self):
-            // self.ensure_one()
-            // if line_id := self.sale_line_id:
-            //     if qty := line_id.product_uom_qty:
-            //         company_id = line_id.company_id
-            //         return line_id.currency_id._convert(
-            //             line_id.product_uom._compute_price(line_id.price_subtotal / qty, self.product_uom),
-            //             company_id.currency_id,
-            //             company_id,
-            //             self.date,
-            //             round=False
-            //         )
-            //     return 0.00
-            // return super()._l10n_in_get_product_price_unit()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_price_unit(self):
-            // self.ensure_one()
-            // return self.product_id.uom_id._compute_price(
-            //     self.product_id.with_company(self.company_id).standard_price, self.product_uom
-            // )
-            */
-            return default;
-        }
-
-        protected async Task<StockMove> L10nInGetProductTaxInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_purchase_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_tax(self):
-            // self.ensure_one()
-            // if line_id := self.purchase_line_id:
-            //     return {
-            //         'is_from_order': True,
-            //         'taxes': line_id.taxes_id
-            //     }
-            // return super()._l10n_in_get_product_tax()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_tax(self):
-            // self.ensure_one()
-            // if line_id := self.sale_line_id:
-            //     return {
-            //         'is_from_order': True,
-            //         'taxes': line_id.tax_id,
-            //     }
-            // return super()._l10n_in_get_product_tax()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_stock, FILE: stock_move.py) ---
-            // def _l10n_in_get_product_tax(self):
-            // self.ensure_one()
-            // return {
-            //     'is_from_order': False,
-            //     'taxes': (
-            //         self.picking_code == "incoming" and
-            //         self.product_id.supplier_taxes_id or self.product_id.taxes_id
-            //     ),
-            // }
-            */
-            return default;
-        }
-
         protected async Task<StockMove> MatchSearchedAvailabilityInternalAsync(object @operator, object @value, object get_comparison_date)
         {
             /*
@@ -5353,7 +5242,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMove> ProductPriceUpdateBeforeDoneAsync(Guid id, object forced_qty)
+        public async Task<StockMove> ProductPriceUpdateBeforeDoneAsync(Guid id, StockMoveProductPriceUpdateBeforeDoneRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: stock_move.py) ---
@@ -6371,7 +6260,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMove> SplitLotsAsync(Guid id, object lots)
+        public async Task<StockMove> SplitLotsAsync(Guid id, StockMoveSplitLotsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move.py) ---

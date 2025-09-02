@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -69,7 +70,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> BuildEmailAsync(Guid id, object email_from, object email_to, object subject, object body, object email_cc, object email_bcc, object reply_to, object attachments, Guid message_id, object references, Guid object_id, object subtype, object headers, object body_alternative, object subtype_alternative)
+        public async Task<IrMailServer> BuildEmailAsync(Guid id, IrMailServerBuildEmailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -277,7 +278,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> ConnectAsync(Guid id, object host, object port, object user, object password, object encryption, object smtp_from, object ssl_certificate, object ssl_private_key, object smtp_debug, Guid mail_server_id, object allow_archived)
+        public async Task<IrMailServer> ConnectAsync(Guid id, IrMailServerConnectRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -846,7 +847,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrMailServer> SendEmailAsync(Guid id, object message, Guid mail_server_id, object smtp_server, object smtp_port, object smtp_user, object smtp_password, object smtp_encryption, object smtp_ssl_certificate, object smtp_ssl_private_key, object smtp_debug, object smtp_session)
+        public async Task<IrMailServer> SendEmailAsync(Guid id, IrMailServerSendEmailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---
@@ -960,7 +961,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrMailServer> TestSmtpConnectionAsync(Guid id, object autodetect_max_email_size)
+        public async Task<IrMailServer> TestSmtpConnectionAsync(Guid id, IrMailServerTestSmtpConnectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_mail_server.py) ---

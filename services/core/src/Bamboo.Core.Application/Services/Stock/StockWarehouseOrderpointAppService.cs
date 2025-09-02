@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1054,7 +1055,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<StockWarehouseOrderpoint> ReplenishAsync(Guid id, object force_to_max)
+        public async Task<StockWarehouseOrderpoint> ReplenishAsync(Guid id, StockWarehouseOrderpointReplenishRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_orderpoint.py) ---

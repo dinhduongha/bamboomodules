@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrRecruitment
 {
     public partial class HrApplicantController
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrRecruitment
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] HrApplicantGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrRecruitment
         [Route("{id}/get-view")]
         public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] HrApplicantGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input.ViewId, input.ViewType);
+            var result = await _appService.GetViewAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrRecruitment
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] HrApplicantMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.Msg, input.CustomValues);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
         
@@ -132,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrRecruitment
         [Route("{id}/website-form-input-filter")]
         public async Task<IActionResult> WebsiteFormInputFilterAsync(Guid id, [FromBody] HrApplicantWebsiteFormInputFilterRequestDto input)
         {
-            var result = await _appService.WebsiteFormInputFilterAsync(id, input.Request, input.Values);
+            var result = await _appService.WebsiteFormInputFilterAsync(id, input);
             return Ok(result);
         }
     }

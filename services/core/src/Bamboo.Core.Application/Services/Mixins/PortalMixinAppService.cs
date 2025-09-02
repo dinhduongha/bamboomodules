@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,119 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("portal", Depends = new[] { "web", "web_editor", "http_routing", "mail", "auth_signup" })]
     public class PortalMixinAppService : ApplicationService, IPortalMixinAppService
     {
-
-        public PortalMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public PortalMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_activate_currency(self):
+            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'account.move':
+            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
+            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_archive(self):
+            // child_tasks = self.child_ids.filtered(lambda child_task: not child_task.display_in_project)
+            // if child_tasks:
+            //     child_tasks.action_archive()
+            // self.filtered(lambda t: not t.display_in_project and t.parent_id).display_in_project = True
+            // return super().action_archive()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionBillMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_bill_matching(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Bill Matching"),
+            //     'res_model': 'purchase.bill.line.match',
+            //     'domain': [
+            //         ('partner_id', '=', self.partner_id.id),
+            //         ('company_id', 'in', self.env.company.ids),
+            //         ('purchase_order_id', 'in', [self.id, False]),
+            //     ],
+            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_cancel(self):
+            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
+            // 
+            // For post-cancel operations, please only override :meth:`_action_cancel`.
+            // 
+            // note: self.ensure_one() if the wizard is shown.
+            // """
+            // if any(order.locked for order in self):
+            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
+            // cancel_warning = self._show_cancel_wizard()
+            // if cancel_warning:
+            //     self.ensure_one()
+            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
+            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
+            //     )
+            //     lang = self.env.context.get('lang')
+            //     template = self.env['mail.template'].browse(template_id)
+            //     if template.lang:
+            //         lang = template._render_lang(self.ids)[self.id]
+            //     ctx = {
+            //         'default_template_id': template_id,
+            //         'default_order_id': self.id,
+            //         'mark_so_as_canceled': True,
+            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     }
+            //     return {
+            //         'name': _('Cancel %s', self.type_name),
+            //         'view_mode': 'form',
+            //         'res_model': 'sale.order.cancel',
+            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
+            //         'type': 'ir.actions.act_window',
+            //         'context': ctx,
+            //         'target': 'new'
+            //     }
+            // else:
+            //     return self._action_cancel()
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
@@ -27,6 +138,67 @@ namespace Bamboo.Core.Application.Services.Mixins
             // inv = self.invoice_ids.filtered(lambda inv: inv.state == 'draft')
             // inv.button_cancel()
             // return self.write({'state': 'cancel'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConfigureBankJournalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def action_configure_bank_journal(self):
+            // """ This function is called by the "configure" button of bank journals,
+            // visible on dashboard if no bank statement source has been defined yet
+            // """
+            // # We simply call the setup bar function.
+            // return self.env['res.company'].with_context(default_linked_journal_id=self.id).setting_init_bank_account_action()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // """ Confirm the given quotation(s) and set their confirmation date.
+            // 
+            // If the corresponding setting is enabled, also locks the Sale Order.
+            // 
+            // :return: True
+            // :rtype: bool
+            // :raise: UserError if trying to confirm cancelled SO's
+            // """
+            // for order in self:
+            //     error_msg = order._confirmation_error_message()
+            //     if error_msg:
+            //         raise UserError(error_msg)
+            // 
+            // self.order_line._validate_analytic_distribution()
+            // 
+            // for order in self:
+            //     if order.partner_id in order.message_partner_ids:
+            //         continue
+            //     order.message_subscribe([order.partner_id.id])
+            // 
+            // self.write(self._prepare_confirmation_values())
+            // 
+            // # Context key 'default_name' is sometimes propagated up to here.
+            // # We don't need it and it creates issues in the creation of linked records.
+            // context = self._context.copy()
+            // context.pop('default_name', None)
+            // context.pop('default_user_id', None)
+            // 
+            // self.with_context(context)._action_confirm()
+            // user = self[:1].create_uid
+            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
+            //     # Public user can confirm SO, so we check the group on any record creator.
+            //     self.action_lock()
+            // 
+            // if self.env.context.get('send_email'):
+            //     self._send_order_confirmation_mail()
+            // 
+            // return True
             */
             return default;
         }
@@ -45,6 +217,219 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_convert_to_subtask(self):
+            // self.ensure_one()
+            // if self.project_id:
+            //     return {
+            //         'name': _('Convert to Task/Sub-Task'),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'project.task',
+            //         'res_id': self.id,
+            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
+            //         'target': 'new',
+            //     }
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'danger',
+            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_create_invoice(self):
+            // """Create the invoice associated to the PO.
+            // """
+            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // 
+            // # 1) Prepare invoice vals and clean-up the section lines
+            // invoice_vals_list = []
+            // sequence = 10
+            // for order in self:
+            //     if order.invoice_status != 'to invoice':
+            //         continue
+            // 
+            //     order = order.with_company(order.company_id)
+            //     pending_section = None
+            //     # Invoice values.
+            //     invoice_vals = order._prepare_invoice()
+            //     # Invoice line values (keep only necessary sections).
+            //     for line in order.order_line:
+            //         if line.display_type == 'line_section':
+            //             pending_section = line
+            //             continue
+            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
+            //             if pending_section:
+            //                 line_vals = pending_section._prepare_account_move_line()
+            //                 line_vals.update({'sequence': sequence})
+            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //                 sequence += 1
+            //                 pending_section = None
+            //             line_vals = line._prepare_account_move_line()
+            //             line_vals.update({'sequence': sequence})
+            //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //             sequence += 1
+            //     invoice_vals_list.append(invoice_vals)
+            // 
+            // if not invoice_vals_list:
+            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
+            // 
+            // # 2) group by (company_id, partner_id, currency_id) for batch creation
+            // new_invoice_vals_list = []
+            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
+            //     origins = set()
+            //     payment_refs = set()
+            //     refs = set()
+            //     ref_invoice_vals = None
+            //     for invoice_vals in invoices:
+            //         if not ref_invoice_vals:
+            //             ref_invoice_vals = invoice_vals
+            //         else:
+            //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
+            //         origins.add(invoice_vals['invoice_origin'])
+            //         payment_refs.add(invoice_vals['payment_reference'])
+            //         refs.add(invoice_vals['ref'])
+            //     ref_invoice_vals.update({
+            //         'ref': ', '.join(refs)[:2000],
+            //         'invoice_origin': ', '.join(origins),
+            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
+            //     })
+            //     new_invoice_vals_list.append(ref_invoice_vals)
+            // invoice_vals_list = new_invoice_vals_list
+            // 
+            // # 3) Create invoices.
+            // moves = self.env['account.move']
+            // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
+            // for vals in invoice_vals_list:
+            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
+            // 
+            // # 4) Some moves might actually be refunds: convert them if the total amount is negative
+            // # We do this after the moves have been created since we need taxes, etc. to know if the total
+            // # is actually negative or not
+            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
+            // 
+            // return self.action_view_invoice(moves)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_dependent_tasks(self):
+            // self.ensure_one()
+            // return {
+            //     'res_model': 'project.task',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
+            //     'domain': [('depend_on_ids', '=', self.id)],
+            //     'name': _('Dependent Tasks'),
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_draft(self):
+            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
+            // return orders.write({
+            //     'state': 'draft',
+            //     'signature': False,
+            //     'signed_by': False,
+            //     'signed_on': False,
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_duplicate(self):
+            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
+            // action['context'] = dict(self.env.context)
+            // action['context']['view_no_maturity'] = False
+            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
+            // action['res_id'] = self.copy().id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_force_register_payment(self):
+            // if any(m.move_type == 'entry' for m in self):
+            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
+            // return self.line_ids.action_register_payment()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_get_list_view(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("%(name)s's Milestones", name=self.name),
+            //     'domain': [('project_id', '=', self.id)],
+            //     'res_model': 'project.milestone',
+            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
+            //     'view_mode': 'list',
+            //     'help': _("""
+            //         <p class="o_view_nocontent_smiling_face">
+            //             No milestones found. Let's create one!
+            //         </p><p>
+            //             Track major progress points that must be reached to achieve success.
+            //         </p>
+            //     """),
+            //     'context': {
+            //         'default_project_id': self.id,
+            //         **self.env.context
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_invoice_download_pdf(self):
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
+            //     'target': 'download',
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionInvoiceReadyToBeSentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -57,12 +442,1077 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        public async Task<TEntity> ActionInvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_activate_currency(self):
-            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            // def action_invoice_sent(self):
+            // """ Open a window to compose an email, with the edi invoice template
+            //     message loaded by default
+            // """
+            // self.ensure_one()
+            // 
+            // report_action = self.action_send_and_print()
+            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
+            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
+            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+            // 
+            // return report_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_lock(self):
+            // self.locked = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMergeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_merge(self):
+            // all_origin = []
+            // all_vendor_references = []
+            // rfq_to_merge = self.filtered(lambda r: r.state in ['draft', 'sent'])
+            // 
+            // # Group RFQs by vendor
+            // if len(rfq_to_merge) < 2:
+            //     raise UserError(_("Please select at least two purchase orders with state RFQ and RFQ sent to merge."))
+            // 
+            // rfqs_grouped = defaultdict(lambda: self.env['purchase.order'])
+            // for rfq in rfq_to_merge:
+            //     key = self._prepare_grouped_data(rfq)
+            //     rfqs_grouped[key] += rfq
+            // 
+            // bunches_of_rfq_to_be_merge = list(rfqs_grouped.values())
+            // if all(len(rfq_bunch) == 1 for rfq_bunch in list(bunches_of_rfq_to_be_merge)):
+            //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
+            // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
+            // 
+            // for rfqs in bunches_of_rfq_to_be_merge:
+            //     if len(rfqs) <= 1:
+            //         continue
+            //     oldest_rfq = min(rfqs, key=lambda r: r.date_order)
+            //     if oldest_rfq:
+            //         # Merge RFQs into the oldest purchase order
+            //         rfqs -= oldest_rfq
+            //         for rfq_line in rfqs.order_line:
+            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
+            //                                                                         l.product_id == rfq_line.product_id and
+            //                                                                         l.product_uom == rfq_line.product_uom and
+            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
+            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
+            //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
+            //                                                                         l.discount == rfq_line.discount and
+            //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
+            //                                                                 )
+            //             if len(existing_line) > 1:
+            //                 existing_line[0].product_qty += sum(existing_line[1:].mapped('product_qty'))
+            //                 existing_line[1:].unlink()
+            //                 existing_line = existing_line[0]
+            // 
+            //             if existing_line:
+            //                 existing_line._merge_po_line(rfq_line)
+            //             else:
+            //                 rfq_line.order_id = oldest_rfq
+            // 
+            //         # Merge source documents and vendor references
+            //         all_origin = rfqs.mapped('origin')
+            //         all_vendor_references = rfqs.mapped('partner_ref')
+            // 
+            //         oldest_rfq.origin = ', '.join(filter(None, [oldest_rfq.origin, *all_origin]))
+            //         oldest_rfq.partner_ref = ', '.join(filter(None, [oldest_rfq.partner_ref, *all_vendor_references]))
+            // 
+            //         rfq_names = rfqs.mapped('name')
+            //         merged_names = ", ".join(rfq_names)
+            //         oldest_rfq_message = _("RFQ merged with %(oldest_rfq_name)s and %(cancelled_rfq)s", oldest_rfq_name=oldest_rfq.name, cancelled_rfq=merged_names)
+            // 
+            //         for rfq in rfqs:
+            //             cancelled_rfq_message = _("RFQ merged with %s", oldest_rfq._get_html_link())
+            //             rfq.message_post(body=cancelled_rfq_message)
+            //         oldest_rfq.message_post(body=oldest_rfq_message)
+            // 
+            //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
+            //         oldest_rfq._merge_alternative_po(rfqs)
+            // 
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'success',
+            //         'message': _('purchase orders merged'),
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // if self.origin_payment_id:
+            //     name = _("Payment")
+            //     res_model = 'account.payment'
+            //     res_id = self.origin_payment_id.id
+            // elif self.statement_line_id:
+            //     name = _("Bank Transaction")
+            //     res_model = 'account.bank.statement.line'
+            //     res_id = self.statement_line_id.id
+            // else:
+            //     name = _("Journal Entry")
+            //     res_model = 'account.move'
+            //     res_id = self.id
+            // 
+            // return {
+            //     'name': name,
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'views': [(False, 'form')],
+            //     'res_model': res_model,
+            //     'res_id': res_id,
+            //     'target': 'current',
+            // }
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Order"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order',
+            //     'res_id': self.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_discount_wizard(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Discount"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order.discount',
+            //     'view_mode': 'form',
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_parent_task(self):
+            // return {
+            //     'name': _('Parent Task'),
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.parent_id.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_ratings(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
+            // if self.rating_count == 1:
+            //     action['view_mode'] = 'form'
+            //     action['res_id'] = self.rating_ids[0].id
+            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
+            //     return action
+            // else:
+            //     return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_open_share_project_wizard(self):
+            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
+            // 
+            // local_context = self.env.context | {
+            //     'default_template_id': template.id if template else False,
+            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
+            //     'active_id': self.id,
+            //     'active_model': 'project.project',
+            // }
+            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
+            // if self.env.context.get('default_access_mode'):
+            //     action['name'] = _("Share Project")
+            // action['context'] = local_context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_task(self):
+            // return {
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_cancel(self):
+            // cancellable_orders = self.filtered(lambda order: order.state == 'draft')
+            // cancellable_orders.write({'state': 'cancel'})
+            // return {
+            //     'pos.order': cancellable_orders.read(self._load_pos_data_fields(self.config_id.ids[0]), load=False)
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_invoice(self):
+            // if len(self.company_id) > 1:
+            //     raise UserError(_("You cannot invoice orders belonging to different companies."))
+            // self.write({'to_invoice': True})
+            // if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
+            //     self._create_order_picking()
+            // return self._generate_pos_order_invoice()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderPaidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_paid(self):
+            // self.ensure_one()
+            // 
+            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
+            // if not self.config_id.cash_rounding \
+            //    or self.config_id.only_round_cash_method \
+            //    and not any(p.payment_method_id.is_cash_count for p in self.payment_ids):
+            //     total = self.amount_total
+            // else:
+            //     total = float_round(self.amount_total, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
+            // 
+            // isPaid = float_is_zero(total - self.amount_paid, precision_rounding=self.currency_id.rounding)
+            // 
+            // if not isPaid and not self.config_id.cash_rounding:
+            //     raise UserError(_("Order %s is not fully paid.", self.name))
+            // elif not isPaid and self.config_id.cash_rounding:
+            //     currency = self.currency_id
+            //     if self.config_id.rounding_method.rounding_method == "HALF-UP":
+            //         maxDiff = currency.round(self.config_id.rounding_method.rounding / 2)
+            //     else:
+            //         maxDiff = currency.round(self.config_id.rounding_method.rounding)
+            // 
+            //     diff = currency.round(self.amount_total - self.amount_paid)
+            //     if not abs(diff) <= maxDiff:
+            //         raise UserError(_("Order %s is not fully paid.", self.name))
+            // 
+            // self.write({'state': 'paid'})
+            // 
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_post(self):
+            // # Disabled by default to avoid breaking automated action flow
+            // if (
+            //     not self.env.context.get('disable_abnormal_invoice_detection', True)
+            //     and self.filtered(lambda m: m.abnormal_amount_warning or m.abnormal_date_warning)
+            // ):
+            //     wizard = self.env['validate.account.move'].create({
+            //         'move_ids': [Command.set(self.ids)],
+            //     })
+            //     return {
+            //         'name': _("Confirm Entries"),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'validate.account.move',
+            //         'res_id': wizard.id,
+            //         'view_mode': 'form',
+            //         'target': 'new',
+            //     }
+            // if self:
+            //     self._post(soft=False)
+            // if autopost_bills_wizard := self._show_autopost_bills_wizard():
+            //     return autopost_bills_wizard
+            // return False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_preview_sale_order(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'target': 'self',
+            //     'url': self.get_portal_url(),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_print_pdf(self):
+            // self.ensure_one()
+            // return self.env.ref('account.account_invoices').report_action(self.id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_profitability_items(self, section_name, domain=None, res_id=False):
+            // return {}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_blocking(self):
+            // self.ensure_one()
+            // blockings = self.dependent_ids
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
+            // if len(blockings) == 1:
+            //     action['view_mode'] = 'form'
+            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //     action['res_id'] = blockings.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_subtasks(self):
+            // self.ensure_one()
+            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
+            // if subtasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
+            //     if len(subtasks) == 1:
+            //         action['view_mode'] = 'form'
+            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //         action['res_id'] = subtasks.id
+            //     return action
+            // return {
+            //     'name': 'Portal Sub-tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_task(self):
+            // action = self.action_open_task()
+            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_recurring_tasks(self):
+            // self.ensure_one()
+            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
+            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
+            // if recurrent_tasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
+            //     action.update({
+            //         'context': {'default_project_id': self.project_id.id},
+            //         'domain': [
+            //             ('project_id', '=', self.project_id.id),
+            //             ('recurrence_id', 'in', self.recurrence_id.ids)
+            //         ]
+            //     })
+            //     return action
+            // # If at least one recurrent task belong to another project, open the portal page
+            // return {
+            //     'name': 'Portal Recurrent Tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_view_parent_task(self):
+            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
+            //     project = self.parent_id.project_id._filtered_access('read')
+            //     if project:
+            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
+            //         if project._check_project_sharing_access():
+            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
+            //         return {
+            //             "name": "Portal Parent Task",
+            //             "type": "ir.actions.act_url",
+            //             "url": url,
+            //         }
+            //     elif self.display_parent_task_button:
+            //         return self.parent_id.get_portal_url()
+            //     # The portal user has no access to the parent task, so normally the button should be invisible.
+            //     return {}
+            // action = self.with_context({
+            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
+            // }).action_open_parent_task()
+            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
+            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_project_task_burndown_chart_report(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
+            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'stage_name_and_sequence_per_id': {
+            //         stage.id: {
+            //             'sequence': stage.sequence,
+            //             'name': stage.name
+            //         } for stage in self.type_ids
+            //     }
+            // })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_send(self):
+            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
+            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
+            // lang = self.env.context.get('lang')
+            // 
+            // ctx = {
+            //     'default_model': 'sale.order',
+            //     'default_res_ids': self.ids,
+            //     'default_composition_mode': 'comment',
+            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
+            //     'email_notification_allow_footer': True,
+            //     'proforma': self.env.context.get('proforma', False),
+            // }
+            // 
+            // if len(self) > 1:
+            //     ctx['default_composition_mode'] = 'mass_mail'
+            // else:
+            //     ctx.update({
+            //         'force_email': True,
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     })
+            //     if not self.env.context.get('hide_default_template'):
+            //         mail_template = self._find_mail_template()
+            //         if mail_template:
+            //             ctx.update({
+            //                 'default_template_id': mail_template.id,
+            //                 'mark_so_as_sent': True,
+            //             })
+            //         if mail_template and mail_template.lang:
+            //             lang = mail_template._render_lang(self.ids)[self.id]
+            //     else:
+            //         for order in self:
+            //             order._portal_ensure_token()
+            // 
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'views': [(False, 'form')],
+            //     'view_id': False,
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            // if (
+            //     self.env.context.get('check_document_layout')
+            //     and not self.env.context.get('discard_logo_check')
+            //     and self.env.is_admin()
+            //     and not self.env.company.external_report_layout_id
+            // ):
+            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+            //         action,
+            //     )
+            //     # Need to remove this context for windows action
+            //     action.pop('close_on_report_download', None)
+            //     layout_action['context']['dialog_size'] = 'extra-large'
+            //     return layout_action
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_sent(self):
+            // """ Mark the given draft quotation(s) as sent.
+            // 
+            // :raise: UserError if any given SO is not in draft state.
+            // """
+            // if any(order.state != 'draft' for order in self):
+            //     raise UserError(_("Only draft orders can be marked as sent directly."))
+            // 
+            // for order in self:
+            //     order.message_subscribe(partner_ids=order.partner_id.ids)
+            // 
+            // self.write({'state': 'sent'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_recurring_tasks(self):
+            // return {
+            //     'name': _('Tasks in Recurrence'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'project.task',
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            //     'context': {'create': False},
+            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_redirect_to_project_task_form(self):
+            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_register_payment(self):
+            // if any(m.state != 'posted' for m in self):
+            //     raise UserError(_("You can only register payment for posted journal entries."))
+            // return self.action_force_register_payment()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_reverse(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
+            // 
+            // if self.is_invoice():
+            //     action['name'] = _('Credit Note')
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRfqSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_rfq_send(self):
+            // '''
+            // This function opens a window to compose an email, with the edi purchase template message loaded by default
+            // '''
+            // self.ensure_one()
+            // ir_model_data = self.env['ir.model.data']
+            // try:
+            //     if self.env.context.get('send_rfq', False):
+            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
+            //     else:
+            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase_done')[1]
+            // except ValueError:
+            //     template_id = False
+            // try:
+            //     compose_form_id = ir_model_data._xmlid_lookup('mail.email_compose_message_wizard_form')[1]
+            // except ValueError:
+            //     compose_form_id = False
+            // ctx = dict(self.env.context or {})
+            // ctx.update({
+            //     'default_model': 'purchase.order',
+            //     'default_res_ids': self.ids,
+            //     'default_template_id': template_id,
+            //     'default_composition_mode': 'comment',
+            //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            //     'email_notification_allow_footer': True,
+            //     'force_email': True,
+            //     'mark_rfq_as_sent': True,
+            // })
+            // 
+            // # In the case of a RFQ or a PO, we want the "View..." button in line with the state of the
+            // # object. Therefore, we pass the model description in the context, in the language in which
+            // # the template is rendered.
+            // lang = self.env.context.get('lang')
+            // if {'default_template_id', 'default_model', 'default_res_id'} <= ctx.keys():
+            //     template = self.env['mail.template'].browse(ctx['default_template_id'])
+            //     if template and template.lang:
+            //         lang = template._render_lang([ctx['default_res_id']])[ctx['default_res_id']]
+            // 
+            // self = self.with_context(lang=lang)
+            // if self.state in ['draft', 'sent']:
+            //     ctx['model_description'] = _('Request for Quotation')
+            // else:
+            //     ctx['model_description'] = _('Purchase Order')
+            // 
+            // return {
+            //     'name': _('Compose Email'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'views': [(compose_form_id, 'form')],
+            //     'view_id': compose_form_id,
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_send_and_print(self):
+            // self.env['account.move.send']._check_move_constrains(self)
+            // return {
+            //     'name': _("Print & Send"),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
+            //     'target': 'new',
+            //     'context': {
+            //         'active_model': 'account.move',
+            //         'active_ids': self.ids,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_send_mail(self):
+            // template_id = self.env['ir.model.data']._xmlid_to_res_id('point_of_sale.pos_email_marketing_template', raise_if_not_found=False)
+            // return {
+            //     'name': _('Send Email'),
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {'default_composition_mode': 'mass_mail', 'default_template_id': template_id},
+            //     'target': 'new'
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendReceiptAsync<TEntity>(IEnumerable<TEntity> entities, object email, object ticket_image, object basic_image) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_send_receipt(self, email, ticket_image, basic_image):
+            // self.env['mail.mail'].sudo().create(self._prepare_mail_values(email, ticket_image, basic_image)).send()
+            // self.email = email
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShareAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: portal, FILE: portal_mixin.py) ---
+            // def action_share(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("portal.portal_share_action")
+            // action['context'] = {'active_id': self.env.context['active_id'],
+            //                      'active_model': self.env.context['active_model'],
+            //                      **literal_eval(action['context'])}
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionStockPickingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_stock_picking(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
+            // action['display_name'] = _('Pickings')
+            // action['context'] = {}
+            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_switch_move_type(self):
+            // if any(move.posted_before for move in self):
+            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
+            // if any(move.move_type == "entry" for move in self):
+            //     raise ValidationError(_("This action isn't available for this document."))
+            // 
+            // for move in self:
+            //     in_out, old_move_type = move.move_type.split('_')
+            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
+            //     move.name = False
+            //     move.write({
+            //         'move_type': new_move_type,
+            //         'currency_id': move.currency_id.id,
+            //         'fiscal_position_id': move.fiscal_position_id.id,
+            //     })
+            //     if move.amount_total < 0:
+            //         move.write({
+            //             'line_ids': [
+            //                 Command.update(line.id, {'quantity': -line.quantity})
+            //                 for line in move.line_ids
+            //                 if line.display_type == 'product'
+            //             ]
+            //         })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_toggle_block_payment(self):
+            // self.ensure_one()
+            // if self.payment_state == 'blocked':
+            //     self.payment_state = 'not_paid'
+            //     self.env.add_to_compute(self._fields['payment_state'], self)
+            // else:
+            //     if self.payment_state in ('paid', 'in_payment'):
+            //         raise UserError(_("You can't block a paid invoice."))
+            //     self.payment_state = 'blocked'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_unlink_recurrence(self):
+            // self.recurrence_id.task_ids.recurring_task = False
+            // self.recurrence_id.unlink()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_unlock(self):
+            // self.locked = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_update_fpos_values(self):
+            // self.invoice_line_ids._compute_price_unit()
+            // self.invoice_line_ids._compute_tax_ids()
+            // self.line_ids._compute_account_id()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_prices(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_prices()
+            // 
+            // if self.pricelist_id:
+            //     message = _("Product prices have been recomputed according to pricelist %s.",
+            //         self.pricelist_id._get_html_link())
+            // else:
+            //     message = _("Product prices have been recomputed.")
+            // self.message_post(body=message)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_taxes(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_taxes()
+            // 
+            // if self.partner_id:
+            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
+            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_all_rating(self):
+            // """ return the action to see all the rating of the project and activate default filters"""
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
+            // action['display_name'] = _("%(name)s's Rating", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context.update(self._context)
+            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
+            // action_context.pop('group_by', None)
+            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
+            // if self.rating_count == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
+            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
+            //     })
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_invoice(self):
+            // return {
+            //     'name': _('Customer Invoice'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('account.view_move_form').id,
+            //     'res_model': 'account.move',
+            //     'context': "{'move_type':'out_invoice'}",
+            //     'type': 'ir.actions.act_window',
+            //     'res_id': self.account_move.id,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_view_invoice(self, invoices=False):
+            // """This function returns an action that display existing vendor bills of
+            // given purchase order ids. When only one found, show the vendor bill
+            // immediately.
+            // """
+            // if not invoices:
+            //     self.invalidate_model(['invoice_ids'])
+            //     invoices = self.invoice_ids
+            // 
+            // result = self.env['ir.actions.act_window']._for_xml_id('account.action_move_in_invoice_type')
+            // # choose the view_mode accordingly
+            // if len(invoices) > 1:
+            //     result['domain'] = [('id', 'in', invoices.ids)]
+            // elif len(invoices) == 1:
+            //     res = self.env.ref('account.view_move_form', False)
+            //     form_view = [(res and res.id or False, 'form')]
+            //     if 'views' in result:
+            //         result['views'] = form_view + [(state, view) for state, view in result['views'] if view != 'form']
+            //     else:
+            //         result['views'] = form_view
+            //     result['res_id'] = invoices.id
+            // else:
+            //     result = {'type': 'ir.actions.act_window_close'}
+            // 
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_view_invoice(self, invoices=False):
+            // if not invoices:
+            //     invoices = self.mapped('invoice_ids')
+            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
+            // if len(invoices) > 1:
+            //     action['domain'] = [('id', 'in', invoices.ids)]
+            // elif len(invoices) == 1:
+            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+            //     if 'views' in action:
+            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            //     else:
+            //         action['views'] = form_view
+            //     action['res_id'] = invoices.id
+            // else:
+            //     action = {'type': 'ir.actions.act_window_close'}
+            // 
+            // context = {
+            //     'default_move_type': 'out_invoice',
+            // }
+            // if len(self) == 1:
+            //     context.update({
+            //         'default_partner_id': self.partner_id.id,
+            //         'default_partner_shipping_id': self.partner_shipping_id.id,
+            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
+            //         'default_invoice_origin': self.name,
+            //     })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRefundOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_refund_orders(self):
+            // return {
+            //     'name': _('Refund Orders'),
+            //     'view_mode': 'list,form',
+            //     'res_model': 'pos.order',
+            //     'type': 'ir.actions.act_window',
+            //     'domain': [('id', 'in', self.mapped('lines.refund_orderline_ids.order_id').ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRefundedOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_refunded_order(self):
+            // return {
+            //     'name': _('Refunded Order'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('point_of_sale.view_pos_pos_form').id,
+            //     'res_model': 'pos.order',
+            //     'type': 'ir.actions.act_window',
+            //     'res_id': self.refunded_order_id.id,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks_analysis(self):
+            // """ return the action to see the tasks analysis report of the project """
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
+            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context['search_default_project_id'] = self.id
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks(self):
+            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
+            // action['display_name'] = self.name
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'create': self.active,
+            //     'active_test': self.active
+            //     })
+            // action['context'] = context
+            // return action
             */
             return default;
         }
@@ -154,25 +1604,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             dict_partner_ids_to_subscribe_per_partner[task.partner_id] = partner_ids_to_subscribe
             // for partner, tasks in dict_tasks_per_partner.items():
             //     tasks.message_subscribe(dict_partner_ids_to_subscribe_per_partner[partner])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'account.move':
-            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
-            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
-            // return res
             */
             return default;
         }
@@ -419,20 +1850,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_archive(self):
-            // child_tasks = self.child_ids.filtered(lambda child_task: not child_task.display_in_project)
-            // if child_tasks:
-            //     child_tasks.action_archive()
-            // self.filtered(lambda t: not t.display_in_project and t.parent_id).display_in_project = True
-            // return super().action_archive()
-            */
-            return default;
-        }
-
         public async Task<TEntity> AutoInitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -518,27 +1935,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // if len(moves) == 100:  # assumes there are more whenever search hits limit
             //     self.env.ref('account.ir_cron_auto_post_draft_entry')._trigger()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> BillMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_bill_matching(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("Bill Matching"),
-            //     'res_model': 'purchase.bill.line.match',
-            //     'domain': [
-            //         ('partner_id', '=', self.partner_id.id),
-            //         ('company_id', 'in', self.env.company.ids),
-            //         ('purchase_order_id', 'in', [self.id, False]),
-            //     ],
-            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
-            // }
             */
             return default;
         }
@@ -818,71 +2214,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_cancel(self):
-            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
-            // 
-            // For post-cancel operations, please only override :meth:`_action_cancel`.
-            // 
-            // note: self.ensure_one() if the wizard is shown.
-            // """
-            // if any(order.locked for order in self):
-            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // cancel_warning = self._show_cancel_wizard()
-            // if cancel_warning:
-            //     self.ensure_one()
-            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
-            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
-            //     )
-            //     lang = self.env.context.get('lang')
-            //     template = self.env['mail.template'].browse(template_id)
-            //     if template.lang:
-            //         lang = template._render_lang(self.ids)[self.id]
-            //     ctx = {
-            //         'default_template_id': template_id,
-            //         'default_order_id': self.id,
-            //         'mark_so_as_canceled': True,
-            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     }
-            //     return {
-            //         'name': _('Cancel %s', self.type_name),
-            //         'view_mode': 'form',
-            //         'res_model': 'sale.order.cancel',
-            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
-            //         'type': 'ir.actions.act_window',
-            //         'context': ctx,
-            //         'target': 'new'
-            //     }
-            // else:
-            //     return self._action_cancel()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CancelEwaybillAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def cancel_ewaybill(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _('Cancel Ewaybill'),
-            //     'res_model': 'l10n.in.ewaybill.cancel',
-            //     'view_mode': 'form',
-            //     'context': {
-            //         'default_l10n_in_ewaybill_id': self.id,
-            //     },
-            //     'target': 'new',
-            //     'type': 'ir.actions.act_window',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> ChangePrivacyVisibilityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object new_visibility) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -1035,38 +2366,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckConfigurationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_configuration(self):
-            // error_message = []
-            // methods_to_check = [
-            //     self._check_partners,
-            //     self._check_document_number,
-            //     self._check_lines,
-            //     self._check_gst_treatment,
-            //     self._check_transporter,
-            // ]
-            // for get_error_message in methods_to_check:
-            //     error_message.extend(get_error_message())
-            // return error_message
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_document_number(self):
-            // if not re.match("^.{1,16}$", self.document_number):
-            //     return [_("Document number should be set and not more than 16 characters")]
-            // return []
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckDraftableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -1162,19 +2461,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckGstTreatmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_gst_treatment(self):
-            // partner, gst_treatment = self._get_gst_treatment()
-            // if not gst_treatment:
-            //     return [_("Set GST Treatment for in %s", partner.display_name)]
-            // return []
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckJournalMoveTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -1185,27 +2471,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         raise ValidationError(_("Cannot create a purchase document in a non purchase journal"))
             //     if move.is_sale_document(include_receipts=True) and move.journal_id.type != 'sale':
             //         raise ValidationError(_("Cannot create a sale document in a non sale journal"))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_lines(self):
-            // error_message = []
-            // AccountEDI = self.env['account.edi.format']
-            // for line in self.move_ids:
-            //     if not (hsn_code := AccountEDI._l10n_in_edi_extract_digits(line.product_id.l10n_in_hsn_code)):
-            //         error_message.append(_("HSN code is not set in product %s", line.product_id.name))
-            //     elif not re.match("^[0-9]+$", hsn_code):
-            //         error_message.append(_(
-            //             "Invalid HSN Code (%(hsn_code)s) in product %(product)s",
-            //             hsn_code=hsn_code,
-            //             product=line.product_id.name,
-            //         ))
-            // return error_message
             */
             return default;
         }
@@ -1277,22 +2542,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _check_parent_id(self):
             // if self._has_cycle():
             //     raise ValidationError(_('Error! You cannot create a recursive hierarchy of tasks.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckPartnersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_partners(self):
-            // error_message = []
-            // partners = {
-            //     self.partner_bill_to_id, self.partner_bill_from_id, self.partner_ship_to_id, self.partner_ship_from_id
-            // }
-            // for partner in partners:
-            //     error_message += self._l10n_in_validate_partner(partner)
-            // return error_message
             */
             return default;
         }
@@ -1419,21 +2668,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             totals['total_amount_currency'] = amount_total
             //             self.tax_totals = totals
             //             break
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckTransporterInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _check_transporter(self):
-            // error_message = []
-            // if self.transporter_id and not self.transporter_id.vat and (self.mode != "1" or not self.vehicle_no):
-            //     error_message.append(_("- Transporter %s does not have a GST Number", self.transporter_id.name))
-            // if self.mode == "4" and self.vehicle_no and self.vehicle_type == "R":
-            //     error_message.append(_("- Vehicle type can not be regular when the transportation mode is ship"))
-            // return error_message
             */
             return default;
         }
@@ -1714,16 +2948,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // super()._compute_access_url()
             // for order in self:
             //     order.access_url = f'/my/orders/{order.id}'
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _compute_access_url(self):
-            // super()._compute_access_url()
-            // for record in self.filtered('id'):
-            //     record.access_url = '/my/test_portal/%s' % self.id
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _compute_access_url(self):
-            // self.access_url = False
-            // for record in self.filtered('id'):
-            //     record.access_url = '/my/test_portal_no_partner/%s' % self.id
             */
             return default;
         }
@@ -2145,17 +3369,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeContentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_content(self):
-            // for ewaybill in self:
-            //     ewaybill.content = base64.b64encode(json.dumps(ewaybill._ewaybill_generate_direct_json()).encode())
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeCurrencyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -2437,14 +3650,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_display_name(self):
             // for move in self:
             //     move.display_name = move._get_move_display_name(show_ref=True)
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_display_name(self):
-            // for ewaybill in self:
-            //     ewaybill.display_name = (
-            //         (ewaybill.state == 'pending' and _('Pending'))
-            //         or (ewaybill.state == 'challan' and _('Challan'))
-            //         or ewaybill.name
-            //     )
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _compute_display_name(self):
             // for po in self:
@@ -2489,36 +3694,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.move_type in ('out_invoice', 'out_receipt', 'in_invoice', 'in_receipt')
             //         and move.company_id.qr_code
             //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeDocumentPartnersDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_document_partners_details(self):
-            // for ewaybill in self.filtered(lambda ewb: ewb.state == 'pending'):
-            //     picking_id = ewaybill.picking_id
-            //     if ewaybill.picking_type_code == 'incoming':
-            //         ewaybill.partner_bill_to_id = picking_id.company_id.partner_id
-            //         ewaybill.partner_bill_from_id = picking_id.partner_id
-            //         ewaybill.partner_ship_to_id = picking_id.picking_type_id.warehouse_id.partner_id
-            //         ewaybill.partner_ship_from_id = picking_id.partner_id
-            //     else:
-            //         ewaybill.partner_bill_to_id = picking_id.partner_id
-            //         ewaybill.partner_bill_from_id = picking_id.company_id.partner_id
-            //         ewaybill.partner_ship_to_id = picking_id.partner_id
-            //         ewaybill.partner_ship_from_id = picking_id.picking_type_id.warehouse_id.partner_id
-            //         if partner_invoice_id := ewaybill.picking_id._l10n_in_get_invoice_partner():
-            //             ewaybill.partner_bill_to_id = partner_invoice_id
-            // 
-            //     if (
-            //         ewaybill.picking_type_code == 'dropship' and
-            //         (dest_partner := ewaybill.picking_id._get_l10n_in_dropship_dest_partner())
-            //     ):
-            //         ewaybill.partner_ship_to_id = dest_partner
-            //         ewaybill.partner_ship_from_id = ewaybill.picking_id.partner_id
             */
             return default;
         }
@@ -2579,20 +3754,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // (self - task_linked_to_calendar).update(dict.fromkeys(
             //     ['working_hours_open', 'working_hours_close', 'working_days_open', 'working_days_close'], 0.0))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeEmailFromInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _compute_email_from(self):
-            // for rating in self:
-            //     if rating.customer_id.email_normalized:
-            //         rating.email_from = rating.customer_id.email_normalized
-            //     elif not rating.email_from:
-            //         rating.email_from = False
             */
             return default;
         }
@@ -2691,24 +3852,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if fpos_id_before != cache[key] and order.order_line:
             //         order.show_update_fpos = True
             //     order.fiscal_position_id = cache[key]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeFiscalPositionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_fiscal_position(self):
-            // for ewaybill in self.filtered(lambda ewb: ewb.state == 'pending'):
-            //     ewaybill.fiscal_position_id = (
-            //         self.env['account.fiscal.position'].with_company(ewaybill.company_id)._get_fiscal_position(
-            //             ewaybill.picking_type_code == 'incoming'
-            //             and ewaybill.partner_bill_from_id
-            //             or ewaybill.partner_bill_to_id
-            //         )
-            //         or ewaybill.picking_id._l10n_in_get_fiscal_position()
-            //     )
             */
             return default;
         }
@@ -3022,21 +4165,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeIsEditableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_is_editable(self):
-            // for ewaybill in self:
-            //     is_incoming = ewaybill.picking_type_code == "incoming"
-            //     ewaybill.is_bill_to_editable = not is_incoming
-            //     ewaybill.is_bill_from_editable = is_incoming
-            //     ewaybill.is_ship_from_editable = is_incoming and ewaybill._is_overseas()
-            //     ewaybill.is_ship_to_editable = not is_incoming and not ewaybill._is_overseas()
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeIsEditedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -3272,20 +4400,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for project in self:
             //     project.milestone_count_reached = mapped_count.get(project.id, 0)
             //     project.milestone_progress = project.milestone_count and project.milestone_count_reached * 100 // project.milestone_count
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeMobileNbrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _compute_mobile_nbr(self):
-            // for rating in self:
-            //     if rating.customer_id.mobile:
-            //         rating.mobile_nbr = rating.customer_id.mobile
-            //     elif not rating.mobile_nbr:
-            //         rating.mobile_nbr = False
             */
             return default;
         }
@@ -3975,20 +5089,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputePhoneNbrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _compute_phone_nbr(self):
-            // for rating in self:
-            //     if rating.customer_id.phone:
-            //         rating.phone_nbr = rating.customer_id.phone
-            //     elif not rating.phone_nbr:
-            //         rating.phone_nbr = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputePickingCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -4475,17 +5575,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeSupplyTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_supply_type(self):
-            // for ewaybill in self:
-            //     ewaybill.supply_type = ewaybill.picking_type_code == 'incoming' and 'I' or 'O'
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeSuspenseAccountIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -4815,18 +5904,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeVehicleTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _compute_vehicle_type(self):
-            // """when transportation mode is ship then vehicle type should be Over Dimensional Cargo (ODC)"""
-            // for ewaybill in self.filtered(lambda ewb: ewb.state == 'pending' and ewb.mode == "4"):
-            //     ewaybill.vehicle_type = 'O'
-            */
-            return default;
-        }
-
         public async Task<TEntity> ConditionalAddToComputeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fname, object condition) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -4840,67 +5917,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // )
             // to_reset.invalidate_recordset([fname])
             // self.env.add_to_compute(field, to_reset)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConfigureBankJournalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
-            // def action_configure_bank_journal(self):
-            // """ This function is called by the "configure" button of bank journals,
-            // visible on dashboard if no bank statement source has been defined yet
-            // """
-            // # We simply call the setup bar function.
-            // return self.env['res.company'].with_context(default_linked_journal_id=self.id).setting_init_bank_account_action()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_confirm(self):
-            // """ Confirm the given quotation(s) and set their confirmation date.
-            // 
-            // If the corresponding setting is enabled, also locks the Sale Order.
-            // 
-            // :return: True
-            // :rtype: bool
-            // :raise: UserError if trying to confirm cancelled SO's
-            // """
-            // for order in self:
-            //     error_msg = order._confirmation_error_message()
-            //     if error_msg:
-            //         raise UserError(error_msg)
-            // 
-            // self.order_line._validate_analytic_distribution()
-            // 
-            // for order in self:
-            //     if order.partner_id in order.message_partner_ids:
-            //         continue
-            //     order.message_subscribe([order.partner_id.id])
-            // 
-            // self.write(self._prepare_confirmation_values())
-            // 
-            // # Context key 'default_name' is sometimes propagated up to here.
-            // # We don't need it and it creates issues in the creation of linked records.
-            // context = self._context.copy()
-            // context.pop('default_name', None)
-            // context.pop('default_user_id', None)
-            // 
-            // self.with_context(context)._action_confirm()
-            // user = self[:1].create_uid
-            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
-            //     # Public user can confirm SO, so we check the group on any record creator.
-            //     self.action_lock()
-            // 
-            // if self.env.context.get('send_email'):
-            //     self._send_order_confirmation_mail()
-            // 
-            // return True
             */
             return default;
         }
@@ -4974,33 +5990,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """, [tuple(self.ids)])
             // if self._cr.fetchone():
             //     raise ValidationError(_('Some journal items already exist in this journal but with other accounts than the allowed ones.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_convert_to_subtask(self):
-            // self.ensure_one()
-            // if self.project_id:
-            //     return {
-            //         'name': _('Convert to Task/Sub-Task'),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'project.task',
-            //         'res_id': self.id,
-            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
-            //         'target': 'new',
-            //     }
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'danger',
-            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
-            //     }
-            // }
             */
             return default;
         }
@@ -5635,86 +6624,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for line_id in downpayment_lines.ids
             // ]  # a simple concatenation would cause all order_line to recompute, we do not want it to happen
             // return downpayment_lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_create_invoice(self):
-            // """Create the invoice associated to the PO.
-            // """
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            // 
-            // # 1) Prepare invoice vals and clean-up the section lines
-            // invoice_vals_list = []
-            // sequence = 10
-            // for order in self:
-            //     if order.invoice_status != 'to invoice':
-            //         continue
-            // 
-            //     order = order.with_company(order.company_id)
-            //     pending_section = None
-            //     # Invoice values.
-            //     invoice_vals = order._prepare_invoice()
-            //     # Invoice line values (keep only necessary sections).
-            //     for line in order.order_line:
-            //         if line.display_type == 'line_section':
-            //             pending_section = line
-            //             continue
-            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
-            //             if pending_section:
-            //                 line_vals = pending_section._prepare_account_move_line()
-            //                 line_vals.update({'sequence': sequence})
-            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //                 sequence += 1
-            //                 pending_section = None
-            //             line_vals = line._prepare_account_move_line()
-            //             line_vals.update({'sequence': sequence})
-            //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //             sequence += 1
-            //     invoice_vals_list.append(invoice_vals)
-            // 
-            // if not invoice_vals_list:
-            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
-            // 
-            // # 2) group by (company_id, partner_id, currency_id) for batch creation
-            // new_invoice_vals_list = []
-            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
-            //     origins = set()
-            //     payment_refs = set()
-            //     refs = set()
-            //     ref_invoice_vals = None
-            //     for invoice_vals in invoices:
-            //         if not ref_invoice_vals:
-            //             ref_invoice_vals = invoice_vals
-            //         else:
-            //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
-            //         origins.add(invoice_vals['invoice_origin'])
-            //         payment_refs.add(invoice_vals['payment_reference'])
-            //         refs.add(invoice_vals['ref'])
-            //     ref_invoice_vals.update({
-            //         'ref': ', '.join(refs)[:2000],
-            //         'invoice_origin': ', '.join(origins),
-            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
-            //     })
-            //     new_invoice_vals_list.append(ref_invoice_vals)
-            // invoice_vals_list = new_invoice_vals_list
-            // 
-            // # 3) Create invoices.
-            // moves = self.env['account.move']
-            // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
-            // for vals in invoice_vals_list:
-            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
-            // 
-            // # 4) Some moves might actually be refunds: convert them if the total amount is negative
-            // # We do this after the moves have been created since we need taxes, etc. to know if the total
-            // # is actually negative or not
-            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
-            // 
-            // return self.action_view_invoice(moves)
             */
             return default;
         }
@@ -6474,24 +7383,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_dependent_tasks(self):
-            // self.ensure_one()
-            // return {
-            //     'res_model': 'project.task',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
-            //     'domain': [('depend_on_ids', '=', self.id)],
-            //     'name': _('Dependent Tasks'),
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> DetachAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -6596,39 +7487,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self.state == 'draft'
             //     and request and request.env.context.get('catalog_skip_tracking')
             // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_draft(self):
-            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
-            // return orders.write({
-            //     'state': 'draft',
-            //     'signature': False,
-            //     'signed_by': False,
-            //     'signed_on': False,
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_duplicate(self):
-            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
-            // action['context'] = dict(self.env.context)
-            // action['context']['view_no_maturity'] = False
-            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
-            // action['res_id'] = self.copy().id
-            // return action
             */
             return default;
         }
@@ -6761,58 +7619,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     alias_name = f"{alias_name}-{vals.get('code')}"
             // 
             // return self.env['mail.alias']._sanitize_alias_name(alias_name)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> EwaybillCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _ewaybill_cancel(self):
-            // cancel_json = {
-            //     "ewbNo": int(self.name),
-            //     "cancelRsnCode": int(self.cancel_reason),
-            //     "cancelRmrk": self.cancel_remarks,
-            // }
-            // ewb_api = EWayBillApi(self.company_id)
-            // self._lock_ewaybill()
-            // try:
-            //     response = ewb_api._ewaybill_cancel(cancel_json)
-            // except EWayBillError as error:
-            //     self._handle_error(error)
-            //     return False
-            // self._handle_internal_warning_if_present(response)  # In case of error 312
-            // self._write_successfully_response({'state': 'cancel'})
-            // self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> EwaybillGenerateDirectJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _ewaybill_generate_direct_json(self):
-            // return {
-            //     **self._prepare_ewaybill_base_json_payload(),
-            //     **self._prepare_ewaybill_transportation_json_payload(),
-            //     **self._prepare_ewaybill_tax_details_json_payload(),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ExportJsonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def action_export_json(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': '/web/content/l10n.in.ewaybill/%s/content' % self.id
-            // }
             */
             return default;
         }
@@ -7339,18 +8145,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_force_register_payment(self):
-            // if any(m.move_type == 'entry' for m in self):
-            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
-            // return self.line_ids.action_register_payment()
-            */
-            return default;
-        }
-
         public async Task<TEntity> GenerateAndSendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object force_synchronous, object allow_fallback_pdf) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -7405,51 +8199,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     generated_invoices |= downpayment_wizard._create_invoices(order)
             // 
             // return generated_invoices
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GenerateEwaybillAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def generate_ewaybill(self):
-            // for ewaybill in self:
-            //     if errors := ewaybill._check_configuration():
-            //         raise UserError('\n'.join(errors))
-            //     ewaybill._generate_ewaybill_direct()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GenerateEwaybillDirectInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _generate_ewaybill_direct(self):
-            // ewb_api = EWayBillApi(self.company_id)
-            // generate_json = self._ewaybill_generate_direct_json()
-            // self._lock_ewaybill()
-            // try:
-            //     response = ewb_api._ewaybill_generate(generate_json)
-            // except EWayBillError as error:
-            //     self._handle_error(error)
-            //     return False
-            // self._handle_internal_warning_if_present(response)  # In case of error 604
-            // response_data = response.get("data")
-            // response_values = {
-            //     'name': response_data.get("ewayBillNo"),
-            //     'state': 'generated',
-            //     'ewaybill_date': self._indian_timezone_to_odoo_utc(
-            //         response_data['ewayBillDate']
-            //     ),
-            //     'ewaybill_expiry_date': self._indian_timezone_to_odoo_utc(
-            //         response_data.get('validUpto')
-            //     ),
-            // }
-            // self._l10n_in_ewaybill_stock_handle_zero_distance_alert_if_present(response)
-            // self._write_successfully_response(response_values)
-            // self._cr.commit()
             */
             return default;
         }
@@ -8397,20 +9146,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetGstTreatmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _get_gst_treatment(self):
-            // if self.picking_type_code == 'incoming':
-            //     partner = self.partner_bill_from_id
-            // else:
-            //     partner = self.partner_bill_to_id
-            // return partner, partner.l10n_in_gst_treatment
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetHidePartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -9341,48 +10076,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetL10nInEwaybillLineDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object tax_details) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _get_l10n_in_ewaybill_line_details(self, line, tax_details):
-            // AccountEDI = self.env['account.edi.format']
-            // product = line.product_id
-            // line_details = {
-            //     "productName": product.name,
-            //     "hsnCode": AccountEDI._l10n_in_edi_extract_digits(product.l10n_in_hsn_code),
-            //     "productDesc": product.name,
-            //     "quantity": line.quantity,
-            //     "qtyUnit": line.product_uom.l10n_in_code and line.product_uom.l10n_in_code.split("-")[
-            //         0] or "OTH",
-            //     "taxableAmount": AccountEDI._l10n_in_round_value(tax_details['total_excluded']),
-            // }
-            // gst_types = ('sgst', 'cgst', 'igst')
-            // gst_tax_rates = {}
-            // for tax in tax_details.get('taxes'):
-            //     for gst_type in gst_types:
-            //         if tax_rate := tax.get(f'{gst_type}_rate'):
-            //             gst_tax_rates.update({
-            //                 f"{gst_type}Rate": AccountEDI._l10n_in_round_value(tax_rate)
-            //             })
-            //     if cess_rate := tax.get("cess_rate"):
-            //         line_details.update({"cessRate": AccountEDI._l10n_in_round_value(cess_rate)})
-            //     if cess_non_advol := tax.get("cess_non_advol_amount"):
-            //         line_details.update({
-            //             "cessNonadvol": AccountEDI._l10n_in_round_value(cess_non_advol)
-            //         })
-            // line_details.update(
-            //     gst_tax_rates
-            //     or dict.fromkeys(
-            //         [f"{gst_type}Rate" for gst_type in gst_types],
-            //         0
-            //     )
-            // )
-            // return line_details
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -9487,35 +10180,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_lines_onchange_currency(self):
             // # Override needed for COGS
             // return self.line_ids
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_get_list_view(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("%(name)s's Milestones", name=self.name),
-            //     'domain': [('project_id', '=', self.id)],
-            //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
-            //     'view_mode': 'list',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             No milestones found. Let's create one!
-            //         </p><p>
-            //             Track major progress points that must be reached to achieve success.
-            //         </p>
-            //     """),
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         **self.env.context
-            //     }
-            // }
             */
             return default;
         }
@@ -9951,16 +10615,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # to extend in module 'sale'; see there for details
             // self.ensure_one()
             // return 0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPartnerStateCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _get_partner_state_code(self, partner):
-            // return int(partner.state_id.l10n_in_tin) if partner.country_id.code == "IN" else 99
             */
             return default;
         }
@@ -11102,40 +11756,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> HandleErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object ewaybill_error) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _handle_error(self, ewaybill_error):
-            // self._handle_internal_warning_if_present(ewaybill_error.error_json)
-            // error_message = ewaybill_error.get_all_error_message()
-            // blocking_level = "error"
-            // if "404" in ewaybill_error.error_codes:
-            //     blocking_level = "warning"
-            // self._write_error(error_message, blocking_level)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> HandleInternalWarningIfPresentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object response) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _handle_internal_warning_if_present(self, response):
-            // if warnings := response.get('odoo_warning'):
-            //     for warning in warnings:
-            //         if warning.get('message_post'):
-            //             odoobot = self.env.ref("base.partner_root")
-            //             self.message_post(
-            //                 author_id=odoobot.id,
-            //                 body=warning.get('message')
-            //             )
-            //         else:
-            //             self._write_error(warning.get('message'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> HasToBePaidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -11210,32 +11830,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     chain['moves']._message_log_batch(bodies={m.id: self.env._("This journal entry has been secured.") for m in chain['moves']})
             // if grant_secure_group_access:
             //     self.env['res.groups']._activate_group_account_secured()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IndianTimezoneToOdooUtcInternalAsync<TEntity>(IEnumerable<TEntity> entities, object str_date, object time_format) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _indian_timezone_to_odoo_utc(self, str_date, time_format='%d/%m/%Y %I:%M:%S %p'):
-            // """
-            //     This method is used to convert date from Indian timezone to UTC
-            // """
-            // if not str_date:
-            //     return False
-            // try:
-            //     local_time = datetime.strptime(str_date, time_format)
-            // except ValueError:
-            //     try:
-            //         # Misc. due to a bug in eWaybill sometimes there are chances of getting below format in response
-            //         local_time = datetime.strptime(str_date, "%d/%m/%Y %H:%M:%S ")
-            //     except ValueError:
-            //         # Worst senario no date format matched
-            //         _logger.warning("Something went wrong while L10nInEwaybill date conversion")
-            //         return fields.Datetime.to_string(fields.Datetime.now())
-            // utc_time = local_time.astimezone(pytz.utc)
-            // return fields.Datetime.to_string(utc_time)
             */
             return default;
         }
@@ -11531,46 +12125,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> InvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_download_pdf(self):
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
-            //     'target': 'download',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> InvoicePaidHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _invoice_paid_hook(self):
             // ''' Hook to be overrided called when the invoice moves to the paid state. '''
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_sent(self):
-            // """ Open a window to compose an email, with the edi invoice template
-            //     message loaded by default
-            // """
-            // self.ensure_one()
-            // 
-            // report_action = self.action_send_and_print()
-            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-            // 
-            // return report_action
             */
             return default;
         }
@@ -11690,17 +12250,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def is_outbound(self, include_receipts=True):
             // return self.move_type in self.get_outbound_types(include_receipts)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsOverseasInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _is_overseas(self):
-            // self.ensure_one()
-            // return self._get_gst_treatment()[1] in ('overseas', 'special_economic_zone')
             */
             return default;
         }
@@ -11883,93 +12432,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> L10nInEwaybillStockHandleZeroDistanceAlertIfPresentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object response) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _l10n_in_ewaybill_stock_handle_zero_distance_alert_if_present(self, response):
-            // if self.distance == 0 and (alert := response.get('data').get('alert')):
-            //     pattern = r"Distance between these two pincodes is (\d+)"
-            //     if (match := re.search(pattern, alert)) and (dist := int(match.group(1))) > 0:
-            //         self.distance = dist
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInTaxDetailsByLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _l10n_in_tax_details_by_line(self, move):
-            // taxes = move.ewaybill_tax_ids.compute_all(price_unit=move.ewaybill_price_unit, quantity=move.quantity)
-            // for tax in taxes['taxes']:
-            //     tax_id = self.env['account.tax'].browse(tax['id'])
-            //     tax_name = "other"
-            //     for gst_tax_name in ['igst', 'sgst', 'cgst']:
-            //         if self.env.ref("l10n_in.tax_tag_%s" % (gst_tax_name)).id in tax['tag_ids']:
-            //             tax_name = gst_tax_name
-            //     if self.env.ref("l10n_in.tax_tag_cess").id in tax['tag_ids']:
-            //         tax_name = tax_id.amount_type != "percent" and "cess_non_advol" or "cess"
-            //     rate_key = "%s_rate" % tax_name
-            //     amount_key = "%s_amount" % tax_name
-            //     tax.setdefault(rate_key, 0)
-            //     tax.setdefault(amount_key, 0)
-            //     tax[rate_key] += tax_id.amount
-            //     tax[amount_key] += tax['amount']
-            // return taxes
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInTaxDetailsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _l10n_in_tax_details(self):
-            // tax_details = {
-            //     'line_tax_details': defaultdict(dict),
-            //     'tax_details': defaultdict(float)
-            // }
-            // for move in self.move_ids:
-            //     line_tax_vals = self._l10n_in_tax_details_by_line(move)
-            //     tax_details['line_tax_details'][move.id] = line_tax_vals
-            //     for val_field in ['total_excluded', 'total_included', 'total_void']:
-            //         tax_details['tax_details'][val_field] += line_tax_vals[val_field]
-            //     for tax in ['igst', 'cgst', 'sgst', 'cess_non_advol', 'cess', 'other']:
-            //         for taxes in line_tax_vals['taxes']:
-            //             for field_key in ["rate", "amount"]:
-            //                 if (key := f"{tax}_{field_key}") in taxes:
-            //                     tax_details['tax_details'][key] += taxes[key]
-            // return tax_details
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInValidatePartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _l10n_in_validate_partner(self, partner):
-            // """
-            // Validation method for Stock Ewaybill (different from the one in EDI Ewaybill)
-            // """
-            // message = []
-            // if partner.country_id.code == "IN":
-            //     if partner.state_id and not partner.state_id.l10n_in_tin:
-            //         message.append(_("- TIN number not set in state %s", partner.state_id.name))
-            //     if not partner.state_id:
-            //         message.append(_("- State is required"))
-            //     if not partner.zip or not re.match("^[0-9]{6}$", partner.zip):
-            //         message.append(_("- Zip code required and should be 6 digits"))
-            // elif not partner.country_id:
-            //     message.append(_("- Country is required"))
-            // if message:
-            //     message.insert(0, "%s" % partner.display_name)
-            // return message
-            */
-            return default;
-        }
-
         public async Task<TEntity> LinkBillOriginToPurchaseOrdersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object timeout) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -12029,31 +12491,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_lock(self):
-            // self.locked = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> LockEwaybillInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _lock_ewaybill(self):
-            // try:
-            //     # Lock e-Waybill
-            //     with self.env.cr.savepoint(flush=False):
-            //         self._cr.execute('SELECT * FROM l10n_in_ewaybill WHERE id IN %s FOR UPDATE NOWAIT', [tuple(self.ids)])
-            // except psycopg2.errors.LockNotAvailable:
-            //     raise UserError(_('This document is being sent by another process already.')) from None
-            */
-            return default;
-        }
-
         public async Task<TEntity> MailGetMessageSubtypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -12079,16 +12516,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         and waiting_subtype in res:
             //         res -= waiting_subtype
             // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MailGetPartnerFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object introspect_fields) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _mail_get_partner_fields(self, introspect_fields=False):
-            // return ['customer_id']
             */
             return default;
         }
@@ -12174,88 +12601,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _merge_alternative_po(self, rfqs):
             // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MergeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_merge(self):
-            // all_origin = []
-            // all_vendor_references = []
-            // rfq_to_merge = self.filtered(lambda r: r.state in ['draft', 'sent'])
-            // 
-            // # Group RFQs by vendor
-            // if len(rfq_to_merge) < 2:
-            //     raise UserError(_("Please select at least two purchase orders with state RFQ and RFQ sent to merge."))
-            // 
-            // rfqs_grouped = defaultdict(lambda: self.env['purchase.order'])
-            // for rfq in rfq_to_merge:
-            //     key = self._prepare_grouped_data(rfq)
-            //     rfqs_grouped[key] += rfq
-            // 
-            // bunches_of_rfq_to_be_merge = list(rfqs_grouped.values())
-            // if all(len(rfq_bunch) == 1 for rfq_bunch in list(bunches_of_rfq_to_be_merge)):
-            //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
-            // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
-            // 
-            // for rfqs in bunches_of_rfq_to_be_merge:
-            //     if len(rfqs) <= 1:
-            //         continue
-            //     oldest_rfq = min(rfqs, key=lambda r: r.date_order)
-            //     if oldest_rfq:
-            //         # Merge RFQs into the oldest purchase order
-            //         rfqs -= oldest_rfq
-            //         for rfq_line in rfqs.order_line:
-            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
-            //                                                                         l.product_id == rfq_line.product_id and
-            //                                                                         l.product_uom == rfq_line.product_uom and
-            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
-            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
-            //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
-            //                                                                         l.discount == rfq_line.discount and
-            //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
-            //                                                                 )
-            //             if len(existing_line) > 1:
-            //                 existing_line[0].product_qty += sum(existing_line[1:].mapped('product_qty'))
-            //                 existing_line[1:].unlink()
-            //                 existing_line = existing_line[0]
-            // 
-            //             if existing_line:
-            //                 existing_line._merge_po_line(rfq_line)
-            //             else:
-            //                 rfq_line.order_id = oldest_rfq
-            // 
-            //         # Merge source documents and vendor references
-            //         all_origin = rfqs.mapped('origin')
-            //         all_vendor_references = rfqs.mapped('partner_ref')
-            // 
-            //         oldest_rfq.origin = ', '.join(filter(None, [oldest_rfq.origin, *all_origin]))
-            //         oldest_rfq.partner_ref = ', '.join(filter(None, [oldest_rfq.partner_ref, *all_vendor_references]))
-            // 
-            //         rfq_names = rfqs.mapped('name')
-            //         merged_names = ", ".join(rfq_names)
-            //         oldest_rfq_message = _("RFQ merged with %(oldest_rfq_name)s and %(cancelled_rfq)s", oldest_rfq_name=oldest_rfq.name, cancelled_rfq=merged_names)
-            // 
-            //         for rfq in rfqs:
-            //             cancelled_rfq_message = _("RFQ merged with %s", oldest_rfq._get_html_link())
-            //             rfq.message_post(body=cancelled_rfq_message)
-            //         oldest_rfq.message_post(body=oldest_rfq_message)
-            // 
-            //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
-            //         oldest_rfq._merge_alternative_po(rfqs)
-            // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'success',
-            //         'message': _('purchase orders merged'),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //     }
-            // }
             */
             return default;
         }
@@ -13479,48 +13824,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_open_business_doc(self):
-            // self.ensure_one()
-            // if self.origin_payment_id:
-            //     name = _("Payment")
-            //     res_model = 'account.payment'
-            //     res_id = self.origin_payment_id.id
-            // elif self.statement_line_id:
-            //     name = _("Bank Transaction")
-            //     res_model = 'account.bank.statement.line'
-            //     res_id = self.statement_line_id.id
-            // else:
-            //     name = _("Journal Entry")
-            //     res_model = 'account.move'
-            //     res_id = self.id
-            // 
-            // return {
-            //     'name': name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [(False, 'form')],
-            //     'res_model': res_model,
-            //     'res_id': res_id,
-            //     'target': 'current',
-            // }
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_business_doc(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Order"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order',
-            //     'res_id': self.id,
-            //     'views': [(False, 'form')],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenCreatedCabaEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -13539,40 +13842,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_discount_wizard(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Discount"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order.discount',
-            //     'view_mode': 'form',
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_parent_task(self):
-            // return {
-            //     'name': _('Parent Task'),
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.parent_id.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenPaymentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -13583,68 +13852,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_ratings(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
-            // if self.rating_count == 1:
-            //     action['view_mode'] = 'form'
-            //     action['res_id'] = self.rating_ids[0].id
-            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
-            //     return action
-            // else:
-            //     return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenReconcileViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def open_reconcile_view(self):
             // return self.line_ids.open_reconcile_view()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_open_share_project_wizard(self):
-            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
-            // 
-            // local_context = self.env.context | {
-            //     'default_template_id': template.id if template else False,
-            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
-            //     'active_id': self.id,
-            //     'active_model': 'project.project',
-            // }
-            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
-            // if self.env.context.get('default_access_mode'):
-            //     action['name'] = _("Share Project")
-            // action['context'] = local_context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_task(self):
-            // return {
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
             */
             return default;
         }
@@ -13666,7 +13879,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        public async Task<TEntity> PaymentActionCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -13681,7 +13894,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
+        public async Task<TEntity> PaymentActionVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -13703,9 +13916,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ No phone or mobile field is available on sale model. Instead SMS will
             // fallback on partner-based computation using ``_mail_get_partner_fields``. """
             // return []
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _phone_get_number_fields(self):
-            // return ['phone_nbr', 'mobile_nbr']
             */
             return default;
         }
@@ -13755,102 +13965,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _portal_get_parent_hash_token(self, pid):
             // return self.project_id._sign_token(pid)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_cancel(self):
-            // cancellable_orders = self.filtered(lambda order: order.state == 'draft')
-            // cancellable_orders.write({'state': 'cancel'})
-            // return {
-            //     'pos.order': cancellable_orders.read(self._load_pos_data_fields(self.config_id.ids[0]), load=False)
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_invoice(self):
-            // if len(self.company_id) > 1:
-            //     raise UserError(_("You cannot invoice orders belonging to different companies."))
-            // self.write({'to_invoice': True})
-            // if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
-            //     self._create_order_picking()
-            // return self._generate_pos_order_invoice()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderPaidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_paid(self):
-            // self.ensure_one()
-            // 
-            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
-            // if not self.config_id.cash_rounding \
-            //    or self.config_id.only_round_cash_method \
-            //    and not any(p.payment_method_id.is_cash_count for p in self.payment_ids):
-            //     total = self.amount_total
-            // else:
-            //     total = float_round(self.amount_total, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
-            // 
-            // isPaid = float_is_zero(total - self.amount_paid, precision_rounding=self.currency_id.rounding)
-            // 
-            // if not isPaid and not self.config_id.cash_rounding:
-            //     raise UserError(_("Order %s is not fully paid.", self.name))
-            // elif not isPaid and self.config_id.cash_rounding:
-            //     currency = self.currency_id
-            //     if self.config_id.rounding_method.rounding_method == "HALF-UP":
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding / 2)
-            //     else:
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding)
-            // 
-            //     diff = currency.round(self.amount_total - self.amount_paid)
-            //     if not abs(diff) <= maxDiff:
-            //         raise UserError(_("Order %s is not fully paid.", self.name))
-            // 
-            // self.write({'state': 'paid'})
-            // 
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_post(self):
-            // # Disabled by default to avoid breaking automated action flow
-            // if (
-            //     not self.env.context.get('disable_abnormal_invoice_detection', True)
-            //     and self.filtered(lambda m: m.abnormal_amount_warning or m.abnormal_date_warning)
-            // ):
-            //     wizard = self.env['validate.account.move'].create({
-            //         'move_ids': [Command.set(self.ids)],
-            //     })
-            //     return {
-            //         'name': _("Confirm Entries"),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'validate.account.move',
-            //         'res_id': wizard.id,
-            //         'view_mode': 'form',
-            //         'target': 'new',
-            //     }
-            // if self:
-            //     self._post(soft=False)
-            // if autopost_bills_wizard := self._show_autopost_bills_wizard():
-            //     return autopost_bills_wizard
-            // return False
             */
             return default;
         }
@@ -14444,123 +14558,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareEwaybillBaseJsonPayloadInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _prepare_ewaybill_base_json_payload(self):
-            // 
-            // def get_transaction_type(seller_details, dispatch_details, buyer_details, ship_to_details):
-            //     """
-            //         1 - Regular
-            //         2 - Bill To - Ship To
-            //         3 - Bill From - Dispatch From
-            //         4 - Combination of 2 and 3
-            //     """
-            //     if seller_details != dispatch_details and buyer_details != ship_to_details:
-            //         return 4
-            //     elif seller_details != dispatch_details:
-            //         return 3
-            //     elif buyer_details != ship_to_details:
-            //         return 2
-            //     else:
-            //         return 1
-            // 
-            // def prepare_details(key_paired_function, partner_detail):
-            //     return {
-            //         f"{place}{key}": fun(partner)
-            //         for key, fun in key_paired_function
-            //         for place, partner in partner_detail
-            //     }
-            // ewaybill_json = {
-            //         # document details
-            //         "supplyType": self.supply_type,
-            //         "subSupplyType": self.type_id.sub_type_code,
-            //         "docType": self.type_id.code,
-            //         "transactionType": get_transaction_type(
-            //             self.partner_bill_from_id,
-            //             self.partner_ship_from_id,
-            //             self.partner_bill_to_id,
-            //             self.partner_ship_to_id
-            //         ),
-            //         "transDistance": str(self.distance),
-            //         "docNo": self.document_number,
-            //         "docDate": (self.document_date or fields.Datetime.now()).strftime("%d/%m/%Y"),
-            //         # bill details
-            //         **prepare_details(
-            //             key_paired_function={
-            //                 'Gstin': lambda p: p.commercial_partner_id.vat or "URP",
-            //                 'TrdName': lambda p: p.commercial_partner_id.name,
-            //                 'StateCode': self._get_partner_state_code,
-            //             }.items(),
-            //             partner_detail={'from': self.partner_bill_from_id, 'to': self.partner_bill_to_id}.items()
-            //         ),
-            //         # shipping details
-            //         **prepare_details(
-            //             key_paired_function={
-            //                 "Addr1": lambda p: p.street and p.street[:120] or "",
-            //                 "Addr2": lambda p: p.street2 and p.street2[:120] or "",
-            //                 "Place": lambda p: p.city and p.city[:50] or "",
-            //                 "Pincode": lambda p: int(p.zip) if p.country_id.code == "IN" else 999999,
-            //             }.items(),
-            //             partner_detail={'from': self.partner_ship_from_id, 'to': self.partner_ship_to_id}.items()
-            //         ),
-            //         "actToStateCode": self._get_partner_state_code(self.partner_ship_to_id),
-            //         "actFromStateCode": self._get_partner_state_code(self.partner_ship_from_id),
-            // }
-            // if self.type_id.sub_type_code == '8':
-            //     ewaybill_json["subSupplyDesc"] = self.type_description
-            // return ewaybill_json
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrepareEwaybillTaxDetailsJsonPayloadInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _prepare_ewaybill_tax_details_json_payload(self):
-            // tax_details = self._l10n_in_tax_details()
-            // round_value = self.env['account.edi.format']._l10n_in_round_value
-            // return {
-            //     "itemList": [
-            //         self._get_l10n_in_ewaybill_line_details(line, tax_details['line_tax_details'][line.id])
-            //         for line in self.move_ids
-            //     ],
-            //     "totalValue": round_value(tax_details['tax_details'].get('total_excluded', 0.00)),
-            //     **{
-            //         f'{tax_type}Value': round_value(tax_details.get('tax_details').get(f'{tax_type}_amount', 0.00))
-            //         for tax_type in ['cgst', 'sgst', 'igst', 'cess']
-            //     },
-            //     "cessNonAdvolValue": round_value(tax_details.get('cess_non_advol_amount', 0.00)),
-            //     "otherValue": round_value(tax_details.get('other_amount', 0.00)),
-            //     "totInvValue": round_value(tax_details['tax_details'].get('total_included', 0.00)),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrepareEwaybillTransportationJsonPayloadInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _prepare_ewaybill_transportation_json_payload(self):
-            // # only pass transporter details when value is exist
-            // return dict(
-            //     filter(lambda kv: kv[1], {
-            //         "transporterId": self.transporter_id.vat,
-            //         "transporterName": self.transporter_id.name,
-            //         "transMode": self.mode,
-            //         "transDocNo": self.transportation_doc_no,
-            //         "transDocDate": self.transportation_doc_date and self.transportation_doc_date.strftime("%d/%m/%Y"),
-            //         "vehicleNo": self.vehicle_no,
-            //         "vehicleType": self.vehicle_type,
-            //     }.items())
-            // )
-            */
-            return default;
-        }
-
         public async Task<TEntity> PrepareGroupedDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object rfq) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15034,63 +15031,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_preview_sale_order(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'target': 'self',
-            //     'url': self.get_portal_url(),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def action_print(self):
-            // self.ensure_one()
-            // if self.state in ['pending', 'cancel']:
-            //     raise UserError(_("Please generate the E-Waybill or mark the document as a Challan to print it."))
-            // 
-            // doc_label = _("Challan") if self.state == 'challan' else _("E-Waybill")
-            // body = _("%s has been generated", doc_label)
-            // filename = "%s - %s.pdf" % (doc_label, self.document_number)
-            // pdf_content = self.env['ir.actions.report']._render_qweb_pdf(
-            //     'l10n_in_ewaybill_stock.action_report_ewaybill', res_ids=[self.id])[0]
-            // attachment = self.env['ir.attachment'].create({
-            //     'name': filename,
-            //     'type': 'binary',
-            //     'datas': base64.b64encode(pdf_content),
-            //     'res_model': 'l10n.in.ewaybill',
-            //     'res_id': self.id,
-            //     'mimetype': 'application/pdf',
-            // })
-            // self.message_post(body=body, attachment_ids=[attachment.id])
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/web/content/{attachment.id}?download=true',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_print_pdf(self):
-            // self.ensure_one()
-            // return self.env.ref('account.account_invoices').report_action(self.id)
-            */
-            return default;
-        }
-
         public async Task<TEntity> PrintQuotationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15246,96 +15186,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_profitability_items(self, section_name, domain=None, res_id=False):
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_blocking(self):
-            // self.ensure_one()
-            // blockings = self.dependent_ids
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
-            // if len(blockings) == 1:
-            //     action['view_mode'] = 'form'
-            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //     action['res_id'] = blockings.id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_subtasks(self):
-            // self.ensure_one()
-            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
-            // if subtasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
-            //     if len(subtasks) == 1:
-            //         action['view_mode'] = 'form'
-            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //         action['res_id'] = subtasks.id
-            //     return action
-            // return {
-            //     'name': 'Portal Sub-tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_task(self):
-            // action = self.action_open_task()
-            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_recurring_tasks(self):
-            // self.ensure_one()
-            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
-            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
-            // if recurrent_tasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
-            //     action.update({
-            //         'context': {'default_project_id': self.project_id.id},
-            //         'domain': [
-            //             ('project_id', '=', self.project_id.id),
-            //             ('recurrence_id', 'in', self.recurrence_id.ids)
-            //         ]
-            //     })
-            //     return action
-            // # If at least one recurrent task belong to another project, open the portal page
-            // return {
-            //     'name': 'Portal Recurrent Tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> ProjectSharingToggleIsFollowerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15349,59 +15199,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     self.sudo().message_subscribe(self.env.user.partner_id.ids)
             // return not is_follower
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_view_parent_task(self):
-            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
-            //     project = self.parent_id.project_id._filtered_access('read')
-            //     if project:
-            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
-            //         if project._check_project_sharing_access():
-            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
-            //         return {
-            //             "name": "Portal Parent Task",
-            //             "type": "ir.actions.act_url",
-            //             "url": url,
-            //         }
-            //     elif self.display_parent_task_button:
-            //         return self.parent_id.get_portal_url()
-            //     # The portal user has no access to the parent task, so normally the button should be invisible.
-            //     return {}
-            // action = self.with_context({
-            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
-            // }).action_open_parent_task()
-            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
-            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_project_task_burndown_chart_report(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
-            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'stage_name_and_sequence_per_id': {
-            //         stage.id: {
-            //             'sequence': stage.sequence,
-            //             'name': stage.name
-            //         } for stage in self.type_ids
-            //     }
-            // })
-            // action['context'] = context
-            // return action
             */
             return default;
         }
@@ -15439,91 +15236,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> QuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_send(self):
-            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
-            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
-            // lang = self.env.context.get('lang')
-            // 
-            // ctx = {
-            //     'default_model': 'sale.order',
-            //     'default_res_ids': self.ids,
-            //     'default_composition_mode': 'comment',
-            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-            //     'email_notification_allow_footer': True,
-            //     'proforma': self.env.context.get('proforma', False),
-            // }
-            // 
-            // if len(self) > 1:
-            //     ctx['default_composition_mode'] = 'mass_mail'
-            // else:
-            //     ctx.update({
-            //         'force_email': True,
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     })
-            //     if not self.env.context.get('hide_default_template'):
-            //         mail_template = self._find_mail_template()
-            //         if mail_template:
-            //             ctx.update({
-            //                 'default_template_id': mail_template.id,
-            //                 'mark_so_as_sent': True,
-            //             })
-            //         if mail_template and mail_template.lang:
-            //             lang = mail_template._render_lang(self.ids)[self.id]
-            //     else:
-            //         for order in self:
-            //             order._portal_ensure_token()
-            // 
-            // action = {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'views': [(False, 'form')],
-            //     'view_id': False,
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
-            // if (
-            //     self.env.context.get('check_document_layout')
-            //     and not self.env.context.get('discard_logo_check')
-            //     and self.env.is_admin()
-            //     and not self.env.company.external_report_layout_id
-            // ):
-            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
-            //         action,
-            //     )
-            //     # Need to remove this context for windows action
-            //     action.pop('close_on_report_download', None)
-            //     layout_action['context']['dialog_size'] = 'extra-large'
-            //     return layout_action
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> QuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_sent(self):
-            // """ Mark the given draft quotation(s) as sent.
-            // 
-            // :raise: UserError if any given SO is not in draft state.
-            // """
-            // if any(order.state != 'draft' for order in self):
-            //     raise UserError(_("Only draft orders can be marked as sent directly."))
-            // 
-            // for order in self:
-            //     order.message_subscribe(partner_ids=order.partner_id.ids)
-            // 
-            // self.write({'state': 'sent'})
-            */
-            return default;
-        }
-
         public async Task<TEntity> RatingApplyAsync<TEntity>(IEnumerable<TEntity> entities, object rate, object token, object rating, object feedback, object subtype_xmlid, object notify_delay_send) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15547,9 +15259,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _rating_apply_get_default_subtype_id(self):
             // return self.env['ir.model.data']._xmlid_to_res_id("project.mt_task_rating")
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _rating_apply_get_default_subtype_id(self):
-            // return self.env['ir.model.data']._xmlid_to_res_id("test_mail_full.mt_mail_test_rating_rating_done")
             */
             return default;
         }
@@ -15585,9 +15294,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not res and self.project_id.partner_id:
             //     return self.project_id.partner_id
             // return res
-            --- ODOO METHOD SOURCE (MODULE: test_mail_full, FILE: test_mail_models_mail.py) ---
-            // def _rating_get_partner(self):
-            // return self.customer_id
             */
             return default;
         }
@@ -15852,38 +15558,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_recurring_tasks(self):
-            // return {
-            //     'name': _('Tasks in Recurrence'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'project.task',
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            //     'context': {'create': False},
-            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_redirect_to_project_task_form(self):
-            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> RefreshInvoiceCurrencyRateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15954,18 +15628,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_register_payment(self):
-            // if any(m.state != 'posted' for m in self):
-            //     raise UserError(_("You can only register payment for posted journal entries."))
-            // return self.action_force_register_payment()
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemoveFromUiAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> server_ids) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -15997,24 +15659,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.auto_post != 'no' and record.is_purchase_document() and not record.invoice_date:
             //         raise ValidationError(_("For this entry to be automatically posted, it required a bill date."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ResetToPendingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def reset_to_pending(self):
-            // self.ensure_one()
-            // if self.state not in ('cancel', 'challan'):
-            //     raise UserError(_("Only Delivery Challan and Cancelled E-waybill can be reset to pending."))
-            // self.write({
-            //     'name': False,
-            //     'state': 'pending',
-            //     'cancel_reason': False,
-            //     'cancel_remarks': False,
-            // })
             */
             return default;
         }
@@ -16090,21 +15734,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_reverse(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
-            // 
-            // if self.is_invoice():
-            //     action['name'] = _('Credit Note')
-            // 
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> ReverseMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_values_list, object cancel) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -16153,68 +15782,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     reverse_moves.with_context(move_reverse_cancel=cancel)._post(soft=False)
             // 
             // return reverse_moves
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RfqSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_rfq_send(self):
-            // '''
-            // This function opens a window to compose an email, with the edi purchase template message loaded by default
-            // '''
-            // self.ensure_one()
-            // ir_model_data = self.env['ir.model.data']
-            // try:
-            //     if self.env.context.get('send_rfq', False):
-            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
-            //     else:
-            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase_done')[1]
-            // except ValueError:
-            //     template_id = False
-            // try:
-            //     compose_form_id = ir_model_data._xmlid_lookup('mail.email_compose_message_wizard_form')[1]
-            // except ValueError:
-            //     compose_form_id = False
-            // ctx = dict(self.env.context or {})
-            // ctx.update({
-            //     'default_model': 'purchase.order',
-            //     'default_res_ids': self.ids,
-            //     'default_template_id': template_id,
-            //     'default_composition_mode': 'comment',
-            //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //     'email_notification_allow_footer': True,
-            //     'force_email': True,
-            //     'mark_rfq_as_sent': True,
-            // })
-            // 
-            // # In the case of a RFQ or a PO, we want the "View..." button in line with the state of the
-            // # object. Therefore, we pass the model description in the context, in the language in which
-            // # the template is rendered.
-            // lang = self.env.context.get('lang')
-            // if {'default_template_id', 'default_model', 'default_res_id'} <= ctx.keys():
-            //     template = self.env['mail.template'].browse(ctx['default_template_id'])
-            //     if template and template.lang:
-            //         lang = template._render_lang([ctx['default_res_id']])[ctx['default_res_id']]
-            // 
-            // self = self.with_context(lang=lang)
-            // if self.state in ['draft', 'sent']:
-            //     ctx['model_description'] = _('Request for Quotation')
-            // else:
-            //     ctx['model_description'] = _('Purchase Order')
-            // 
-            // return {
-            //     'name': _('Compose Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'views': [(compose_form_id, 'form')],
-            //     'view_id': compose_form_id,
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
             */
             return default;
         }
@@ -16641,27 +16208,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_send_and_print(self):
-            // self.env['account.move.send']._check_move_constrains(self)
-            // return {
-            //     'name': _("Print & Send"),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
-            //     'target': 'new',
-            //     'context': {
-            //         'active_model': 'account.move',
-            //         'active_ids': self.ids,
-            //     },
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> SendEmailNotifyToCcInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners_to_notify) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -16687,24 +16233,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         model_description=task_model_description,
             //         mail_auto_delete=True,
             //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_mail(self):
-            // template_id = self.env['ir.model.data']._xmlid_to_res_id('point_of_sale.pos_email_marketing_template', raise_if_not_found=False)
-            // return {
-            //     'name': _('Send Email'),
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {'default_composition_mode': 'mass_mail', 'default_template_id': template_id},
-            //     'target': 'new'
-            // }
             */
             return default;
         }
@@ -16815,17 +16343,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     project.task_ids._send_task_rating_mail()
             //     project._compute_rating_request_deadline()
             //     self.env.cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendReceiptAsync<TEntity>(IEnumerable<TEntity> entities, object email, object ticket_image, object basic_image) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_receipt(self, email, ticket_image, basic_image):
-            // self.env['mail.mail'].sudo().create(self._prepare_mail_values(email, ticket_image, basic_image)).send()
-            // self.email = email
             */
             return default;
         }
@@ -17081,35 +16598,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetToChallanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def action_set_to_challan(self):
-            // self.ensure_one()
-            // if self.state != 'pending':
-            //     raise UserError(_("The challan can only be generated in the Pending state."))
-            // self.write({
-            //     'state': 'challan',
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShareAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: portal, FILE: portal_mixin.py) ---
-            // def action_share(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("portal.portal_share_action")
-            // action['context'] = {'active_id': self.env.context['active_id'],
-            //                      'active_model': self.env.context['active_model'],
-            //                      **literal_eval(action['context'])}
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> ShouldBeLockedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -17245,21 +16733,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StockPickingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_stock_picking(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
-            // action['display_name'] = _('Pickings')
-            // action['context'] = {}
-            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> StolenMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -17270,37 +16743,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         yield self.env['account.move.line'].browse(command[1]).move_id.id
             //     if command[0] == Command.SET:
             //         yield from self.env['account.move.line'].browse(command[2]).move_id.ids
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_switch_move_type(self):
-            // if any(move.posted_before for move in self):
-            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
-            // if any(move.move_type == "entry" for move in self):
-            //     raise ValidationError(_("This action isn't available for this document."))
-            // 
-            // for move in self:
-            //     in_out, old_move_type = move.move_type.split('_')
-            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
-            //     move.name = False
-            //     move.write({
-            //         'move_type': new_move_type,
-            //         'currency_id': move.currency_id.id,
-            //         'fiscal_position_id': move.fiscal_position_id.id,
-            //     })
-            //     if move.amount_total < 0:
-            //         move.write({
-            //             'line_ids': [
-            //                 Command.update(line.id, {'quantity': -line.quantity})
-            //                 for line in move.line_ids
-            //                 if line.display_type == 'product'
-            //             ]
-            //         })
             */
             return default;
         }
@@ -17881,23 +17323,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_toggle_block_payment(self):
-            // self.ensure_one()
-            // if self.payment_state == 'blocked':
-            //     self.payment_state = 'not_paid'
-            //     self.env.add_to_compute(self._fields['payment_state'], self)
-            // else:
-            //     if self.payment_state in ('paid', 'in_payment'):
-            //         raise UserError(_("You can't block a paid invoice."))
-            //     self.payment_state = 'blocked'
-            */
-            return default;
-        }
-
         public async Task<TEntity> ToggleFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -18153,17 +17578,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UnlinkL10nInEwaybillPreventInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _unlink_l10n_in_ewaybill_prevent(self):
-            // if self.filtered(lambda ewaybill: ewaybill.state != 'pending'):
-            //     raise UserError(_("You cannot delete a generated E-waybill. Instead, you should cancel it."))
-            */
-            return default;
-        }
-
         public async Task<TEntity> UnlinkOrReverseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -18185,27 +17599,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // to_unlink.filtered(lambda m: m.state == 'draft').unlink()
             // to_cancel.button_cancel()
             // return to_reverse._reverse_moves(cancel=True)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_unlink_recurrence(self):
-            // self.recurrence_id.task_ids.recurring_task = False
-            // self.recurrence_id.unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_unlock(self):
-            // self.locked = False
             */
             return default;
         }
@@ -18252,18 +17645,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # update the date on PO line
             // for line, date in updated_dates:
             //     line._update_date_planned(date)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_update_fpos_values(self):
-            // self.invoice_line_ids._compute_price_unit()
-            // self.invoice_line_ids._compute_tax_ids()
-            // self.line_ids._compute_account_id()
             */
             return default;
         }
@@ -18380,42 +17761,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_prices(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_prices()
-            // 
-            // if self.pricelist_id:
-            //     message = _("Product prices have been recomputed according to pricelist %s.",
-            //         self.pricelist_id._get_html_link())
-            // else:
-            //     message = _("Product prices have been recomputed.")
-            // self.message_post(body=message)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_taxes(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_taxes()
-            // 
-            // if self.partner_id:
-            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
-            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
-            //     )
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateUpdateDateActivityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object updated_dates, object activity) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -18464,170 +17809,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if record.fiscal_position_id and impacted_countries != record.fiscal_position_id.country_id:
             //             raise ValidationError(_("This entry contains taxes that are not compatible with your fiscal position. Check the country set in fiscal position and in your tax configuration."))
             //         raise ValidationError(_("This entry contains one or more taxes that are incompatible with your fiscal country. Check company fiscal country in the settings and tax country in taxes configuration."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_all_rating(self):
-            // """ return the action to see all the rating of the project and activate default filters"""
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
-            // action['display_name'] = _("%(name)s's Rating", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context.update(self._context)
-            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
-            // action_context.pop('group_by', None)
-            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
-            // if self.rating_count == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
-            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
-            //     })
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_invoice(self):
-            // return {
-            //     'name': _('Customer Invoice'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('account.view_move_form').id,
-            //     'res_model': 'account.move',
-            //     'context': "{'move_type':'out_invoice'}",
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.account_move.id,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_view_invoice(self, invoices=False):
-            // """This function returns an action that display existing vendor bills of
-            // given purchase order ids. When only one found, show the vendor bill
-            // immediately.
-            // """
-            // if not invoices:
-            //     self.invalidate_model(['invoice_ids'])
-            //     invoices = self.invoice_ids
-            // 
-            // result = self.env['ir.actions.act_window']._for_xml_id('account.action_move_in_invoice_type')
-            // # choose the view_mode accordingly
-            // if len(invoices) > 1:
-            //     result['domain'] = [('id', 'in', invoices.ids)]
-            // elif len(invoices) == 1:
-            //     res = self.env.ref('account.view_move_form', False)
-            //     form_view = [(res and res.id or False, 'form')]
-            //     if 'views' in result:
-            //         result['views'] = form_view + [(state, view) for state, view in result['views'] if view != 'form']
-            //     else:
-            //         result['views'] = form_view
-            //     result['res_id'] = invoices.id
-            // else:
-            //     result = {'type': 'ir.actions.act_window_close'}
-            // 
-            // return result
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_view_invoice(self, invoices=False):
-            // if not invoices:
-            //     invoices = self.mapped('invoice_ids')
-            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
-            // if len(invoices) > 1:
-            //     action['domain'] = [('id', 'in', invoices.ids)]
-            // elif len(invoices) == 1:
-            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
-            //     if 'views' in action:
-            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
-            //     else:
-            //         action['views'] = form_view
-            //     action['res_id'] = invoices.id
-            // else:
-            //     action = {'type': 'ir.actions.act_window_close'}
-            // 
-            // context = {
-            //     'default_move_type': 'out_invoice',
-            // }
-            // if len(self) == 1:
-            //     context.update({
-            //         'default_partner_id': self.partner_id.id,
-            //         'default_partner_shipping_id': self.partner_shipping_id.id,
-            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
-            //         'default_invoice_origin': self.name,
-            //     })
-            // action['context'] = context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRefundOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refund_orders(self):
-            // return {
-            //     'name': _('Refund Orders'),
-            //     'view_mode': 'list,form',
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'domain': [('id', 'in', self.mapped('lines.refund_orderline_ids.order_id').ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRefundedOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refunded_order(self):
-            // return {
-            //     'name': _('Refunded Order'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('point_of_sale.view_pos_pos_form').id,
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.refunded_order_id.id,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks_analysis(self):
-            // """ return the action to see the tasks analysis report of the project """
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
-            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context['search_default_project_id'] = self.id
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks(self):
-            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
-            // action['display_name'] = self.name
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'create': self.active,
-            //     'active_test': self.active
-            //     })
-            // action['context'] = context
-            // return action
             */
             return default;
         }
@@ -19083,19 +18264,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> WriteErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error_message, object blocking_level) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _write_error(self, error_message, blocking_level='error'):
-            // self.write({
-            //     'error_message': error_message,
-            //     'blocking_level': blocking_level,
-            // })
-            */
-            return default;
-        }
-
         public async Task<TEntity> WritePartnerValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IPortalMixinable
         {
             /*
@@ -19107,20 +18275,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if 'reminder_date_before_receipt' in vals:
             //     partner_values['reminder_date_before_receipt'] = vals.pop('reminder_date_before_receipt')
             // return vals, partner_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WriteSuccessfullyResponseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object response_vals) where TEntity : IEntity<Guid>, IPortalMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_ewaybill_stock, FILE: l10n_in_ewaybill.py) ---
-            // def _write_successfully_response(self, response_vals):
-            // response_vals.update({
-            //     'error_message': False,
-            //     'blocking_level': False,
-            // })
-            // self.write(response_vals)
             */
             return default;
         }

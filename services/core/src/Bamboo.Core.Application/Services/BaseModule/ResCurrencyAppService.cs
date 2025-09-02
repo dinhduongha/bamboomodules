@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -44,7 +45,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> AmountToTextAsync(Guid id, object amount)
+        public async Task<ResCurrency> AmountToTextAsync(Guid id, ResCurrencyAmountToTextRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -114,7 +115,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> CompareAmountsAsync(Guid id, object amount1, object amount2)
+        public async Task<ResCurrency> CompareAmountsAsync(Guid id, ResCurrencyCompareAmountsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -331,7 +332,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> FormatAsync(Guid id, object amount)
+        public async Task<ResCurrency> FormatAsync(Guid id, ResCurrencyFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -349,7 +350,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, Guid company_id)
+        public async Task<ResCurrency> GetCompanyCurrencyForSpreadsheetAsync(Guid id, ResCurrencyGetCompanyCurrencyForSpreadsheetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: res_currency.py) ---
@@ -752,7 +753,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> IsZeroAsync(Guid id, object amount)
+        public async Task<ResCurrency> IsZeroAsync(Guid id, ResCurrencyIsZeroRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
@@ -797,7 +798,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrency> RoundAsync(Guid id, object amount)
+        public async Task<ResCurrency> RoundAsync(Guid id, ResCurrencyRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---

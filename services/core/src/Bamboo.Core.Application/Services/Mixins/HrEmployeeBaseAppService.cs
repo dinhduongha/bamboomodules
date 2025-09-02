@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,148 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("hr", Depends = new[] { "base_setup", "digest", "phone_validation", "resource_mail", "web" })]
     public class HrEmployeeBaseAppService : ApplicationService, IHrEmployeeBaseAppService
     {
-
-        public HrEmployeeBaseAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public HrEmployeeBaseAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionCreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_user(self):
+            // self.ensure_one()
+            // if self.user_id:
+            //     raise ValidationError(_("This employee already has an user."))
+            // return {
+            //     'name': _('Create User'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.users',
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
+            //     'target': 'new',
+            //     'context': dict(self._context, **{
+            //         'default_create_employee_id': self.id,
+            //         'default_name': self.name,
+            //         'default_phone': self.work_phone,
+            //         'default_mobile': self.mobile_phone,
+            //         'default_login': self.work_email,
+            //         'default_partner_id': self.work_contact_id.id,
+            //     })
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenLeaveRequestAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
+            // def action_open_leave_request(self):
+            // if len(self) == 1:
+            //     model = 'hr.leave'
+            //     context = {'default_employee_id': self.id}
+            // else:
+            //     model = 'hr.leave.generate.multi.wizard'
+            //     context = {
+            //         'default_employee_ids': self.ids,
+            //         'default_date_from': fields.Date.today(),
+            //         'default_date_to': fields.Date.today(),
+            //         'default_name': _('Unplanned Absence'),
+            //     }
+            // 
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': model,
+            //     'views': [[False, 'form']],
+            //     'view_mode': 'form',
+            //     'context': context,
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_related_contacts(self):
+            // related_partners = self._get_related_partners()
+            // action = {
+            //     'name': _("Related Contacts"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.partner',
+            //     'view_mode': 'form',
+            // }
+            // if len(related_partners) > 1:
+            //     action['view_mode'] = 'kanban,list,form'
+            //     action['domain'] = [('id', 'in', related_partners.ids)]
+            //     return action
+            // else:
+            //     action['res_id'] = related_partners.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendLogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
+            // def action_send_log(self):
+            // if not self.env.user.has_group('hr.group_hr_manager'):
+            //     raise UserError(_("You don't have the right to do this. Please contact an Administrator."))
+            // 
+            // for employee in self:
+            //     employee.message_post(body=_(
+            //         "%(name)s has been noted as %(state)s today",
+            //         name=employee.name,
+            //         state=employee.hr_presence_state_display))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendSmsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
+            // def action_send_sms(self):
+            //         if not self.env.user.has_group('hr.group_hr_manager'):
+            //             raise UserError(_("You don't have the right to do this. Please contact an Administrator."))
+            // 
+            //         context = dict(self.env.context)
+            //         context.update(default_res_model='hr.employee', default_res_ids=self.ids, default_composition_mode='mass', default_number_field_name='mobile_phone', default_mass_keep_log=True)
+            // 
+            //         template = self.env.ref('hr_presence.sms_template_presence', False)
+            //         if not template:
+            //             context['default_body'] = _("""We hope this message finds you well. It has come to our attention that you are currently not present at work, and there is no record of a time off request from you. If this absence is due to an oversight on our part, we sincerely apologize for any confusion.
+            // Please take the necessary steps to address this unplanned absence. Should you have any questions or need assistance, do not hesitate to reach out to your manager or the HR department at your earliest convenience.
+            // Thank you for your prompt attention to this matter.""")
+            //         else:
+            //             context['default_template_id'] = template.id
+            // 
+            //         return {
+            //             "type": "ir.actions.act_window",
+            //             "res_model": "sms.composer",
+            //             "view_mode": 'form',
+            //             "context": context,
+            //             "name": self.env._("Send SMS"),
+            //             "target": "new",
+            //         }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetAbsentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
+            // def action_set_absent(self):
+            // self._action_set_manual_presence(False)
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionSetManualPresenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object state) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
@@ -31,6 +171,16 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'manually_set_presence': True,
             //     "hr_presence_state_display": 'present' if state else 'absent',
             // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetPresentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
+            // def action_set_present(self):
+            // self._action_set_manual_presence(True)
             */
             return default;
         }
@@ -873,34 +1023,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_create_user(self):
-            // self.ensure_one()
-            // if self.user_id:
-            //     raise ValidationError(_("This employee already has an user."))
-            // return {
-            //     'name': _('Create User'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.users',
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
-            //     'target': 'new',
-            //     'context': dict(self._context, **{
-            //         'default_create_employee_id': self.id,
-            //         'default_name': self.name,
-            //         'default_phone': self.work_phone,
-            //         'default_mobile': self.mobile_phone,
-            //         'default_login': self.work_email,
-            //         'default_partner_id': self.work_contact_id.id,
-            //     })
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> CreateWorkContactsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
         {
             /*
@@ -1480,7 +1602,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetPresenceServerDataAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
+        public async Task<TEntity> GetPresenceServerActionDataAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
@@ -1839,35 +1961,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenLeaveRequestAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
-            // def action_open_leave_request(self):
-            // if len(self) == 1:
-            //     model = 'hr.leave'
-            //     context = {'default_employee_id': self.id}
-            // else:
-            //     model = 'hr.leave.generate.multi.wizard'
-            //     context = {
-            //         'default_employee_ids': self.ids,
-            //         'default_date_from': fields.Date.today(),
-            //         'default_date_to': fields.Date.today(),
-            //         'default_name': _('Unplanned Absence'),
-            //     }
-            // 
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': model,
-            //     'views': [[False, 'form']],
-            //     'view_mode': 'form',
-            //     'context': context,
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> PhoneGetNumberFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
         {
             /*
@@ -1894,29 +1987,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if active_status is not None:
             //     resource_vals['active'] = active_status
             // return resource_vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_related_contacts(self):
-            // related_partners = self._get_related_partners()
-            // action = {
-            //     'name': _("Related Contacts"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.partner',
-            //     'view_mode': 'form',
-            // }
-            // if len(related_partners) > 1:
-            //     action['view_mode'] = 'kanban,list,form'
-            //     action['domain'] = [('id', 'in', related_partners.ids)]
-            //     return action
-            // else:
-            //     action['res_id'] = related_partners.id
-            // return action
             */
             return default;
         }
@@ -2095,74 +2165,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not user_employee.department_id:
             //     return [('id', operator, user_employee.id)]
             // return (['!'] if operator == '!=' else []) + [('department_id', 'child_of', user_employee.department_id.id)]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendLogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
-            // def action_send_log(self):
-            // if not self.env.user.has_group('hr.group_hr_manager'):
-            //     raise UserError(_("You don't have the right to do this. Please contact an Administrator."))
-            // 
-            // for employee in self:
-            //     employee.message_post(body=_(
-            //         "%(name)s has been noted as %(state)s today",
-            //         name=employee.name,
-            //         state=employee.hr_presence_state_display))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendSmsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
-            // def action_send_sms(self):
-            //         if not self.env.user.has_group('hr.group_hr_manager'):
-            //             raise UserError(_("You don't have the right to do this. Please contact an Administrator."))
-            // 
-            //         context = dict(self.env.context)
-            //         context.update(default_res_model='hr.employee', default_res_ids=self.ids, default_composition_mode='mass', default_number_field_name='mobile_phone', default_mass_keep_log=True)
-            // 
-            //         template = self.env.ref('hr_presence.sms_template_presence', False)
-            //         if not template:
-            //             context['default_body'] = _("""We hope this message finds you well. It has come to our attention that you are currently not present at work, and there is no record of a time off request from you. If this absence is due to an oversight on our part, we sincerely apologize for any confusion.
-            // Please take the necessary steps to address this unplanned absence. Should you have any questions or need assistance, do not hesitate to reach out to your manager or the HR department at your earliest convenience.
-            // Thank you for your prompt attention to this matter.""")
-            //         else:
-            //             context['default_template_id'] = template.id
-            // 
-            //         return {
-            //             "type": "ir.actions.act_window",
-            //             "res_model": "sms.composer",
-            //             "view_mode": 'form',
-            //             "context": context,
-            //             "name": self.env._("Send SMS"),
-            //             "target": "new",
-            //         }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetAbsentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
-            // def action_set_absent(self):
-            // self._action_set_manual_presence(False)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetPresentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHrEmployeeBaseable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_presence, FILE: hr_employee.py) ---
-            // def action_set_present(self):
-            // self._action_set_manual_presence(True)
             */
             return default;
         }

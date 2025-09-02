@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -282,7 +283,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrDepartment> GetFormviewActionAsync(Guid id, object access_uid)
+        public async Task<HrDepartment> GetFormviewActionAsync(Guid id, HrDepartmentGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_department.py) ---

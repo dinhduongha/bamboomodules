@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadAppService = mailThreadAppService;
         }
 
-        public async Task<PhoneBlacklist> AddAsync(Guid id, object number, object message)
+        public async Task<PhoneBlacklist> AddAsync(Guid id, PhoneBlacklistAddRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---
@@ -107,7 +108,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PhoneBlacklist> RemoveAsync(Guid id, object number, object message)
+        public async Task<PhoneBlacklist> RemoveAsync(Guid id, PhoneBlacklistRemoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: phone_validation, FILE: phone_blacklist.py) ---

@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class IrActionsActionsAppService : ApplicationService, IIrActionsActionsAppService
     {
-
-        public IrActionsActionsAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public IrActionsActionsAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ActionConfigureExternalReportLayoutInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_action, Guid xml_id) where TEntity : IEntity<Guid>, IIrActionsActionsable
@@ -1078,7 +1080,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetValidReportsAsync<TEntity>(IEnumerable<TEntity> entities, object model, List<Guid> record_ids) where TEntity : IEntity<Guid>, IIrActionsActionsable
+        public async Task<TEntity> GetValidActionReportsAsync<TEntity>(IEnumerable<TEntity> entities, object model, List<Guid> record_ids) where TEntity : IEntity<Guid>, IIrActionsActionsable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---

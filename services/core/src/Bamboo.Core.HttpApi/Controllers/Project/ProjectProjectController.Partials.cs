@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Project
 {
     public partial class ProjectProjectController
@@ -116,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/action-profitability-items")]
         public async Task<IActionResult> ActionProfitabilityItemsAsync(Guid id, [FromBody] ProjectProjectProfitabilityItemsRequestDto input)
         {
-            var result = await _appService.ProfitabilityItemsAsync(id, input.SectionName, input.Domain, input.ResId);
+            var result = await _appService.ProfitabilityItemsAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectProjectCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -244,7 +245,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/get-sale-items-data")]
         public async Task<IActionResult> GetSaleItemsDataAsync(Guid id, [FromBody] ProjectProjectGetSaleItemsDataRequestDto input)
         {
-            var result = await _appService.GetSaleItemsDataAsync(id, input.Offset, input.Limit, input.WithAction, input.SectionId);
+            var result = await _appService.GetSaleItemsDataAsync(id, input);
             return Ok(result);
         }
         
@@ -252,7 +253,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/map-tasks")]
         public async Task<IActionResult> MapTasksAsync(Guid id, [FromBody] ProjectProjectMapTasksRequestDto input)
         {
-            var result = await _appService.MapTasksAsync(id, input.NewProjectId);
+            var result = await _appService.MapTasksAsync(id, input);
             return Ok(result);
         }
         
@@ -260,7 +261,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/message-subscribe")]
         public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] ProjectProjectMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input.PartnerIds, input.SubtypeIds);
+            var result = await _appService.MessageSubscribeAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +269,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/message-unsubscribe")]
         public async Task<IActionResult> MessageUnsubscribeAsync(Guid id, [FromBody] ProjectProjectMessageUnsubscribeRequestDto input)
         {
-            var result = await _appService.MessageUnsubscribeAsync(id, input.PartnerIds);
+            var result = await _appService.MessageUnsubscribeAsync(id, input);
             return Ok(result);
         }
         

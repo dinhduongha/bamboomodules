@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -36,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrDefault> DiscardRecordsAsync(Guid id, object records)
+        public async Task<IrDefault> DiscardRecordsAsync(Guid id, IrDefaultDiscardRecordsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---
@@ -53,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrDefault> DiscardValuesAsync(Guid id, object model_name, object field_name, object values)
+        public async Task<IrDefault> DiscardValuesAsync(Guid id, IrDefaultDiscardValuesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---
@@ -180,7 +181,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrDefault> SetAsync(Guid id, object model_name, object field_name, object @value, Guid user_id, Guid company_id, object condition)
+        public async Task<IrDefault> SetAsync(Guid id, IrDefaultSetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_default.py) ---

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -118,7 +119,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> ExecuteImportAsync(Guid id, object fields, object columns, object options, object dryrun)
+        public async Task<BaseImportImport> ExecuteImportAsync(Guid id, BaseImportImportExecuteImportRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
@@ -435,7 +436,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> GetFieldsTreeAsync(Guid id, object model, object depth)
+        public async Task<BaseImportImport> GetFieldsTreeAsync(Guid id, BaseImportImportGetFieldsTreeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---
@@ -1204,7 +1205,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<BaseImportImport> ParsePreviewAsync(Guid id, object options, object count)
+        public async Task<BaseImportImport> ParsePreviewAsync(Guid id, BaseImportImportParsePreviewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import, FILE: base_import.py) ---

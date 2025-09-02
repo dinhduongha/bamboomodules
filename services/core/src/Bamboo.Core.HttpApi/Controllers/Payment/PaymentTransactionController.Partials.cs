@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Payment
 {
     public partial class PaymentTransactionController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Payment
         [Route("{id}/action-refund")]
         public async Task<IActionResult> ActionRefundAsync(Guid id, [FromBody] PaymentTransactionRefundRequestDto input)
         {
-            var result = await _appService.RefundAsync(id, input.AmountToRefund);
+            var result = await _appService.RefundAsync(id, input);
             return Ok(result);
         }
         

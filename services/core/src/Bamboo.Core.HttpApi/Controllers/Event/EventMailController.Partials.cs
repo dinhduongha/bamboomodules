@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Event
 {
     public partial class EventMailController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Event
         [Route("{id}/run")]
         public async Task<IActionResult> RunAsync(Guid id, [FromBody] EventMailRunRequestDto input)
         {
-            var result = await _appService.RunAsync(id, input.Autocommit);
+            var result = await _appService.RunAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Event
         [Route("{id}/schedule-communications")]
         public async Task<IActionResult> ScheduleCommunicationsAsync(Guid id, [FromBody] EventMailScheduleCommunicationsRequestDto input)
         {
-            var result = await _appService.ScheduleCommunicationsAsync(id, input.Autocommit);
+            var result = await _appService.ScheduleCommunicationsAsync(id, input);
             return Ok(result);
         }
     }

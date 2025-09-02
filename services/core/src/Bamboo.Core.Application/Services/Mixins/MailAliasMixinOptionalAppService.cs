@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,24 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("mail", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
     public class MailAliasMixinOptionalAppService : ApplicationService, IMailAliasMixinOptionalAppService
     {
-
-        public MailAliasMixinOptionalAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public MailAliasMixinOptionalAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionConfigureBankJournalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
+            // def action_configure_bank_journal(self):
+            // """ This function is called by the "configure" button of bank journals,
+            // visible on dashboard if no bank statement source has been defined yet
+            // """
+            // # We simply call the setup bar function.
+            // return self.env['res.company'].with_context(default_linked_journal_id=self.id).setting_init_bank_account_action()
+            */
+            return default;
         }
 
         public async Task<TEntity> AliasFilterFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values, object filters) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
@@ -91,15 +107,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // }
             // if 'default_alias_domain_id' in self.env.context:
             //     values['alias_domain_id'] = self.env.context['default_alias_domain_id']
-            // return values
-            --- ODOO METHOD SOURCE (MODULE: test_mail, FILE: test_mail_models.py) ---
-            // def _alias_get_creation_values(self):
-            // """ Updates itself """
-            // values = super()._alias_get_creation_values()
-            // values['alias_model_id'] = self.env['ir.model']._get_id('mail.test.alias.optional')
-            // if self.id:
-            //     values['alias_force_thread_id'] = self.id
-            //     values['alias_defaults'] = {'company_id': self.company_id.id}
             // return values
             */
             return default;
@@ -510,20 +517,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         journal.suspense_account_id = journal.company_id.account_journal_suspense_account_id
             //     else:
             //         journal.suspense_account_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConfigureBankJournalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailAliasMixinOptionalable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_journal.py) ---
-            // def action_configure_bank_journal(self):
-            // """ This function is called by the "configure" button of bank journals,
-            // visible on dashboard if no bank statement source has been defined yet
-            // """
-            // # We simply call the setup bar function.
-            // return self.env['res.company'].with_context(default_linked_journal_id=self.id).setting_init_bank_account_action()
             */
             return default;
         }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -94,7 +95,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceResource> CopyDataAsync(Guid id, object @default)
+        public async Task<ResourceResource> CopyDataAsync(Guid id, ResourceResourceCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_resource.py) ---
@@ -105,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResourceResource> GetAvatarCardDataAsync(Guid id, object fields)
+        public async Task<ResourceResource> GetAvatarCardDataAsync(Guid id, ResourceResourceGetAvatarCardDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource_mail, FILE: resource_resource.py) ---

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ProjectProjectStage> CopyDataAsync(Guid id, object @default)
+        public async Task<ProjectProjectStage> CopyDataAsync(Guid id, ProjectProjectStageCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project_stage.py) ---
@@ -62,7 +63,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProjectProjectStage> UnlinkWizardAsync(Guid id, object stage_view)
+        public async Task<ProjectProjectStage> UnlinkWizardAsync(Guid id, ProjectProjectStageUnlinkWizardRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project_stage.py) ---

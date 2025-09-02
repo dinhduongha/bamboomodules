@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -446,7 +447,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> CheckExternalDependenciesAsync(Guid id, object module_name, object newstate)
+        public async Task<IrModuleModule> CheckExternalDependenciesAsync(Guid id, IrModuleModuleCheckExternalDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -581,7 +582,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> DownstreamDependenciesAsync(Guid id, object known_deps, object exclude_states)
+        public async Task<IrModuleModule> DownstreamDependenciesAsync(Guid id, IrModuleModuleDownstreamDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -1061,7 +1062,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> GetModuleInfoAsync(Guid id, object name)
+        public async Task<IrModuleModule> GetModuleInfoAsync(Guid id, IrModuleModuleGetModuleInfoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -1846,7 +1847,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> SearchPanelSelectRangeAsync(Guid id, object field_name)
+        public async Task<IrModuleModule> SearchPanelSelectRangeAsync(Guid id, IrModuleModuleSearchPanelSelectRangeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -2461,7 +2462,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModuleModule> UpstreamDependenciesAsync(Guid id, object known_deps, object exclude_states)
+        public async Task<IrModuleModule> UpstreamDependenciesAsync(Guid id, IrModuleModuleUpstreamDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_module.py) ---
@@ -2493,7 +2494,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModuleModule> WebReadAsync(Guid id, object specification)
+        public async Task<IrModuleModule> WebReadAsync(Guid id, IrModuleModuleWebReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---
@@ -2509,7 +2510,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModuleModule> WebSearchReadAsync(Guid id, object domain, object specification, object offset, object limit, object order, object count_limit)
+        public async Task<IrModuleModule> WebSearchReadAsync(Guid id, IrModuleModuleWebSearchReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_import_module, FILE: ir_module.py) ---

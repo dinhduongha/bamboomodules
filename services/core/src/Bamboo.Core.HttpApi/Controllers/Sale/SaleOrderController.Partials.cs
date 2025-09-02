@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Sale
 {
     public partial class SaleOrderController
@@ -53,14 +54,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
         {
             var result = await _appService.OpenBusinessDocAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-declaration-of-intent")]
-        public async Task<IActionResult> ActionOpenDeclarationOfIntentAsync(Guid id)
-        {
-            var result = await _appService.OpenDeclarationOfIntentAsync(id);
             return Ok(result);
         }
         
@@ -188,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/action-view-invoice")]
         public async Task<IActionResult> ActionViewInvoiceAsync(Guid id, [FromBody] SaleOrderViewInvoiceRequestDto input)
         {
-            var result = await _appService.ViewInvoiceAsync(id, input.Invoices);
+            var result = await _appService.ViewInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -249,18 +242,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         }
         
         [HttpPost]
-        [Route("{id}/compute-payment-reference-finnish")]
-        public async Task<IActionResult> ComputePaymentReferenceFinnishAsync(Guid id, [FromBody] SaleOrderComputePaymentReferenceFinnishRequestDto input)
-        {
-            var result = await _appService.ComputePaymentReferenceFinnishAsync(id, input.Number);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SaleOrderCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +253,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/create-document-from-attachment")]
         public async Task<IActionResult> CreateDocumentFromAttachmentAsync(Guid id, [FromBody] SaleOrderCreateDocumentFromAttachmentRequestDto input)
         {
-            var result = await _appService.CreateDocumentFromAttachmentAsync(id, input.AttachmentIds);
+            var result = await _appService.CreateDocumentFromAttachmentAsync(id, input);
             return Ok(result);
         }
         
@@ -276,15 +261,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] SaleOrderGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMsg);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-finnish-check-digit")]
-        public async Task<IActionResult> GetFinnishCheckDigitAsync(Guid id, [FromBody] SaleOrderGetFinnishCheckDigitRequestDto input)
-        {
-            var result = await _appService.GetFinnishCheckDigitAsync(id, input.BaseNumber);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -300,7 +277,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/get-promo-code-error")]
         public async Task<IActionResult> GetPromoCodeErrorAsync(Guid id, [FromBody] SaleOrderGetPromoCodeErrorRequestDto input)
         {
-            var result = await _appService.GetPromoCodeErrorAsync(id, input.Delete);
+            var result = await _appService.GetPromoCodeErrorAsync(id, input);
             return Ok(result);
         }
         
@@ -308,7 +285,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/get-promo-code-success-message")]
         public async Task<IActionResult> GetPromoCodeSuccessMessageAsync(Guid id, [FromBody] SaleOrderGetPromoCodeSuccessMessageRequestDto input)
         {
-            var result = await _appService.GetPromoCodeSuccessMessageAsync(id, input.Delete);
+            var result = await _appService.GetPromoCodeSuccessMessageAsync(id, input);
             return Ok(result);
         }
         
@@ -345,14 +322,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         }
         
         [HttpPost]
-        [Route("{id}/number2numeric")]
-        public async Task<IActionResult> Number2numericAsync(Guid id, [FromBody] SaleOrderNumber2numericRequestDto input)
-        {
-            var result = await _appService.Number2numericAsync(id, input.Number);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/onchange-order-line")]
         public async Task<IActionResult> OnchangeOrderLineAsync(Guid id)
         {
@@ -380,7 +349,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/save-included-pdf")]
         public async Task<IActionResult> SaveIncludedPdfAsync(Guid id, [FromBody] SaleOrderSaveIncludedPdfRequestDto input)
         {
-            var result = await _appService.SaveIncludedPdfAsync(id, input.SelectedPdf);
+            var result = await _appService.SaveIncludedPdfAsync(id, input);
             return Ok(result);
         }
         
@@ -388,7 +357,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/save-new-custom-content")]
         public async Task<IActionResult> SaveNewCustomContentAsync(Guid id, [FromBody] SaleOrderSaveNewCustomContentRequestDto input)
         {
-            var result = await _appService.SaveNewCustomContentAsync(id, input.DocumentType, input.FormField, input.Content);
+            var result = await _appService.SaveNewCustomContentAsync(id, input);
             return Ok(result);
         }
         
@@ -396,7 +365,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sale
         [Route("{id}/set-delivery-line")]
         public async Task<IActionResult> SetDeliveryLineAsync(Guid id, [FromBody] SaleOrderSetDeliveryLineRequestDto input)
         {
-            var result = await _appService.SetDeliveryLineAsync(id, input.Carrier, input.Amount);
+            var result = await _appService.SetDeliveryLineAsync(id, input);
             return Ok(result);
         }
     }

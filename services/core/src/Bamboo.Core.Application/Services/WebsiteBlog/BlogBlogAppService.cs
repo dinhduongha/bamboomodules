@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -31,7 +32,7 @@ namespace Bamboo.Core.Application.Services
             _websiteSeoMetadataAppService = websiteSeoMetadataAppService;
         }
 
-        public async Task<BlogBlog> AllTagsAsync(Guid id, object @join, object min_limit)
+        public async Task<BlogBlog> AllTagsAsync(Guid id, BlogBlogAllTagsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_blog, FILE: website_blog.py) ---

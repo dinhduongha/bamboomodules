@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -563,7 +564,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannelMember> SetCustomNotificationsAsync(Guid id, object custom_notifications)
+        public async Task<DiscussChannelMember> SetCustomNotificationsAsync(Guid id, DiscussChannelMemberSetCustomNotificationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel_member.py) ---

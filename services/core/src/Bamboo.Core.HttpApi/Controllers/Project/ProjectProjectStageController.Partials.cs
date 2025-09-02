@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Project
 {
     public partial class ProjectProjectStageController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProjectProjectStageCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/unlink-wizard")]
         public async Task<IActionResult> UnlinkWizardAsync(Guid id, [FromBody] ProjectProjectStageUnlinkWizardRequestDto input)
         {
-            var result = await _appService.UnlinkWizardAsync(id, input.StageView);
+            var result = await _appService.UnlinkWizardAsync(id, input);
             return Ok(result);
         }
     }

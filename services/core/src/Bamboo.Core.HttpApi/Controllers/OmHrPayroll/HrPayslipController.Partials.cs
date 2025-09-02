@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
 {
     public partial class HrPayslipController
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
         [Route("{id}/get-contract")]
         public async Task<IActionResult> GetContractAsync(Guid id, [FromBody] HrPayslipGetContractRequestDto input)
         {
-            var result = await _appService.GetContractAsync(id, input.Employee, input.DateFrom, input.DateTo);
+            var result = await _appService.GetContractAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
         [Route("{id}/get-inputs")]
         public async Task<IActionResult> GetInputsAsync(Guid id, [FromBody] HrPayslipGetInputsRequestDto input)
         {
-            var result = await _appService.GetInputsAsync(id, input.Contracts, input.DateFrom, input.DateTo);
+            var result = await _appService.GetInputsAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
         [Route("{id}/get-salary-line-total")]
         public async Task<IActionResult> GetSalaryLineTotalAsync(Guid id, [FromBody] HrPayslipGetSalaryLineTotalRequestDto input)
         {
-            var result = await _appService.GetSalaryLineTotalAsync(id, input.Code);
+            var result = await _appService.GetSalaryLineTotalAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
         [Route("{id}/get-worked-day-lines")]
         public async Task<IActionResult> GetWorkedDayLinesAsync(Guid id, [FromBody] HrPayslipGetWorkedDayLinesRequestDto input)
         {
-            var result = await _appService.GetWorkedDayLinesAsync(id, input.Contracts, input.DateFrom, input.DateTo);
+            var result = await _appService.GetWorkedDayLinesAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmHrPayroll
         [Route("{id}/onchange-employee-id")]
         public async Task<IActionResult> OnchangeEmployeeIdAsync(Guid id, [FromBody] HrPayslipOnchangeEmployeeIdRequestDto input)
         {
-            var result = await _appService.OnchangeEmployeeIdAsync(id, input.DateFrom, input.DateTo, input.EmployeeId, input.ContractId);
+            var result = await _appService.OnchangeEmployeeIdAsync(id, input);
             return Ok(result);
         }
         

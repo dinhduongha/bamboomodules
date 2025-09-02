@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -66,7 +67,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAsset> FilterDuplicateAsync(Guid id, Guid website_id)
+        public async Task<IrAsset> FilterDuplicateAsync(Guid id, IrAssetFilterDuplicateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_asset.py) ---

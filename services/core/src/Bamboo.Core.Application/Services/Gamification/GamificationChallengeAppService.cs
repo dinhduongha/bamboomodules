@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -606,7 +607,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<GamificationChallenge> ReportProgressAsync(Guid id, object users, object subset_goals)
+        public async Task<GamificationChallenge> ReportProgressAsync(Guid id, GamificationChallengeReportProgressRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: gamification, FILE: gamification_challenge.py) ---

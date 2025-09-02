@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,146 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("product", Depends = new[] { "base", "mail", "uom" })]
     public class ProductCatalogMixinAppService : ApplicationService, IProductCatalogMixinAppService
     {
-
-        public ProductCatalogMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public ProductCatalogMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_activate_currency(self):
+            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'account.move':
+            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
+            // def action_add_from_catalog(self):
+            // kanban_view_id = self.env.ref('product.product_view_kanban_catalog').id
+            // search_view_id = self.env.ref('product.product_view_search_catalog').id
+            // additional_context = self._get_action_add_from_catalog_extra_context()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Products'),
+            //     'res_model': 'product.product',
+            //     'views': [(kanban_view_id, 'kanban'), (False, 'form')],
+            //     'search_view_id': [search_view_id, 'search'],
+            //     'domain': self._get_product_catalog_domain(),
+            //     'context': {**self.env.context, **additional_context},
+            // }
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
+            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
+            // return res
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'repair.order':
+            //     res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAssignAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_assign(self):
+            // for production in self:
+            //     production.move_raw_ids._action_assign()
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_assign(self):
+            // return self.move_ids._action_assign()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionBillMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_bill_matching(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Bill Matching"),
+            //     'res_model': 'purchase.bill.line.match',
+            //     'domain': [
+            //         ('partner_id', '=', self.partner_id.id),
+            //         ('company_id', 'in', self.env.company.ids),
+            //         ('purchase_order_id', 'in', [self.id, False]),
+            //     ],
+            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_cancel(self):
+            // """ Cancels production order, unfinished stock moves and set procurement
+            // orders in exception """
+            // self._action_cancel()
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_cancel(self):
+            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
+            // 
+            // For post-cancel operations, please only override :meth:`_action_cancel`.
+            // 
+            // note: self.ensure_one() if the wizard is shown.
+            // """
+            // if any(order.locked for order in self):
+            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
+            // cancel_warning = self._show_cancel_wizard()
+            // if cancel_warning:
+            //     self.ensure_one()
+            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
+            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
+            //     )
+            //     lang = self.env.context.get('lang')
+            //     template = self.env['mail.template'].browse(template_id)
+            //     if template.lang:
+            //         lang = template._render_lang(self.ids)[self.id]
+            //     ctx = {
+            //         'default_template_id': template_id,
+            //         'default_order_id': self.id,
+            //         'mark_so_as_canceled': True,
+            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     }
+            //     return {
+            //         'name': _('Cancel %s', self.type_name),
+            //         'view_mode': 'form',
+            //         'res_model': 'sale.order.cancel',
+            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
+            //         'type': 'ir.actions.act_window',
+            //         'context': ctx,
+            //         'target': 'new'
+            //     }
+            // else:
+            //     return self._action_cancel()
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
@@ -78,6 +216,119 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionComputeBomDaysAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
+            // def action_compute_bom_days(self):
+            // company_id = self.env.context.get('default_company_id', self.env.company.id)
+            // warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
+            // for bom in self:
+            //     bom_data = self.env['report.mrp.report_bom_structure'].with_context(minimized=True)._get_bom_data(bom, warehouse, bom.product_id, ignore_stock=True)
+            //     bom.days_to_prepare_mo = self.env['report.mrp.report_bom_structure']._get_max_component_delay(bom_data['components'])
+            //     if bom_data.get('availability_state') == 'unavailable' and not bom_data.get('components_available', True):
+            //         return {
+            //             'type': 'ir.actions.client',
+            //             'tag': 'display_notification',
+            //             'params': {
+            //                 'title': _('Cannot compute days to prepare due to missing route info for at least 1 component or for the final product.'),
+            //                 'sticky': False,
+            //             }
+            //         }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_confirm(self):
+            // self._check_company()
+            // moves_ids_to_confirm = set()
+            // move_raws_ids_to_adjust = set()
+            // workorder_ids_to_confirm = set()
+            // for production in self:
+            //     production_vals = {}
+            //     if production.bom_id:
+            //         production_vals.update({'consumption': production.bom_id.consumption})
+            //     # In case of Serial number tracking, force the UoM to the UoM of product
+            //     if production.product_tracking == 'serial' and production.product_uom_id != production.product_id.uom_id:
+            //         production_vals.update({
+            //             'product_qty': production.product_uom_id._compute_quantity(production.product_qty, production.product_id.uom_id),
+            //             'product_uom_id': production.product_id.uom_id
+            //         })
+            //         for move_finish in production.move_finished_ids.filtered(lambda m: m.product_id == production.product_id):
+            //             move_finish.write({
+            //                 'product_uom_qty': move_finish.product_uom._compute_quantity(move_finish.product_uom_qty, move_finish.product_id.uom_id),
+            //                 'product_uom': move_finish.product_id.uom_id
+            //             })
+            //     if production_vals:
+            //         production.write(production_vals)
+            //     move_raws_ids_to_adjust.update(production.move_raw_ids.ids)
+            //     moves_ids_to_confirm.update((production.move_raw_ids | production.move_finished_ids).ids)
+            //     workorder_ids_to_confirm.update(production.workorder_ids.ids)
+            // 
+            // move_raws_to_adjust = self.env['stock.move'].browse(sorted(move_raws_ids_to_adjust))
+            // moves_to_confirm = self.env['stock.move'].browse(sorted(moves_ids_to_confirm))
+            // workorder_to_confirm = self.env['mrp.workorder'].browse(sorted(workorder_ids_to_confirm))
+            // 
+            // move_raws_to_adjust._adjust_procure_method()
+            // moves_to_confirm._action_confirm(merge=False)
+            // workorder_to_confirm._action_confirm()
+            // # run scheduler for moves forecasted to not have enough in stock
+            // ignored_mo_ids = self.env.context.get('ignore_mo_ids', [])
+            // self.move_raw_ids.with_context(ignore_mo_ids=ignored_mo_ids + self.ids)._trigger_scheduler()
+            // self.picking_ids.filtered(
+            //     lambda p: p.state not in ['cancel', 'done']).action_confirm()
+            // # Force confirm state only for draft production not for more advanced state like
+            // # 'progress' (in case of backorders with some qty_producing)
+            // self.filtered(lambda mo: mo.state == 'draft').state = 'confirmed'
+            // return True
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // """ Confirm the given quotation(s) and set their confirmation date.
+            // 
+            // If the corresponding setting is enabled, also locks the Sale Order.
+            // 
+            // :return: True
+            // :rtype: bool
+            // :raise: UserError if trying to confirm cancelled SO's
+            // """
+            // for order in self:
+            //     error_msg = order._confirmation_error_message()
+            //     if error_msg:
+            //         raise UserError(error_msg)
+            // 
+            // self.order_line._validate_analytic_distribution()
+            // 
+            // for order in self:
+            //     if order.partner_id in order.message_partner_ids:
+            //         continue
+            //     order.message_subscribe([order.partner_id.id])
+            // 
+            // self.write(self._prepare_confirmation_values())
+            // 
+            // # Context key 'default_name' is sometimes propagated up to here.
+            // # We don't need it and it creates issues in the creation of linked records.
+            // context = self._context.copy()
+            // context.pop('default_name', None)
+            // context.pop('default_user_id', None)
+            // 
+            // self.with_context(context)._action_confirm()
+            // user = self[:1].create_uid
+            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
+            //     # Public user can confirm SO, so we check the group on any record creator.
+            //     self.action_lock()
+            // 
+            // if self.env.context.get('send_email'):
+            //     self._send_order_confirmation_mail()
+            // 
+            // return True
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionConfirmInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -102,6 +353,170 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionCreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_create_invoice(self):
+            // """Create the invoice associated to the PO.
+            // """
+            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // 
+            // # 1) Prepare invoice vals and clean-up the section lines
+            // invoice_vals_list = []
+            // sequence = 10
+            // for order in self:
+            //     if order.invoice_status != 'to invoice':
+            //         continue
+            // 
+            //     order = order.with_company(order.company_id)
+            //     pending_section = None
+            //     # Invoice values.
+            //     invoice_vals = order._prepare_invoice()
+            //     # Invoice line values (keep only necessary sections).
+            //     for line in order.order_line:
+            //         if line.display_type == 'line_section':
+            //             pending_section = line
+            //             continue
+            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
+            //             if pending_section:
+            //                 line_vals = pending_section._prepare_account_move_line()
+            //                 line_vals.update({'sequence': sequence})
+            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //                 sequence += 1
+            //                 pending_section = None
+            //             line_vals = line._prepare_account_move_line()
+            //             line_vals.update({'sequence': sequence})
+            //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
+            //             sequence += 1
+            //     invoice_vals_list.append(invoice_vals)
+            // 
+            // if not invoice_vals_list:
+            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
+            // 
+            // # 2) group by (company_id, partner_id, currency_id) for batch creation
+            // new_invoice_vals_list = []
+            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
+            //     origins = set()
+            //     payment_refs = set()
+            //     refs = set()
+            //     ref_invoice_vals = None
+            //     for invoice_vals in invoices:
+            //         if not ref_invoice_vals:
+            //             ref_invoice_vals = invoice_vals
+            //         else:
+            //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
+            //         origins.add(invoice_vals['invoice_origin'])
+            //         payment_refs.add(invoice_vals['payment_reference'])
+            //         refs.add(invoice_vals['ref'])
+            //     ref_invoice_vals.update({
+            //         'ref': ', '.join(refs)[:2000],
+            //         'invoice_origin': ', '.join(origins),
+            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
+            //     })
+            //     new_invoice_vals_list.append(ref_invoice_vals)
+            // invoice_vals_list = new_invoice_vals_list
+            // 
+            // # 3) Create invoices.
+            // moves = self.env['account.move']
+            // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
+            // for vals in invoice_vals_list:
+            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
+            // 
+            // # 4) Some moves might actually be refunds: convert them if the total amount is negative
+            // # We do this after the moves have been created since we need taxes, etc. to know if the total
+            // # is actually negative or not
+            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
+            // 
+            // return self.action_view_invoice(moves)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_create_sale_order(self):
+            // if any(repair.sale_order_id for repair in self):
+            //     concerned_ro = self.filtered('sale_order_id')
+            //     ref_str = "\n".join(ro.name for ro in concerned_ro)
+            //     raise UserError(
+            //         _(
+            //             "You cannot create a quotation for a repair order that is already linked to an existing sale order.\nConcerned repair order(s):\n%(ref_str)s",
+            //             ref_str=ref_str,
+            //         ),
+            //     )
+            // if any(not repair.partner_id for repair in self):
+            //     concerned_ro = self.filtered(lambda ro: not ro.partner_id)
+            //     ref_str = "\n".join(ro.name for ro in concerned_ro)
+            //     raise UserError(
+            //         _(
+            //             "You need to define a customer for a repair order in order to create an associated quotation.\nConcerned repair order(s):\n%(ref_str)s",
+            //             ref_str=ref_str,
+            //         ),
+            //     )
+            // sale_order_values_list = []
+            // for repair in self:
+            //     sale_order_values_list.append({
+            //         "company_id": self.company_id.id,
+            //         "partner_id": self.partner_id.id,
+            //         "warehouse_id": self.picking_type_id.warehouse_id.id,
+            //         "repair_order_ids": [Command.link(repair.id)],
+            //     })
+            // self.env['sale.order'].create(sale_order_values_list)
+            // # Add Sale Order Lines for 'add' move_ids
+            // self.move_ids._create_repair_sale_order_line()
+            // return self.action_view_sale_order()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_draft(self):
+            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
+            // return orders.write({
+            //     'state': 'draft',
+            //     'signature': False,
+            //     'signed_by': False,
+            //     'signed_on': False,
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_duplicate(self):
+            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
+            // action['context'] = dict(self.env.context)
+            // action['context']['view_no_maturity'] = False
+            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
+            // action['res_id'] = self.copy().id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_force_register_payment(self):
+            // if any(m.move_type == 'entry' for m in self):
+            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
+            // return self.line_ids.action_register_payment()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionGenerateBackorderWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities, object quantity_issues) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -117,6 +532,37 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ctx.update({'default_mrp_production_ids': self.ids, 'default_mrp_production_backorder_line_ids': lines})
             // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_mrp_production_backorder")
             // action['context'] = ctx
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGenerateBomAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_generate_bom(self):
+            // """ Generates a new Bill of Material based on the Manufacturing Order's product, components,
+            // workorders and by-products, and assigns it to the MO. Returns a new BoM's form view action.
+            // """
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('mrp.mrp_bom_form_action')
+            // action['view_mode'] = 'form'
+            // action['views'] = [(False, 'form')]
+            // 
+            // bom_lines_vals, byproduct_vals, operations_vals = self._get_bom_values()
+            // action['context'] = {
+            //     'default_bom_line_ids': bom_lines_vals,
+            //     'default_byproduct_ids': byproduct_vals,
+            //     'default_code': _("New BoM from %(mo_name)s", mo_name=self.display_name),
+            //     'default_company_id': self.company_id.id,
+            //     'default_operation_ids': operations_vals,
+            //     'default_product_id': self.product_id.id,
+            //     'default_product_qty': self.product_qty,
+            //     'default_product_tmpl_id': self.product_id.product_tmpl_id.id,
+            //     'default_product_uom_id': self.product_uom_id.id,
+            //     'parent_production_id': self.id,  # Used to assign the new BoM to the current MO.
+            // }
             // return action
             */
             return default;
@@ -148,6 +594,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionGenerateSerialAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_generate_serial(self):
+            // self.ensure_one()
+            // self._set_lot_producing()
+            // if self.product_id.tracking == 'serial':
+            //     self._set_qty_producing(False)
+            // if self.picking_type_id.auto_print_generated_mrp_lot:
+            //     return self._autoprint_generated_lot(self.lot_producing_id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_invoice_download_pdf(self):
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
+            //     'target': 'download',
+            // }
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionInvoiceReadyToBeSentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -156,6 +631,515 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Hook allowing custom code when an invoice becomes ready to be sent by mail to the customer.
             // For example, when an EDI document must be sent to the government and be signed by it.
             // """
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_invoice_sent(self):
+            // """ Open a window to compose an email, with the edi invoice template
+            //     message loaded by default
+            // """
+            // self.ensure_one()
+            // 
+            // report_action = self.action_send_and_print()
+            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
+            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
+            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+            // 
+            // return report_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_lock(self):
+            // self.locked = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMassProduceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_mass_produce(self):
+            // self.ensure_one()
+            // self._check_company()
+            // if self.state not in ['draft', 'confirmed', 'progress', 'to_close'] or\
+            //         self._auto_production_checks():
+            //     return
+            // 
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_mrp_batch_produce")
+            // action['context'] = {
+            //     'default_production_id': self.id,
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMergeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_merge(self):
+            // self._pre_action_split_merge_hook(merge=True)
+            // products = set([(production.product_id, production.bom_id) for production in self])
+            // product_id, bom_id = products.pop()
+            // users = set([production.user_id for production in self])
+            // if len(users) == 1:
+            //     user_id = users.pop()
+            // else:
+            //     user_id = self.env.user
+            // 
+            // origs = self._prepare_merge_orig_links()
+            // dests = {}
+            // for move in self.move_finished_ids:
+            //     dests.setdefault(move.byproduct_id.id, []).extend(move.move_dest_ids.ids)
+            // 
+            // production = self.env['mrp.production'].with_context(default_picking_type_id=self.picking_type_id.id).create({
+            //     'product_id': product_id.id,
+            //     'bom_id': bom_id.id,
+            //     'picking_type_id': self.picking_type_id.id,
+            //     'product_qty': sum(production.product_uom_qty for production in self),
+            //     'product_uom_id': product_id.uom_id.id,
+            //     'user_id': user_id.id,
+            //     'origin': ",".join(sorted([production.name for production in self])),
+            // })
+            // 
+            // for move in production.move_raw_ids:
+            //     for field, vals in origs[move.bom_line_id.id].items():
+            //         move[field] = vals
+            // 
+            // for move in production.move_finished_ids:
+            //     move.move_dest_ids = [Command.set(dests[move.byproduct_id.id])]
+            // 
+            // self.move_dest_ids.created_production_id = production.id
+            // 
+            // self.procurement_group_id.stock_move_ids.group_id = production.procurement_group_id
+            // 
+            // if 'confirmed' in self.mapped('state'):
+            //     production.move_raw_ids._adjust_procure_method()
+            //     (production.move_raw_ids | production.move_finished_ids).write({'state': 'confirmed'})
+            //     production.action_confirm()
+            // 
+            // self.with_context(skip_activity=True)._action_cancel()
+            // # set the new deadline of origin moves (stock to pre prod)
+            // production.move_raw_ids.move_orig_ids.with_context(date_deadline_propagate_ids=set(production.move_raw_ids.ids)).write({'date_deadline': production.date_start})
+            // for p in self:
+            //     p._message_log(body=_('This production has been merge in %s', production.display_name))
+            // 
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'mrp.production',
+            //     'view_mode': 'form',
+            //     'res_id': production.id,
+            // }
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_merge(self):
+            // all_origin = []
+            // all_vendor_references = []
+            // rfq_to_merge = self.filtered(lambda r: r.state in ['draft', 'sent'])
+            // 
+            // # Group RFQs by vendor
+            // if len(rfq_to_merge) < 2:
+            //     raise UserError(_("Please select at least two purchase orders with state RFQ and RFQ sent to merge."))
+            // 
+            // rfqs_grouped = defaultdict(lambda: self.env['purchase.order'])
+            // for rfq in rfq_to_merge:
+            //     key = self._prepare_grouped_data(rfq)
+            //     rfqs_grouped[key] += rfq
+            // 
+            // bunches_of_rfq_to_be_merge = list(rfqs_grouped.values())
+            // if all(len(rfq_bunch) == 1 for rfq_bunch in list(bunches_of_rfq_to_be_merge)):
+            //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
+            // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
+            // 
+            // for rfqs in bunches_of_rfq_to_be_merge:
+            //     if len(rfqs) <= 1:
+            //         continue
+            //     oldest_rfq = min(rfqs, key=lambda r: r.date_order)
+            //     if oldest_rfq:
+            //         # Merge RFQs into the oldest purchase order
+            //         rfqs -= oldest_rfq
+            //         for rfq_line in rfqs.order_line:
+            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
+            //                                                                         l.product_id == rfq_line.product_id and
+            //                                                                         l.product_uom == rfq_line.product_uom and
+            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
+            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
+            //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
+            //                                                                         l.discount == rfq_line.discount and
+            //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
+            //                                                                 )
+            //             if len(existing_line) > 1:
+            //                 existing_line[0].product_qty += sum(existing_line[1:].mapped('product_qty'))
+            //                 existing_line[1:].unlink()
+            //                 existing_line = existing_line[0]
+            // 
+            //             if existing_line:
+            //                 existing_line._merge_po_line(rfq_line)
+            //             else:
+            //                 rfq_line.order_id = oldest_rfq
+            // 
+            //         # Merge source documents and vendor references
+            //         all_origin = rfqs.mapped('origin')
+            //         all_vendor_references = rfqs.mapped('partner_ref')
+            // 
+            //         oldest_rfq.origin = ', '.join(filter(None, [oldest_rfq.origin, *all_origin]))
+            //         oldest_rfq.partner_ref = ', '.join(filter(None, [oldest_rfq.partner_ref, *all_vendor_references]))
+            // 
+            //         rfq_names = rfqs.mapped('name')
+            //         merged_names = ", ".join(rfq_names)
+            //         oldest_rfq_message = _("RFQ merged with %(oldest_rfq_name)s and %(cancelled_rfq)s", oldest_rfq_name=oldest_rfq.name, cancelled_rfq=merged_names)
+            // 
+            //         for rfq in rfqs:
+            //             cancelled_rfq_message = _("RFQ merged with %s", oldest_rfq._get_html_link())
+            //             rfq.message_post(body=cancelled_rfq_message)
+            //         oldest_rfq.message_post(body=oldest_rfq_message)
+            // 
+            //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
+            //         oldest_rfq._merge_alternative_po(rfqs)
+            // 
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'success',
+            //         'message': _('purchase orders merged'),
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // if self.origin_payment_id:
+            //     name = _("Payment")
+            //     res_model = 'account.payment'
+            //     res_id = self.origin_payment_id.id
+            // elif self.statement_line_id:
+            //     name = _("Bank Transaction")
+            //     res_model = 'account.bank.statement.line'
+            //     res_id = self.statement_line_id.id
+            // else:
+            //     name = _("Journal Entry")
+            //     res_model = 'account.move'
+            //     res_id = self.id
+            // 
+            // return {
+            //     'name': name,
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'views': [(False, 'form')],
+            //     'res_model': res_model,
+            //     'res_id': res_id,
+            //     'target': 'current',
+            // }
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Order"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order',
+            //     'res_id': self.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_discount_wizard(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Discount"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order.discount',
+            //     'view_mode': 'form',
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenLabelLayoutAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_open_label_layout(self):
+            // view = self.env.ref('stock.product_label_layout_form_picking')
+            // return {
+            //     'name': _('Choose Labels Layout'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'product.label.layout',
+            //     'views': [(view.id, 'form')],
+            //     'target': 'new',
+            //     'context': {
+            //         'default_product_ids': self.move_finished_ids.product_id.ids,
+            //         'default_move_ids': self.move_finished_ids.ids,
+            //         'default_move_quantity': 'move'},
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenLabelTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_open_label_type(self):
+            // move_line_ids = self.move_finished_ids.mapped('move_line_ids')
+            // if self.env.user.has_group('stock.group_production_lot') and move_line_ids.lot_id:
+            //     view = self.env.ref('stock.picking_label_type_form')
+            //     return {
+            //         'name': _('Choose Type of Labels To Print'),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'picking.label.type',
+            //         'views': [(view.id, 'form')],
+            //         'target': 'new',
+            //         'context': {'default_production_ids': self.ids},
+            //     }
+            // return self.action_open_label_layout()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPlanWithComponentsAvailabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_plan_with_components_availability(self):
+            // for production in self.filtered(lambda p: p.state in ('draft', 'confirmed')):
+            //     if production.state == 'draft':
+            //         production.action_confirm()
+            //     move_expected_date = production.move_raw_ids.filtered('forecast_expected_date').mapped('forecast_expected_date')
+            //     expected_date = max(move_expected_date, default=False)
+            //     if expected_date and production.components_availability_state != 'unavailable':
+            //         production.date_start = expected_date
+            // self.filtered(lambda p: p.state == 'confirmed').button_plan()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_post(self):
+            // # Disabled by default to avoid breaking automated action flow
+            // if (
+            //     not self.env.context.get('disable_abnormal_invoice_detection', True)
+            //     and self.filtered(lambda m: m.abnormal_amount_warning or m.abnormal_date_warning)
+            // ):
+            //     wizard = self.env['validate.account.move'].create({
+            //         'move_ids': [Command.set(self.ids)],
+            //     })
+            //     return {
+            //         'name': _("Confirm Entries"),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'validate.account.move',
+            //         'res_id': wizard.id,
+            //         'view_mode': 'form',
+            //         'target': 'new',
+            //     }
+            // if self:
+            //     self._post(soft=False)
+            // if autopost_bills_wizard := self._show_autopost_bills_wizard():
+            //     return autopost_bills_wizard
+            // return False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_preview_sale_order(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'target': 'self',
+            //     'url': self.get_portal_url(),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_print_pdf(self):
+            // self.ensure_one()
+            // return self.env.ref('account.account_invoices').report_action(self.id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProductForecastReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_product_forecast_report(self):
+            // self.ensure_one()
+            // action = self.product_id.action_product_forecast_report()
+            // action['context'] = {
+            //     'active_id': self.product_id.id,
+            //     'active_model': 'product.product',
+            //     'move_to_match_ids': self.move_finished_ids.filtered(lambda m: m.product_id == self.product_id).ids
+            // }
+            // warehouse = self.picking_type_id.warehouse_id
+            // if warehouse:
+            //     action['context']['warehouse_id'] = warehouse.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_send(self):
+            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
+            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
+            // lang = self.env.context.get('lang')
+            // 
+            // ctx = {
+            //     'default_model': 'sale.order',
+            //     'default_res_ids': self.ids,
+            //     'default_composition_mode': 'comment',
+            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
+            //     'email_notification_allow_footer': True,
+            //     'proforma': self.env.context.get('proforma', False),
+            // }
+            // 
+            // if len(self) > 1:
+            //     ctx['default_composition_mode'] = 'mass_mail'
+            // else:
+            //     ctx.update({
+            //         'force_email': True,
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     })
+            //     if not self.env.context.get('hide_default_template'):
+            //         mail_template = self._find_mail_template()
+            //         if mail_template:
+            //             ctx.update({
+            //                 'default_template_id': mail_template.id,
+            //                 'mark_so_as_sent': True,
+            //             })
+            //         if mail_template and mail_template.lang:
+            //             lang = mail_template._render_lang(self.ids)[self.id]
+            //     else:
+            //         for order in self:
+            //             order._portal_ensure_token()
+            // 
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'views': [(False, 'form')],
+            //     'view_id': False,
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            // if (
+            //     self.env.context.get('check_document_layout')
+            //     and not self.env.context.get('discard_logo_check')
+            //     and self.env.is_admin()
+            //     and not self.env.company.external_report_layout_id
+            // ):
+            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+            //         action,
+            //     )
+            //     # Need to remove this context for windows action
+            //     action.pop('close_on_report_download', None)
+            //     layout_action['context']['dialog_size'] = 'extra-large'
+            //     return layout_action
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_sent(self):
+            // """ Mark the given draft quotation(s) as sent.
+            // 
+            // :raise: UserError if any given SO is not in draft state.
+            // """
+            // if any(order.state != 'draft' for order in self):
+            //     raise UserError(_("Only draft orders can be marked as sent directly."))
+            // 
+            // for order in self:
+            //     order.message_subscribe(partner_ids=order.partner_id.ids)
+            // 
+            // self.write({'state': 'sent'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_register_payment(self):
+            // if any(m.state != 'posted' for m in self):
+            //     raise UserError(_("You can only register payment for posted journal entries."))
+            // return self.action_force_register_payment()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRepairCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_repair_cancel(self):
+            // if any(repair.state == 'done' for repair in self):
+            //     raise UserError(_("You cannot cancel a Repair Order that's already been completed"))
+            // for repair in self:
+            //     if repair.sale_order_id:
+            //         repair.sale_order_line_id.write({'product_uom_qty': 0.0})  # Quantity of the product that generated the RO is set to 0
+            // self.move_ids._action_cancel()  # Quantity of parts added from the RO to the SO is set to 0
+            // return self.write({'state': 'cancel'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRepairCancelDraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_repair_cancel_draft(self):
+            // if self.filtered(lambda repair: repair.state != 'cancel'):
+            //     self.action_repair_cancel()
+            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and float_is_zero(l.product_uom_qty, precision_rounding=l.product_uom.rounding))
+            // sale_line_to_update.move_ids._update_repair_sale_order_line()
+            // self.move_ids.state = 'draft'
+            // self.state = 'draft'
+            // return True
             */
             return default;
         }
@@ -181,12 +1165,663 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> ActionRepairDoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_repair_done(self):
+            // """ Creates stock move for final product of repair order.
+            // Writes move_id and move_ids state to 'done'.
+            // Writes repair order state to 'Repaired'.
+            // @return: True
+            // """
+            // 
+            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // product_move_vals = []
+            // 
+            // # Cancel moves with 0 quantity
+            // self.move_ids.filtered(lambda m: float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding))._action_cancel()
+            // 
+            // no_service_policy = 'service_policy' not in self.env['product.template']
+            // #SOL qty delivered = repair.move_ids.quantity
+            // for repair in self:
+            //     if all(not move.picked for move in repair.move_ids):
+            //         repair.move_ids.picked = True
+            //     if repair.sale_order_line_id:
+            //         ro_origin_product = repair.sale_order_line_id.product_template_id
+            //         # TODO: As 'service_policy' only appears with 'sale_project' module, isolate conditions related to this field in a 'sale_project_repair' module if it's worth
+            //         if ro_origin_product.type == 'service' and (no_service_policy or ro_origin_product.service_policy == 'ordered_prepaid'):
+            //             repair.sale_order_line_id.qty_delivered = repair.sale_order_line_id.product_uom_qty
+            //     if not repair.product_id:
+            //         continue
+            // 
+            //     if repair.product_id.product_tmpl_id.tracking != 'none' and not repair.lot_id:
+            //         raise ValidationError(_(
+            //             "Serial number is required for product to repair : %s",
+            //             repair.product_id.display_name
+            //         ))
+            // 
+            //     # Try to create move with the appropriate owner
+            //     owner_id = False
+            //     available_qty_owner = self.env['stock.quant']._get_available_quantity(repair.product_id, repair.location_id, repair.lot_id, owner_id=repair.partner_id, strict=True)
+            //     if float_compare(available_qty_owner, repair.product_qty, precision_digits=precision) >= 0:
+            //         owner_id = repair.partner_id.id
+            // 
+            //     product_move_vals.append({
+            //         'name': repair.name,
+            //         'product_id': repair.product_id.id,
+            //         'product_uom': repair.product_uom.id or repair.product_id.uom_id.id,
+            //         'product_uom_qty': repair.product_qty,
+            //         'partner_id': repair.partner_id.id,
+            //         'location_id': repair.product_location_src_id.id,
+            //         'location_dest_id': repair.product_location_dest_id.id,
+            //         'picked': True,
+            //         'picking_id': False,
+            //         'move_line_ids': [(0, 0, {
+            //             'product_id': repair.product_id.id,
+            //             'lot_id': repair.lot_id.id,
+            //             'product_uom_id': repair.product_uom.id or repair.product_id.uom_id.id,
+            //             'quantity': repair.product_qty,
+            //             'package_id': False,
+            //             'result_package_id': False,
+            //             'owner_id': owner_id,
+            //             'location_id': repair.product_location_src_id.id,
+            //             'company_id': repair.company_id.id,
+            //             'location_dest_id': repair.product_location_dest_id.id,
+            //             'consume_line_ids': [(6, 0, repair.move_ids.move_line_ids.ids)]
+            //         })],
+            //         'repair_id': repair.id,
+            //         'origin': repair.name,
+            //         'company_id': repair.company_id.id,
+            //     })
+            // 
+            // product_moves = self.env['stock.move'].create(product_move_vals)
+            // repair_move = {m.repair_id.id: m for m in product_moves}
+            // for repair in self:
+            //     move_id = repair_move.get(repair.id, False)
+            //     if move_id:
+            //         repair.move_id = move_id
+            // all_moves = self.move_ids + product_moves
+            // all_moves._action_done(cancel_backorder=True)
+            // 
+            // for sale_line in self.move_ids.sale_line_id:
+            //     price_unit = sale_line.price_unit
+            //     sale_line.write({'product_uom_qty': sale_line.qty_delivered, 'price_unit': price_unit})
+            // 
+            // self.state = 'done'
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRepairEndAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_repair_end(self):
+            // """ Checks before action_repair_done.
+            // @return: True
+            // """
+            // if self.filtered(lambda repair: repair.state != 'under_repair'):
+            //     raise UserError(_("Repair must be under repair in order to end reparation."))
+            // partial_moves = set()
+            // picked_moves = set()
+            // for move in self.move_ids:
+            //     if float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0:
+            //         partial_moves.add(move.id)
+            //     if move.picked:
+            //         picked_moves.add(move.id)
+            // return self.action_repair_done()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRepairStartAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_repair_start(self):
+            // """ Writes repair order state to 'Under Repair'
+            // """
+            // if self.filtered(lambda repair: repair.state != 'confirmed'):
+            //     self._action_repair_confirm()
+            // return self.write({'state': 'under_repair'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_activate_currency(self):
-            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            // def action_reverse(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
+            // 
+            // if self.is_invoice():
+            //     action['name'] = _('Credit Note')
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRfqSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_rfq_send(self):
+            // '''
+            // This function opens a window to compose an email, with the edi purchase template message loaded by default
+            // '''
+            // self.ensure_one()
+            // ir_model_data = self.env['ir.model.data']
+            // try:
+            //     if self.env.context.get('send_rfq', False):
+            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
+            //     else:
+            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase_done')[1]
+            // except ValueError:
+            //     template_id = False
+            // try:
+            //     compose_form_id = ir_model_data._xmlid_lookup('mail.email_compose_message_wizard_form')[1]
+            // except ValueError:
+            //     compose_form_id = False
+            // ctx = dict(self.env.context or {})
+            // ctx.update({
+            //     'default_model': 'purchase.order',
+            //     'default_res_ids': self.ids,
+            //     'default_template_id': template_id,
+            //     'default_composition_mode': 'comment',
+            //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            //     'email_notification_allow_footer': True,
+            //     'force_email': True,
+            //     'mark_rfq_as_sent': True,
+            // })
+            // 
+            // # In the case of a RFQ or a PO, we want the "View..." button in line with the state of the
+            // # object. Therefore, we pass the model description in the context, in the language in which
+            // # the template is rendered.
+            // lang = self.env.context.get('lang')
+            // if {'default_template_id', 'default_model', 'default_res_id'} <= ctx.keys():
+            //     template = self.env['mail.template'].browse(ctx['default_template_id'])
+            //     if template and template.lang:
+            //         lang = template._render_lang([ctx['default_res_id']])[ctx['default_res_id']]
+            // 
+            // self = self.with_context(lang=lang)
+            // if self.state in ['draft', 'sent']:
+            //     ctx['model_description'] = _('Request for Quotation')
+            // else:
+            //     ctx['model_description'] = _('Purchase Order')
+            // 
+            // return {
+            //     'name': _('Compose Email'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'views': [(compose_form_id, 'form')],
+            //     'view_id': compose_form_id,
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSeeMoveScrapAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_see_move_scrap(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_stock_scrap")
+            // action['domain'] = [('production_id', '=', self.id)]
+            // action['context'] = dict(self._context, default_origin=self.name)
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_send_and_print(self):
+            // self.env['account.move.send']._check_move_constrains(self)
+            // return {
+            //     'name': _("Print & Send"),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
+            //     'target': 'new',
+            //     'context': {
+            //         'active_model': 'account.move',
+            //         'active_ids': self.ids,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSplitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_split(self):
+            // self._pre_action_split_merge_hook(split=True)
+            // if len(self) > 1:
+            //     productions = [Command.create({'production_id': production.id}) for production in self]
+            //     # Wizard need a real id to have buttons enable in the view
+            //     wizard = self.env['mrp.production.split.multi'].create({'production_ids': productions})
+            //     action = self.env['ir.actions.actions']._for_xml_id('mrp.action_mrp_production_split_multi')
+            //     action['res_id'] = wizard.id
+            //     return action
+            // else:
+            //     action = self.env['ir.actions.actions']._for_xml_id('mrp.action_mrp_production_split')
+            //     action['context'] = {
+            //         'default_production_id': self.id,
+            //     }
+            //     return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionStartAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_start(self):
+            // self.ensure_one()
+            // if self.state == "confirmed":
+            //     self.state = "progress"
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_switch_move_type(self):
+            // if any(move.posted_before for move in self):
+            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
+            // if any(move.move_type == "entry" for move in self):
+            //     raise ValidationError(_("This action isn't available for this document."))
+            // 
+            // for move in self:
+            //     in_out, old_move_type = move.move_type.split('_')
+            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
+            //     move.name = False
+            //     move.write({
+            //         'move_type': new_move_type,
+            //         'currency_id': move.currency_id.id,
+            //         'fiscal_position_id': move.fiscal_position_id.id,
+            //     })
+            //     if move.amount_total < 0:
+            //         move.write({
+            //             'line_ids': [
+            //                 Command.update(line.id, {'quantity': -line.quantity})
+            //                 for line in move.line_ids
+            //                 if line.display_type == 'product'
+            //             ]
+            //         })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_toggle_block_payment(self):
+            // self.ensure_one()
+            // if self.payment_state == 'blocked':
+            //     self.payment_state = 'not_paid'
+            //     self.env.add_to_compute(self._fields['payment_state'], self)
+            // else:
+            //     if self.payment_state in ('paid', 'in_payment'):
+            //         raise UserError(_("You can't block a paid invoice."))
+            //     self.payment_state = 'blocked'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionToggleIsLockedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_toggle_is_locked(self):
+            // self.ensure_one()
+            // self.is_locked = not self.is_locked
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_unlock(self):
+            // self.locked = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnreserveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_unreserve(self):
+            // return self.move_ids.filtered(lambda m: m.state in ('assigned', 'partially_available'))._do_unreserve()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateBomAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_update_bom(self):
+            // for production in self:
+            //     if production.bom_id:
+            //         production._link_bom(production.bom_id)
+            // self.is_outdated_bom = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_update_fpos_values(self):
+            // self.invoice_line_ids._compute_price_unit()
+            // self.invoice_line_ids._compute_tax_ids()
+            // self.line_ids._compute_account_id()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_prices(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_prices()
+            // 
+            // if self.pricelist_id:
+            //     message = _("Product prices have been recomputed according to pricelist %s.",
+            //         self.pricelist_id._get_html_link())
+            // else:
+            //     message = _("Product prices have been recomputed.")
+            // self.message_post(body=message)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_taxes(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_taxes()
+            // 
+            // if self.partner_id:
+            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
+            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionValidateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_validate(self):
+            // self.ensure_one()
+            // if self.filtered(lambda repair: any(m.product_uom_qty < 0 for m in repair.move_ids)):
+            //     raise UserError(_("You can not enter negative quantities."))
+            // if not self.product_id or not self.product_id.is_storable:
+            //     return self._action_repair_confirm()
+            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
+            // available_qty_owner = sum(self.env['stock.quant'].search([
+            //     ('product_id', '=', self.product_id.id),
+            //     ('location_id', '=', self.product_location_src_id.id),
+            //     ('lot_id', '=', self.lot_id.id),
+            //     ('owner_id', '=', self.partner_id.id),
+            // ]).mapped('quantity'))
+            // available_qty_noown = sum(self.env['stock.quant'].search([
+            //     ('product_id', '=', self.product_id.id),
+            //     ('location_id', '=', self.product_location_src_id.id),
+            //     ('lot_id', '=', self.lot_id.id),
+            //     ('owner_id', '=', False),
+            // ]).mapped('quantity'))
+            // repair_qty = self.product_uom._compute_quantity(self.product_qty, self.product_id.uom_id)
+            // for available_qty in [available_qty_owner, available_qty_noown]:
+            //     if float_compare(available_qty, repair_qty, precision_digits=precision) >= 0:
+            //         return self._action_repair_confirm()
+            // 
+            // return {
+            //     'name': _('%(product)s: Insufficient Quantity To Repair', product=self.product_id.display_name),
+            //     'view_mode': 'form',
+            //     'res_model': 'stock.warn.insufficient.qty.repair',
+            //     'view_id': self.env.ref('repair.stock_warn_insufficient_qty_repair_form_view').id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': {
+            //         'default_product_id': self.product_id.id,
+            //         'default_location_id': self.product_location_src_id.id,
+            //         'default_repair_id': self.id,
+            //         'default_quantity': repair_qty,
+            //         'default_product_uom_name': self.product_id.uom_name
+            //     },
+            //     'target': 'new'
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
+            // def action_view_invoice(self, invoices=False):
+            // """This function returns an action that display existing vendor bills of
+            // given purchase order ids. When only one found, show the vendor bill
+            // immediately.
+            // """
+            // if not invoices:
+            //     self.invalidate_model(['invoice_ids'])
+            //     invoices = self.invoice_ids
+            // 
+            // result = self.env['ir.actions.act_window']._for_xml_id('account.action_move_in_invoice_type')
+            // # choose the view_mode accordingly
+            // if len(invoices) > 1:
+            //     result['domain'] = [('id', 'in', invoices.ids)]
+            // elif len(invoices) == 1:
+            //     res = self.env.ref('account.view_move_form', False)
+            //     form_view = [(res and res.id or False, 'form')]
+            //     if 'views' in result:
+            //         result['views'] = form_view + [(state, view) for state, view in result['views'] if view != 'form']
+            //     else:
+            //         result['views'] = form_view
+            //     result['res_id'] = invoices.id
+            // else:
+            //     result = {'type': 'ir.actions.act_window_close'}
+            // 
+            // return result
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_view_invoice(self, invoices=False):
+            // if not invoices:
+            //     invoices = self.mapped('invoice_ids')
+            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
+            // if len(invoices) > 1:
+            //     action['domain'] = [('id', 'in', invoices.ids)]
+            // elif len(invoices) == 1:
+            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+            //     if 'views' in action:
+            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            //     else:
+            //         action['views'] = form_view
+            //     action['res_id'] = invoices.id
+            // else:
+            //     action = {'type': 'ir.actions.act_window_close'}
+            // 
+            // context = {
+            //     'default_move_type': 'out_invoice',
+            // }
+            // if len(self) == 1:
+            //     context.update({
+            //         'default_partner_id': self.partner_id.id,
+            //         'default_partner_shipping_id': self.partner_shipping_id.id,
+            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
+            //         'default_invoice_origin': self.name,
+            //     })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMoDeliveryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_mo_delivery(self):
+            // """ Returns an action that display picking related to manufacturing order.
+            // It can either be a list view or in a form view (if there is only one picking to show).
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_picking_tree_all")
+            // if len(self.picking_ids) > 1:
+            //     action['domain'] = [('id', 'in', self.picking_ids.ids)]
+            // elif self.picking_ids:
+            //     action['res_id'] = self.picking_ids.id
+            //     picking_form = self.env.ref('stock.view_picking_form', False)
+            //     picking_form_view = [(picking_form and picking_form.id or False, 'form')]
+            //     action['views'] = picking_form_view + [(state, view) for state, view in action.get('views', []) if view != 'form']
+            // action['context'] = dict(self._context, default_origin=self.name)
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMrpProductionBackordersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_mrp_production_backorders(self):
+            // backorder_ids = self.procurement_group_id.mrp_production_ids.ids
+            // return {
+            //     'res_model': 'mrp.production',
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Backorder MO's"),
+            //     'domain': [('id', 'in', backorder_ids)],
+            //     'view_mode': 'list,form',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMrpProductionChildsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_mrp_production_childs(self):
+            // self.ensure_one()
+            // mrp_production_ids = self._get_children().ids
+            // action = {
+            //     'res_model': 'mrp.production',
+            //     'type': 'ir.actions.act_window',
+            // }
+            // if len(mrp_production_ids) == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'res_id': mrp_production_ids[0],
+            //     })
+            // else:
+            //     action.update({
+            //         'name': _("%s Child MO's", self.name),
+            //         'domain': [('id', 'in', mrp_production_ids)],
+            //         'view_mode': 'list,form',
+            //     })
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMrpProductionSourcesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_mrp_production_sources(self):
+            // self.ensure_one()
+            // mrp_production_ids = self._get_sources().ids
+            // action = {
+            //     'res_model': 'mrp.production',
+            //     'type': 'ir.actions.act_window',
+            // }
+            // if len(mrp_production_ids) == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'res_id': mrp_production_ids[0],
+            //     })
+            // else:
+            //     action.update({
+            //         'name': _("MO Generated by %s", self.name),
+            //         'domain': [('id', 'in', mrp_production_ids)],
+            //         'view_mode': 'list,form',
+            //     })
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMrpProductionUnbuildsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_mrp_production_unbuilds(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_unbuild")
+            // action['domain'] = [('mo_id', '=', self.id)]
+            // context = literal_eval(action['context'])
+            // context.update(self.env.context)
+            // context['default_mo_id'] = self.id
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewReceptionReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
+            // def action_view_reception_report(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_reception_action")
+            // # default_production_ids needs to be first default_ key so the "print" button correctly works
+            // action['context'] = dict({'default_production_ids': self.ids}, **self.env.context)
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
+            // def action_view_sale_order(self):
+            // return {
+            //     "type": "ir.actions.act_window",
+            //     "res_model": "sale.order",
+            //     "views": [[False, "form"]],
+            //     "res_id": self.sale_order_id.id,
+            // }
             */
             return default;
         }
@@ -231,45 +1866,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             special_type='early_payment',
             //         ))
             // return epd_lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'account.move':
-            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_catalog_mixin.py) ---
-            // def action_add_from_catalog(self):
-            // kanban_view_id = self.env.ref('product.product_view_kanban_catalog').id
-            // search_view_id = self.env.ref('product.product_view_search_catalog').id
-            // additional_context = self._get_action_add_from_catalog_extra_context()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Products'),
-            //     'res_model': 'product.product',
-            //     'views': [(kanban_view_id, 'kanban'), (False, 'form')],
-            //     'search_view_id': [search_view_id, 'search'],
-            //     'domain': self._get_product_catalog_domain(),
-            //     'context': {**self.env.context, **additional_context},
-            // }
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'purchase.order':
-            //     res['search_view_id'] = [self.env.ref('purchase.product_view_search_catalog').id, 'search']
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'repair.order':
-            //     res['search_view_id'] = [self.env.ref('repair.product_view_search_catalog').id, 'search']
-            // return res
             */
             return default;
         }
@@ -374,21 +1970,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             self.company_id.po_double_validation_amount, self.currency_id, self.company_id,
             //             self.date_order or fields.Date.today()))
             //     or self.env.user.has_group('purchase.group_purchase_manager'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AssignAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_assign(self):
-            // for production in self:
-            //     production.move_raw_ids._action_assign()
-            // return True
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_assign(self):
-            // return self.move_ids._action_assign()
             */
             return default;
         }
@@ -542,27 +2123,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     action = self.env.ref("stock.label_lot_template").report_action(lot_id.id, config=False)
             //     clean_action(action, self.env)
             //     return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> BillMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_bill_matching(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("Bill Matching"),
-            //     'res_model': 'purchase.bill.line.match',
-            //     'domain': [
-            //         ('partner_id', '=', self.partner_id.id),
-            //         ('company_id', 'in', self.env.company.ids),
-            //         ('purchase_order_id', 'in', [self.id, False]),
-            //     ],
-            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
-            // }
             */
             return default;
         }
@@ -1146,57 +2706,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if message:
             //         return {'warning': {'title': _('Warning'), 'message': message}}
             // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_cancel(self):
-            // """ Cancels production order, unfinished stock moves and set procurement
-            // orders in exception """
-            // self._action_cancel()
-            // return True
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_cancel(self):
-            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
-            // 
-            // For post-cancel operations, please only override :meth:`_action_cancel`.
-            // 
-            // note: self.ensure_one() if the wizard is shown.
-            // """
-            // if any(order.locked for order in self):
-            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // cancel_warning = self._show_cancel_wizard()
-            // if cancel_warning:
-            //     self.ensure_one()
-            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
-            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
-            //     )
-            //     lang = self.env.context.get('lang')
-            //     template = self.env['mail.template'].browse(template_id)
-            //     if template.lang:
-            //         lang = template._render_lang(self.ids)[self.id]
-            //     ctx = {
-            //         'default_template_id': template_id,
-            //         'default_order_id': self.id,
-            //         'mark_so_as_canceled': True,
-            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     }
-            //     return {
-            //         'name': _('Cancel %s', self.type_name),
-            //         'view_mode': 'form',
-            //         'res_model': 'sale.order.cancel',
-            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
-            //         'type': 'ir.actions.act_window',
-            //         'context': ctx,
-            //         'target': 'new'
-            //     }
-            // else:
-            //     return self._action_cancel()
             */
             return default;
         }
@@ -2078,29 +3587,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.bank_partner_id = move.company_id.partner_id
             //     else:
             //         move.bank_partner_id = move.commercial_partner_id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeBomDaysAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---
-            // def action_compute_bom_days(self):
-            // company_id = self.env.context.get('default_company_id', self.env.company.id)
-            // warehouse = self.env['stock.warehouse'].search([('company_id', '=', company_id)], limit=1)
-            // for bom in self:
-            //     bom_data = self.env['report.mrp.report_bom_structure'].with_context(minimized=True)._get_bom_data(bom, warehouse, bom.product_id, ignore_stock=True)
-            //     bom.days_to_prepare_mo = self.env['report.mrp.report_bom_structure']._get_max_component_delay(bom_data['components'])
-            //     if bom_data.get('availability_state') == 'unavailable' and not bom_data.get('components_available', True):
-            //         return {
-            //             'type': 'ir.actions.client',
-            //             'tag': 'display_notification',
-            //             'params': {
-            //                 'title': _('Cannot compute days to prepare due to missing route info for at least 1 component or for the final product.'),
-            //                 'sticky': False,
-            //             }
-            //         }
             */
             return default;
         }
@@ -4663,96 +6149,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_confirm(self):
-            // self._check_company()
-            // moves_ids_to_confirm = set()
-            // move_raws_ids_to_adjust = set()
-            // workorder_ids_to_confirm = set()
-            // for production in self:
-            //     production_vals = {}
-            //     if production.bom_id:
-            //         production_vals.update({'consumption': production.bom_id.consumption})
-            //     # In case of Serial number tracking, force the UoM to the UoM of product
-            //     if production.product_tracking == 'serial' and production.product_uom_id != production.product_id.uom_id:
-            //         production_vals.update({
-            //             'product_qty': production.product_uom_id._compute_quantity(production.product_qty, production.product_id.uom_id),
-            //             'product_uom_id': production.product_id.uom_id
-            //         })
-            //         for move_finish in production.move_finished_ids.filtered(lambda m: m.product_id == production.product_id):
-            //             move_finish.write({
-            //                 'product_uom_qty': move_finish.product_uom._compute_quantity(move_finish.product_uom_qty, move_finish.product_id.uom_id),
-            //                 'product_uom': move_finish.product_id.uom_id
-            //             })
-            //     if production_vals:
-            //         production.write(production_vals)
-            //     move_raws_ids_to_adjust.update(production.move_raw_ids.ids)
-            //     moves_ids_to_confirm.update((production.move_raw_ids | production.move_finished_ids).ids)
-            //     workorder_ids_to_confirm.update(production.workorder_ids.ids)
-            // 
-            // move_raws_to_adjust = self.env['stock.move'].browse(sorted(move_raws_ids_to_adjust))
-            // moves_to_confirm = self.env['stock.move'].browse(sorted(moves_ids_to_confirm))
-            // workorder_to_confirm = self.env['mrp.workorder'].browse(sorted(workorder_ids_to_confirm))
-            // 
-            // move_raws_to_adjust._adjust_procure_method()
-            // moves_to_confirm._action_confirm(merge=False)
-            // workorder_to_confirm._action_confirm()
-            // # run scheduler for moves forecasted to not have enough in stock
-            // ignored_mo_ids = self.env.context.get('ignore_mo_ids', [])
-            // self.move_raw_ids.with_context(ignore_mo_ids=ignored_mo_ids + self.ids)._trigger_scheduler()
-            // self.picking_ids.filtered(
-            //     lambda p: p.state not in ['cancel', 'done']).action_confirm()
-            // # Force confirm state only for draft production not for more advanced state like
-            // # 'progress' (in case of backorders with some qty_producing)
-            // self.filtered(lambda mo: mo.state == 'draft').state = 'confirmed'
-            // return True
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_confirm(self):
-            // """ Confirm the given quotation(s) and set their confirmation date.
-            // 
-            // If the corresponding setting is enabled, also locks the Sale Order.
-            // 
-            // :return: True
-            // :rtype: bool
-            // :raise: UserError if trying to confirm cancelled SO's
-            // """
-            // for order in self:
-            //     error_msg = order._confirmation_error_message()
-            //     if error_msg:
-            //         raise UserError(error_msg)
-            // 
-            // self.order_line._validate_analytic_distribution()
-            // 
-            // for order in self:
-            //     if order.partner_id in order.message_partner_ids:
-            //         continue
-            //     order.message_subscribe([order.partner_id.id])
-            // 
-            // self.write(self._prepare_confirmation_values())
-            // 
-            // # Context key 'default_name' is sometimes propagated up to here.
-            // # We don't need it and it creates issues in the creation of linked records.
-            // context = self._context.copy()
-            // context.pop('default_name', None)
-            // context.pop('default_user_id', None)
-            // 
-            // self.with_context(context)._action_confirm()
-            // user = self[:1].create_uid
-            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
-            //     # Public user can confirm SO, so we check the group on any record creator.
-            //     self.action_lock()
-            // 
-            // if self.env.context.get('send_email'):
-            //     self._send_order_confirmation_mail()
-            // 
-            // return True
-            */
-            return default;
-        }
-
         public async Task<TEntity> ConfirmReceptionMailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -5115,86 +6511,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_create_invoice(self):
-            // """Create the invoice associated to the PO.
-            // """
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            // 
-            // # 1) Prepare invoice vals and clean-up the section lines
-            // invoice_vals_list = []
-            // sequence = 10
-            // for order in self:
-            //     if order.invoice_status != 'to invoice':
-            //         continue
-            // 
-            //     order = order.with_company(order.company_id)
-            //     pending_section = None
-            //     # Invoice values.
-            //     invoice_vals = order._prepare_invoice()
-            //     # Invoice line values (keep only necessary sections).
-            //     for line in order.order_line:
-            //         if line.display_type == 'line_section':
-            //             pending_section = line
-            //             continue
-            //         if not float_is_zero(line.qty_to_invoice, precision_digits=precision):
-            //             if pending_section:
-            //                 line_vals = pending_section._prepare_account_move_line()
-            //                 line_vals.update({'sequence': sequence})
-            //                 invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //                 sequence += 1
-            //                 pending_section = None
-            //             line_vals = line._prepare_account_move_line()
-            //             line_vals.update({'sequence': sequence})
-            //             invoice_vals['invoice_line_ids'].append((0, 0, line_vals))
-            //             sequence += 1
-            //     invoice_vals_list.append(invoice_vals)
-            // 
-            // if not invoice_vals_list:
-            //     raise UserError(_('There is no invoiceable line. If a product has a control policy based on received quantity, please make sure that a quantity has been received.'))
-            // 
-            // # 2) group by (company_id, partner_id, currency_id) for batch creation
-            // new_invoice_vals_list = []
-            // for grouping_keys, invoices in groupby(invoice_vals_list, key=lambda x: (x.get('company_id'), x.get('partner_id'), x.get('currency_id'))):
-            //     origins = set()
-            //     payment_refs = set()
-            //     refs = set()
-            //     ref_invoice_vals = None
-            //     for invoice_vals in invoices:
-            //         if not ref_invoice_vals:
-            //             ref_invoice_vals = invoice_vals
-            //         else:
-            //             ref_invoice_vals['invoice_line_ids'] += invoice_vals['invoice_line_ids']
-            //         origins.add(invoice_vals['invoice_origin'])
-            //         payment_refs.add(invoice_vals['payment_reference'])
-            //         refs.add(invoice_vals['ref'])
-            //     ref_invoice_vals.update({
-            //         'ref': ', '.join(refs)[:2000],
-            //         'invoice_origin': ', '.join(origins),
-            //         'payment_reference': len(payment_refs) == 1 and payment_refs.pop() or False,
-            //     })
-            //     new_invoice_vals_list.append(ref_invoice_vals)
-            // invoice_vals_list = new_invoice_vals_list
-            // 
-            // # 3) Create invoices.
-            // moves = self.env['account.move']
-            // AccountMove = self.env['account.move'].with_context(default_move_type='in_invoice')
-            // for vals in invoice_vals_list:
-            //     moves |= AccountMove.with_company(vals['company_id']).create(vals)
-            // 
-            // # 4) Some moves might actually be refunds: convert them if the total amount is negative
-            // # We do this after the moves have been created since we need taxes, etc. to know if the total
-            // # is actually negative or not
-            // moves.filtered(lambda m: m.currency_id.round(m.amount_total) < 0).action_switch_move_type()
-            // 
-            // return self.action_view_invoice(moves)
-            */
-            return default;
-        }
-
         public async Task<TEntity> CreateInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object grouped, object final, object date) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -5415,45 +6731,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     attachment.write({'res_model': self._name, 'res_id': order.id})
             // 
             // return orders
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_create_sale_order(self):
-            // if any(repair.sale_order_id for repair in self):
-            //     concerned_ro = self.filtered('sale_order_id')
-            //     ref_str = "\n".join(ro.name for ro in concerned_ro)
-            //     raise UserError(
-            //         _(
-            //             "You cannot create a quotation for a repair order that is already linked to an existing sale order.\nConcerned repair order(s):\n%(ref_str)s",
-            //             ref_str=ref_str,
-            //         ),
-            //     )
-            // if any(not repair.partner_id for repair in self):
-            //     concerned_ro = self.filtered(lambda ro: not ro.partner_id)
-            //     ref_str = "\n".join(ro.name for ro in concerned_ro)
-            //     raise UserError(
-            //         _(
-            //             "You need to define a customer for a repair order in order to create an associated quotation.\nConcerned repair order(s):\n%(ref_str)s",
-            //             ref_str=ref_str,
-            //         ),
-            //     )
-            // sale_order_values_list = []
-            // for repair in self:
-            //     sale_order_values_list.append({
-            //         "company_id": self.company_id.id,
-            //         "partner_id": self.partner_id.id,
-            //         "warehouse_id": self.picking_type_id.warehouse_id.id,
-            //         "repair_order_ids": [Command.link(repair.id)],
-            //     })
-            // self.env['sale.order'].create(sale_order_values_list)
-            // # Add Sale Order Lines for 'add' move_ids
-            // self.move_ids._create_repair_sale_order_line()
-            // return self.action_view_sale_order()
             */
             return default;
         }
@@ -5828,39 +7105,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
             // def do_unreserve(self):
             // (self.move_finished_ids | self.move_raw_ids).filtered(lambda x: x.state not in ('done', 'cancel'))._do_unreserve()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_draft(self):
-            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
-            // return orders.write({
-            //     'state': 'draft',
-            //     'signature': False,
-            //     'signed_by': False,
-            //     'signed_on': False,
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_duplicate(self):
-            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
-            // action['context'] = dict(self.env.context)
-            // action['context']['view_no_maturity'] = False
-            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
-            // action['res_id'] = self.copy().id
-            // return action
             */
             return default;
         }
@@ -6322,18 +7566,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_force_register_payment(self):
-            // if any(m.move_type == 'entry' for m in self):
-            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
-            // return self.line_ids.action_register_payment()
-            */
-            return default;
-        }
-
         public async Task<TEntity> GenerateAndSendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object force_synchronous, object allow_fallback_pdf) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -6363,37 +7595,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ).create({})
             //     wizard.action_send_and_print(force_synchronous=force_synchronous)
             // return wizard
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GenerateBomAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_generate_bom(self):
-            // """ Generates a new Bill of Material based on the Manufacturing Order's product, components,
-            // workorders and by-products, and assigns it to the MO. Returns a new BoM's form view action.
-            // """
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('mrp.mrp_bom_form_action')
-            // action['view_mode'] = 'form'
-            // action['views'] = [(False, 'form')]
-            // 
-            // bom_lines_vals, byproduct_vals, operations_vals = self._get_bom_values()
-            // action['context'] = {
-            //     'default_bom_line_ids': bom_lines_vals,
-            //     'default_byproduct_ids': byproduct_vals,
-            //     'default_code': _("New BoM from %(mo_name)s", mo_name=self.display_name),
-            //     'default_company_id': self.company_id.id,
-            //     'default_operation_ids': operations_vals,
-            //     'default_product_id': self.product_id.id,
-            //     'default_product_qty': self.product_qty,
-            //     'default_product_tmpl_id': self.product_id.product_tmpl_id.id,
-            //     'default_product_uom_id': self.product_uom_id.id,
-            //     'parent_production_id': self.id,  # Used to assign the new BoM to the current MO.
-            // }
-            // return action
             */
             return default;
         }
@@ -6468,21 +7669,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.qr_code_method = qr_code_method
             // 
             // return rslt
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GenerateSerialAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_generate_serial(self):
-            // self.ensure_one()
-            // self._set_lot_producing()
-            // if self.product_id.tracking == 'serial':
-            //     self._set_qty_producing(False)
-            // if self.picking_type_id.auto_print_generated_mrp_lot:
-            //     return self._autoprint_generated_lot(self.lot_producing_id)
             */
             return default;
         }
@@ -9931,46 +11117,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> InvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_download_pdf(self):
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
-            //     'target': 'download',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> InvoicePaidHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _invoice_paid_hook(self):
             // ''' Hook to be overrided called when the invoice moves to the paid state. '''
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_sent(self):
-            // """ Open a window to compose an email, with the edi invoice template
-            //     message loaded by default
-            // """
-            // self.ensure_one()
-            // 
-            // report_action = self.action_send_and_print()
-            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-            // 
-            // return report_action
             */
             return default;
         }
@@ -10501,16 +11653,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_lock(self):
-            // self.locked = True
-            */
-            return default;
-        }
-
         public async Task<TEntity> LogDownsideManufacturedQuantityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves_modification, object cancel) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -10581,168 +11723,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MassProduceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_mass_produce(self):
-            // self.ensure_one()
-            // self._check_company()
-            // if self.state not in ['draft', 'confirmed', 'progress', 'to_close'] or\
-            //         self._auto_production_checks():
-            //     return
-            // 
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_mrp_batch_produce")
-            // action['context'] = {
-            //     'default_production_id': self.id,
-            // }
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> MergeAlternativePoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object rfqs) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
             // def _merge_alternative_po(self, rfqs):
             // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MergeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_merge(self):
-            // self._pre_action_split_merge_hook(merge=True)
-            // products = set([(production.product_id, production.bom_id) for production in self])
-            // product_id, bom_id = products.pop()
-            // users = set([production.user_id for production in self])
-            // if len(users) == 1:
-            //     user_id = users.pop()
-            // else:
-            //     user_id = self.env.user
-            // 
-            // origs = self._prepare_merge_orig_links()
-            // dests = {}
-            // for move in self.move_finished_ids:
-            //     dests.setdefault(move.byproduct_id.id, []).extend(move.move_dest_ids.ids)
-            // 
-            // production = self.env['mrp.production'].with_context(default_picking_type_id=self.picking_type_id.id).create({
-            //     'product_id': product_id.id,
-            //     'bom_id': bom_id.id,
-            //     'picking_type_id': self.picking_type_id.id,
-            //     'product_qty': sum(production.product_uom_qty for production in self),
-            //     'product_uom_id': product_id.uom_id.id,
-            //     'user_id': user_id.id,
-            //     'origin': ",".join(sorted([production.name for production in self])),
-            // })
-            // 
-            // for move in production.move_raw_ids:
-            //     for field, vals in origs[move.bom_line_id.id].items():
-            //         move[field] = vals
-            // 
-            // for move in production.move_finished_ids:
-            //     move.move_dest_ids = [Command.set(dests[move.byproduct_id.id])]
-            // 
-            // self.move_dest_ids.created_production_id = production.id
-            // 
-            // self.procurement_group_id.stock_move_ids.group_id = production.procurement_group_id
-            // 
-            // if 'confirmed' in self.mapped('state'):
-            //     production.move_raw_ids._adjust_procure_method()
-            //     (production.move_raw_ids | production.move_finished_ids).write({'state': 'confirmed'})
-            //     production.action_confirm()
-            // 
-            // self.with_context(skip_activity=True)._action_cancel()
-            // # set the new deadline of origin moves (stock to pre prod)
-            // production.move_raw_ids.move_orig_ids.with_context(date_deadline_propagate_ids=set(production.move_raw_ids.ids)).write({'date_deadline': production.date_start})
-            // for p in self:
-            //     p._message_log(body=_('This production has been merge in %s', production.display_name))
-            // 
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'mrp.production',
-            //     'view_mode': 'form',
-            //     'res_id': production.id,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_merge(self):
-            // all_origin = []
-            // all_vendor_references = []
-            // rfq_to_merge = self.filtered(lambda r: r.state in ['draft', 'sent'])
-            // 
-            // # Group RFQs by vendor
-            // if len(rfq_to_merge) < 2:
-            //     raise UserError(_("Please select at least two purchase orders with state RFQ and RFQ sent to merge."))
-            // 
-            // rfqs_grouped = defaultdict(lambda: self.env['purchase.order'])
-            // for rfq in rfq_to_merge:
-            //     key = self._prepare_grouped_data(rfq)
-            //     rfqs_grouped[key] += rfq
-            // 
-            // bunches_of_rfq_to_be_merge = list(rfqs_grouped.values())
-            // if all(len(rfq_bunch) == 1 for rfq_bunch in list(bunches_of_rfq_to_be_merge)):
-            //     raise UserError(_("In selected purchase order to merge these details must be same\nVendor, currency, destination, dropship address and agreement"))
-            // bunches_of_rfq_to_be_merge = [rfqs for rfqs in bunches_of_rfq_to_be_merge if len(rfqs) > 1]
-            // 
-            // for rfqs in bunches_of_rfq_to_be_merge:
-            //     if len(rfqs) <= 1:
-            //         continue
-            //     oldest_rfq = min(rfqs, key=lambda r: r.date_order)
-            //     if oldest_rfq:
-            //         # Merge RFQs into the oldest purchase order
-            //         rfqs -= oldest_rfq
-            //         for rfq_line in rfqs.order_line:
-            //             existing_line = oldest_rfq.order_line.filtered(lambda l: l.display_type not in ['line_note', 'line_section'] and
-            //                                                                         l.product_id == rfq_line.product_id and
-            //                                                                         l.product_uom == rfq_line.product_uom and
-            //                                                                         l.product_packaging_id == rfq_line.product_packaging_id and
-            //                                                                         l.product_packaging_qty == rfq_line.product_packaging_qty and
-            //                                                                         l.analytic_distribution == rfq_line.analytic_distribution and
-            //                                                                         l.discount == rfq_line.discount and
-            //                                                                         abs(l.date_planned - rfq_line.date_planned).total_seconds() <= 86400  # 24 hours in seconds
-            //                                                                 )
-            //             if len(existing_line) > 1:
-            //                 existing_line[0].product_qty += sum(existing_line[1:].mapped('product_qty'))
-            //                 existing_line[1:].unlink()
-            //                 existing_line = existing_line[0]
-            // 
-            //             if existing_line:
-            //                 existing_line._merge_po_line(rfq_line)
-            //             else:
-            //                 rfq_line.order_id = oldest_rfq
-            // 
-            //         # Merge source documents and vendor references
-            //         all_origin = rfqs.mapped('origin')
-            //         all_vendor_references = rfqs.mapped('partner_ref')
-            // 
-            //         oldest_rfq.origin = ', '.join(filter(None, [oldest_rfq.origin, *all_origin]))
-            //         oldest_rfq.partner_ref = ', '.join(filter(None, [oldest_rfq.partner_ref, *all_vendor_references]))
-            // 
-            //         rfq_names = rfqs.mapped('name')
-            //         merged_names = ", ".join(rfq_names)
-            //         oldest_rfq_message = _("RFQ merged with %(oldest_rfq_name)s and %(cancelled_rfq)s", oldest_rfq_name=oldest_rfq.name, cancelled_rfq=merged_names)
-            // 
-            //         for rfq in rfqs:
-            //             cancelled_rfq_message = _("RFQ merged with %s", oldest_rfq._get_html_link())
-            //             rfq.message_post(body=cancelled_rfq_message)
-            //         oldest_rfq.message_post(body=oldest_rfq_message)
-            // 
-            //         rfqs.filtered(lambda r: r.state != 'cancel').button_cancel()
-            //         oldest_rfq._merge_alternative_po(rfqs)
-            // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'success',
-            //         'message': _('purchase orders merged'),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //     }
-            // }
             */
             return default;
         }
@@ -11809,48 +12795,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_open_business_doc(self):
-            // self.ensure_one()
-            // if self.origin_payment_id:
-            //     name = _("Payment")
-            //     res_model = 'account.payment'
-            //     res_id = self.origin_payment_id.id
-            // elif self.statement_line_id:
-            //     name = _("Bank Transaction")
-            //     res_model = 'account.bank.statement.line'
-            //     res_id = self.statement_line_id.id
-            // else:
-            //     name = _("Journal Entry")
-            //     res_model = 'account.move'
-            //     res_id = self.id
-            // 
-            // return {
-            //     'name': name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [(False, 'form')],
-            //     'res_model': res_model,
-            //     'res_id': res_id,
-            //     'target': 'current',
-            // }
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_business_doc(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Order"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order',
-            //     'res_id': self.id,
-            //     'views': [(False, 'form')],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenCreatedCabaEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -11865,65 +12809,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'domain': [('id', 'in', self.tax_cash_basis_created_move_ids.ids)],
             //     'views': [(self.env.ref('account.view_move_tree').id, 'list'), (False, 'form')],
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_discount_wizard(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Discount"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order.discount',
-            //     'view_mode': 'form',
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenLabelLayoutAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_open_label_layout(self):
-            // view = self.env.ref('stock.product_label_layout_form_picking')
-            // return {
-            //     'name': _('Choose Labels Layout'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'product.label.layout',
-            //     'views': [(view.id, 'form')],
-            //     'target': 'new',
-            //     'context': {
-            //         'default_product_ids': self.move_finished_ids.product_id.ids,
-            //         'default_move_ids': self.move_finished_ids.ids,
-            //         'default_move_quantity': 'move'},
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenLabelTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_open_label_type(self):
-            // move_line_ids = self.move_finished_ids.mapped('move_line_ids')
-            // if self.env.user.has_group('stock.group_production_lot') and move_line_ids.lot_id:
-            //     view = self.env.ref('stock.picking_label_type_form')
-            //     return {
-            //         'name': _('Choose Type of Labels To Print'),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'picking.label.type',
-            //         'views': [(view.id, 'form')],
-            //         'target': 'new',
-            //         'context': {'default_production_ids': self.ids},
-            //     }
-            // return self.action_open_label_layout()
             */
             return default;
         }
@@ -11948,7 +12833,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> PaymentActionCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -11963,7 +12848,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
+        public async Task<TEntity> PaymentActionVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -11985,23 +12870,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ No phone or mobile field is available on sale model. Instead SMS will
             // fallback on partner-based computation using ``_mail_get_partner_fields``. """
             // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PlanWithComponentsAvailabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_plan_with_components_availability(self):
-            // for production in self.filtered(lambda p: p.state in ('draft', 'confirmed')):
-            //     if production.state == 'draft':
-            //         production.action_confirm()
-            //     move_expected_date = production.move_raw_ids.filtered('forecast_expected_date').mapped('forecast_expected_date')
-            //     expected_date = max(move_expected_date, default=False)
-            //     if expected_date and production.components_availability_state != 'unavailable':
-            //         production.date_start = expected_date
-            // self.filtered(lambda p: p.state == 'confirmed').button_plan()
             */
             return default;
         }
@@ -12038,36 +12906,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'date_start': min([workorder.leave_id.date_from for workorder in workorders]),
             //     'date_finished': max([workorder.leave_id.date_to for workorder in workorders])
             // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_post(self):
-            // # Disabled by default to avoid breaking automated action flow
-            // if (
-            //     not self.env.context.get('disable_abnormal_invoice_detection', True)
-            //     and self.filtered(lambda m: m.abnormal_amount_warning or m.abnormal_date_warning)
-            // ):
-            //     wizard = self.env['validate.account.move'].create({
-            //         'move_ids': [Command.set(self.ids)],
-            //     })
-            //     return {
-            //         'name': _("Confirm Entries"),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'validate.account.move',
-            //         'res_id': wizard.id,
-            //         'view_mode': 'form',
-            //         'target': 'new',
-            //     }
-            // if self:
-            //     self._post(soft=False)
-            // if autopost_bills_wizard := self._show_autopost_bills_wizard():
-            //     return autopost_bills_wizard
-            // return False
             */
             return default;
         }
@@ -12995,32 +13833,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_preview_sale_order(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'target': 'self',
-            //     'url': self.get_portal_url(),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_print_pdf(self):
-            // self.ensure_one()
-            // return self.env.ref('account.account_invoices').report_action(self.id)
-            */
-            return default;
-        }
-
         public async Task<TEntity> PrintQuotationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -13042,26 +13854,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ProductForecastReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_product_forecast_report(self):
-            // self.ensure_one()
-            // action = self.product_id.action_product_forecast_report()
-            // action['context'] = {
-            //     'active_id': self.product_id.id,
-            //     'active_model': 'product.product',
-            //     'move_to_match_ids': self.move_finished_ids.filtered(lambda m: m.product_id == self.product_id).ids
-            // }
-            // warehouse = self.picking_type_id.warehouse_id
-            // if warehouse:
-            //     action['context']['warehouse_id'] = warehouse.id
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> QuickEditModeSuggestInvoiceDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -13079,91 +13871,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if prev_move:
             //             invoice_date = self._get_accounting_date(prev_move.invoice_date, False)
             //         record.invoice_date = invoice_date
-            */
-            return default;
-        }
-
-        public async Task<TEntity> QuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_send(self):
-            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
-            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
-            // lang = self.env.context.get('lang')
-            // 
-            // ctx = {
-            //     'default_model': 'sale.order',
-            //     'default_res_ids': self.ids,
-            //     'default_composition_mode': 'comment',
-            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-            //     'email_notification_allow_footer': True,
-            //     'proforma': self.env.context.get('proforma', False),
-            // }
-            // 
-            // if len(self) > 1:
-            //     ctx['default_composition_mode'] = 'mass_mail'
-            // else:
-            //     ctx.update({
-            //         'force_email': True,
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     })
-            //     if not self.env.context.get('hide_default_template'):
-            //         mail_template = self._find_mail_template()
-            //         if mail_template:
-            //             ctx.update({
-            //                 'default_template_id': mail_template.id,
-            //                 'mark_so_as_sent': True,
-            //             })
-            //         if mail_template and mail_template.lang:
-            //             lang = mail_template._render_lang(self.ids)[self.id]
-            //     else:
-            //         for order in self:
-            //             order._portal_ensure_token()
-            // 
-            // action = {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'views': [(False, 'form')],
-            //     'view_id': False,
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
-            // if (
-            //     self.env.context.get('check_document_layout')
-            //     and not self.env.context.get('discard_logo_check')
-            //     and self.env.is_admin()
-            //     and not self.env.company.external_report_layout_id
-            // ):
-            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
-            //         action,
-            //     )
-            //     # Need to remove this context for windows action
-            //     action.pop('close_on_report_download', None)
-            //     layout_action['context']['dialog_size'] = 'extra-large'
-            //     return layout_action
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> QuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_sent(self):
-            // """ Mark the given draft quotation(s) as sent.
-            // 
-            // :raise: UserError if any given SO is not in draft state.
-            // """
-            // if any(order.state != 'draft' for order in self):
-            //     raise UserError(_("Only draft orders can be marked as sent directly."))
-            // 
-            // for order in self:
-            //     order.message_subscribe(partner_ids=order.partner_id.ids)
-            // 
-            // self.write({'state': 'sent'})
             */
             return default;
         }
@@ -13384,175 +14091,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_register_payment(self):
-            // if any(m.state != 'posted' for m in self):
-            //     raise UserError(_("You can only register payment for posted journal entries."))
-            // return self.action_force_register_payment()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RepairCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_repair_cancel(self):
-            // if any(repair.state == 'done' for repair in self):
-            //     raise UserError(_("You cannot cancel a Repair Order that's already been completed"))
-            // for repair in self:
-            //     if repair.sale_order_id:
-            //         repair.sale_order_line_id.write({'product_uom_qty': 0.0})  # Quantity of the product that generated the RO is set to 0
-            // self.move_ids._action_cancel()  # Quantity of parts added from the RO to the SO is set to 0
-            // return self.write({'state': 'cancel'})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RepairCancelDraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_repair_cancel_draft(self):
-            // if self.filtered(lambda repair: repair.state != 'cancel'):
-            //     self.action_repair_cancel()
-            // sale_line_to_update = self.move_ids.sale_line_id.filtered(lambda l: l.order_id.state != 'cancel' and float_is_zero(l.product_uom_qty, precision_rounding=l.product_uom.rounding))
-            // sale_line_to_update.move_ids._update_repair_sale_order_line()
-            // self.move_ids.state = 'draft'
-            // self.state = 'draft'
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RepairDoneAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_repair_done(self):
-            // """ Creates stock move for final product of repair order.
-            // Writes move_id and move_ids state to 'done'.
-            // Writes repair order state to 'Repaired'.
-            // @return: True
-            // """
-            // 
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            // product_move_vals = []
-            // 
-            // # Cancel moves with 0 quantity
-            // self.move_ids.filtered(lambda m: float_is_zero(m.quantity, precision_rounding=m.product_uom.rounding))._action_cancel()
-            // 
-            // no_service_policy = 'service_policy' not in self.env['product.template']
-            // #SOL qty delivered = repair.move_ids.quantity
-            // for repair in self:
-            //     if all(not move.picked for move in repair.move_ids):
-            //         repair.move_ids.picked = True
-            //     if repair.sale_order_line_id:
-            //         ro_origin_product = repair.sale_order_line_id.product_template_id
-            //         # TODO: As 'service_policy' only appears with 'sale_project' module, isolate conditions related to this field in a 'sale_project_repair' module if it's worth
-            //         if ro_origin_product.type == 'service' and (no_service_policy or ro_origin_product.service_policy == 'ordered_prepaid'):
-            //             repair.sale_order_line_id.qty_delivered = repair.sale_order_line_id.product_uom_qty
-            //     if not repair.product_id:
-            //         continue
-            // 
-            //     if repair.product_id.product_tmpl_id.tracking != 'none' and not repair.lot_id:
-            //         raise ValidationError(_(
-            //             "Serial number is required for product to repair : %s",
-            //             repair.product_id.display_name
-            //         ))
-            // 
-            //     # Try to create move with the appropriate owner
-            //     owner_id = False
-            //     available_qty_owner = self.env['stock.quant']._get_available_quantity(repair.product_id, repair.location_id, repair.lot_id, owner_id=repair.partner_id, strict=True)
-            //     if float_compare(available_qty_owner, repair.product_qty, precision_digits=precision) >= 0:
-            //         owner_id = repair.partner_id.id
-            // 
-            //     product_move_vals.append({
-            //         'name': repair.name,
-            //         'product_id': repair.product_id.id,
-            //         'product_uom': repair.product_uom.id or repair.product_id.uom_id.id,
-            //         'product_uom_qty': repair.product_qty,
-            //         'partner_id': repair.partner_id.id,
-            //         'location_id': repair.product_location_src_id.id,
-            //         'location_dest_id': repair.product_location_dest_id.id,
-            //         'picked': True,
-            //         'picking_id': False,
-            //         'move_line_ids': [(0, 0, {
-            //             'product_id': repair.product_id.id,
-            //             'lot_id': repair.lot_id.id,
-            //             'product_uom_id': repair.product_uom.id or repair.product_id.uom_id.id,
-            //             'quantity': repair.product_qty,
-            //             'package_id': False,
-            //             'result_package_id': False,
-            //             'owner_id': owner_id,
-            //             'location_id': repair.product_location_src_id.id,
-            //             'company_id': repair.company_id.id,
-            //             'location_dest_id': repair.product_location_dest_id.id,
-            //             'consume_line_ids': [(6, 0, repair.move_ids.move_line_ids.ids)]
-            //         })],
-            //         'repair_id': repair.id,
-            //         'origin': repair.name,
-            //         'company_id': repair.company_id.id,
-            //     })
-            // 
-            // product_moves = self.env['stock.move'].create(product_move_vals)
-            // repair_move = {m.repair_id.id: m for m in product_moves}
-            // for repair in self:
-            //     move_id = repair_move.get(repair.id, False)
-            //     if move_id:
-            //         repair.move_id = move_id
-            // all_moves = self.move_ids + product_moves
-            // all_moves._action_done(cancel_backorder=True)
-            // 
-            // for sale_line in self.move_ids.sale_line_id:
-            //     price_unit = sale_line.price_unit
-            //     sale_line.write({'product_uom_qty': sale_line.qty_delivered, 'price_unit': price_unit})
-            // 
-            // self.state = 'done'
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RepairEndAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_repair_end(self):
-            // """ Checks before action_repair_done.
-            // @return: True
-            // """
-            // if self.filtered(lambda repair: repair.state != 'under_repair'):
-            //     raise UserError(_("Repair must be under repair in order to end reparation."))
-            // partial_moves = set()
-            // picked_moves = set()
-            // for move in self.move_ids:
-            //     if float_compare(move.quantity, move.product_uom_qty, precision_rounding=move.product_uom.rounding) < 0:
-            //         partial_moves.add(move.id)
-            //     if move.picked:
-            //         picked_moves.add(move.id)
-            // return self.action_repair_done()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RepairStartAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_repair_start(self):
-            // """ Writes repair order state to 'Under Repair'
-            // """
-            // if self.filtered(lambda repair: repair.state != 'confirmed'):
-            //     self._action_repair_confirm()
-            // return self.write({'state': 'under_repair'})
-            */
-            return default;
-        }
-
         public async Task<TEntity> RequireBillDateForAutopostInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -13657,21 +14195,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_reverse(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
-            // 
-            // if self.is_invoice():
-            //     action['name'] = _('Credit Note')
-            // 
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> ReverseMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object default_values_list, object cancel) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -13720,68 +14243,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     reverse_moves.with_context(move_reverse_cancel=cancel)._post(soft=False)
             // 
             // return reverse_moves
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RfqSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_rfq_send(self):
-            // '''
-            // This function opens a window to compose an email, with the edi purchase template message loaded by default
-            // '''
-            // self.ensure_one()
-            // ir_model_data = self.env['ir.model.data']
-            // try:
-            //     if self.env.context.get('send_rfq', False):
-            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
-            //     else:
-            //         template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase_done')[1]
-            // except ValueError:
-            //     template_id = False
-            // try:
-            //     compose_form_id = ir_model_data._xmlid_lookup('mail.email_compose_message_wizard_form')[1]
-            // except ValueError:
-            //     compose_form_id = False
-            // ctx = dict(self.env.context or {})
-            // ctx.update({
-            //     'default_model': 'purchase.order',
-            //     'default_res_ids': self.ids,
-            //     'default_template_id': template_id,
-            //     'default_composition_mode': 'comment',
-            //     'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //     'email_notification_allow_footer': True,
-            //     'force_email': True,
-            //     'mark_rfq_as_sent': True,
-            // })
-            // 
-            // # In the case of a RFQ or a PO, we want the "View..." button in line with the state of the
-            // # object. Therefore, we pass the model description in the context, in the language in which
-            // # the template is rendered.
-            // lang = self.env.context.get('lang')
-            // if {'default_template_id', 'default_model', 'default_res_id'} <= ctx.keys():
-            //     template = self.env['mail.template'].browse(ctx['default_template_id'])
-            //     if template and template.lang:
-            //         lang = template._render_lang([ctx['default_res_id']])[ctx['default_res_id']]
-            // 
-            // self = self.with_context(lang=lang)
-            // if self.state in ['draft', 'sent']:
-            //     ctx['model_description'] = _('Request for Quotation')
-            // else:
-            //     ctx['model_description'] = _('Purchase Order')
-            // 
-            // return {
-            //     'name': _('Compose Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'views': [(compose_form_id, 'form')],
-            //     'view_id': compose_form_id,
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
             */
             return default;
         }
@@ -14038,20 +14499,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SeeMoveScrapAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_see_move_scrap(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_stock_scrap")
-            // action['domain'] = [('production_id', '=', self.id)]
-            // action['context'] = dict(self._context, default_origin=self.name)
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> SelectExpectedDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object expected_dates) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14059,27 +14506,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _select_expected_date(self, expected_dates):
             // self.ensure_one()
             // return min(expected_dates)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_send_and_print(self):
-            // self.env['account.move.send']._check_move_constrains(self)
-            // return {
-            //     'name': _("Print & Send"),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
-            //     'target': 'new',
-            //     'context': {
-            //         'active_model': 'account.move',
-            //         'active_ids': self.ids,
-            //     },
-            // }
             */
             return default;
         }
@@ -14617,29 +15043,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SplitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_split(self):
-            // self._pre_action_split_merge_hook(split=True)
-            // if len(self) > 1:
-            //     productions = [Command.create({'production_id': production.id}) for production in self]
-            //     # Wizard need a real id to have buttons enable in the view
-            //     wizard = self.env['mrp.production.split.multi'].create({'production_ids': productions})
-            //     action = self.env['ir.actions.actions']._for_xml_id('mrp.action_mrp_production_split_multi')
-            //     action['res_id'] = wizard.id
-            //     return action
-            // else:
-            //     action = self.env['ir.actions.actions']._for_xml_id('mrp.action_mrp_production_split')
-            //     action['context'] = {
-            //         'default_production_id': self.id,
-            //     }
-            //     return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> SplitProductionsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object amounts, object cancel_remaining_qty, object set_consumed_qty) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14883,18 +15286,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> StartAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_start(self):
-            // self.ensure_one()
-            // if self.state == "confirmed":
-            //     self.state = "progress"
-            */
-            return default;
-        }
-
         public async Task<TEntity> StolenMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -14905,37 +15296,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         yield self.env['account.move.line'].browse(command[1]).move_id.id
             //     if command[0] == Command.SET:
             //         yield from self.env['account.move.line'].browse(command[2]).move_id.ids
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_switch_move_type(self):
-            // if any(move.posted_before for move in self):
-            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
-            // if any(move.move_type == "entry" for move in self):
-            //     raise ValidationError(_("This action isn't available for this document."))
-            // 
-            // for move in self:
-            //     in_out, old_move_type = move.move_type.split('_')
-            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
-            //     move.name = False
-            //     move.write({
-            //         'move_type': new_move_type,
-            //         'currency_id': move.currency_id.id,
-            //         'fiscal_position_id': move.fiscal_position_id.id,
-            //     })
-            //     if move.amount_total < 0:
-            //         move.write({
-            //             'line_ids': [
-            //                 Command.update(line.id, {'quantity': -line.quantity})
-            //                 for line in move.line_ids
-            //                 if line.display_type == 'product'
-            //             ]
-            //         })
             */
             return default;
         }
@@ -15419,35 +15779,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_toggle_block_payment(self):
-            // self.ensure_one()
-            // if self.payment_state == 'blocked':
-            //     self.payment_state = 'not_paid'
-            //     self.env.add_to_compute(self._fields['payment_state'], self)
-            // else:
-            //     if self.payment_state in ('paid', 'in_payment'):
-            //         raise UserError(_("You can't block a paid invoice."))
-            //     self.payment_state = 'blocked'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ToggleIsLockedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_toggle_is_locked(self):
-            // self.ensure_one()
-            // self.is_locked = not self.is_locked
-            // return True
-            */
-            return default;
-        }
-
         public async Task<TEntity> TrackFinalizeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -15693,39 +16024,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_unlock(self):
-            // self.locked = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnreserveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_unreserve(self):
-            // return self.move_ids.filtered(lambda m: m.state in ('assigned', 'partially_available'))._do_unreserve()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateBomAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_update_bom(self):
-            // for production in self:
-            //     if production.bom_id:
-            //         production._link_bom(production.bom_id)
-            // self.is_outdated_bom = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateCatalogLineQuantityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object line, object quantity) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -15755,18 +16053,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # update the date on PO line
             // for line, date in updated_dates:
             //     line._update_date_planned(date)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_update_fpos_values(self):
-            // self.invoice_line_ids._compute_price_unit()
-            // self.invoice_line_ids._compute_tax_ids()
-            // self.line_ids._compute_account_id()
             */
             return default;
         }
@@ -15950,25 +16236,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_prices(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_prices()
-            // 
-            // if self.pricelist_id:
-            //     message = _("Product prices have been recomputed according to pricelist %s.",
-            //         self.pricelist_id._get_html_link())
-            // else:
-            //     message = _("Product prices have been recomputed.")
-            // self.message_post(body=message)
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateRawMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object factor) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -16003,23 +16270,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_taxes(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_taxes()
-            // 
-            // if self.partner_id:
-            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
-            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
-            //     )
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateUpdateDateActivityInternalAsync<TEntity>(IEnumerable<TEntity> entities, object updated_dates, object activity) where TEntity : IEntity<Guid>, IProductCatalogMixinable
         {
             /*
@@ -16032,53 +16282,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         original_receipt_date=line.date_planned.date(),
             //         new_receipt_date=date.date()
             //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ValidateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_validate(self):
-            // self.ensure_one()
-            // if self.filtered(lambda repair: any(m.product_uom_qty < 0 for m in repair.move_ids)):
-            //     raise UserError(_("You can not enter negative quantities."))
-            // if not self.product_id or not self.product_id.is_storable:
-            //     return self._action_repair_confirm()
-            // precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            // available_qty_owner = sum(self.env['stock.quant'].search([
-            //     ('product_id', '=', self.product_id.id),
-            //     ('location_id', '=', self.product_location_src_id.id),
-            //     ('lot_id', '=', self.lot_id.id),
-            //     ('owner_id', '=', self.partner_id.id),
-            // ]).mapped('quantity'))
-            // available_qty_noown = sum(self.env['stock.quant'].search([
-            //     ('product_id', '=', self.product_id.id),
-            //     ('location_id', '=', self.product_location_src_id.id),
-            //     ('lot_id', '=', self.lot_id.id),
-            //     ('owner_id', '=', False),
-            // ]).mapped('quantity'))
-            // repair_qty = self.product_uom._compute_quantity(self.product_qty, self.product_id.uom_id)
-            // for available_qty in [available_qty_owner, available_qty_noown]:
-            //     if float_compare(available_qty, repair_qty, precision_digits=precision) >= 0:
-            //         return self._action_repair_confirm()
-            // 
-            // return {
-            //     'name': _('%(product)s: Insufficient Quantity To Repair', product=self.product_id.display_name),
-            //     'view_mode': 'form',
-            //     'res_model': 'stock.warn.insufficient.qty.repair',
-            //     'view_id': self.env.ref('repair.stock_warn_insufficient_qty_repair_form_view').id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': {
-            //         'default_product_id': self.product_id.id,
-            //         'default_location_id': self.product_location_src_id.id,
-            //         'default_repair_id': self.id,
-            //         'default_quantity': repair_qty,
-            //         'default_product_uom_name': self.product_id.uom_name
-            //     },
-            //     'target': 'new'
-            // }
             */
             return default;
         }
@@ -16115,207 +16318,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if record.fiscal_position_id and impacted_countries != record.fiscal_position_id.country_id:
             //             raise ValidationError(_("This entry contains taxes that are not compatible with your fiscal position. Check the country set in fiscal position and in your tax configuration."))
             //         raise ValidationError(_("This entry contains one or more taxes that are incompatible with your fiscal country. Check company fiscal country in the settings and tax country in taxes configuration."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
-            // def action_view_invoice(self, invoices=False):
-            // """This function returns an action that display existing vendor bills of
-            // given purchase order ids. When only one found, show the vendor bill
-            // immediately.
-            // """
-            // if not invoices:
-            //     self.invalidate_model(['invoice_ids'])
-            //     invoices = self.invoice_ids
-            // 
-            // result = self.env['ir.actions.act_window']._for_xml_id('account.action_move_in_invoice_type')
-            // # choose the view_mode accordingly
-            // if len(invoices) > 1:
-            //     result['domain'] = [('id', 'in', invoices.ids)]
-            // elif len(invoices) == 1:
-            //     res = self.env.ref('account.view_move_form', False)
-            //     form_view = [(res and res.id or False, 'form')]
-            //     if 'views' in result:
-            //         result['views'] = form_view + [(state, view) for state, view in result['views'] if view != 'form']
-            //     else:
-            //         result['views'] = form_view
-            //     result['res_id'] = invoices.id
-            // else:
-            //     result = {'type': 'ir.actions.act_window_close'}
-            // 
-            // return result
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_view_invoice(self, invoices=False):
-            // if not invoices:
-            //     invoices = self.mapped('invoice_ids')
-            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
-            // if len(invoices) > 1:
-            //     action['domain'] = [('id', 'in', invoices.ids)]
-            // elif len(invoices) == 1:
-            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
-            //     if 'views' in action:
-            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
-            //     else:
-            //         action['views'] = form_view
-            //     action['res_id'] = invoices.id
-            // else:
-            //     action = {'type': 'ir.actions.act_window_close'}
-            // 
-            // context = {
-            //     'default_move_type': 'out_invoice',
-            // }
-            // if len(self) == 1:
-            //     context.update({
-            //         'default_partner_id': self.partner_id.id,
-            //         'default_partner_shipping_id': self.partner_shipping_id.id,
-            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
-            //         'default_invoice_origin': self.name,
-            //     })
-            // action['context'] = context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMoDeliveryAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_mo_delivery(self):
-            // """ Returns an action that display picking related to manufacturing order.
-            // It can either be a list view or in a form view (if there is only one picking to show).
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock.action_picking_tree_all")
-            // if len(self.picking_ids) > 1:
-            //     action['domain'] = [('id', 'in', self.picking_ids.ids)]
-            // elif self.picking_ids:
-            //     action['res_id'] = self.picking_ids.id
-            //     picking_form = self.env.ref('stock.view_picking_form', False)
-            //     picking_form_view = [(picking_form and picking_form.id or False, 'form')]
-            //     action['views'] = picking_form_view + [(state, view) for state, view in action.get('views', []) if view != 'form']
-            // action['context'] = dict(self._context, default_origin=self.name)
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMrpProductionBackordersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_mrp_production_backorders(self):
-            // backorder_ids = self.procurement_group_id.mrp_production_ids.ids
-            // return {
-            //     'res_model': 'mrp.production',
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("Backorder MO's"),
-            //     'domain': [('id', 'in', backorder_ids)],
-            //     'view_mode': 'list,form',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMrpProductionChildsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_mrp_production_childs(self):
-            // self.ensure_one()
-            // mrp_production_ids = self._get_children().ids
-            // action = {
-            //     'res_model': 'mrp.production',
-            //     'type': 'ir.actions.act_window',
-            // }
-            // if len(mrp_production_ids) == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'res_id': mrp_production_ids[0],
-            //     })
-            // else:
-            //     action.update({
-            //         'name': _("%s Child MO's", self.name),
-            //         'domain': [('id', 'in', mrp_production_ids)],
-            //         'view_mode': 'list,form',
-            //     })
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMrpProductionSourcesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_mrp_production_sources(self):
-            // self.ensure_one()
-            // mrp_production_ids = self._get_sources().ids
-            // action = {
-            //     'res_model': 'mrp.production',
-            //     'type': 'ir.actions.act_window',
-            // }
-            // if len(mrp_production_ids) == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'res_id': mrp_production_ids[0],
-            //     })
-            // else:
-            //     action.update({
-            //         'name': _("MO Generated by %s", self.name),
-            //         'domain': [('id', 'in', mrp_production_ids)],
-            //         'view_mode': 'list,form',
-            //     })
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMrpProductionUnbuildsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_mrp_production_unbuilds(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_unbuild")
-            // action['domain'] = [('mo_id', '=', self.id)]
-            // context = literal_eval(action['context'])
-            // context.update(self.env.context)
-            // context['default_mo_id'] = self.id
-            // action['context'] = context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewReceptionReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
-            // def action_view_reception_report(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_reception_action")
-            // # default_production_ids needs to be first default_ key so the "print" button correctly works
-            // action['context'] = dict({'default_production_ids': self.ids}, **self.env.context)
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IProductCatalogMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: repair, FILE: repair.py) ---
-            // def action_view_sale_order(self):
-            // return {
-            //     "type": "ir.actions.act_window",
-            //     "res_model": "sale.order",
-            //     "views": [[False, "form"]],
-            //     "res_id": self.sale_order_id.id,
-            // }
             */
             return default;
         }

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Stock
 {
     public partial class StockQuantController
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/move-quants")]
         public async Task<IActionResult> MoveQuantsAsync(Guid id, [FromBody] StockQuantMoveQuantsRequestDto input)
         {
-            var result = await _appService.MoveQuantsAsync(id, input.LocationDestId, input.PackageDestId, input.Message, input.Unpack);
+            var result = await _appService.MoveQuantsAsync(id, input);
             return Ok(result);
         }
     }

@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("point_of_sale", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
     public class PosBusMixinAppService : ApplicationService, IPosBusMixinAppService
     {
-
-        public PosBusMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public PosBusMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AccumulateAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IPosBusMixinable
@@ -209,6 +211,231 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionPosConfigModalEditAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
+            // def action_pos_config_modal_edit(self):
+            // return {
+            //     'view_mode': 'form',
+            //     'res_model': 'pos.config',
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'res_id': self.id,
+            //     'context': {'pos_config_open_modal': True},
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_cancel(self):
+            // cancellable_orders = self.filtered(lambda order: order.state == 'draft')
+            // cancellable_orders.write({'state': 'cancel'})
+            // return {
+            //     'pos.order': cancellable_orders.read(self._load_pos_data_fields(self.config_id.ids[0]), load=False)
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_invoice(self):
+            // if len(self.company_id) > 1:
+            //     raise UserError(_("You cannot invoice orders belonging to different companies."))
+            // self.write({'to_invoice': True})
+            // if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
+            //     self._create_order_picking()
+            // return self._generate_pos_order_invoice()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosOrderPaidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_pos_order_paid(self):
+            // self.ensure_one()
+            // 
+            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
+            // if not self.config_id.cash_rounding \
+            //    or self.config_id.only_round_cash_method \
+            //    and not any(p.payment_method_id.is_cash_count for p in self.payment_ids):
+            //     total = self.amount_total
+            // else:
+            //     total = float_round(self.amount_total, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
+            // 
+            // isPaid = float_is_zero(total - self.amount_paid, precision_rounding=self.currency_id.rounding)
+            // 
+            // if not isPaid and not self.config_id.cash_rounding:
+            //     raise UserError(_("Order %s is not fully paid.", self.name))
+            // elif not isPaid and self.config_id.cash_rounding:
+            //     currency = self.currency_id
+            //     if self.config_id.rounding_method.rounding_method == "HALF-UP":
+            //         maxDiff = currency.round(self.config_id.rounding_method.rounding / 2)
+            //     else:
+            //         maxDiff = currency.round(self.config_id.rounding_method.rounding)
+            // 
+            //     diff = currency.round(self.amount_total - self.amount_paid)
+            //     if not abs(diff) <= maxDiff:
+            //         raise UserError(_("Order %s is not fully paid.", self.name))
+            // 
+            // self.write({'state': 'paid'})
+            // 
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosSessionCloseAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_pos_session_close(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
+            // bank_payment_method_diffs = bank_payment_method_diffs or {}
+            // # Session without cash payment method will not have a cash register.
+            // # However, there could be other payment methods, thus, session still
+            // # needs to be validated.
+            // return self._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosSessionClosingControlAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_pos_session_closing_control(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
+            // bank_payment_method_diffs = bank_payment_method_diffs or {}
+            // for session in self:
+            //     if any(order.state == 'draft' for order in self.get_session_orders()):
+            //         raise UserError(_("You cannot close the POS when orders are still in draft"))
+            //     if session.state == 'closed':
+            //         raise UserError(_('This session is already closed.'))
+            //     stop_at = self.stop_at or fields.Datetime.now()
+            //     session.write({'state': 'closing_control', 'stop_at': stop_at})
+            //     if not session.config_id.cash_control:
+            //         return session.action_pos_session_close(balancing_account, amount_to_balance, bank_payment_method_diffs)
+            //     # If the session is in rescue, we only compute the payments in the cash register
+            //     # It is not yet possible to close a rescue session through the front end, see `close_session_from_ui`
+            //     if session.rescue and session.config_id.cash_control:
+            //         default_cash_payment_method_id = self.payment_method_ids.filtered(lambda pm: pm.type == 'cash')[0]
+            //         orders = self._get_closed_orders()
+            //         total_cash = sum(
+            //             orders.payment_ids.filtered(lambda p: p.payment_method_id == default_cash_payment_method_id).mapped('amount')
+            //         ) + self.cash_register_balance_start
+            // 
+            //         session.cash_register_balance_end_real = total_cash
+            // 
+            //     return session.action_pos_session_validate(balancing_account, amount_to_balance, bank_payment_method_diffs)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosSessionOpenAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_pos_session_open(self):
+            // # we only open sessions that haven't already been opened
+            // for session in self.filtered(lambda session: session.state == 'opening_control'):
+            //     values = {}
+            //     if session.config_id.cash_control and not session.rescue:
+            //         last_session = self.search([('config_id', '=', session.config_id.id), ('id', '!=', session.id)], limit=1)
+            //         session.cash_register_balance_start = last_session.cash_register_balance_end_real  # defaults to 0 if lastsession is empty
+            //     session.write(values)
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPosSessionValidateAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_pos_session_validate(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
+            // bank_payment_method_diffs = bank_payment_method_diffs or {}
+            // return self.action_pos_session_close(balancing_account, amount_to_balance, bank_payment_method_diffs)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_send_mail(self):
+            // template_id = self.env['ir.model.data']._xmlid_to_res_id('point_of_sale.pos_email_marketing_template', raise_if_not_found=False)
+            // return {
+            //     'name': _('Send Email'),
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {'default_composition_mode': 'mass_mail', 'default_template_id': template_id},
+            //     'target': 'new'
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendReceiptAsync<TEntity>(IEnumerable<TEntity> entities, object email, object ticket_image, object basic_image) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_send_receipt(self, email, ticket_image, basic_image):
+            // self.env['mail.mail'].sudo().create(self._prepare_mail_values(email, ticket_image, basic_image)).send()
+            // self.email = email
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowPaymentsListAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_show_payments_list(self):
+            // return {
+            //     'name': _('Payments'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'pos.payment',
+            //     'view_mode': 'list,form',
+            //     'domain': self._get_captured_payments_domain(),
+            //     'context': {'search_default_group_by_payment_method': 1}
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionStockPickingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_stock_picking(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
+            // action['display_name'] = _('Pickings')
+            // action['context'] = {}
+            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
+            // return action
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_stock_picking(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
+            // action['display_name'] = _('Pickings')
+            // action['context'] = {}
+            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
+            // return action
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionToOpenUiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
         {
             /*
@@ -225,6 +452,77 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'type': 'ir.actions.act_url',
             //     'url': pos_url,
             //     'target': 'self',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_invoice(self):
+            // return {
+            //     'name': _('Customer Invoice'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('account.view_move_form').id,
+            //     'res_model': 'account.move',
+            //     'context': "{'move_type':'out_invoice'}",
+            //     'type': 'ir.actions.act_window',
+            //     'res_id': self.account_move.id,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
+            // def action_view_order(self):
+            // return {
+            //     'name': _('Orders'),
+            //     'res_model': 'pos.order',
+            //     'view_mode': 'list,form',
+            //     'views': [
+            //         (self.env.ref('point_of_sale.view_pos_order_tree_no_session_id').id, 'list'),
+            //         (self.env.ref('point_of_sale.view_pos_pos_form').id, 'form'),
+            //         ],
+            //     'type': 'ir.actions.act_window',
+            //     'domain': [('session_id', 'in', self.ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRefundOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_refund_orders(self):
+            // return {
+            //     'name': _('Refund Orders'),
+            //     'view_mode': 'list,form',
+            //     'res_model': 'pos.order',
+            //     'type': 'ir.actions.act_window',
+            //     'domain': [('id', 'in', self.mapped('lines.refund_orderline_ids.order_id').ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRefundedOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
+            // def action_view_refunded_order(self):
+            // return {
+            //     'name': _('Refunded Order'),
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('point_of_sale.view_pos_pos_form').id,
+            //     'res_model': 'pos.order',
+            //     'type': 'ir.actions.act_window',
+            //     'res_id': self.refunded_order_id.id,
             // }
             */
             return default;
@@ -3904,168 +4202,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PosConfigModalEditAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
-            // def action_pos_config_modal_edit(self):
-            // return {
-            //     'view_mode': 'form',
-            //     'res_model': 'pos.config',
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'new',
-            //     'res_id': self.id,
-            //     'context': {'pos_config_open_modal': True},
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> PosHasValidProductInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
             // def _pos_has_valid_product(self):
             // return self.env['product.product'].sudo().search_count([('available_in_pos', '=', True), ('list_price', '>=', 0), ('id', 'not in', self.env['pos.config']._get_special_products().ids), '|', ('active', '=', False), ('active', '=', True)], limit=1) > 0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_cancel(self):
-            // cancellable_orders = self.filtered(lambda order: order.state == 'draft')
-            // cancellable_orders.write({'state': 'cancel'})
-            // return {
-            //     'pos.order': cancellable_orders.read(self._load_pos_data_fields(self.config_id.ids[0]), load=False)
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_invoice(self):
-            // if len(self.company_id) > 1:
-            //     raise UserError(_("You cannot invoice orders belonging to different companies."))
-            // self.write({'to_invoice': True})
-            // if self.company_id.anglo_saxon_accounting and self.session_id.update_stock_at_closing and self.session_id.state != 'closed':
-            //     self._create_order_picking()
-            // return self._generate_pos_order_invoice()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosOrderPaidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_pos_order_paid(self):
-            // self.ensure_one()
-            // 
-            // # TODO: add support for mix of cash and non-cash payments when both cash_rounding and only_round_cash_method are True
-            // if not self.config_id.cash_rounding \
-            //    or self.config_id.only_round_cash_method \
-            //    and not any(p.payment_method_id.is_cash_count for p in self.payment_ids):
-            //     total = self.amount_total
-            // else:
-            //     total = float_round(self.amount_total, precision_rounding=self.config_id.rounding_method.rounding, rounding_method=self.config_id.rounding_method.rounding_method)
-            // 
-            // isPaid = float_is_zero(total - self.amount_paid, precision_rounding=self.currency_id.rounding)
-            // 
-            // if not isPaid and not self.config_id.cash_rounding:
-            //     raise UserError(_("Order %s is not fully paid.", self.name))
-            // elif not isPaid and self.config_id.cash_rounding:
-            //     currency = self.currency_id
-            //     if self.config_id.rounding_method.rounding_method == "HALF-UP":
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding / 2)
-            //     else:
-            //         maxDiff = currency.round(self.config_id.rounding_method.rounding)
-            // 
-            //     diff = currency.round(self.amount_total - self.amount_paid)
-            //     if not abs(diff) <= maxDiff:
-            //         raise UserError(_("Order %s is not fully paid.", self.name))
-            // 
-            // self.write({'state': 'paid'})
-            // 
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosSessionCloseAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_pos_session_close(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
-            // bank_payment_method_diffs = bank_payment_method_diffs or {}
-            // # Session without cash payment method will not have a cash register.
-            // # However, there could be other payment methods, thus, session still
-            // # needs to be validated.
-            // return self._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosSessionClosingControlAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_pos_session_closing_control(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
-            // bank_payment_method_diffs = bank_payment_method_diffs or {}
-            // for session in self:
-            //     if any(order.state == 'draft' for order in self.get_session_orders()):
-            //         raise UserError(_("You cannot close the POS when orders are still in draft"))
-            //     if session.state == 'closed':
-            //         raise UserError(_('This session is already closed.'))
-            //     stop_at = self.stop_at or fields.Datetime.now()
-            //     session.write({'state': 'closing_control', 'stop_at': stop_at})
-            //     if not session.config_id.cash_control:
-            //         return session.action_pos_session_close(balancing_account, amount_to_balance, bank_payment_method_diffs)
-            //     # If the session is in rescue, we only compute the payments in the cash register
-            //     # It is not yet possible to close a rescue session through the front end, see `close_session_from_ui`
-            //     if session.rescue and session.config_id.cash_control:
-            //         default_cash_payment_method_id = self.payment_method_ids.filtered(lambda pm: pm.type == 'cash')[0]
-            //         orders = self._get_closed_orders()
-            //         total_cash = sum(
-            //             orders.payment_ids.filtered(lambda p: p.payment_method_id == default_cash_payment_method_id).mapped('amount')
-            //         ) + self.cash_register_balance_start
-            // 
-            //         session.cash_register_balance_end_real = total_cash
-            // 
-            //     return session.action_pos_session_validate(balancing_account, amount_to_balance, bank_payment_method_diffs)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosSessionOpenAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_pos_session_open(self):
-            // # we only open sessions that haven't already been opened
-            // for session in self.filtered(lambda session: session.state == 'opening_control'):
-            //     values = {}
-            //     if session.config_id.cash_control and not session.rescue:
-            //         last_session = self.search([('config_id', '=', session.config_id.id), ('id', '!=', session.id)], limit=1)
-            //         session.cash_register_balance_start = last_session.cash_register_balance_end_real  # defaults to 0 if lastsession is empty
-            //     session.write(values)
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PosSessionValidateAsync<TEntity>(IEnumerable<TEntity> entities, object balancing_account, object amount_to_balance, object bank_payment_method_diffs) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_pos_session_validate(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
-            // bank_payment_method_diffs = bank_payment_method_diffs or {}
-            // return self.action_pos_session_close(balancing_account, amount_to_balance, bank_payment_method_diffs)
             */
             return default;
         }
@@ -4993,24 +5135,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SendMailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_mail(self):
-            // template_id = self.env['ir.model.data']._xmlid_to_res_id('point_of_sale.pos_email_marketing_template', raise_if_not_found=False)
-            // return {
-            //     'name': _('Send Email'),
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {'default_composition_mode': 'mass_mail', 'default_template_id': template_id},
-            //     'target': 'new'
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> SendOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
         {
             /*
@@ -5018,17 +5142,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _send_order(self):
             // # This function is made to be overriden by pos_self_order_preparation_display
             // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendReceiptAsync<TEntity>(IEnumerable<TEntity> entities, object email, object ticket_image, object basic_image) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_send_receipt(self, email, ticket_image, basic_image):
-            // self.env['mail.mail'].sudo().create(self._prepare_mail_values(email, ticket_image, basic_image)).send()
-            // self.email = email
             */
             return default;
         }
@@ -5134,46 +5247,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'group_by':'move_id', 'search_default_posted':1,
             //     },
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowPaymentsListAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_show_payments_list(self):
-            // return {
-            //     'name': _('Payments'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'pos.payment',
-            //     'view_mode': 'list,form',
-            //     'domain': self._get_captured_payments_domain(),
-            //     'context': {'search_default_group_by_payment_method': 1}
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> StockPickingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_stock_picking(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
-            // action['display_name'] = _('Pickings')
-            // action['context'] = {}
-            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
-            // return action
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_stock_picking(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('stock.action_picking_tree_ready')
-            // action['display_name'] = _('Pickings')
-            // action['context'] = {}
-            // action['domain'] = [('id', 'in', self.picking_ids.ids)]
-            // return action
             */
             return default;
         }
@@ -5483,77 +5556,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // self.write({'state': 'closed'})
             // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_invoice(self):
-            // return {
-            //     'name': _('Customer Invoice'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('account.view_move_form').id,
-            //     'res_model': 'account.move',
-            //     'context': "{'move_type':'out_invoice'}",
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.account_move.id,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
-            // def action_view_order(self):
-            // return {
-            //     'name': _('Orders'),
-            //     'res_model': 'pos.order',
-            //     'view_mode': 'list,form',
-            //     'views': [
-            //         (self.env.ref('point_of_sale.view_pos_order_tree_no_session_id').id, 'list'),
-            //         (self.env.ref('point_of_sale.view_pos_pos_form').id, 'form'),
-            //         ],
-            //     'type': 'ir.actions.act_window',
-            //     'domain': [('session_id', 'in', self.ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRefundOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refund_orders(self):
-            // return {
-            //     'name': _('Refund Orders'),
-            //     'view_mode': 'list,form',
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'domain': [('id', 'in', self.mapped('lines.refund_orderline_ids.order_id').ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRefundedOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosBusMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
-            // def action_view_refunded_order(self):
-            // return {
-            //     'name': _('Refunded Order'),
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('point_of_sale.view_pos_pos_form').id,
-            //     'res_model': 'pos.order',
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.refunded_order_id.id,
-            // }
             */
             return default;
         }

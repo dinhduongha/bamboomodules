@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -290,7 +291,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PurchaseOrder> ButtonApproveAsync(Guid id, object force)
+        public async Task<PurchaseOrder> ButtonApproveAsync(Guid id, PurchaseOrderButtonApproveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -666,25 +667,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PurchaseOrder> ComputeL10nInGstTreatmentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_purchase, FILE: purchase_order.py) ---
-            // def _compute_l10n_in_gst_treatment(self):
-            // for order in self:
-            //     # set default value as False so CacheMiss error never occurs for this field.
-            //     order.l10n_in_gst_treatment = False
-            //     if order.country_code == 'IN':
-            //         l10n_in_gst_treatment = order.partner_id.l10n_in_gst_treatment
-            //         if not l10n_in_gst_treatment and order.partner_id.country_id and order.partner_id.country_id.code != 'IN':
-            //             l10n_in_gst_treatment = 'overseas'
-            //         if not l10n_in_gst_treatment:
-            //             l10n_in_gst_treatment = order.partner_id.vat and 'regular' or 'consumer'
-            //         order.l10n_in_gst_treatment = l10n_in_gst_treatment
-            */
-            return default;
-        }
-
         protected async Task<PurchaseOrder> ComputeMrpProductionCountInternalAsync()
         {
             /*
@@ -855,7 +837,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> ConfirmReminderMailAsync(Guid id, object confirmed_date)
+        public async Task<PurchaseOrder> ConfirmReminderMailAsync(Guid id, PurchaseOrderConfirmReminderMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1191,7 +1173,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetConfirmUrlAsync(Guid id, object confirm_type)
+        public async Task<PurchaseOrder> GetConfirmUrlAsync(Guid id, PurchaseOrderGetConfirmUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -1286,7 +1268,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PurchaseOrder> GetLocalizedDatePlannedAsync(Guid id, object date_planned)
+        public async Task<PurchaseOrder> GetLocalizedDatePlannedAsync(Guid id, PurchaseOrderGetLocalizedDatePlannedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---
@@ -2575,7 +2557,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PurchaseOrder> ViewInvoiceAsync(Guid id, object invoices)
+        public async Task<PurchaseOrder> ViewInvoiceAsync(Guid id, PurchaseOrderViewInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: purchase_order.py) ---

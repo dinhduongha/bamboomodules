@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,152 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("analytic", Depends = new[] { "base", "mail", "uom" })]
     public class AnalyticPlanFieldsMixinAppService : ApplicationService, IAnalyticPlanFieldsMixinAppService
     {
-
-        public AnalyticPlanFieldsMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public AnalyticPlanFieldsMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionGetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_get_list_view(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("%(name)s's Milestones", name=self.name),
+            //     'domain': [('project_id', '=', self.id)],
+            //     'res_model': 'project.milestone',
+            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
+            //     'view_mode': 'list',
+            //     'help': _("""
+            //         <p class="o_view_nocontent_smiling_face">
+            //             No milestones found. Let's create one!
+            //         </p><p>
+            //             Track major progress points that must be reached to achieve success.
+            //         </p>
+            //     """),
+            //     'context': {
+            //         'default_project_id': self.id,
+            //         **self.env.context
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_open_share_project_wizard(self):
+            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
+            // 
+            // local_context = self.env.context | {
+            //     'default_template_id': template.id if template else False,
+            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
+            //     'active_id': self.id,
+            //     'active_model': 'project.project',
+            // }
+            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
+            // if self.env.context.get('default_access_mode'):
+            //     action['name'] = _("Share Project")
+            // action['context'] = local_context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_profitability_items(self, section_name, domain=None, res_id=False):
+            // return {}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_project_task_burndown_chart_report(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
+            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'stage_name_and_sequence_per_id': {
+            //         stage.id: {
+            //             'sequence': stage.sequence,
+            //             'name': stage.name
+            //         } for stage in self.type_ids
+            //     }
+            // })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_all_rating(self):
+            // """ return the action to see all the rating of the project and activate default filters"""
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
+            // action['display_name'] = _("%(name)s's Rating", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context.update(self._context)
+            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
+            // action_context.pop('group_by', None)
+            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
+            // if self.rating_count == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
+            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
+            //     })
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks_analysis(self):
+            // """ return the action to see the tasks analysis report of the project """
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
+            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context['search_default_project_id'] = self.id
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks(self):
+            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
+            // action['display_name'] = self.name
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'create': self.active,
+            //     'active_test': self.active
+            //     })
+            // action['context'] = context
+            // return action
+            */
+            return default;
         }
 
         public async Task<TEntity> AddCollaboratorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners, object limited_access) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
@@ -736,35 +880,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_get_list_view(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("%(name)s's Milestones", name=self.name),
-            //     'domain': [('project_id', '=', self.id)],
-            //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
-            //     'view_mode': 'list',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             No milestones found. Let's create one!
-            //         </p><p>
-            //             Track major progress points that must be reached to achieve success.
-            //         </p>
-            //     """),
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         **self.env.context
-            //     }
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetMandatoryPlansInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object business_domain) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
         {
             /*
@@ -1259,28 +1374,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_open_share_project_wizard(self):
-            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
-            // 
-            // local_context = self.env.context | {
-            //     'default_template_id': template.id if template else False,
-            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
-            //     'active_id': self.id,
-            //     'active_model': 'project.project',
-            // }
-            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
-            // if self.env.context.get('default_access_mode'):
-            //     action['name'] = _("Share Project")
-            // action['context'] = local_context
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> OrderFieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @alias, object field_name, object direction, object nulls, object query) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
         {
             /*
@@ -1338,39 +1431,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                 if subfname in self._fields:
             //                     account_filter_node.addnext(E.filter(name=subfname, context=f"{{'group_by': '{subfname}'}}"))
             // return arch, view
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_profitability_items(self, section_name, domain=None, res_id=False):
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_project_task_burndown_chart_report(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
-            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'stage_name_and_sequence_per_id': {
-            //         stage.id: {
-            //             'sequence': stage.sequence,
-            //             'name': stage.name
-            //         } for stage in self.type_ids
-            //     }
-            // })
-            // action['context'] = context
-            // return action
             */
             return default;
         }
@@ -1573,64 +1633,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // result = super(Project, self).unlink()
             // analytic_accounts_to_delete.unlink()
             // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_all_rating(self):
-            // """ return the action to see all the rating of the project and activate default filters"""
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
-            // action['display_name'] = _("%(name)s's Rating", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context.update(self._context)
-            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
-            // action_context.pop('group_by', None)
-            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
-            // if self.rating_count == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
-            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
-            //     })
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks_analysis(self):
-            // """ return the action to see the tasks analysis report of the project """
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
-            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context['search_default_project_id'] = self.id
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAnalyticPlanFieldsMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks(self):
-            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
-            // action['display_name'] = self.name
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'create': self.active,
-            //     'active_test': self.active
-            //     })
-            // action['context'] = context
-            // return action
             */
             return default;
         }

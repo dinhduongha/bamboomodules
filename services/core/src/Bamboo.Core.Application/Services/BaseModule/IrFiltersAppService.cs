@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -74,7 +75,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrFilters> CopyDataAsync(Guid id, object @default)
+        public async Task<IrFilters> CopyDataAsync(Guid id, IrFiltersCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
@@ -90,7 +91,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrFilters> CreateOrReplaceAsync(Guid id, object vals)
+        public async Task<IrFilters> CreateOrReplaceAsync(Guid id, IrFiltersCreateOrReplaceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---
@@ -165,7 +166,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrFilters> GetFiltersAsync(Guid id, object model, Guid action_id, Guid embedded_action_id, Guid embedded_parent_res_id)
+        public async Task<IrFilters> GetFiltersAsync(Guid id, IrFiltersGetFiltersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_filters.py) ---

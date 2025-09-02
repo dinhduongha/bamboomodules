@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -319,7 +320,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CreateAsync(entity, fields);
         }
 
-        public async Task<FleetVehicle> CreateDriverHistoryAsync(Guid id, object vals)
+        public async Task<FleetVehicle> CreateDriverHistoryAsync(Guid id, FleetVehicleCreateDriverHistoryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---

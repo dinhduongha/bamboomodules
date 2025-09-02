@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountMoveController
@@ -41,14 +42,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/action-check-l10n-it-edi")]
-        public async Task<IActionResult> ActionCheckL10nItEdiAsync(Guid id)
-        {
-            var result = await _appService.CheckL10nItEdiAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-debit-note")]
         public async Task<IActionResult> ActionDebitNoteAsync(Guid id)
         {
@@ -69,22 +62,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         public async Task<IActionResult> ActionForceRegisterPaymentAsync(Guid id)
         {
             var result = await _appService.ForceRegisterPaymentAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-get-eta-invoice-pdf")]
-        public async Task<IActionResult> ActionGetEtaInvoicePdfAsync(Guid id)
-        {
-            var result = await _appService.GetEtaInvoicePdfAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-invoice-download-fatturapa")]
-        public async Task<IActionResult> ActionInvoiceDownloadFatturapaAsync(Guid id)
-        {
-            var result = await _appService.InvoiceDownloadFatturapaAsync(id);
             return Ok(result);
         }
         
@@ -113,82 +90,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/action-l10n-id-update-payment-status")]
-        public async Task<IActionResult> ActionL10nIdUpdatePaymentStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nIdUpdatePaymentStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-in-apply-higher-tax")]
-        public async Task<IActionResult> ActionL10nInApplyHigherTaxAsync(Guid id)
-        {
-            var result = await _appService.L10nInApplyHigherTaxAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-in-withholding-entries")]
-        public async Task<IActionResult> ActionL10nInWithholdingEntriesAsync(Guid id)
-        {
-            var result = await _appService.L10nInWithholdingEntriesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-it-edi-send")]
-        public async Task<IActionResult> ActionL10nItEdiSendAsync(Guid id)
-        {
-            var result = await _appService.L10nItEdiSendAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-my-edi-reject-bill")]
-        public async Task<IActionResult> ActionL10nMyEdiRejectBillAsync(Guid id)
-        {
-            var result = await _appService.L10nMyEdiRejectBillAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-my-edi-send-invoice")]
-        public async Task<IActionResult> ActionL10nMyEdiSendInvoiceAsync(Guid id)
-        {
-            var result = await _appService.L10nMyEdiSendInvoiceAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-my-edi-update-status")]
-        public async Task<IActionResult> ActionL10nMyEdiUpdateStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nMyEdiUpdateStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-vn-edi-update-payment-status")]
-        public async Task<IActionResult> ActionL10nVnEdiUpdatePaymentStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nVnEdiUpdatePaymentStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-business-doc")]
         public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
         {
             var result = await _appService.OpenBusinessDocAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-declaration-of-intent")]
-        public async Task<IActionResult> ActionOpenDeclarationOfIntentAsync(Guid id)
-        {
-            var result = await _appService.OpenDeclarationOfIntentAsync(id);
             return Ok(result);
         }
         
@@ -201,26 +106,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/action-open-l10n-ph2307-wizard")]
-        public async Task<IActionResult> ActionOpenL10nPh2307WizardAsync(Guid id)
-        {
-            var result = await _appService.OpenL10nPh2307WizardAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-post")]
         public async Task<IActionResult> ActionPostAsync(Guid id)
         {
             var result = await _appService.PostAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-post-sign-invoices")]
-        public async Task<IActionResult> ActionPostSignInvoicesAsync(Guid id)
-        {
-            var result = await _appService.PostSignInvoicesAsync(id);
             return Ok(result);
         }
         
@@ -236,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/action-process-edi-web-services")]
         public async Task<IActionResult> ActionProcessEdiWebServicesAsync(Guid id, [FromBody] AccountMoveProcessEdiWebServicesRequestDto input)
         {
-            var result = await _appService.ProcessEdiWebServicesAsync(id, input.WithCommit);
+            var result = await _appService.ProcessEdiWebServicesAsync(id, input);
             return Ok(result);
         }
         
@@ -301,14 +190,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         public async Task<IActionResult> ActionUpdateFposValuesAsync(Guid id)
         {
             var result = await _appService.UpdateFposValuesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-validate-tin")]
-        public async Task<IActionResult> ActionValidateTinAsync(Guid id)
-        {
-            var result = await _appService.ValidateTinAsync(id);
             return Ok(result);
         }
         
@@ -449,14 +330,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/check-cn2an")]
-        public async Task<IActionResult> CheckCn2anAsync(Guid id)
-        {
-            var result = await _appService.CheckCn2anAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/check-move-sequence-chain")]
         public async Task<IActionResult> CheckMoveSequenceChainAsync(Guid id)
         {
@@ -473,66 +346,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/compute-payment-reference-finnish")]
-        public async Task<IActionResult> ComputePaymentReferenceFinnishAsync(Guid id, [FromBody] AccountMoveComputePaymentReferenceFinnishRequestDto input)
-        {
-            var result = await _appService.ComputePaymentReferenceFinnishAsync(id, input.Number);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/compute-payment-reference-finnish-rf")]
-        public async Task<IActionResult> ComputePaymentReferenceFinnishRfAsync(Guid id, [FromBody] AccountMoveComputePaymentReferenceFinnishRfRequestDto input)
-        {
-            var result = await _appService.ComputePaymentReferenceFinnishRfAsync(id, input.Number);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountMoveCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/cron-l10n-it-edi-download-and-update")]
-        public async Task<IActionResult> CronL10nItEdiDownloadAndUpdateAsync(Guid id)
-        {
-            var result = await _appService.CronL10nItEdiDownloadAndUpdateAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/download-csv")]
-        public async Task<IActionResult> DownloadCsvAsync(Guid id)
-        {
-            var result = await _appService.DownloadCsvAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/download-efaktur")]
-        public async Task<IActionResult> DownloadEfakturAsync(Guid id)
-        {
-            var result = await _appService.DownloadEfakturAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/download-l10n-jo-edi-computed-xml")]
-        public async Task<IActionResult> DownloadL10nJoEdiComputedXmlAsync(Guid id)
-        {
-            var result = await _appService.DownloadL10nJoEdiComputedXmlAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/download-xml")]
-        public async Task<IActionResult> DownloadXmlAsync(Guid id)
-        {
-            var result = await _appService.DownloadXmlAsync(id);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -540,7 +357,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-currency-rate")]
         public async Task<IActionResult> GetCurrencyRateAsync(Guid id, [FromBody] AccountMoveGetCurrencyRateRequestDto input)
         {
-            var result = await _appService.GetCurrencyRateAsync(id, input.CompanyId, input.ToCurrencyId, input.Date);
+            var result = await _appService.GetCurrencyRateAsync(id, input);
             return Ok(result);
         }
         
@@ -553,18 +370,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/get-finnish-check-digit")]
-        public async Task<IActionResult> GetFinnishCheckDigitAsync(Guid id, [FromBody] AccountMoveGetFinnishCheckDigitRequestDto input)
-        {
-            var result = await _appService.GetFinnishCheckDigitAsync(id, input.BaseNumber);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/get-inbound-types")]
         public async Task<IActionResult> GetInboundTypesAsync(Guid id, [FromBody] AccountMoveGetInboundTypesRequestDto input)
         {
-            var result = await _appService.GetInboundTypesAsync(id, input.IncludeReceipts);
+            var result = await _appService.GetInboundTypesAsync(id, input);
             return Ok(result);
         }
         
@@ -572,7 +381,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-invoice-localisation-fields-required-to-invoice")]
         public async Task<IActionResult> GetInvoiceLocalisationFieldsRequiredToInvoiceAsync(Guid id, [FromBody] AccountMoveGetInvoiceLocalisationFieldsRequiredToInvoiceRequestDto input)
         {
-            var result = await _appService.GetInvoiceLocalisationFieldsRequiredToInvoiceAsync(id, input.CountryId);
+            var result = await _appService.GetInvoiceLocalisationFieldsRequiredToInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -580,31 +389,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-invoice-types")]
         public async Task<IActionResult> GetInvoiceTypesAsync(Guid id, [FromBody] AccountMoveGetInvoiceTypesRequestDto input)
         {
-            var result = await _appService.GetInvoiceTypesAsync(id, input.IncludeReceipts);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-l10n-ch-qrr-number")]
-        public async Task<IActionResult> GetL10nChQrrNumberAsync(Guid id)
-        {
-            var result = await _appService.GetL10nChQrrNumberAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-l10n-sa-confirmation-datetime-sa-tz")]
-        public async Task<IActionResult> GetL10nSaConfirmationDatetimeSaTzAsync(Guid id)
-        {
-            var result = await _appService.GetL10nSaConfirmationDatetimeSaTzAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-linked-ddts")]
-        public async Task<IActionResult> GetLinkedDdtsAsync(Guid id)
-        {
-            var result = await _appService.GetLinkedDdtsAsync(id);
+            var result = await _appService.GetInvoiceTypesAsync(id, input);
             return Ok(result);
         }
         
@@ -612,7 +397,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-outbound-types")]
         public async Task<IActionResult> GetOutboundTypesAsync(Guid id, [FromBody] AccountMoveGetOutboundTypesRequestDto input)
         {
-            var result = await _appService.GetOutboundTypesAsync(id, input.IncludeReceipts);
+            var result = await _appService.GetOutboundTypesAsync(id, input);
             return Ok(result);
         }
         
@@ -628,15 +413,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-purchase-types")]
         public async Task<IActionResult> GetPurchaseTypesAsync(Guid id, [FromBody] AccountMoveGetPurchaseTypesRequestDto input)
         {
-            var result = await _appService.GetPurchaseTypesAsync(id, input.IncludeReceipts);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-rf-check-digits")]
-        public async Task<IActionResult> GetRfCheckDigitsAsync(Guid id, [FromBody] AccountMoveGetRfCheckDigitsRequestDto input)
-        {
-            var result = await _appService.GetRfCheckDigitsAsync(id, input.BaseNumber);
+            var result = await _appService.GetPurchaseTypesAsync(id, input);
             return Ok(result);
         }
         
@@ -644,15 +421,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-sale-types")]
         public async Task<IActionResult> GetSaleTypesAsync(Guid id, [FromBody] AccountMoveGetSaleTypesRequestDto input)
         {
-            var result = await _appService.GetSaleTypesAsync(id, input.IncludeReceipts);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-tag")]
-        public async Task<IActionResult> GetTagAsync(Guid id, [FromBody] AccountMoveGetTagRequestDto input)
-        {
-            var result = await _appService.GetTagAsync(id, input.Element, input.Selector);
+            var result = await _appService.GetSaleTypesAsync(id, input);
             return Ok(result);
         }
         
@@ -684,7 +453,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/is-inbound")]
         public async Task<IActionResult> IsInboundAsync(Guid id, [FromBody] AccountMoveIsInboundRequestDto input)
         {
-            var result = await _appService.IsInboundAsync(id, input.IncludeReceipts);
+            var result = await _appService.IsInboundAsync(id, input);
             return Ok(result);
         }
         
@@ -692,7 +461,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/is-invoice")]
         public async Task<IActionResult> IsInvoiceAsync(Guid id, [FromBody] AccountMoveIsInvoiceRequestDto input)
         {
-            var result = await _appService.IsInvoiceAsync(id, input.IncludeReceipts);
+            var result = await _appService.IsInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -700,7 +469,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/is-outbound")]
         public async Task<IActionResult> IsOutboundAsync(Guid id, [FromBody] AccountMoveIsOutboundRequestDto input)
         {
-            var result = await _appService.IsOutboundAsync(id, input.IncludeReceipts);
+            var result = await _appService.IsOutboundAsync(id, input);
             return Ok(result);
         }
         
@@ -708,7 +477,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/is-purchase-document")]
         public async Task<IActionResult> IsPurchaseDocumentAsync(Guid id, [FromBody] AccountMoveIsPurchaseDocumentRequestDto input)
         {
-            var result = await _appService.IsPurchaseDocumentAsync(id, input.IncludeReceipts);
+            var result = await _appService.IsPurchaseDocumentAsync(id, input);
             return Ok(result);
         }
         
@@ -716,7 +485,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/is-sale-document")]
         public async Task<IActionResult> IsSaleDocumentAsync(Guid id, [FromBody] AccountMoveIsSaleDocumentRequestDto input)
         {
-            var result = await _appService.IsSaleDocumentAsync(id, input.IncludeReceipts);
+            var result = await _appService.IsSaleDocumentAsync(id, input);
             return Ok(result);
         }
         
@@ -724,7 +493,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/js-assign-outstanding-line")]
         public async Task<IActionResult> JsAssignOutstandingLineAsync(Guid id, [FromBody] AccountMoveJsAssignOutstandingLineRequestDto input)
         {
-            var result = await _appService.JsAssignOutstandingLineAsync(id, input.LineId);
+            var result = await _appService.JsAssignOutstandingLineAsync(id, input);
             return Ok(result);
         }
         
@@ -732,95 +501,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/js-remove-outstanding-partial")]
         public async Task<IActionResult> JsRemoveOutstandingPartialAsync(Guid id, [FromBody] AccountMoveJsRemoveOutstandingPartialRequestDto input)
         {
-            var result = await _appService.JsRemoveOutstandingPartialAsync(id, input.PartialId);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-ch-action-print-qr")]
-        public async Task<IActionResult> L10nChActionPrintQrAsync(Guid id)
-        {
-            var result = await _appService.L10nChPrintQrAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-es-tbai-cancel")]
-        public async Task<IActionResult> L10nEsTbaiCancelAsync(Guid id)
-        {
-            var result = await _appService.L10nEsTbaiCancelAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-es-tbai-send-bill")]
-        public async Task<IActionResult> L10nEsTbaiSendBillAsync(Guid id)
-        {
-            var result = await _appService.L10nEsTbaiSendBillAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-gr-edi-try-send-expense-classification")]
-        public async Task<IActionResult> L10nGrEdiTrySendExpenseClassificationAsync(Guid id)
-        {
-            var result = await _appService.L10nGrEdiTrySendExpenseClassificationAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-gr-edi-try-send-invoices")]
-        public async Task<IActionResult> L10nGrEdiTrySendInvoicesAsync(Guid id)
-        {
-            var result = await _appService.L10nGrEdiTrySendInvoicesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-hu-edi-button-hide-banner")]
-        public async Task<IActionResult> L10nHuEdiButtonHideBannerAsync(Guid id)
-        {
-            var result = await _appService.L10nHuEdiButtonHideBannerAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-hu-edi-button-update-status")]
-        public async Task<IActionResult> L10nHuEdiButtonUpdateStatusAsync(Guid id, [FromBody] AccountMoveL10nHuEdiButtonUpdateStatusRequestDto input)
-        {
-            var result = await _appService.L10nHuEdiButtonUpdateStatusAsync(id, input.FromCron);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-edi-ewaybill-send")]
-        public async Task<IActionResult> L10nInEdiEwaybillSendAsync(Guid id)
-        {
-            var result = await _appService.L10nInEdiEwaybillSendAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-verify-partner-gstin-status")]
-        public async Task<IActionResult> L10nInVerifyPartnerGstinStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nInVerifyPartnerGstinStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-ke-action-cu-post")]
-        public async Task<IActionResult> L10nKeActionCuPostAsync(Guid id)
-        {
-            var result = await _appService.L10nKeCuPostAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-ke-cu-responses")]
-        public async Task<IActionResult> L10nKeCuResponsesAsync(Guid id, [FromBody] AccountMoveL10nKeCuResponsesRequestDto input)
-        {
-            var result = await _appService.L10nKeCuResponsesAsync(id, input.Responses);
+            var result = await _appService.JsRemoveOutstandingPartialAsync(id, input);
             return Ok(result);
         }
         
@@ -828,15 +509,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] AccountMoveMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.MsgDict, input.CustomValues);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/number2numeric")]
-        public async Task<IActionResult> Number2numericAsync(Guid id, [FromBody] AccountMoveNumber2numericRequestDto input)
-        {
-            var result = await _appService.Number2numericAsync(id, input.Number);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
         
@@ -881,14 +554,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/prepare-efaktur-vals")]
-        public async Task<IActionResult> PrepareEfakturValsAsync(Guid id)
-        {
-            var result = await _appService.PrepareEfakturValsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/preview-invoice")]
         public async Task<IActionResult> PreviewInvoiceAsync(Guid id)
         {
@@ -901,30 +566,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         public async Task<IActionResult> RefreshInvoiceCurrencyRateAsync(Guid id)
         {
             var result = await _appService.RefreshInvoiceCurrencyRateAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/reset-efaktur")]
-        public async Task<IActionResult> ResetEfakturAsync(Guid id)
-        {
-            var result = await _appService.ResetEfakturAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/space-qrr-reference")]
-        public async Task<IActionResult> SpaceQrrReferenceAsync(Guid id, [FromBody] AccountMoveSpaceQrrReferenceRequestDto input)
-        {
-            var result = await _appService.SpaceQrrReferenceAsync(id, input.QrrRef);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/space-scor-reference")]
-        public async Task<IActionResult> SpaceScorReferenceAsync(Guid id, [FromBody] AccountMoveSpaceScorReferenceRequestDto input)
-        {
-            var result = await _appService.SpaceScorReferenceAsync(id, input.Iso11649Ref);
             return Ok(result);
         }
     }

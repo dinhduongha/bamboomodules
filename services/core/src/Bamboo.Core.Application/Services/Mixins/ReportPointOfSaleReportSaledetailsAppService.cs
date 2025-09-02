@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("point_of_sale", Depends = new[] { "stock_account", "barcodes", "web_editor", "digest", "phone_validation" })]
     public class ReportPointOfSaleReportSaledetailsAppService : ApplicationService, IReportPointOfSaleReportSaledetailsAppService
     {
-
-        public ReportPointOfSaleReportSaledetailsAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public ReportPointOfSaleReportSaledetailsAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> GetDateStartAndDateStopInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date_start, object date_stop) where TEntity : IEntity<Guid>, IReportPointOfSaleReportSaledetailsable

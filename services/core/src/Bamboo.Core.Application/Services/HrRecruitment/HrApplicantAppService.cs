@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -361,7 +362,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrApplicant> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<HrApplicant> GetEmptyListHelpAsync(Guid id, HrApplicantGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
@@ -401,7 +402,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrApplicant> GetViewAsync(Guid id, Guid view_id, object view_type)
+        public async Task<HrApplicant> GetViewAsync(Guid id, HrApplicantGetViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
@@ -461,7 +462,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrApplicant> MessageNewAsync(Guid id, object msg, object custom_values)
+        public async Task<HrApplicant> MessageNewAsync(Guid id, HrApplicantMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
@@ -872,7 +873,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrApplicant> WebsiteFormInputFilterAsync(Guid id, object request, object values)
+        public async Task<HrApplicant> WebsiteFormInputFilterAsync(Guid id, HrApplicantWebsiteFormInputFilterRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_hr_recruitment, FILE: hr_applicant.py) ---

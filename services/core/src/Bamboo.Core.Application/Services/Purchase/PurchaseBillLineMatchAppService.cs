@@ -1,23 +1,26 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
-
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("Purchase", Depends = new[] { "account" })]
-    public class PurchaseBillLineMatchAppService : ApplicationService, IPurchaseBillLineMatchAppService
+    public class PurchaseBillLineMatchAppService : GenericApplicationService<PurchaseBillLineMatch>, IPurchaseBillLineMatchAppService
     {
-        private readonly IPurchaseBillLineMatchRepository _purchaseBillLineMatchRepository;
-        public PurchaseBillLineMatchAppService(IPurchaseBillLineMatchRepository purchaseBillLineMatchRepository) 
+
+        public PurchaseBillLineMatchAppService(IRepository<PurchaseBillLineMatch, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _purchaseBillLineMatchRepository = purchaseBillLineMatchRepository;
+
         }
 
         protected async Task<PurchaseBillLineMatch> ActionCreateBillFromPoLinesInternalAsync(object partner, object po_lines)
@@ -61,8 +64,7 @@ namespace Bamboo.Core.Application.Services
             //     'context': context,
             // }
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseBillLineMatch> ComputeAmountUntaxedFieldsInternalAsync()
@@ -187,8 +189,7 @@ namespace Bamboo.Core.Application.Services
             // # Add all remaining POL to the residual bill
             // residual_bill._add_purchase_order_lines(residual_purchase_order_lines)
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<PurchaseBillLineMatch> OpenLineAsync(Guid id)
@@ -204,8 +205,7 @@ namespace Bamboo.Core.Application.Services
             //     'res_id': self.account_move_id.id if self.account_move_id else self.purchase_order_id.id,
             // }
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<PurchaseBillLineMatch> SelectAmLineInternalAsync()

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class ResConfigSettingsController
@@ -33,22 +34,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/action-l10n-my-edi-allow-processing")]
-        public async Task<IActionResult> ActionL10nMyEdiAllowProcessingAsync(Guid id)
-        {
-            var result = await _appService.L10nMyEdiAllowProcessingAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-my-edi-unregister")]
-        public async Task<IActionResult> ActionL10nMyEdiUnregisterAsync(Guid id)
-        {
-            var result = await _appService.L10nMyEdiUnregisterAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-abandoned-cart-mail-template")]
         public async Task<IActionResult> ActionOpenAbandonedCartMailTemplateAsync(Guid id)
         {
@@ -61,14 +46,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         public async Task<IActionResult> ActionOpenBlockedThirdPartyDomainsAsync(Guid id)
         {
             var result = await _appService.OpenBlockedThirdPartyDomainsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-company-form")]
-        public async Task<IActionResult> ActionOpenCompanyFormAsync(Guid id)
-        {
-            var result = await _appService.OpenCompanyFormAsync(id);
             return Ok(result);
         }
         
@@ -145,14 +122,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/action-website-test-setting")]
-        public async Task<IActionResult> ActionWebsiteTestSettingAsync(Guid id)
-        {
-            var result = await _appService.WebsiteTestSettingAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-account-peppol-configure-services")]
         public async Task<IActionResult> ButtonAccountPeppolConfigureServicesAsync(Guid id)
         {
@@ -161,26 +130,10 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/button-create-proxy-user")]
-        public async Task<IActionResult> ButtonCreateProxyUserAsync(Guid id)
-        {
-            var result = await _appService.ButtonCreateProxyUserAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/button-deregister-peppol-participant")]
         public async Task<IActionResult> ButtonDeregisterPeppolParticipantAsync(Guid id)
         {
             var result = await _appService.ButtonDeregisterPeppolParticipantAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/button-l10n-ro-edi-generate-token")]
-        public async Task<IActionResult> ButtonL10nRoEdiGenerateTokenAsync(Guid id)
-        {
-            var result = await _appService.ButtonL10nRoEdiGenerateTokenAsync(id);
             return Ok(result);
         }
         
@@ -260,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-config-warning")]
         public async Task<IActionResult> GetConfigWarningAsync(Guid id, [FromBody] ResConfigSettingsGetConfigWarningRequestDto input)
         {
-            var result = await _appService.GetConfigWarningAsync(id, input.Msg);
+            var result = await _appService.GetConfigWarningAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-option-name")]
         public async Task<IActionResult> GetOptionNameAsync(Guid id, [FromBody] ResConfigSettingsGetOptionNameRequestDto input)
         {
-            var result = await _appService.GetOptionNameAsync(id, input.FullFieldName);
+            var result = await _appService.GetOptionNameAsync(id, input);
             return Ok(result);
         }
         
@@ -276,7 +229,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-option-path")]
         public async Task<IActionResult> GetOptionPathAsync(Guid id, [FromBody] ResConfigSettingsGetOptionPathRequestDto input)
         {
-            var result = await _appService.GetOptionPathAsync(id, input.MenuXmlId);
+            var result = await _appService.GetOptionPathAsync(id, input);
             return Ok(result);
         }
         
@@ -293,46 +246,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         public async Task<IActionResult> GetValuesAsync(Guid id)
         {
             var result = await _appService.GetValuesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-check-gst-number")]
-        public async Task<IActionResult> L10nInCheckGstNumberAsync(Guid id)
-        {
-            var result = await _appService.L10nInCheckGstNumberAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-edi-buy-iap")]
-        public async Task<IActionResult> L10nInEdiBuyIapAsync(Guid id)
-        {
-            var result = await _appService.L10nInEdiBuyIapAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-edi-ewaybill-test")]
-        public async Task<IActionResult> L10nInEdiEwaybillTestAsync(Guid id)
-        {
-            var result = await _appService.L10nInEdiEwaybillTestAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-in-edi-test")]
-        public async Task<IActionResult> L10nInEdiTestAsync(Guid id)
-        {
-            var result = await _appService.L10nInEdiTestAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/nilvera-ping")]
-        public async Task<IActionResult> NilveraPingAsync(Guid id)
-        {
-            var result = await _appService.NilveraPingAsync(id);
             return Ok(result);
         }
         
@@ -356,7 +269,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/onchange-module")]
         public async Task<IActionResult> OnchangeModuleAsync(Guid id, [FromBody] ResConfigSettingsOnchangeModuleRequestDto input)
         {
-            var result = await _appService.OnchangeModuleAsync(id, input.FieldValue, input.ModuleName);
+            var result = await _appService.OnchangeModuleAsync(id, input);
             return Ok(result);
         }
         
@@ -433,14 +346,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/refresh-eu-tax-mapping")]
-        public async Task<IActionResult> RefreshEuTaxMappingAsync(Guid id)
-        {
-            var result = await _appService.RefreshEuTaxMappingAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/regenerate-kiosk-key")]
         public async Task<IActionResult> RegenerateKioskKeyAsync(Guid id)
         {
@@ -484,7 +389,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/remove-data")]
         public async Task<IActionResult> RemoveDataAsync(Guid id, [FromBody] ResConfigSettingsRemoveDataRequestDto input)
         {
-            var result = await _appService.RemoveDataAsync(id, input.O, input.S);
+            var result = await _appService.RemoveDataAsync(id, input);
             return Ok(result);
         }
         

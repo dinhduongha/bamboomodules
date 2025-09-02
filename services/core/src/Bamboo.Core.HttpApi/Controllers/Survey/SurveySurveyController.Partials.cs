@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Survey
 {
     public partial class SurveySurveyController
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Survey
         [Route("{id}/action-print-survey")]
         public async Task<IActionResult> ActionPrintSurveyAsync(Guid id, [FromBody] SurveySurveyPrintSurveyRequestDto input)
         {
-            var result = await _appService.PrintSurveyAsync(id, input.Answer);
+            var result = await _appService.PrintSurveyAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Survey
         [Route("{id}/action-start-survey")]
         public async Task<IActionResult> ActionStartSurveyAsync(Guid id, [FromBody] SurveySurveyStartSurveyRequestDto input)
         {
-            var result = await _appService.StartSurveyAsync(id, input.Answer);
+            var result = await _appService.StartSurveyAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Survey
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] SurveySurveyCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Survey
         [Route("{id}/get-formview-id")]
         public async Task<IActionResult> GetFormviewIdAsync(Guid id, [FromBody] SurveySurveyGetFormviewIdRequestDto input)
         {
-            var result = await _appService.GetFormviewIdAsync(id, input.AccessUid);
+            var result = await _appService.GetFormviewIdAsync(id, input);
             return Ok(result);
         }
         

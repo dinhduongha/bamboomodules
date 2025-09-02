@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -294,16 +295,6 @@ namespace Bamboo.Core.Application.Services
             //         'raw_base_amount_currency': tax_data['base_amount'],
             //         'raw_base_amount': base_amount,
             //     })
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_tax.py) ---
-            // def _add_tax_details_in_base_line(self, base_line, company, rounding_method=None):
-            // """
-            // Withholding taxes should not affect the tax computation unless explicitly required (via a specific key in the base line).
-            // This requires to adapt the tax computation slightly to achieve this behavior.
-            // """
-            // # EXTENDS 'account'
-            // if not base_line.get('calculate_withholding_taxes'):
-            //     base_line['filter_tax_function'] = lambda t: not t.is_withholding_tax_on_payment
-            // super()._add_tax_details_in_base_line(base_line, company, rounding_method=rounding_method)
             */
             return default;
         }
@@ -562,19 +553,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountTax> CheckAmountTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_tax.py) ---
-            // def _check_amount_type(self):
-            // """ The computation of withholding taxes needs to be limited in computation types to ensure that it works as expected. """
-            // for tax in self:
-            //     if tax.is_withholding_tax_on_payment and tax.amount_type in ['group', 'division']:
-            //         raise UserError(tax.env._("Withholding On Payment taxes cannot use the 'Group of Taxes' or the 'Percentage Tax Included' computations."))
-            */
-            return default;
-        }
-
         protected async Task<AccountTax> CheckChildrenScopeInternalAsync()
         {
             /*
@@ -682,7 +660,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> ComputeAllAsync(Guid id, object price_unit, object currency, object quantity, object product, object partner, object is_refund, object handle_price_include, object include_caba_tags, object rounding_method)
+        public async Task<AccountTax> ComputeAllAsync(Guid id, AccountTaxComputeAllRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -937,94 +915,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountTax> ComputeL10nArTypeTaxUseInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_withholding, FILE: account_tax.py) ---
-            // def _compute_l10n_ar_type_tax_use(self):
-            // for tax in self:
-            //     if tax.country_code == 'AR':
-            //         if tax.type_tax_use in ('sale', 'purchase'):
-            //             tax.l10n_ar_type_tax_use = tax.type_tax_use
-            //         elif tax.l10n_ar_withholding_payment_type in ('supplier', 'customer'):
-            //             tax.l10n_ar_type_tax_use = tax.l10n_ar_withholding_payment_type
-            //         else:
-            //             tax.l10n_ar_type_tax_use = 'none'
-            //     else:
-            //         tax.l10n_ar_type_tax_use = 'none'
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> ComputeL10nHuTaxReasonInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_tax.py) ---
-            // def _compute_l10n_hu_tax_reason(self):
-            // for tax in self:
-            //     reason = _DEFAULT_TAX_REASONS.get(tax.l10n_hu_tax_type, '')
-            //     tax.l10n_hu_tax_reason = self.env._(reason)
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> ComputeL10nInTaxTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_tax.py) ---
-            // def _compute_l10n_in_tax_type(self):
-            // self.l10n_in_tax_type = False
-            // in_taxes = self.filtered(lambda tax: tax.country_code == 'IN')
-            // if in_taxes:
-            //     tags_mapping = {
-            //         'igst': self.env.ref('l10n_in.tax_tag_igst'),
-            //         'cgst': self.env.ref('l10n_in.tax_tag_cgst'),
-            //         'sgst': self.env.ref('l10n_in.tax_tag_sgst'),
-            //         'cess': self.env.ref('l10n_in.tax_tag_cess'),
-            //     }
-            //     for tax in in_taxes:
-            //         tags = tax.invoice_repartition_line_ids.tag_ids
-            //         for tag_code, tag in tags_mapping.items():
-            //             if tag in tags:
-            //                 tax.l10n_in_tax_type = tag_code
-            //                 break
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> ComputeL10nMxTaxTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_mx, FILE: account_tax.py) ---
-            // def _compute_l10n_mx_tax_type(self):
-            // for tax in self:
-            //     tax.l10n_mx_tax_type = 'iva' if tax.country_id.code == 'MX' else False
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> ComputeL10nMyTaxTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_tax.py) ---
-            // def _compute_l10n_my_tax_type(self):
-            // """ Compute default tax type based on a few factors. """
-            // for tax in self:
-            //     if tax.country_id.code != 'MY':
-            //         tax.l10n_my_tax_type = False
-            //     else:
-            //         if tax.amount == 0:
-            //             tax.l10n_my_tax_type = 'E'
-            //         elif tax.tax_scope == 'consu':
-            //             tax.l10n_my_tax_type = '01'
-            //         elif tax.tax_scope == 'service':
-            //             tax.l10n_my_tax_type = '02'
-            //         else:
-            //             tax.l10n_my_tax_type = '06'
-            */
-            return default;
-        }
-
         protected async Task<AccountTax> ComputePriceIncludeInternalAsync()
         {
             /*
@@ -1140,7 +1030,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountTax> CopyDataAsync(Guid id, AccountTaxCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -1906,7 +1796,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountTax> GetTaxTagsAsync(Guid id, object is_refund, object repartition_type)
+        public async Task<AccountTax> GetTaxTagsAsync(Guid id, AccountTaxGetTaxTagsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
@@ -2245,229 +2135,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountTax> InverseL10nArTypeTaxUseInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_withholding, FILE: account_tax.py) ---
-            // def _inverse_l10n_ar_type_tax_use(self):
-            // for tax in self.filtered(lambda t: t.country_code == 'AR'):
-            //     if tax.l10n_ar_type_tax_use in ('sale', 'purchase'):
-            //         tax.type_tax_use = tax.l10n_ar_type_tax_use
-            //         tax.l10n_ar_tax_type = False
-            //         tax.l10n_ar_state_id = False
-            //         tax.l10n_ar_withholding_payment_type = False
-            //     else:
-            //         if tax.l10n_ar_type_tax_use in ('supplier', 'customer'):
-            //             tax.l10n_ar_withholding_payment_type = tax.l10n_ar_type_tax_use
-            //         else:
-            //             tax.l10n_ar_withholding_payment_type = False
-            //             tax.l10n_ar_tax_type = False
-            //         tax.type_tax_use = 'none'
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nEsGetRegimeCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es, FILE: account_tax.py) ---
-            // def _l10n_es_get_regime_code(self):
-            // # Regime codes (ClaveRegimenEspecialOTrascendencia)
-            // # NOTE there's 11 more codes to implement, also there can be up to 3 in total
-            // # See https://www.gipuzkoa.eus/documents/2456431/13761128/Anexo+I.pdf/2ab0116c-25b4-f16a-440e-c299952d683d
-            // oss_tag = self.env.ref('l10n_eu_oss.tag_oss', raise_if_not_found=False)
-            // 
-            // # If there's an OSS tax, it is considered an OSS operation
-            // if oss_tag and oss_tag in self.invoice_repartition_line_ids.tag_ids:
-            //     return '17'
-            // 
-            // if self.filtered(lambda t: t.l10n_es_exempt_reason == 'E2'):
-            //     return '02'
-            // 
-            // return '01'
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nInGetHsnSummaryTableInternalAsync(object base_lines, object display_uom)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_tax.py) ---
-            // def _l10n_in_get_hsn_summary_table(self, base_lines, display_uom):
-            // l10n_in_tax_types = set()
-            // items_map = defaultdict(lambda: {
-            //     'quantity': 0.0,
-            //     'amount_untaxed': 0.0,
-            //     'tax_amount_igst': 0.0,
-            //     'tax_amount_cgst': 0.0,
-            //     'tax_amount_sgst': 0.0,
-            //     'tax_amount_cess': 0.0,
-            // })
-            // 
-            // def get_base_line_grouping_key(base_line):
-            //     unique_taxes_data = set(
-            //         tax_data['tax']
-            //         for tax_data in base_line['tax_details']['taxes_data']
-            //         if tax_data['tax']['l10n_in_tax_type'] in ('igst', 'cgst', 'sgst')
-            //     )
-            //     rate = sum(tax.amount for tax in unique_taxes_data)
-            // 
-            //     return {
-            //         'l10n_in_hsn_code': base_line['l10n_in_hsn_code'],
-            //         'uom_name': base_line['product_uom_id'].name,
-            //         'rate': rate,
-            //     }
-            // 
-            // # quantity / amount_untaxed.
-            // for base_line in base_lines:
-            //     key = frozendict(get_base_line_grouping_key(base_line))
-            //     if not key['l10n_in_hsn_code']:
-            //         continue
-            // 
-            //     item = items_map[key]
-            //     item['quantity'] += base_line['quantity']
-            //     item['amount_untaxed'] += (
-            //         base_line['tax_details']['total_excluded_currency']
-            //         + base_line['tax_details']['delta_total_excluded_currency']
-            //     )
-            // 
-            // # Tax amounts.
-            // def grouping_function(base_line, tax_data):
-            //     return {
-            //         **get_base_line_grouping_key(base_line),
-            //         'l10n_in_tax_type': tax_data['tax'].l10n_in_tax_type,
-            //     } if tax_data else None
-            // 
-            // base_lines_aggregated_values = self._aggregate_base_lines_tax_details(base_lines, grouping_function)
-            // values_per_grouping_key = self._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // for grouping_key, values in values_per_grouping_key.items():
-            //     if (
-            //         not grouping_key
-            //         or not grouping_key['l10n_in_hsn_code']
-            //         or not grouping_key['l10n_in_tax_type']
-            //     ):
-            //         continue
-            // 
-            //     key = frozendict({
-            //         'l10n_in_hsn_code': grouping_key['l10n_in_hsn_code'],
-            //         'rate': grouping_key['rate'],
-            //         'uom_name': grouping_key['uom_name'],
-            //     })
-            //     item = items_map[key]
-            //     l10n_in_tax_type = grouping_key['l10n_in_tax_type']
-            //     item[f'tax_amount_{l10n_in_tax_type}'] += values['tax_amount_currency']
-            //     l10n_in_tax_types.add(l10n_in_tax_type)
-            // 
-            // return {
-            //     'has_igst': 'igst' in l10n_in_tax_types,
-            //     'has_gst': bool({'cgst', 'sgst'} & l10n_in_tax_types),
-            //     'has_cess': 'cess' in l10n_in_tax_types,
-            //     'nb_columns': 5 + len(l10n_in_tax_types),
-            //     'display_uom': display_uom,
-            //     'items': [
-            //         key | values
-            //         for key, values in items_map.items()
-            //     ],
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nItEdiCheckExonerationWithNoTaxInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it, FILE: account_tax.py) ---
-            // def _l10n_it_edi_check_exoneration_with_no_tax(self):
-            // for tax in self:
-            //     if tax.country_id.code == 'IT':
-            //         if tax.amount_type == 'percent' and tax.amount == 0 and not (tax.l10n_it_exempt_reason and tax.l10n_it_law_reference):
-            //             raise ValidationError(_("If the tax amount is 0%, you must enter the exoneration code and the related law reference."))
-            //         if tax.l10n_it_exempt_reason == 'N6' and tax._l10n_it_is_split_payment():
-            //             raise UserError(_("Split Payment is not compatible with exoneration of kind 'N6'"))
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nItFilterKindInternalAsync(object kind)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it, FILE: account_tax.py) ---
-            // def _l10n_it_filter_kind(self, kind):
-            // """ Filters taxes depending on _l10n_it_get_tax_kind. """
-            // return self.filtered(lambda tax: tax._l10n_it_get_tax_kind() == kind)
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nItGetTaxKindInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it, FILE: account_tax.py) ---
-            // def _l10n_it_get_tax_kind(self):
-            // if self.amount_type == 'percent' and self.amount >= 0:
-            //     return 'vat'
-            // return None
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_tax.py) ---
-            // def _l10n_it_get_tax_kind(self):
-            // return ((self.l10n_it_withholding_type and 'withholding')
-            //         or (self.l10n_it_pension_fund_type and 'pension_fund')
-            //         or super()._l10n_it_get_tax_kind())
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nItIsSplitPaymentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it, FILE: account_tax.py) ---
-            // def _l10n_it_is_split_payment(self):
-            // """ Split payment means that the Public Administration buyer will pay VAT
-            //     to the tax agency instead of the vendor
-            // """
-            // self.ensure_one()
-            // 
-            // tax_tags = self.get_tax_tags(is_refund=False, repartition_type='tax') | self.get_tax_tags(is_refund=False, repartition_type='base')
-            // if not tax_tags:
-            //     return False
-            // 
-            // it_tax_report_ve38_lines = self.env['account.report.line'].search([
-            //     ('report_id.country_id.code', '=', 'IT'),
-            //     ('code', '=', 'VE38'),
-            // ])
-            // if not it_tax_report_ve38_lines:
-            //     return False
-            // 
-            // ve38_lines_tags = it_tax_report_ve38_lines.expression_ids._get_matching_tags()
-            // return bool(tax_tags & ve38_lines_tags)
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nJoIsExemptTaxInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_tax.py) ---
-            // def _l10n_jo_is_exempt_tax(self):
-            // self.ensure_one()
-            // exempt_tags = self.env.ref('l10n_jo.tax_report_vat_sale_export_exempt_local_zero_tag')._get_matching_tags()
-            // exempt_taxes = self.env['account.tax'].search([('repartition_line_ids.tag_ids', 'in', exempt_tags.ids)])
-            // return self.id in exempt_taxes.ids
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> L10nSaConstrainIsRetentionInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_tax.py) ---
-            // def _l10n_sa_constrain_is_retention(self):
-            // for tax in self:
-            //     if tax.amount >= 0 and tax.l10n_sa_is_retention and tax.type_tax_use == 'sale':
-            //         raise UserError(_("Cannot set a tax to Retention if the amount is greater than or equal 0"))
-            */
-            return default;
-        }
-
         protected async Task<AccountTax> LoadPosDataDomainInternalAsync(object data)
         {
             /*
@@ -2481,17 +2148,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<AccountTax> LoadPosDataFieldsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax_pos, FILE: account_tax.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // fields = super()._load_pos_data_fields(config_id)
-            // # Adding the field in the data so that it is available in batch_for_taxes_computation
-            // fields.append('is_withholding_tax_on_payment')
-            // return fields
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_pos, FILE: account_tax.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // fields = super()._load_pos_data_fields(config_id)
-            // fields += ['l10n_in_tax_type']
-            // return fields
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: account_tax.py) ---
             // def _load_pos_data_fields(self, config_id):
             // return [
@@ -2598,18 +2254,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountTax> NeverUnlinkDeclarationOfIntentTaxInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_tax.py) ---
-            // def _never_unlink_declaration_of_intent_tax(self):
-            // for tax in self:
-            //     if tax == tax.company_id.l10n_it_edi_doi_tax_id:
-            //         raise UserError(_('You cannot delete the special tax for Declarations of Intent.'))
-            */
-            return default;
-        }
-
         public async Task<AccountTax> OnchangeAmountAsync(Guid id)
         {
             /*
@@ -2617,24 +2261,8 @@ namespace Bamboo.Core.Application.Services
             // def onchange_amount(self):
             // if self.amount_type in ('percent', 'division') and self.amount != 0.0 and not self.invoice_label:
             //     self.invoice_label = "{0:.4g}%".format(self.amount)
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_tax.py) ---
-            // def onchange_amount(self):
-            // super().onchange_amount()
-            // self.l10n_sa_is_retention = False
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<AccountTax> OnchangeAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_tax.py) ---
-            // def _onchange_amount(self):
-            // """ Reset the is_withholding_tax_on_payment field when the amount is set to positive; as the field will be hidden. """
-            // if self.amount >= 0:
-            //     self.is_withholding_tax_on_payment = False
-            */
-            return default;
         }
 
         public async Task<AccountTax> OnchangeAmountTypeAsync(Guid id)
@@ -2648,32 +2276,6 @@ namespace Bamboo.Core.Application.Services
             //     self.invoice_label = None
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<AccountTax> OnchangeIsWithholdingTaxOnPaymentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: account_tax.py) ---
-            // def _onchange_is_withholding_tax_on_payment(self):
-            // """ Ensure that we don't keep cash basis enabled if it was before checking the withholding tax option. """
-            // if self.is_withholding_tax_on_payment:
-            //     self.tax_exigibility = 'on_invoice'
-            //     self.price_include_override = 'tax_excluded'
-            */
-            return default;
-        }
-
-        protected async Task<AccountTax> OnchangeL10nKeItemCodeIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke, FILE: account_tax.py) ---
-            // def _onchange_l10n_ke_item_code_id(self):
-            // """ When the amount of the tax changes this field is reset """
-            // for tax in self:
-            //     if tax._origin.amount != tax.amount:
-            //         tax.l10n_ke_item_code_id = None
-            */
-            return default;
         }
 
         public async Task<AccountTax> OnchangePriceIncludeAsync(Guid id)
@@ -2815,12 +2417,6 @@ namespace Bamboo.Core.Application.Services
             // # EXTENDS 'account'
             // results = super()._prepare_base_line_for_taxes_computation(record, **kwargs)
             // results['expense_id'] = self._get_base_line_field_value_from_record(record, 'expense_id', kwargs, self.env['hr.expense'])
-            // return results
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_tax.py) ---
-            // def _prepare_base_line_for_taxes_computation(self, record, **kwargs):
-            // # EXTENDS 'account'
-            // results = super()._prepare_base_line_for_taxes_computation(record, **kwargs)
-            // results['l10n_in_hsn_code'] = self._get_base_line_field_value_from_record(record, 'l10n_in_hsn_code', kwargs, False)
             // return results
             */
             return default;
@@ -3733,24 +3329,6 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_("The tax group must have the same country_id as the tax using it."))
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<AccountTax> ValidateWithholdingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_tax.py) ---
-            // def _validate_withholding(self):
-            // for tax in self:
-            //     if tax.l10n_it_withholding_type and tax.l10n_it_withholding_type != 'RT04' and tax.amount >= 0:
-            //         raise ValidationError(_("Tax '%s' has a withholding type so the amount must be negative.", tax.name))
-            //     if tax.l10n_it_withholding_type and not tax.l10n_it_withholding_reason:
-            //         raise ValidationError(_("Tax '%s' has a withholding type, so the withholding reason must also be specified", tax.name))
-            //     if tax.l10n_it_withholding_reason and not tax.l10n_it_withholding_type:
-            //         raise ValidationError(_("Tax '%s' has a withholding reason, so the withholding type must also be specified", tax.name))
-            //     if (tax.l10n_it_withholding_type or tax.l10n_it_withholding_reason) and tax.l10n_it_pension_fund_type:
-            //         raise ValidationError(_("Tax '%s' cannot be both a Withholding tax and a Pension fund tax. Please create two separate ones.", tax.name))
-            */
-            return default;
         }
 
         public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountTax entity, List<string> fields)

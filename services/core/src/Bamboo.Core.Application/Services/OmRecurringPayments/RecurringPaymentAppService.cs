@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -33,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<RecurringPayment> ComputeNextDateAsync(Guid id, object date)
+        public async Task<RecurringPayment> ComputeNextDateAsync(Guid id, RecurringPaymentComputeNextDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---
@@ -53,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<RecurringPayment> CreateLinesAsync(Guid id, object date)
+        public async Task<RecurringPayment> CreateLinesAsync(Guid id, RecurringPaymentCreateLinesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_recurring_payments, FILE: recurring_payment.py) ---

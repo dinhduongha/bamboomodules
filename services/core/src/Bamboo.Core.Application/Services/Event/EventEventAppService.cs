@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -985,7 +986,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> CopyDataAsync(Guid id, object @default)
+        public async Task<EventEvent> CopyDataAsync(Guid id, EventEventCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
@@ -1601,7 +1602,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> GoogleMapLinkAsync(Guid id, object zoom)
+        public async Task<EventEvent> GoogleMapLinkAsync(Guid id, EventEventGoogleMapLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -1682,7 +1683,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> MailAttendeesAsync(Guid id, Guid template_id, object force_send, object filter_func)
+        public async Task<EventEvent> MailAttendeesAsync(Guid id, EventEventMailAttendeesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
@@ -2051,7 +2052,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventEvent> ToggleBoothMenuAsync(Guid id, object val)
+        public async Task<EventEvent> ToggleBoothMenuAsync(Guid id, EventEventToggleBoothMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_booth, FILE: event_event.py) ---
@@ -2061,7 +2062,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<EventEvent> ToggleExhibitorMenuAsync(Guid id, object val)
+        public async Task<EventEvent> ToggleExhibitorMenuAsync(Guid id, EventEventToggleExhibitorMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_exhibitor, FILE: event_event.py) ---
@@ -2071,7 +2072,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<EventEvent> ToggleWebsiteMenuAsync(Guid id, object val)
+        public async Task<EventEvent> ToggleWebsiteMenuAsync(Guid id, EventEventToggleWebsiteMenuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
@@ -2081,7 +2082,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<EventEvent> ToggleWebsiteTrackAsync(Guid id, object val)
+        public async Task<EventEvent> ToggleWebsiteTrackAsync(Guid id, EventEventToggleWebsiteTrackRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_event.py) ---
@@ -2091,7 +2092,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<EventEvent> ToggleWebsiteTrackProposalAsync(Guid id, object val)
+        public async Task<EventEvent> ToggleWebsiteTrackProposalAsync(Guid id, EventEventToggleWebsiteTrackProposalRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_event_track, FILE: event_event.py) ---

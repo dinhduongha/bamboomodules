@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ProjectTags> ArrangeTagListByIdAsync(Guid id, object tag_list, object id_order)
+        public async Task<ProjectTags> ArrangeTagListByIdAsync(Guid id, ProjectTagsArrangeTagListByIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_tags.py) ---

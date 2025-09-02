@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class FormatAddressMixinAppService : ApplicationService, IFormatAddressMixinAppService
     {
-
-        public FormatAddressMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public FormatAddressMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AccessibleBranchesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
@@ -25,6 +27,191 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _accessible_branches(self):
             // return self.browse(self.__accessible_branches())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAllCompanyBranchesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
+            // def action_all_company_branches(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Branches'),
+            //     'res_model': 'res.company',
+            //     'domain': [('parent_id', '=', self.id)],
+            //     'context': {
+            //         'active_test': False,
+            //         'default_parent_id': self.id,
+            //     },
+            //     'views': [[False, 'list'], [False, 'kanban'], [False, 'form']],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_reschedule_meeting(self):
+            // self.ensure_one()
+            // action = self.action_schedule_meeting(smart_calendar=False)
+            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // if next_activity.calendar_event_id:
+            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_schedule_meeting(self, smart_calendar=True):
+            // """ Open meeting's calendar view to schedule meeting on current opportunity.
+            // 
+            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
+            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
+            //     :return dict: dictionary value for created Meeting view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
+            // partner_ids = self.env.user.partner_id.ids
+            // if self.partner_id:
+            //     partner_ids.append(self.partner_id.id)
+            // current_opportunity_id = self.id if self.type == 'opportunity' else False
+            // action['context'] = {
+            //     'search_default_opportunity_id': current_opportunity_id,
+            //     'default_opportunity_id': current_opportunity_id,
+            //     'default_partner_id': self.partner_id.id,
+            //     'default_partner_ids': partner_ids,
+            //     'default_team_id': self.team_id.id,
+            //     'default_name': self.name,
+            // }
+            // 
+            // # 'Smart' calendar view : get the most relevant time period to display to the user.
+            // if current_opportunity_id and smart_calendar:
+            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
+            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_automated_probability(self):
+            // self.write({'probability': self.automated_probability})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_lost(self, **additional_values):
+            // """ Lost semantic: probability = 0 or active = False """
+            // res = self.action_archive()
+            // if additional_values:
+            //     self.write(dict(additional_values))
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won(self):
+            // """ Won semantic: probability = 100 (active untouched) """
+            // self.action_unarchive()
+            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
+            // leads_by_won_stage = {}
+            // for lead in self:
+            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
+            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
+            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
+            //     # sequence than any "won" stage. But while this is not the case, searching
+            //     # for the "won" stage while alterning the sequence order (see below) will correctly
+            //     # handle such a case :
+            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
+            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
+            //     #       not in [x (won)] nor [z (won)]
+            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
+            //     if not stage_id:
+            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
+            //     if stage_id in leads_by_won_stage:
+            //         leads_by_won_stage[stage_id] += lead
+            //     else:
+            //         leads_by_won_stage[stage_id] = lead
+            // for won_stage_id, leads in leads_by_won_stage.items():
+            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won_rainbowman(self):
+            // self.ensure_one()
+            // self.action_set_won()
+            // 
+            // message = self._get_rainbowman_message()
+            // if message:
+            //     return {
+            //         'effect': {
+            //             'fadeout': 'slow',
+            //             'message': message,
+            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
+            //             'type': 'rainbow_man',
+            //         }
+            //     }
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_show_potential_duplicates(self):
+            // """ Open kanban view to display duplicate leads or opportunity.
+            //     :return dict: dictionary value for created kanban view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
+            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
+            // action['context'] = {
+            //     'active_test': False,
+            //     'create': False
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_snooze(self):
+            // self.ensure_one()
+            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // my_next_activity.action_snooze()
+            // return True
             */
             return default;
         }
@@ -97,27 +284,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // branches.
             // """
             // return self == self.sudo().search([('id', 'child_of', self.root_id.ids)])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AllCompanyBranchesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def action_all_company_branches(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Branches'),
-            //     'res_model': 'res.company',
-            //     'domain': [('parent_id', '=', self.id)],
-            //     'context': {
-            //         'active_test': False,
-            //         'default_parent_id': self.id,
-            //     },
-            //     'views': [[False, 'list'], [False, 'kanban'], [False, 'form']],
-            // }
             */
             return default;
         }
@@ -4342,57 +4508,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_reschedule_meeting(self):
-            // self.ensure_one()
-            // action = self.action_schedule_meeting(smart_calendar=False)
-            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // if next_activity.calendar_event_id:
-            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_schedule_meeting(self, smart_calendar=True):
-            // """ Open meeting's calendar view to schedule meeting on current opportunity.
-            // 
-            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
-            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
-            //     :return dict: dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
-            // partner_ids = self.env.user.partner_id.ids
-            // if self.partner_id:
-            //     partner_ids.append(self.partner_id.id)
-            // current_opportunity_id = self.id if self.type == 'opportunity' else False
-            // action['context'] = {
-            //     'search_default_opportunity_id': current_opportunity_id,
-            //     'default_opportunity_id': current_opportunity_id,
-            //     'default_partner_id': self.partner_id.id,
-            //     'default_partner_ids': partner_ids,
-            //     'default_team_id': self.team_id.id,
-            //     'default_name': self.name,
-            // }
-            // 
-            // # 'Smart' calendar view : get the most relevant time period to display to the user.
-            // if current_opportunity_id and smart_calendar:
-            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
-            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
-            // 
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> SearchDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IFormatAddressMixinable
         {
             /*
@@ -4498,119 +4613,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     field_names, lead_offset, lead_limit, lead_order,
             // )
             // return self.browse(my_lead_ids_keep) + other_lead_res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_automated_probability(self):
-            // self.write({'probability': self.automated_probability})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_lost(self, **additional_values):
-            // """ Lost semantic: probability = 0 or active = False """
-            // res = self.action_archive()
-            // if additional_values:
-            //     self.write(dict(additional_values))
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won(self):
-            // """ Won semantic: probability = 100 (active untouched) """
-            // self.action_unarchive()
-            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
-            // leads_by_won_stage = {}
-            // for lead in self:
-            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
-            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
-            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
-            //     # sequence than any "won" stage. But while this is not the case, searching
-            //     # for the "won" stage while alterning the sequence order (see below) will correctly
-            //     # handle such a case :
-            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
-            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
-            //     #       not in [x (won)] nor [z (won)]
-            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
-            //     if not stage_id:
-            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
-            //     if stage_id in leads_by_won_stage:
-            //         leads_by_won_stage[stage_id] += lead
-            //     else:
-            //         leads_by_won_stage[stage_id] = lead
-            // for won_stage_id, leads in leads_by_won_stage.items():
-            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won_rainbowman(self):
-            // self.ensure_one()
-            // self.action_set_won()
-            // 
-            // message = self._get_rainbowman_message()
-            // if message:
-            //     return {
-            //         'effect': {
-            //             'fadeout': 'slow',
-            //             'message': message,
-            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
-            //             'type': 'rainbow_man',
-            //         }
-            //     }
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_show_potential_duplicates(self):
-            // """ Open kanban view to display duplicate leads or opportunity.
-            //     :return dict: dictionary value for created kanban view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
-            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
-            // action['context'] = {
-            //     'active_test': False,
-            //     'create': False
-            // }
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatAddressMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_snooze(self):
-            // self.ensure_one()
-            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // my_next_activity.action_snooze()
-            // return True
             */
             return default;
         }

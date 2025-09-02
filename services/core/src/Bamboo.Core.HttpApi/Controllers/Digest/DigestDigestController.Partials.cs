@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Digest
 {
     public partial class DigestDigestController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Digest
         [Route("{id}/action-set-periodicity")]
         public async Task<IActionResult> ActionSetPeriodicityAsync(Guid id, [FromBody] DigestDigestSetPeriodicityRequestDto input)
         {
-            var result = await _appService.SetPeriodicityAsync(id, input.Periodicity);
+            var result = await _appService.SetPeriodicityAsync(id, input);
             return Ok(result);
         }
         

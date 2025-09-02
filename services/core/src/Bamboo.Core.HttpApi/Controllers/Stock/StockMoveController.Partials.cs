@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Stock
 {
     public partial class StockMoveController
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/action-generate-lot-line-vals")]
         public async Task<IActionResult> ActionGenerateLotLineValsAsync(Guid id, [FromBody] StockMoveGenerateLotLineValsRequestDto input)
         {
-            var result = await _appService.GenerateLotLineValsAsync(id, input.Context, input.Mode, input.FirstLot, input.Count, input.LotText);
+            var result = await _appService.GenerateLotLineValsAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockMoveCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -116,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/product-price-update-before-done")]
         public async Task<IActionResult> ProductPriceUpdateBeforeDoneAsync(Guid id, [FromBody] StockMoveProductPriceUpdateBeforeDoneRequestDto input)
         {
-            var result = await _appService.ProductPriceUpdateBeforeDoneAsync(id, input.ForcedQty);
+            var result = await _appService.ProductPriceUpdateBeforeDoneAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/split-lots")]
         public async Task<IActionResult> SplitLotsAsync(Guid id, [FromBody] StockMoveSplitLotsRequestDto input)
         {
-            var result = await _appService.SplitLotsAsync(id, input.Lots);
+            var result = await _appService.SplitLotsAsync(id, input);
             return Ok(result);
         }
     }

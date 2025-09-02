@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -223,7 +224,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProcurementGroup> RunAsync(Guid id, object procurements, object raise_user_error)
+        public async Task<ProcurementGroup> RunAsync(Guid id, ProcurementGroupRunRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: stock_rule.py) ---
@@ -329,7 +330,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProcurementGroup> RunSchedulerAsync(Guid id, object use_new_cursor, Guid company_id)
+        public async Task<ProcurementGroup> RunSchedulerAsync(Guid id, ProcurementGroupRunSchedulerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_rule.py) ---

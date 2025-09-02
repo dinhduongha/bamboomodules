@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1258,7 +1259,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockQuant> MoveQuantsAsync(Guid id, Guid location_dest_id, Guid package_dest_id, object message, object unpack)
+        public async Task<StockQuant> MoveQuantsAsync(Guid id, StockQuantMoveQuantsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_quant.py) ---

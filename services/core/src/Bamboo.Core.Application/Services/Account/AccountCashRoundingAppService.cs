@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -36,7 +37,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountCashRounding> ComputeDifferenceAsync(Guid id, object currency, object amount)
+        public async Task<AccountCashRounding> ComputeDifferenceAsync(Guid id, AccountCashRoundingComputeDifferenceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---
@@ -75,7 +76,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountCashRounding> RoundAsync(Guid id, object amount)
+        public async Task<AccountCashRounding> RoundAsync(Guid id, AccountCashRoundingRoundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_cash_rounding.py) ---

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountAccountController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAccountCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/copy-translations")]
         public async Task<IActionResult> CopyTranslationsAsync(Guid id, [FromBody] AccountAccountCopyTranslationsRequestDto input)
         {
-            var result = await _appService.CopyTranslationsAsync(id, input.New, input.Excluded);
+            var result = await _appService.CopyTranslationsAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-account-group")]
         public async Task<IActionResult> GetAccountGroupAsync(Guid id, [FromBody] AccountAccountGetAccountGroupRequestDto input)
         {
-            var result = await _appService.GetAccountGroupAsync(id, input.AccountTypes);
+            var result = await _appService.GetAccountGroupAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/spreadsheet-fetch-debit-credit")]
         public async Task<IActionResult> SpreadsheetFetchDebitCreditAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchDebitCreditAsync(id, input.ArgsList);
+            var result = await _appService.SpreadsheetFetchDebitCreditAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/spreadsheet-fetch-partner-balance")]
         public async Task<IActionResult> SpreadsheetFetchPartnerBalanceAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchPartnerBalanceAsync(id, input.ArgsList);
+            var result = await _appService.SpreadsheetFetchPartnerBalanceAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/spreadsheet-fetch-residual-amount")]
         public async Task<IActionResult> SpreadsheetFetchResidualAmountAsync(Guid id, [FromBody] AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
         {
-            var result = await _appService.SpreadsheetFetchResidualAmountAsync(id, input.ArgsList);
+            var result = await _appService.SpreadsheetFetchResidualAmountAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/spreadsheet-move-line-action")]
         public async Task<IActionResult> SpreadsheetMoveLineActionAsync(Guid id, [FromBody] AccountAccountSpreadsheetMoveLineActionRequestDto input)
         {
-            var result = await _appService.SpreadsheetMoveLineActionAsync(id, input.Args);
+            var result = await _appService.SpreadsheetMoveLineActionAsync(id, input);
             return Ok(result);
         }
     }

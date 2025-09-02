@@ -1,4 +1,4 @@
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -156,28 +156,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<BaseDocumentLayout> DefaultCompanyDetailsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_din5008, FILE: base_document_layout.py) ---
-            // def _default_company_details(self):
-            // # OVERRIDE web/models/base_document_layout
-            // default_company_details = super()._default_company_details()
-            // if self.env.company.external_report_layout_id == self.env.ref('l10n_din5008.external_layout_din5008'):
-            //     # In order to respect the strict formatting of DIN5008, we need to remove empty lines from the address
-            //     return re.sub(r'(( )*<br>( )*\n)+', r'<br>\n', default_company_details)
-            // return default_company_details
-            --- ODOO METHOD SOURCE (MODULE: l10n_ma, FILE: base_document_layout.py) ---
-            // def _default_company_details(self):
-            // # OVERRIDE web/models/base_document_layout
-            // company_details = super()._default_company_details()
-            // if self.env.company.country_code == 'MA':
-            //     company_details += Markup('<br> ICE: %s') % self.env.company.company_registry
-            // return company_details
-            --- ODOO METHOD SOURCE (MODULE: l10n_mu_account, FILE: base_document_layout.py) ---
-            // def _default_company_details(self):
-            // company_details = super()._default_company_details()
-            // company = self.env.company
-            // if company.company_registry and company.country_code == 'MU':
-            //     return company_details + Markup('<br/> %s') % company.company_registry
-            // return company_details
             --- ODOO METHOD SOURCE (MODULE: web, FILE: base_document_layout.py) ---
             // def _default_company_details(self):
             // company = self.env.company
@@ -195,15 +173,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<BaseDocumentLayout> DefaultReportFooterInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_din5008, FILE: base_document_layout.py) ---
-            // def _default_report_footer(self):
-            // # OVERRIDE web/models/base_document_layout
-            // if self.env.company.external_report_layout_id == self.env.ref('l10n_din5008.external_layout_din5008'):
-            //     company = self.env.company
-            //     # Company VAT should not be present in this footer, as it is displayed elsewhere in the DIN5008 layout
-            //     footer_fields = [field for field in [company.phone, company.email, company.website] if isinstance(field, str) and len(field) > 0]
-            //     return Markup('<br>').join(footer_fields)
-            // return super()._default_report_footer()
             --- ODOO METHOD SOURCE (MODULE: web, FILE: base_document_layout.py) ---
             // def _default_report_footer(self):
             // company = self.env.company
@@ -224,7 +193,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(Guid id, object logo, object white_threshold, object mitigate)
+        public async Task<BaseDocumentLayout> ExtractImagePrimarySecondaryColorsAsync(Guid id, BaseDocumentLayoutExtractImagePrimarySecondaryColorsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: base_document_layout.py) ---

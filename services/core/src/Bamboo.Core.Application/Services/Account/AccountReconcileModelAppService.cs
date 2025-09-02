@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -76,7 +77,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountReconcileModel> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountReconcileModel> CopyDataAsync(Guid id, AccountReconcileModelCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_reconcile_model.py) ---

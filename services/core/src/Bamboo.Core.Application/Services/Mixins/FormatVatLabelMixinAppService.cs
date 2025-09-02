@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class FormatVatLabelMixinAppService : ApplicationService, IFormatVatLabelMixinAppService
     {
-
-        public FormatVatLabelMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public FormatVatLabelMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AccessibleBranchesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
@@ -25,6 +27,27 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _accessible_branches(self):
             // return self.browse(self.__accessible_branches())
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAllCompanyBranchesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
+            // def action_all_company_branches(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Branches'),
+            //     'res_model': 'res.company',
+            //     'domain': [('parent_id', '=', self.id)],
+            //     'context': {
+            //         'active_test': False,
+            //         'default_parent_id': self.id,
+            //     },
+            //     'views': [[False, 'list'], [False, 'kanban'], [False, 'form']],
+            // }
             */
             return default;
         }
@@ -97,27 +120,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // branches.
             // """
             // return self == self.sudo().search([('id', 'child_of', self.root_id.ids)])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AllCompanyBranchesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IFormatVatLabelMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def action_all_company_branches(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Branches'),
-            //     'res_model': 'res.company',
-            //     'domain': [('parent_id', '=', self.id)],
-            //     'context': {
-            //         'active_test': False,
-            //         'default_parent_id': self.id,
-            //     },
-            //     'views': [[False, 'list'], [False, 'kanban'], [False, 'form']],
-            // }
             */
             return default;
         }

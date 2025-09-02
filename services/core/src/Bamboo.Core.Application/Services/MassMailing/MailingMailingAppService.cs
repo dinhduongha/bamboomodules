@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -989,7 +990,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingMailing> CopyDataAsync(Guid id, object @default)
+        public async Task<MailingMailing> CopyDataAsync(Guid id, MailingMailingCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -1171,7 +1172,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingMailing> FetchFavoritesAsync(Guid id, object extra_domain)
+        public async Task<MailingMailing> FetchFavoritesAsync(Guid id, MailingMailingFetchFavoritesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
@@ -2251,7 +2252,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingMailing> SendMailAsync(Guid id, List<Guid> res_ids)
+        public async Task<MailingMailing> SendMailAsync(Guid id, MailingMailingSendMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: marketing_card, FILE: mailing_mailing.py) ---
@@ -2270,7 +2271,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingMailing> SendSmsAsync(Guid id, List<Guid> res_ids)
+        public async Task<MailingMailing> SendSmsAsync(Guid id, MailingMailingSendSmsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing_sms, FILE: mailing_mailing.py) ---

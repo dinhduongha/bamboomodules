@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Stock
 {
     public partial class StockLotController
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] StockLotCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/generate-lot-names")]
         public async Task<IActionResult> GenerateLotNamesAsync(Guid id, [FromBody] StockLotGenerateLotNamesRequestDto input)
         {
-            var result = await _appService.GenerateLotNamesAsync(id, input.FirstLot, input.Count);
+            var result = await _appService.GenerateLotNamesAsync(id, input);
             return Ok(result);
         }
     }

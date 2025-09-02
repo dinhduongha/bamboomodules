@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -203,7 +204,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticAccount> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountAnalyticAccount> CopyDataAsync(Guid id, AccountAnalyticAccountCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_account.py) ---
@@ -560,7 +561,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, object specification)
+        public async Task<List<Dictionary<string, object>>> WebReadAsync(Guid id, AccountAnalyticAccountWebReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: analytic, FILE: analytic_account.py) ---
@@ -570,8 +571,7 @@ namespace Bamboo.Core.Application.Services
             //     self_context = self.with_context(analytic_plan_id=self.plan_id.id)
             // return super(AccountAnalyticAccount, self_context).web_read(specification)
             */
-            var entity = await Repository.GetAsync(id);
-            return default;
+            var entity = await Repository.GetAsync(id); return default;
         }
     }
 }

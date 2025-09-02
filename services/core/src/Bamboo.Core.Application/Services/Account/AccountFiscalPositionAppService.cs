@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
             _posLoadMixinAppService = posLoadMixinAppService;
         }
 
-        public async Task<AccountFiscalPosition> AdjustValsCountryIdAsync(Guid id, object vals)
+        public async Task<AccountFiscalPosition> AdjustValsCountryIdAsync(Guid id, AccountFiscalPositionAdjustValsCountryIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: account_fiscal_position.py) ---
@@ -209,25 +210,6 @@ namespace Bamboo.Core.Application.Services
             //     key=lambda x: x[1],
             //     default=(self.env['account.fiscal.position'], False)
             // )[0]
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: account_fiscal_position.py) ---
-            // def _get_fiscal_position(self, partner, delivery=None):
-            // if not delivery:
-            //     delivery = partner
-            // 
-            // if self.env.company.country_id.code != "BR" or delivery.country_id.code != 'BR':
-            //     return super()._get_fiscal_position(partner, delivery=delivery)
-            // 
-            // # manually set fiscal position on partner has a higher priority
-            // manual_fiscal_position = delivery.property_account_position_id or partner.property_account_position_id
-            // if manual_fiscal_position:
-            //     return manual_fiscal_position
-            // 
-            // # Taxation in Brazil depends on both the state of the partner and the state of the company
-            // if self.env.company.state_id == delivery.state_id:
-            //     return self.search([('l10n_br_fp_type', '=', 'internal'), ('company_id', '=', self.env.company.id)], limit=1)
-            // if self.env.company.state_id.code in SOUTH_SOUTHEAST and delivery.state_id.code in NORTH_NORTHEAST_MIDWEST:
-            //     return self.search([('l10n_br_fp_type', '=', 'ss_nnm'), ('company_id', '=', self.env.company.id)], limit=1)
-            // return self.search([('l10n_br_fp_type', '=', 'interstate'), ('company_id', '=', self.env.company.id)], limit=1)
             */
             return default;
         }
@@ -276,15 +258,6 @@ namespace Bamboo.Core.Application.Services
             //     )),
             //     ('sequence', lambda fpos: -(fpos.sequence or 0.1)),  # do not filter out sequence=0, priority to lowest sequence in `max` method
             // ]
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_fiscal_position.py) ---
-            // def _get_fpos_ranking_functions(self, partner):
-            // if self.env.company.country_id.code != "AR":
-            //     return super()._get_fpos_ranking_functions(partner)
-            // return [
-            //     ('l10n_ar_afip_responsibility_type_id', lambda fpos: (
-            //         partner.l10n_ar_afip_responsibility_type_id in fpos.l10n_ar_afip_responsibility_type_ids
-            //     ))
-            // ] + super()._get_fpos_ranking_functions(partner)
             */
             return default;
         }
@@ -364,7 +337,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountFiscalPosition> MapAccountAsync(Guid id, object account)
+        public async Task<AccountFiscalPosition> MapAccountAsync(Guid id, AccountFiscalPositionMapAccountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -374,7 +347,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountFiscalPosition> MapTaxAsync(Guid id, object taxes)
+        public async Task<AccountFiscalPosition> MapTaxAsync(Guid id, AccountFiscalPositionMapTaxRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -386,18 +359,6 @@ namespace Bamboo.Core.Application.Services
             // ))
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<AccountFiscalPosition> NeverUnlinkDeclarationOfIntentFiscalPositionInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_fiscal_position.py) ---
-            // def _never_unlink_declaration_of_intent_fiscal_position(self):
-            // for fiscal_position in self:
-            //     if fiscal_position == fiscal_position.company_id.l10n_it_edi_doi_fiscal_position_id:
-            //         raise UserError(_('You cannot delete the special fiscal position for Declarations of Intent.'))
-            */
-            return default;
         }
 
         protected async Task<AccountFiscalPosition> OnchangeCountryGroupIdInternalAsync()
@@ -425,7 +386,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountFiscalPosition> RaiseVatErrorMessageAsync(Guid id, object country)
+        public async Task<AccountFiscalPosition> RaiseVatErrorMessageAsync(Guid id, AccountFiscalPositionRaiseVatErrorMessageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: account_fiscal_position.py) ---
@@ -528,17 +489,6 @@ namespace Bamboo.Core.Application.Services
             // def write(self, vals):
             // vals = self.adjust_vals_country_id(vals)
             // return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: account_fiscal_position.py) ---
-            // def write(self, vals):
-            // if "tax_ids" in vals:
-            //     if self.env["pos.order"].sudo().search_count([("fiscal_position_id", "in", self.ids)]):
-            //         raise UserError(
-            //             _(
-            //                 "You cannot modify a fiscal position used in a POS order. "
-            //                 "You should archive it and create a new one."
-            //             )
-            //         )
-            // return super(AccountFiscalPosition, self).write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

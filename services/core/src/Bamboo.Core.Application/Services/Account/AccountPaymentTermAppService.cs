@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -235,7 +236,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountPaymentTerm> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountPaymentTerm> CopyDataAsync(Guid id, AccountPaymentTermCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment_term.py) ---

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Gamification
 {
     public partial class GamificationChallengeController
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Gamification
         [Route("{id}/report-progress")]
         public async Task<IActionResult> ReportProgressAsync(Guid id, [FromBody] GamificationChallengeReportProgressRequestDto input)
         {
-            var result = await _appService.ReportProgressAsync(id, input.Users, input.SubsetGoals);
+            var result = await _appService.ReportProgressAsync(id, input);
             return Ok(result);
         }
     }

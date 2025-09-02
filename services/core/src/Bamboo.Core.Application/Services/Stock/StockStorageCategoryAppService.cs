@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -44,7 +45,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockStorageCategory> CopyDataAsync(Guid id, object @default)
+        public async Task<StockStorageCategory> CopyDataAsync(Guid id, StockStorageCategoryCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_storage_category.py) ---

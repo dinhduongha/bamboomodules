@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mail
 {
     public partial class MailActivityController
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/action-feedback")]
         public async Task<IActionResult> ActionFeedbackAsync(Guid id, [FromBody] MailActivityFeedbackRequestDto input)
         {
-            var result = await _appService.FeedbackAsync(id, input.Feedback, input.AttachmentIds);
+            var result = await _appService.FeedbackAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/action-feedback-schedule-next")]
         public async Task<IActionResult> ActionFeedbackScheduleNextAsync(Guid id, [FromBody] MailActivityFeedbackScheduleNextRequestDto input)
         {
-            var result = await _appService.FeedbackScheduleNextAsync(id, input.Feedback, input.AttachmentIds);
+            var result = await _appService.FeedbackScheduleNextAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/get-activity-data")]
         public async Task<IActionResult> GetActivityDataAsync(Guid id, [FromBody] MailActivityGetActivityDataRequestDto input)
         {
-            var result = await _appService.GetActivityDataAsync(id, input.ResModel, input.Domain, input.Limit, input.Offset, input.FetchDone);
+            var result = await _appService.GetActivityDataAsync(id, input);
             return Ok(result);
         }
         

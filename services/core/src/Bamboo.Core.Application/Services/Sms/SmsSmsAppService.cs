@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -114,7 +115,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SmsSms> SendAsync(Guid id, object unlink_failed, object unlink_sent, object auto_commit, object raise_exception)
+        public async Task<SmsSms> SendAsync(Guid id, SmsSmsSendRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---
@@ -191,7 +192,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SmsSms> SetErrorAsync(Guid id, object failure_type)
+        public async Task<SmsSms> SetErrorAsync(Guid id, SmsSmsSetErrorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_sms.py) ---

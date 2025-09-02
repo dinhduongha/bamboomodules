@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class ResUsersSettingsController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/set-custom-notifications")]
         public async Task<IActionResult> SetCustomNotificationsAsync(Guid id, [FromBody] ResUsersSettingsSetCustomNotificationsRequestDto input)
         {
-            var result = await _appService.SetCustomNotificationsAsync(id, input.CustomNotifications);
+            var result = await _appService.SetCustomNotificationsAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/set-res-users-settings")]
         public async Task<IActionResult> SetResUsersSettingsAsync(Guid id, [FromBody] ResUsersSettingsSetResUsersSettingsRequestDto input)
         {
-            var result = await _appService.SetResUsersSettingsAsync(id, input.NewSettings);
+            var result = await _appService.SetResUsersSettingsAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/set-volume-setting")]
         public async Task<IActionResult> SetVolumeSettingAsync(Guid id, [FromBody] ResUsersSettingsSetVolumeSettingRequestDto input)
         {
-            var result = await _appService.SetVolumeSettingAsync(id, input.PartnerId, input.Volume, input.GuestId);
+            var result = await _appService.SetVolumeSettingAsync(id, input);
             return Ok(result);
         }
     }

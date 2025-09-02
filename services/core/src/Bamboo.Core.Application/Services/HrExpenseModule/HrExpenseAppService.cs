@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -53,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrExpense> CheckAmountNotZeroAsync(Guid id, object vals)
+        public async Task<HrExpense> CheckAmountNotZeroAsync(Guid id, HrExpenseCheckAmountNotZeroRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
@@ -541,7 +542,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CreateAsync(entity, fields);
         }
 
-        public async Task<HrExpense> CreateExpenseFromAttachmentsAsync(Guid id, List<Guid> attachment_ids, object view_type)
+        public async Task<HrExpense> CreateExpenseFromAttachmentsAsync(Guid id, HrExpenseCreateExpenseFromAttachmentsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
@@ -753,7 +754,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrExpense> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<HrExpense> GetEmptyListHelpAsync(Guid id, HrExpenseGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---
@@ -945,7 +946,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrExpense> MessageNewAsync(Guid id, object msg_dict, object custom_values)
+        public async Task<HrExpense> MessageNewAsync(Guid id, HrExpenseMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: hr_expense.py) ---

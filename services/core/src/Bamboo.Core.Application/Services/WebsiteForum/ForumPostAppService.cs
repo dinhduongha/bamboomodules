@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -38,7 +39,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> CloseAsync(Guid id, Guid reason_id)
+        public async Task<ForumPost> CloseAsync(Guid id, ForumPostCloseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -287,7 +288,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ForumPost> ConvertCommentToAnswerAsync(Guid id, Guid message_id)
+        public async Task<ForumPost> ConvertCommentToAnswerAsync(Guid id, ForumPostConvertCommentToAnswerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -547,7 +548,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ForumPost> MarkAsOffensiveBatchAsync(Guid id, object key, object values)
+        public async Task<ForumPost> MarkAsOffensiveBatchAsync(Guid id, ForumPostMarkAsOffensiveBatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -872,7 +873,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ForumPost> UnlinkCommentAsync(Guid id, Guid message_id)
+        public async Task<ForumPost> UnlinkCommentAsync(Guid id, ForumPostUnlinkCommentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---
@@ -973,7 +974,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ForumPost> VoteAsync(Guid id, object upvote)
+        public async Task<ForumPost> VoteAsync(Guid id, ForumPostVoteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_forum, FILE: forum_post.py) ---

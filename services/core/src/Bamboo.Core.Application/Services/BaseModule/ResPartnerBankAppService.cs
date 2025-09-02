@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -41,7 +42,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartnerBank> BuildQrCodeBase64Async(Guid id, object amount, object free_communication, object structured_communication, object currency, object debtor_partner, object qr_method, object silent_errors)
+        public async Task<ResPartnerBank> BuildQrCodeBase64Async(Guid id, ResPartnerBankBuildQrCodeBase64RequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -54,7 +55,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartnerBank> BuildQrCodeUrlAsync(Guid id, object amount, object free_communication, object structured_communication, object currency, object debtor_partner, object qr_method, object silent_errors)
+        public async Task<ResPartnerBank> BuildQrCodeUrlAsync(Guid id, ResPartnerBankBuildQrCodeUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: res_partner_bank.py) ---
@@ -116,18 +117,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartnerBank> CheckAbaRoutingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_us, FILE: res_partner_bank.py) ---
-            // def _check_aba_routing(self):
-            // for bank in self:
-            //     if bank.aba_routing and not re.match(r'^\d{1,9}$', bank.aba_routing):
-            //         raise ValidationError(_('ABA/Routing should only contains numbers (maximum 9 digits).'))
-            */
-            return default;
-        }
-
         protected async Task<ResPartnerBank> CheckAllowOutPaymentInternalAsync()
         {
             /*
@@ -138,48 +127,6 @@ namespace Bamboo.Core.Application.Services
             //     if bank.allow_out_payment:
             //         if not self.env.user.has_group('account.group_validate_bank_account'):
             //             raise ValidationError(_('You do not have the right to trust or un-trust a bank account.'))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> CheckBrProxyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _check_br_proxy(self):
-            // for bank in self.filtered(lambda bank: bank.country_code == "BR" and bank.proxy_type != "none"):
-            //     if bank.proxy_type not in ("email", "mobile", "br_cpf_cnpj", "br_random"):
-            //         raise ValidationError(
-            //             _(
-            //                 "The proxy type must be Email Address, Mobile Number, CPF/CNPJ (BR) or Random Key (BR) for Pix code generation."
-            //             )
-            //         )
-            // 
-            //     value = bank.proxy_value
-            //     if bank.proxy_type == "email" and not mail_validate(value):
-            //         raise ValidationError(_("%s is not a valid email.", value))
-            // 
-            //     if bank.proxy_type == "br_cpf_cnpj" and (
-            //         not self.partner_id.check_vat_br(value) or any(not char.isdecimal() for char in value)
-            //     ):
-            //         raise ValidationError(_("%s is not a valid CPF or CNPJ (don't include periods or dashes).", value))
-            // 
-            //     if bank.proxy_type == "mobile" and (not value or not value.startswith("+55") or len(value) != 14):
-            //         raise ValidationError(
-            //             _(
-            //                 "The mobile number %s is invalid. It must start with +55, contain a 2 digit territory or state code followed by a 9 digit number.",
-            //                 value,
-            //             )
-            //         )
-            // 
-            //     regex = r"%(char)s{8}-%(char)s{4}-%(char)s{4}-%(char)s{4}-%(char)s{12}" % {"char": "[a-fA-F0-9]"}
-            //     if bank.proxy_type == "br_random" and not re.fullmatch(regex, bank.proxy_value):
-            //         raise ValidationError(
-            //             _(
-            //                 "The random key %s is invalid, the format looks like this: 71d6c6e1-64ea-4a11-9560-a10870c40ca2",
-            //                 value,
-            //             )
-            //         )
             */
             return default;
         }
@@ -215,103 +162,11 @@ namespace Bamboo.Core.Application.Services
             //         return _("The account receiving the payment must have an account holder name or partner name set.")
             // 
             // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _check_for_qr_code_errors(
-            //     self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication
-            // ):
-            //     """Override."""
-            //     if (
-            //         qr_method == "emv_qr"
-            //         and self.country_code == "BR"
-            //         and self.proxy_type not in ("email", "mobile", "br_cpf_cnpj", "br_random")
-            //     ):
-            //         return _(
-            //             "To generate a Pix code the proxy type for %s must be Email Address, Mobile Number, CPF/CNPJ (BR) or Random Key (BR).",
-            //             self.display_name,
-            //         )
-            // 
-            //     return super()._check_for_qr_code_errors(
-            //         qr_method, amount, currency, debtor_partner, free_communication, structured_communication
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // def _partner_fields_set(partner):
-            //     return partner.zip and \
-            //            partner.city and \
-            //            partner.country_id.code and \
-            //            (partner.street or partner.street2)
-            // 
-            // if qr_method == 'ch_qr':
-            //     if not _partner_fields_set(self.partner_id):
-            //         return _("The partner set on the bank account meant to receive the payment (%s) must have a complete postal address (street, zip, city and country).", self.acc_number)
-            // 
-            //     if debtor_partner and not _partner_fields_set(debtor_partner):
-            //         return _("The partner must have a complete postal address (street, zip, city and country).")
-            // 
-            //     if self.l10n_ch_qr_iban and not self._is_qr_reference(structured_communication):
-            //         return _("When using a QR-IBAN as the destination account of a QR-code, the payment reference must be a QR-reference.")
-            // 
-            //     debtor_check = self._l10n_ch_qr_debtor_check(debtor_partner)
-            //     if debtor_check:
-            //         return debtor_check
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'emv_qr' and self.country_code == 'HK' and self.proxy_type not in ['id', 'mobile', 'email']:
-            //     return _("The FPS Type must be either ID, Mobile or Email to generate a FPS QR code.")
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // # EXTENDS account
-            // if qr_method == 'id_qr':
-            //     if not amount:
-            //         return _("The amount must be set to generate a QR code.")
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'emv_qr' and self.country_code == 'SG' and self.proxy_type not in ['mobile', 'uen']:
-            //     return _("The PayNow Type must be either Mobile Number or UEN.")
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'emv_qr' and self.country_code == 'TH' and self.proxy_type not in ['ewallet_id', 'merchant_tax_id', 'mobile']:
-            //     return _("The PayNow Type must be either Ewallet ID, Merchant Tax ID or Mobile Number to generate a Thailand Bank QR code")
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _check_for_qr_code_errors(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'emv_qr' and self.country_code == 'VN' and self.proxy_type not in ['merchant_id', 'payment_service', 'atm_card', 'bank_acc']:
-            //     return _("The proxy type %s is not supported for Vietnamese partners. It must be either Merchant ID, ATM Card Number or Bank Account", self.proxy_type)
-            // 
-            // return super()._check_for_qr_code_errors(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
             */
             return default;
         }
 
-        protected async Task<ResPartnerBank> CheckHkProxyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _check_hk_proxy(self):
-            // auto_mobn_re = re.compile(r"^[+]\d{1,3}-\d{6,12}$")
-            // for bank in self.filtered(lambda b: b.country_code == 'HK'):
-            //     if bank.proxy_type not in ['id', 'mobile', 'email', 'none', False]:
-            //         raise ValidationError(_("The FPS Type must be either ID, Mobile or Email to generate a FPS QR code for account number %s.", bank.acc_number))
-            //     if bank.proxy_type == 'id' and (not bank.proxy_value or len(bank.proxy_value) not in [7, 9]):
-            //         raise ValidationError(_("Invalid FPS ID! Please enter a valid FPS ID with length 7 or 9 for account number %s.", bank.acc_number))
-            //     if bank.proxy_type == 'mobile' and (not bank.proxy_value or not auto_mobn_re.match(bank.proxy_value)):
-            //         raise ValidationError(_("Invalid Mobile! Please enter a valid mobile number with format +852-67891234 for account number %s.", bank.acc_number))
-            //     if bank.proxy_type == 'email' and (not bank.proxy_value or not single_email_re.match(bank.proxy_value)):
-            //         raise ValidationError(_("Invalid Email! Please enter a valid email address for account number %s.", bank.acc_number))
-            */
-            return default;
-        }
-
-        public async Task<ResPartnerBank> CheckIbanAsync(Guid id, object iban)
+        public async Task<ResPartnerBank> CheckIbanAsync(Guid id, ResPartnerBankCheckIbanRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_iban, FILE: res_partner_bank.py) ---
@@ -349,62 +204,9 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartnerBank> CheckSgProxyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _check_sg_proxy(self):
-            // for bank in self.filtered(lambda b: b.country_code == 'SG'):
-            //     if bank.proxy_type not in ['mobile', 'uen', 'none', False]:
-            //         raise ValidationError(_("The PayNow Type must be either Mobile or UEN to generate a PayNow QR code for account number %s.", bank.acc_number))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> CheckThProxyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_bank.py) ---
-            // def _check_th_proxy(self):
-            // tax_id_re = re.compile(r'^[0-9]{13}$')
-            // mobile_re = re.compile(r'^[0-9]{10}$')
-            // for bank in self.filtered(lambda b: b.country_code == 'TH'):
-            //     if bank.proxy_type not in ['ewallet_id', 'merchant_tax_id', 'mobile', 'none', False]:
-            //         raise ValidationError(_("The QR Code Type must be either Ewallet ID, Merchant Tax ID or Mobile Number to generate a Thailand Bank QR code for account number %s.", bank.acc_number))
-            //     if bank.proxy_type == 'merchant_tax_id' and (not bank.proxy_value or not tax_id_re.match(bank.proxy_value)):
-            //         raise ValidationError(_("The Merchant Tax ID must be in the format 1234567890123 for account number %s.", bank.acc_number))
-            //     if bank.proxy_type == 'mobile' and (not bank.proxy_value or not mobile_re.match(bank.proxy_value)):
-            //         raise ValidationError(_("The Mobile Number must be in the format 0812345678 for account number %s.", bank.acc_number))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> CheckVnProxyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _check_vn_proxy(self):
-            // for bank in self.filtered(lambda b: b.country_code == 'VN'):
-            //     if bank.proxy_type not in ['merchant_id', 'payment_service', 'atm_card', 'bank_acc', 'none', False]:
-            //         raise ValidationError(_("The QR Code Type must be either Merchant ID, ATM Card Number or Bank Account to generate a Vietnam Bank QR code for account number %s.", bank.acc_number))
-            */
-            return default;
-        }
-
         protected async Task<ResPartnerBank> ComputeAccTypeInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: res_partner_bank.py) ---
-            // def _compute_acc_type(self):
-            // """ Criteria to be an ABA account:
-            //     - Spaces, hypens, digits are valid.
-            //     - Total length must be 9 or less.
-            //     - Cannot be only spaces, zeros or hyphens (must have at least one digit in range 1-9)
-            // """
-            // super()._compute_acc_type()
-            // for rec in self:
-            //     if rec.acc_type == 'bank' and re.match(r"^(?=.*[1-9])[ \-\d]{0,9}$", rec.acc_number or ''):
-            //         rec.acc_type = 'aba'
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
             // def _compute_acc_type(self):
             // for bank in self:
@@ -480,32 +282,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
             // def _compute_display_qr_setting(self):
             // self.display_qr_setting = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _compute_display_qr_setting(self):
-            // """Override."""
-            // bank_br = self.filtered(lambda b: b.country_code == "BR")
-            // bank_br.display_qr_setting = True
-            // super(ResPartnerBank, self - bank_br)._compute_display_qr_setting()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _compute_display_qr_setting(self):
-            // bank_hk = self.filtered(lambda b: b.country_code == 'HK')
-            // bank_hk.display_qr_setting = True
-            // super(ResPartnerBank, self - bank_hk)._compute_display_qr_setting()
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _compute_display_qr_setting(self):
-            // bank_sg = self.filtered(lambda b: b.country_code == 'SG')
-            // bank_sg.display_qr_setting = True
-            // super(ResPartnerBank, self - bank_sg)._compute_display_qr_setting()
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_bank.py) ---
-            // def _compute_display_qr_setting(self):
-            // bank_th = self.filtered(lambda b: b.country_code == 'TH')
-            // bank_th.display_qr_setting = True
-            // super(ResPartnerBank, self - bank_th)._compute_display_qr_setting()
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _compute_display_qr_setting(self):
-            // bank_vn = self.filtered(lambda b: b.country_code == 'VN')
-            // bank_vn.display_qr_setting = True
-            // super(ResPartnerBank, self - bank_vn)._compute_display_qr_setting()
             */
             return default;
         }
@@ -534,41 +310,6 @@ namespace Bamboo.Core.Application.Services
             // )))
             // for bank in self:
             //     bank.duplicate_bank_partner_ids = self.env['res.partner'].browse(id2duplicates.get(bank._origin.id))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> ComputeL10nChDisplayQrBankOptionsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _compute_l10n_ch_display_qr_bank_options(self):
-            // for bank in self:
-            //     if bank.partner_id:
-            //         bank.l10n_ch_display_qr_bank_options = bank.partner_id.ref_company_ids.country_id.code in ('CH', 'LI')
-            //     elif bank.company_id:
-            //         bank.l10n_ch_display_qr_bank_options = bank.company_id.account_fiscal_country_id.code in ('CH', 'LI')
-            //     else:
-            //         bank.l10n_ch_display_qr_bank_options = self.env.company.account_fiscal_country_id.code in ('CH', 'LI')
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> ComputeL10nChQrIbanInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _compute_l10n_ch_qr_iban(self):
-            // for record in self:
-            //     try:
-            //         validate_qr_iban(record.acc_number)
-            //         valid_qr_iban = True
-            //     except ValidationError:
-            //         valid_qr_iban = False
-            //     if valid_qr_iban:
-            //         record.l10n_ch_qr_iban = record.sanitized_acc_number
-            //     else:
-            //         record.l10n_ch_qr_iban = None
             */
             return default;
         }
@@ -674,13 +415,6 @@ namespace Bamboo.Core.Application.Services
             //         except ValidationError:
             //             pass
             // return super(ResPartnerBank, self).create(vals_list)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     if vals.get('l10n_ch_qr_iban'):
-            //         validate_qr_iban(vals['l10n_ch_qr_iban'])
-            //         vals['l10n_ch_qr_iban'] = pretty_iban(normalize_iban(vals['l10n_ch_qr_iban']))
-            // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
         }
@@ -708,29 +442,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
             // def _get_additional_data_field(self, comment):
             // return None
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _get_additional_data_field(self, comment):
-            // """Override."""
-            // if self.country_code == "BR":
-            //     # Only include characters allowed by the Pix spec.
-            //     return self._serialize(5, re.sub(r"[^a-zA-Z0-9*]", "", comment))
-            // return super()._get_additional_data_field(comment)
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _get_additional_data_field(self, comment):
-            // if self.country_code == 'HK':
-            //     return self._serialize(5, comment)
-            // return super()._get_additional_data_field(comment)
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _get_additional_data_field(self, comment):
-            // if self.country_code == 'SG':
-            //     return self._serialize(1, comment)
-            // return super()._get_additional_data_field(comment)
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _get_additional_data_field(self, comment):
-            // if self.country_code == 'VN':
-            //     # The first check is too permissive for VietQR.
-            //     return self._serialize(8, re.sub(r"[^a-zA-Z0-9 _\\\-.]+", "", comment))
-            // return super()._get_additional_data_field(comment)
             */
             return default;
         }
@@ -772,17 +483,6 @@ namespace Bamboo.Core.Application.Services
             // def _get_available_qr_methods(self):
             // rslt = super()._get_available_qr_methods()
             // rslt.append(('sct_qr', _("SEPA Credit Transfer QR"), 20))
-            // return rslt
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _get_available_qr_methods(self):
-            // rslt = super()._get_available_qr_methods()
-            // rslt.append(('ch_qr', _("Swiss QR bill"), 10))
-            // return rslt
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _get_available_qr_methods(self):
-            // # EXTENDS account
-            // rslt = super()._get_available_qr_methods()
-            // rslt.append(('id_qr', _("QRIS"), 40))
             // return rslt
             */
             return default;
@@ -860,89 +560,6 @@ namespace Bamboo.Core.Application.Services
             //         return '\r\n'.join(error_messages)
             //     return None
             // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // """Override."""
-            // if qr_method == "emv_qr" and self.country_code == "BR":
-            //     if currency.name != "BRL":
-            //         return _("Can't generate a Pix QR code with a currency other than BRL.")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // def _get_error_for_ch_qr():
-            //     error_messages = [_("The Swiss QR code could not be generated for the following reason(s):")]
-            //     if self.acc_type != 'iban':
-            //         error_messages.append(_("The account type isn't QR-IBAN or IBAN."))
-            //     debtor_check = self._l10n_ch_qr_debtor_check(debtor_partner)
-            //     if debtor_partner and debtor_check:
-            //         error_messages.append(debtor_check)
-            //     if currency.id not in (self.env.ref('base.EUR').id, self.env.ref('base.CHF').id):
-            //         error_messages.append(_("The currency isn't EUR nor CHF."))
-            //     return '\r\n'.join(error_messages) if len(error_messages) > 1 else None
-            // 
-            // if qr_method == 'ch_qr':
-            //     return _get_error_for_ch_qr()
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // if qr_method == 'emv_qr' and self.country_code == 'HK':
-            //     if currency.name not in ['HKD', 'CNY']:
-            //         return _("Can't generate a FPS QR code with a currency other than HKD or CNY.")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // # EXTENDS account
-            // if qr_method == 'id_qr':
-            //     if self.country_code != 'ID':
-            //         return _("You cannot generate a QRIS QR code with a bank account that is not in Indonesia.")
-            //     if currency.name not in ['IDR']:
-            //         return _("You cannot generate a QRIS QR code with a currency other than IDR")
-            //     if not (self.sudo().l10n_id_qris_api_key and self.sudo().l10n_id_qris_mid):
-            //         return _("To use QRIS QR code, Please setup the QRIS API Key and Merchant ID on the bank's configuration")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // if qr_method == 'emv_qr' and self.country_code == 'SG':
-            //     if currency.name not in ['SGD']:
-            //         return _("Can't generate a PayNow QR code with a currency other than SGD.")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // if qr_method == 'emv_qr' and self.country_code == 'TH':
-            //     if currency.name not in ['THB']:
-            //         return _("Can't generate a PayNow QR code with a currency other than THB.")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _get_error_messages_for_qr(self, qr_method, debtor_partner, currency):
-            // if qr_method == 'emv_qr' and self.country_code == 'VN':
-            //     if currency.name not in ['VND']:
-            //         return _("Can't generate a Vietnamese QR banking code with a currency other than VND.")
-            //     if not self.bank_bic:
-            //         return _("Missing Bank Identifier Code.\n"
-            //                  "Please configure the Bank Identifier Code inside the bank settings.")
-            //     return None
-            // 
-            // return super()._get_error_messages_for_qr(qr_method, debtor_partner, currency)
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> GetFiscalCountryCodesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_mx, FILE: res_bank.py) ---
-            // def _get_fiscal_country_codes(self):
-            // return ','.join(self.env.companies.mapped('account_fiscal_country_id.code'))
             */
             return default;
         }
@@ -953,84 +570,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
             // def _get_merchant_account_info(self):
             // return None, None
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _get_merchant_account_info(self):
-            // """Override."""
-            // if self.country_code == "BR":
-            //     merchant_account_info_data = (
-            //         (0, "br.gov.bcb.pix"),  # GUI
-            //         (1, self.proxy_value),  # key
-            //     )
-            //     return 26, "".join(self._serialize(*val) for val in merchant_account_info_data)
-            // 
-            // return super()._get_merchant_account_info()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hk, FILE: res_bank.py) ---
-            // def _get_merchant_account_info(self):
-            // if self.country_code == 'HK':
-            //     fps_type_mapping = {
-            //         'id': 2,
-            //         'mobile': 3,
-            //         'email': 4,
-            //     }
-            //     fps_type = fps_type_mapping[self.proxy_type]
-            //     merchant_account_vals = [
-            //         (0, 'hk.com.hkicl'),                                 # GUID
-            //         (fps_type, self.proxy_value),                        # Proxy Type and Proxy Value
-            //     ]
-            //     merchant_account_info = ''.join([self._serialize(*val) for val in merchant_account_vals])
-            //     return (26, merchant_account_info)
-            // return super()._get_merchant_account_info()
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_bank.py) ---
-            // def _get_merchant_account_info(self):
-            // if self.country_code == 'SG':
-            //     proxy_type_mapping = {
-            //         'mobile': 0,
-            //         'uen': 2,
-            //     }
-            //     merchant_account_vals = [
-            //         (0, 'SG.PAYNOW'),                                           # GUID
-            //         (1, proxy_type_mapping[self.proxy_type]),                   # Proxy Type
-            //         (2, self.proxy_value),                                      # Proxy Value
-            //         (3, 0),                                                     # Is Amount Editable
-            //     ]
-            //     merchant_account_info = ''.join([self._serialize(*val) for val in merchant_account_vals])
-            //     return (26, merchant_account_info)
-            // return super()._get_merchant_account_info()
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_bank.py) ---
-            // def _get_merchant_account_info(self):
-            // if self.country_code == 'TH':
-            //     proxy_type_mapping = {
-            //         'mobile': 1,
-            //         'merchant_tax_id': 2,
-            //         'ewallet_id': 3,
-            //     }
-            //     proxy_value = re.sub(r"^0", "66", self.proxy_value).zfill(13) if self.proxy_type == 'mobile' else self.proxy_value
-            //     vals = [
-            //         (0, 'A000000677010111'),
-            //         (proxy_type_mapping[self.proxy_type], proxy_value),
-            //     ]
-            //     return (29, ''.join([self._serialize(*val) for val in vals]))
-            // return super()._get_merchant_account_info()
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn, FILE: res_bank.py) ---
-            // def _get_merchant_account_info(self):
-            // if self.country_code == 'VN':
-            //     proxy_type_mapping = {
-            //         'merchant_id': 'QRPUSH',
-            //         'payment_service': 'QRPUSH',
-            //         'atm_card': 'QRIBFTTC',
-            //         'bank_acc': 'QRIBFTTA',
-            //     }
-            //     payment_network = [
-            //         (0, self.bank_bic),
-            //         (1, self.proxy_value),
-            //     ]
-            //     vals = [
-            //         (0, 'A000000727'),
-            //         (1, ''.join([self._serialize(*val) for val in payment_network])),
-            //         (2, proxy_type_mapping[self.proxy_type]),
-            //     ]
-            //     return (38, ''.join([self._serialize(*val) for val in vals]))
-            // return super()._get_merchant_account_info()
             */
             return default;
         }
@@ -1045,23 +584,6 @@ namespace Bamboo.Core.Application.Services
             //     '977': 'Paynovate',
             //     '974': 'PPS EU SA',
             // }
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> GetPartnerAddressLinesInternalAsync(object partner)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _get_partner_address_lines(self, partner):
-            // """ Returns a tuple of two elements containing the address lines to use
-            // for this partner. Line 1 contains the street and number, line 2 contains
-            // zip and city. Those two lines are limited to 70 characters
-            // """
-            // streets = [partner.street, partner.street2]
-            // line_1 = ' '.join(filter(None, streets))
-            // line_2 = partner.zip + ' ' + partner.city
-            // return line_1[:70], line_2[:70]
             */
             return default;
         }
@@ -1122,33 +644,6 @@ namespace Bamboo.Core.Application.Services
             //         'value': '\n'.join(self._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)),
             //     }
             // return super()._get_qr_code_generation_params(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _get_qr_code_generation_params(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'ch_qr':
-            //     return {
-            //         'barcode_type': 'QR',
-            //         'width': 256,
-            //         'height': 256,
-            //         'quiet': 1,
-            //         'mask': 'ch_cross',
-            //         'value': '\n'.join(self._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)),
-            //         # Swiss QR code requires Error Correction Level = 'M' by specification
-            //         'barLevel': 'M',
-            //     }
-            // return super()._get_qr_code_generation_params(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _get_qr_code_generation_params(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // # EXTENDS account
-            // if qr_method == 'id_qr':
-            //     if not self._context.get('is_online_qr'):
-            //         return {}
-            //     return {
-            //         'barcode_type': 'QR',
-            //         'width': 120,
-            //         'height': 120,
-            //         'value': self._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication),
-            //     }
-            // return super()._get_qr_code_generation_params(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
             */
             return default;
         }
@@ -1176,7 +671,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartnerBank> GetQrCodeValsListInternalAsync()
+        protected async Task<ResPartnerBank> GetQrCodeValsListInternalAsync(object qr_method, object amount, object currency, object debtor_partner, object free_communication, object structured_communication)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_qr_code_emv, FILE: res_bank.py) ---
@@ -1204,19 +699,6 @@ namespace Bamboo.Core.Application.Services
             //     (60, merchant_city),                                                    # Merchant City
             //     (62, additional_data_field),                                            # Additional Data Field
             // ]
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_partner_bank.py) ---
-            // def _get_qr_code_vals_list(self, *args, **kwargs):
-            // """Override. Force the amount field to always have two decimals. Uppercase the merchant name and merchant city.
-            // Although not specified explicitly in the spec, not uppercasing causes errors when scanning the code. Also ensure
-            // there is always some comment set."""
-            // res = super()._get_qr_code_vals_list(*args, **kwargs)
-            // if self.country_code == "BR":
-            //     res[5] = (res[5][0], float_repr(res[5][1], 2) if res[5][1] else None)  # amount
-            //     res[7] = (res[7][0], res[7][1].upper())  # merchant_name
-            //     res[8] = (res[8][0], res[8][1].upper())  # merchant_city
-            //     if not res[9][1]:
-            //         res[9] = (res[9][0], self._get_additional_data_field("***"))  # default comment if none is set
-            // return res
             */
             return default;
         }
@@ -1264,69 +746,6 @@ namespace Bamboo.Core.Application.Services
             //     ]
             //     return qr_code_vals
             // return super()._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _get_qr_vals(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // if qr_method == 'ch_qr':
-            //     return self._l10n_ch_get_qr_vals(amount, currency, debtor_partner, free_communication, structured_communication)
-            // return super()._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _get_qr_vals(self, qr_method, amount, currency, debtor_partner, free_communication, structured_communication):
-            // """ Getting content for the QR through calling QRIS API and storing the QRIS transaction as a record"""
-            // # EXTENDS account
-            // if qr_method == "id_qr":
-            //     model = self._context.get('qris_model')
-            //     model_id = self._context.get('qris_model_id')
-            // 
-            //     # qris_trx is to help us fetch the backend record associated to the model and model_id.
-            //     # we are using model and model_id instead of model.browse(id) because while executing this method
-            //     # not all backend records are created already. For example, pos.order record isn't created until
-            //     # payment is completed on the PoS interace.
-            //     qris_trx = self.env['l10n_id.qris.transaction']._get_latest_transaction(model, model_id)
-            // 
-            //     # QRIS codes are valid for 30 minutes. To leave some margin, we will return the same QR code we already
-            //     # generated if the invoice is re-accessed before 25m. Otherwise, a new QR code is generated
-            //     # Additionally, we want to check that it's requesting for the same amount as it's possible to change
-            //     # amount in apps like PoS.
-            //     if qris_trx and qris_trx.qris_amount == int(amount):
-            //         now = fields.Datetime.now()
-            //         latest_qr_date = qris_trx.qris_creation_datetime
-            // 
-            //         if (now - latest_qr_date).total_seconds() < 1500:
-            //             return qris_trx['qris_content']
-            // 
-            //     params = {
-            //         "do": "create-invoice",
-            //         "apikey": self.l10n_id_qris_api_key,
-            //         "mID": self.l10n_id_qris_mid,
-            //         "cliTrxNumber": free_communication or structured_communication,
-            //         "cliTrxAmount": int(amount)
-            //     }
-            //     response = _l10n_id_make_qris_request('show_qris.php', params)
-            //     if response.get("status") == "failed":
-            //         raise ValidationError(response.get("data"))
-            //     data = response.get('data')
-            // 
-            //     # create a new transaction line while also converting the qris_request_date to UTC time
-            //     if model and model_id:
-            //         new_trx = self.env['l10n_id.qris.transaction'].create({
-            //             'model': model,
-            //             'model_id': model_id,
-            //             'qris_invoice_id': data.get('qris_invoiceid'),
-            //             'qris_amount': int(amount),
-            //             # Since the QRIS response is always returned with "Asia/Jakarta" timezone which is UTC+07:00
-            //             'qris_creation_datetime': fields.Datetime.to_datetime(data.get('qris_request_date')) - datetime.timedelta(hours=7),
-            //             'qris_content': data.get('qris_content'),
-            //             'bank_id': self.id
-            //         })
-            // 
-            //         # Search the backend record and attach the qris transaction to the record if it exists.
-            //         trx_record = new_trx._get_record()
-            //         if trx_record:
-            //             trx_record.l10n_id_qris_transaction_ids |= new_trx
-            // 
-            //     return data.get('qris_content')
-            // 
-            // return super()._get_qr_vals(qr_method, amount, currency, debtor_partner, free_communication, structured_communication)
             */
             return default;
         }
@@ -1349,158 +768,9 @@ namespace Bamboo.Core.Application.Services
             // rslt = super(ResPartnerBank, self)._get_supported_account_types()
             // rslt.append(('iban', self.env._('IBAN')))
             // return rslt
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner_bank.py) ---
-            // def _get_supported_account_types(self):
-            // """ Add new account type named cbu used in Argentina """
-            // res = super()._get_supported_account_types()
-            // res.append(('cbu', _('CBU')))
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: res_partner_bank.py) ---
-            // def _get_supported_account_types(self):
-            // rslt = super(ResPartnerBank, self)._get_supported_account_types()
-            // rslt.append(('aba', _('ABA')))
-            // return rslt
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
             // def _get_supported_account_types(self):
             // return [('bank', _('Normal'))]
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> IsIso11649ReferenceInternalAsync(object reference)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _is_iso11649_reference(self, reference):
-            // """ Checks whether the given reference is a ISO11649 (SCOR) reference.
-            // """
-            // return reference \
-            //        and len(reference) >= 5 \
-            //        and len(reference) <= 25 \
-            //        and reference.startswith('RF') \
-            //        and int(''.join(str(int(x, 36)) for x in clean(reference[4:] + reference[:4], ' -.,/:').upper().strip())) % 97 == 1
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> IsQrReferenceInternalAsync(object reference)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _is_qr_reference(self, reference):
-            // """ Checks whether the given reference is a QR-reference, i.e. it is
-            // made of 27 digits, the 27th being a mod10r check on the 26 previous ones.
-            // """
-            // return reference \
-            //     and len(reference) == 27 \
-            //     and re.match(r'\d+$', reference) \
-            //     and reference == mod10r(reference[:-1])
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> L10nChGetQrValsInternalAsync(object amount, object currency, object debtor_partner, object free_communication, object structured_communication)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _l10n_ch_get_qr_vals(self, amount, currency, debtor_partner, free_communication, structured_communication):
-            // comment = ""
-            // if free_communication:
-            //     comment = (free_communication[:137] + '...') if len(free_communication) > 140 else free_communication
-            // 
-            // creditor_addr_1, creditor_addr_2 = self._get_partner_address_lines(self.partner_id)
-            // debtor_addr_1, debtor_addr_2 = self._get_partner_address_lines(debtor_partner)
-            // 
-            // # Compute reference type (empty by default, only mandatory for QR-IBAN,
-            // # and must then be 27 characters-long, with mod10r check digit as the 27th one)
-            // reference_type = 'NON'
-            // reference = ''
-            // acc_number = self.sanitized_acc_number
-            // 
-            // if self.l10n_ch_qr_iban:
-            //     # _check_for_qr_code_errors ensures we can't have a QR-IBAN without a QR-reference here
-            //     reference_type = 'QRR'
-            //     reference = structured_communication
-            //     acc_number = sanitize_account_number(self.l10n_ch_qr_iban)
-            // elif self._is_iso11649_reference(structured_communication):
-            //     reference_type = 'SCOR'
-            //     reference = structured_communication.replace(' ', '')
-            // 
-            // currency = currency or self.currency_id or self.company_id.currency_id
-            // 
-            // return [
-            //     'SPC',                                                # QR Type
-            //     '0200',                                               # Version
-            //     '1',                                                  # Coding Type
-            //     acc_number,                                           # IBAN / QR-IBAN
-            //     'K',                                                  # Creditor Address Type
-            //     (self.acc_holder_name or self.partner_id.name)[:70],  # Creditor Name
-            //     creditor_addr_1,                                      # Creditor Address Line 1
-            //     creditor_addr_2,                                      # Creditor Address Line 2
-            //     '',                                                   # Creditor Postal Code (empty, since we're using combined addres elements)
-            //     '',                                                   # Creditor Town (empty, since we're using combined addres elements)
-            //     self.partner_id.country_id.code,                      # Creditor Country
-            //     '',                                                   # Ultimate Creditor Address Type
-            //     '',                                                   # Name
-            //     '',                                                   # Ultimate Creditor Address Line 1
-            //     '',                                                   # Ultimate Creditor Address Line 2
-            //     '',                                                   # Ultimate Creditor Postal Code
-            //     '',                                                   # Ultimate Creditor Town
-            //     '',                                                   # Ultimate Creditor Country
-            //     '{:.2f}'.format(amount),                              # Amount
-            //     currency.name,                                        # Currency
-            //     'K',                                                  # Ultimate Debtor Address Type
-            //     debtor_partner.commercial_partner_id.name[:70],       # Ultimate Debtor Name
-            //     debtor_addr_1,                                        # Ultimate Debtor Address Line 1
-            //     debtor_addr_2,                                        # Ultimate Debtor Address Line 2
-            //     '',                                                   # Ultimate Debtor Postal Code (not to be provided for address type K)
-            //     '',                                                   # Ultimate Debtor Postal City (not to be provided for address type K)
-            //     debtor_partner.country_id.code,                       # Ultimate Debtor Postal Country
-            //     reference_type,                                       # Reference Type
-            //     reference,                                            # Reference
-            //     comment,                                              # Unstructured Message
-            //     'EPD',                                                # Mandatory trailer part
-            // ]
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> L10nChQrDebtorCheckInternalAsync(object debtor_partner)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def _l10n_ch_qr_debtor_check(self, debtor_partner):
-            // """  This method should be used in _get_error_messages_for_qr and _check_for_qr_code_errors
-            //      It allows is to permit to set this qr method if a partner is not yet provided when executing _get_error_messages_for_qr
-            //      while preventing to print qr code when executing _check_for_qr_code_errors if the partner is not provided
-            // """
-            // if not debtor_partner or debtor_partner.country_id.code not in ('CH', 'LI'):
-            //     return _("The debtor partner's address isn't located in Switzerland.")
-            // return False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartnerBank> L10nIdQrisFetchStatusInternalAsync(object qr_data)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: res_bank.py) ---
-            // def _l10n_id_qris_fetch_status(self, qr_data):
-            // """
-            // using self and the given data, fetches the status of a specific QR code generated by QRIS
-            // Expected values in the qr_data dict are:
-            //     - invoice_id returned when generating a QR code
-            //     - the amount present in the qr code
-            //     - the datetime at which the QR code was generated
-            // """
-            // return _l10n_id_make_qris_request('checkpaid_qris.php', {
-            //     'do': 'checkStatus',
-            //     'apikey': self.l10n_id_qris_api_key,
-            //     'mID': self.l10n_id_qris_mid,
-            //     'invid': qr_data['qris_invoice_id'],
-            //     'trxvalue': qr_data['qris_amount'],
-            //     'trxdate': qr_data['qris_creation_datetime'],
-            // })
             */
             return default;
         }
@@ -1515,7 +785,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartnerBank> RetrieveAccTypeAsync(Guid id, object acc_number)
+        public async Task<ResPartnerBank> RetrieveAccTypeAsync(Guid id, ResPartnerBankRetrieveAccTypeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_iban, FILE: res_partner_bank.py) ---
@@ -1525,13 +795,6 @@ namespace Bamboo.Core.Application.Services
             //     return 'iban'
             // except ValidationError:
             //     return super(ResPartnerBank, self).retrieve_acc_type(acc_number)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner_bank.py) ---
-            // def retrieve_acc_type(self, acc_number):
-            // try:
-            //     validate_cbu(acc_number)
-            // except Exception:
-            //     return super().retrieve_acc_type(acc_number)
-            // return 'cbu'
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_bank.py) ---
             // def retrieve_acc_type(self, acc_number):
             // """ To be overridden by subclasses in order to support other account_types.
@@ -1574,20 +837,6 @@ namespace Bamboo.Core.Application.Services
             // return True
             */
             return await base.UnlinkAsync(ids);
-        }
-
-        protected async Task<ResPartnerBank> ValidateAbaBsbInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: res_partner_bank.py) ---
-            // def _validate_aba_bsb(self):
-            // for record in self:
-            //     if record.aba_bsb:
-            //         test_bsb = re.sub('( |-)', '', record.aba_bsb)
-            //         if len(test_bsb) != 6 or not test_bsb.isdigit():
-            //             raise ValidationError(_('BSB is not valid (expected format is "NNN-NNN"). Please rectify.'))
-            */
-            return default;
         }
 
         public override async Task<List<object>> WriteAsync(List<Guid> ids, ResPartnerBank entity, List<string> fields)
@@ -1649,12 +898,6 @@ namespace Bamboo.Core.Application.Services
             //     except ValidationError:
             //         pass
             // return super(ResPartnerBank, self).write(vals)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: res_bank.py) ---
-            // def write(self, vals):
-            // if vals.get('l10n_ch_qr_iban'):
-            //     validate_qr_iban(vals['l10n_ch_qr_iban'])
-            //     vals['l10n_ch_qr_iban'] = pretty_iban(normalize_iban(vals['l10n_ch_qr_iban']))
-            // return super().write(vals)
             */
             return await base.WriteAsync(ids, entity, fields);
         }

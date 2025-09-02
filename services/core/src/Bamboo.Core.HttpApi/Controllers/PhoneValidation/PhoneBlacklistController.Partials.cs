@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.PhoneValidation
 {
     public partial class PhoneBlacklistController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PhoneValidation
         [Route("{id}/add")]
         public async Task<IActionResult> AddAsync(Guid id, [FromBody] PhoneBlacklistAddRequestDto input)
         {
-            var result = await _appService.AddAsync(id, input.Number, input.Message);
+            var result = await _appService.AddAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PhoneValidation
         [Route("{id}/remove")]
         public async Task<IActionResult> RemoveAsync(Guid id, [FromBody] PhoneBlacklistRemoveRequestDto input)
         {
-            var result = await _appService.RemoveAsync(id, input.Number, input.Message);
+            var result = await _appService.RemoveAsync(id, input);
             return Ok(result);
         }
     }

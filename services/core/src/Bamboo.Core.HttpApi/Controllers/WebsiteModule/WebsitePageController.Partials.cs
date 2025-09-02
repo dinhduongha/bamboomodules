@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.WebsiteModule
 {
     public partial class WebsitePageController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteModule
         [Route("{id}/clone-page")]
         public async Task<IActionResult> ClonePageAsync(Guid id, [FromBody] WebsitePageClonePageRequestDto input)
         {
-            var result = await _appService.ClonePageAsync(id, input.PageId, input.PageName, input.CloneMenu);
+            var result = await _appService.ClonePageAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteModule
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] WebsitePageCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -47,13 +48,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base_address_extended, FILE: res_partner.py) ---
             // def _address_fields(self):
             // return super()._address_fields() + ['city_id']
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: res_partner.py) ---
-            // def _address_fields(self):
-            // return super()._address_fields() + ['l10n_eg_building_no']
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_partner.py) ---
-            // def _address_fields(self):
-            // return super()._address_fields() + ['l10n_sa_edi_building_number',
-            //                                     'l10n_sa_edi_plot_identification']
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _address_fields(self):
             // """Returns the list of address fields that are synced from the parent."""
@@ -62,7 +56,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> AddressGetAsync(Guid id, object adr_pref)
+        public async Task<ResPartner> AddressGetAsync(Guid id, ResPartnerAddressGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -107,19 +101,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResPartner> ArUnlinkExceptMasterDataInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_pos, FILE: res_partner.py) ---
-            // def _ar_unlink_except_master_data(self):
-            // consumidor_final_anonimo = self.env.ref('l10n_ar.par_cfa').id
-            // for partner in self.ids:
-            //     if partner == consumidor_final_anonimo:
-            //         raise UserError(_('Deleting this partner is not allowed.'))
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> AssetDifferenceSearchInternalAsync(object account_type, object @operator, object operand)
         {
             /*
@@ -155,19 +136,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> AutoInitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: res_partner.py) ---
-            // def _auto_init(self):
-            // if not column_exists(self.env.cr, 'res_partner', 'l10n_gr_edi_branch_number'):
-            //     create_column(self.env.cr, 'res_partner', 'l10n_gr_edi_branch_number', 'int4')
-            // return super()._auto_init()
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> AutocompleteAsync(Guid id, object query, object timeout)
+        public async Task<ResPartner> AutocompleteAsync(Guid id, ResPartnerAutocompleteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -177,7 +146,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> AutocompleteByNameAsync(Guid id, object query, Guid query_country_id, object timeout)
+        public async Task<ResPartner> AutocompleteByNameAsync(Guid id, ResPartnerAutocompleteByNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -200,7 +169,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> AutocompleteByVatAsync(Guid id, object vat, Guid query_country_id, object timeout)
+        public async Task<ResPartner> AutocompleteByVatAsync(Guid id, ResPartnerAutocompleteByVatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -412,7 +381,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ButtonAccountPeppolCheckPartnerEndpointAsync(Guid id, object company)
+        public async Task<ResPartner> ButtonAccountPeppolCheckPartnerEndpointAsync(Guid id, ResPartnerButtonAccountPeppolCheckPartnerEndpointRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: res_partner.py) ---
@@ -528,18 +497,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> CheckCompanyRegistryMaInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ma, FILE: res_partner.py) ---
-            // def _check_company_registry_ma(self):
-            // for record in self:
-            //     if record.country_code == 'MA' and record.company_registry and (len(record.company_registry) != 15 or not record.company_registry.isdigit()):
-            //         raise ValidationError(_("ICE number should have exactly 15 digits."))
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> CheckDocumentTypeSupportInternalAsync(object participant_info, object ubl_cii_format)
         {
             /*
@@ -557,7 +514,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CheckGstInAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckGstInAsync(Guid id, ResPartnerCheckGstInRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -591,75 +548,6 @@ namespace Bamboo.Core.Application.Services
             //             vals['state_id'] = state.id
             */
             return default;
-        }
-
-        protected async Task<ResPartner> CheckL10nRsEdiPublicFundsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: res_partner.py) ---
-            // def _check_l10n_rs_edi_public_funds(self):
-            // for record in self:
-            //     if record.l10n_rs_edi_public_funds and \
-            //         (len(record.l10n_rs_edi_public_funds) < 5 or not record.l10n_rs_edi_public_funds.isdigit()):
-            //         raise ValidationError(_('Public Funds ID(JBKJS) must be exactly five digits'))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> CheckL10nRsEdiRegistrationNumberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: res_partner.py) ---
-            // def _check_l10n_rs_edi_registration_number(self):
-            // for record in self:
-            //     if record.l10n_rs_edi_registration_number and \
-            //         (len(record.l10n_rs_edi_registration_number) not in [8, 13] or not record.l10n_rs_edi_registration_number.isdigit()):
-            //         raise ValidationError(_('Customer identification number should be 8 or 13 digits'))
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> CheckNilveraCustomerAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_partner.py) ---
-            // def check_nilvera_customer(self):
-            // self.ensure_one()
-            // if not self.vat:
-            //     return
-            // 
-            // with _get_nilvera_client(self.env.company) as client:
-            //     response = client.request("GET", "/general/GlobalCompany/Check/TaxNumber/" + urllib.parse.quote(self.vat), handle_response=False)
-            //     if response.status_code == 200:
-            //         query_result = response.json()
-            // 
-            //         if not query_result:
-            //             self.l10n_tr_nilvera_customer_status = 'earchive'
-            //             self.l10n_tr_nilvera_customer_alias_id = False
-            //         else:
-            //             self.l10n_tr_nilvera_customer_status = 'einvoice'
-            // 
-            //             # We need to sync the data from the API with the records in database.
-            //             aliases = {result.get('Name') for result in query_result}
-            //             persisted_aliases = self.l10n_tr_nilvera_customer_alias_ids
-            //             # Find aliases to add (in query result but not in database).
-            //             aliases_to_add = aliases - set(persisted_aliases.mapped('name'))
-            //             # Find aliases to remove (in database but not in query result).
-            //             aliases_to_remove = set(persisted_aliases.mapped('name')) - aliases
-            // 
-            //             newly_persisted_aliases = self.env['l10n_tr.nilvera.alias'].create([{
-            //                 'name': alias_name,
-            //                 'partner_id': self.id,
-            //             } for alias_name in aliases_to_add])
-            //             to_keep = persisted_aliases.filtered(lambda a: a.name not in aliases_to_remove)
-            //             (persisted_aliases - to_keep).unlink()
-            // 
-            //             # If no alias was previously selected, automatically select the first alias.
-            //             remaining_aliases = newly_persisted_aliases | to_keep
-            //             if not self.l10n_tr_nilvera_customer_alias_id and remaining_aliases:
-            //                 self.l10n_tr_nilvera_customer_alias_id = remaining_aliases[0]
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResPartner> CheckParentIdInternalAsync()
@@ -751,7 +639,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CheckVatAlAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatAlAsync(Guid id, ResPartnerCheckVatAlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -786,68 +674,11 @@ namespace Bamboo.Core.Application.Services
             //         partner_label = _("partner [%s]", partner.name)
             //         msg = partner._build_vat_error_message(country and country.code.lower() or None, partner.vat, partner_label)
             //         raise ValidationError(msg)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // """ Since we validate more documents than the vat for Argentinean partners (CUIT - VAT AR, CUIL, DNI) we
-            // extend this method in order to process it. """
-            // # NOTE by the moment we include the CUIT (VAT AR) validation also here because we extend the messages
-            // # errors to be more friendly to the user. In a future when Odoo improve the base_vat message errors
-            // # we can change this method and use the base_vat.check_vat_ar method.s
-            // l10n_ar_partners = self.filtered(lambda p: p.l10n_latam_identification_type_id.l10n_ar_afip_code or p.country_code == 'AR')
-            // l10n_ar_partners.l10n_ar_identification_validation()
-            // return super(ResPartner, self - l10n_ar_partners).check_vat()
-            --- ODOO METHOD SOURCE (MODULE: l10n_co, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // # check_vat is implemented by base_vat which this localization
-            // # doesn't directly depend on. It is however automatically
-            // # installed for Colombia.
-            // if self.sudo().env.ref('base.module_base_vat').state == 'installed':
-            //     # don't check Colombian partners unless they have RUT (= Colombian VAT) set as document type
-            //     self = self.filtered(lambda partner: partner.country_id.code != "CO" or\
-            //                                          partner.l10n_latam_identification_type_id.l10n_co_document_code == 'rut')
-            //     return super(ResPartner, self).check_vat()
-            // else:
-            //     return True
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // it_ruc = self.env.ref("l10n_ec.ec_ruc", False)
-            // it_dni = self.env.ref("l10n_ec.ec_dni", False)
-            // ecuadorian_partners = self.filtered(
-            //     lambda x: x.country_id == self.env.ref("base.ec")
-            // )
-            // for partner in ecuadorian_partners:
-            //     if partner.vat:
-            //         if partner.l10n_latam_identification_type_id.id in (
-            //             it_ruc.id,
-            //             it_dni.id,
-            //         ):
-            //             if partner.l10n_latam_identification_type_id.id == it_dni.id and len(partner.vat) != 10:
-            //                 raise ValidationError(_('If your identification type is %s, it must be 10 digits',
-            //                                         it_dni.display_name))
-            //             if partner.l10n_latam_identification_type_id.id == it_ruc.id and len(partner.vat) != 13:
-            //                 raise ValidationError(_('If your identification type is %s, it must be 13 digits',
-            //                                         it_ruc.display_name))
-            // return super(ResPartner, self - ecuadorian_partners).check_vat()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_base, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // with_vat = self.filtered(lambda x: x.l10n_latam_identification_type_id.is_vat)
-            // return super(ResPartner, with_vat).check_vat()
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: res_partner.py) ---
-            // def check_vat(self):
-            // # EXTEND account/base_vat
-            // """ Add validation of UY document types CI and NIE """
-            // ci_nie_types = self.filtered(
-            //     lambda p: p.l10n_latam_identification_type_id.l10n_uy_dgi_code in ("1", "3")
-            //               and p.l10n_latam_identification_type_id.country_id.code == "UY" and p.vat)
-            // for partner in ci_nie_types:
-            //     if not partner._l10n_uy_ci_nie_is_valid():
-            //         raise ValidationError(self._l10n_uy_build_vat_error_message(partner))
-            // return super(ResPartner, self - ci_nie_types).check_vat()
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatBrAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatBrAsync(Guid id, ResPartnerCheckVatBrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -859,7 +690,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatChAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatChAsync(Guid id, ResPartnerCheckVatChRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -894,7 +725,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatCrAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatCrAsync(Guid id, ResPartnerCheckVatCrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -909,7 +740,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatDeAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatDeAsync(Guid id, ResPartnerCheckVatDeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -921,7 +752,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatEcAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatEcAsync(Guid id, ResPartnerCheckVatEcRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -932,7 +763,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatGrAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatGrAsync(Guid id, ResPartnerCheckVatGrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -946,7 +777,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatHuAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatHuAsync(Guid id, ResPartnerCheckVatHuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -973,7 +804,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatIdAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatIdAsync(Guid id, ResPartnerCheckVatIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1002,7 +833,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatIeAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatIeAsync(Guid id, ResPartnerCheckVatIeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1012,7 +843,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatIlAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatIlAsync(Guid id, ResPartnerCheckVatIlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1023,7 +854,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatInAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatInAsync(Guid id, ResPartnerCheckVatInRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1039,21 +870,11 @@ namespace Bamboo.Core.Application.Services
             //     ]
             //     return any(re.compile(rx).match(vat) for rx in all_gstin_re)
             // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def check_vat_in(self, vat):
-            // """
-            //     This TEST_GST_NUMBER is used as test credentials for EDI
-            //     but this is not a valid number as per the regular expression
-            //     so TEST_GST_NUMBER is considered always valid
-            // """
-            // if vat == TEST_GST_NUMBER:
-            //     return True
-            // return super().check_vat_in(vat)
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatMaAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatMaAsync(Guid id, ResPartnerCheckVatMaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1063,7 +884,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatMxAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatMxAsync(Guid id, ResPartnerCheckVatMxRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1092,7 +913,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatNoAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatNoAsync(Guid id, ResPartnerCheckVatNoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1126,7 +947,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatPeAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatPeAsync(Guid id, ResPartnerCheckVatPeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1143,7 +964,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatPhAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatPhAsync(Guid id, ResPartnerCheckVatPhRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1153,7 +974,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatRoAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatRoAsync(Guid id, ResPartnerCheckVatRoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1180,7 +1001,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatRuAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatRuAsync(Guid id, ResPartnerCheckVatRuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1224,7 +1045,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatSaAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatSaAsync(Guid id, ResPartnerCheckVatSaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1238,7 +1059,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatTAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatTAsync(Guid id, ResPartnerCheckVatTRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1249,7 +1070,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatTrAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatTrAsync(Guid id, ResPartnerCheckVatTrRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1259,7 +1080,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatUaAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatUaAsync(Guid id, ResPartnerCheckVatUaRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1286,7 +1107,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatUyAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatUyAsync(Guid id, ResPartnerCheckVatUyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1322,7 +1143,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatVeAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatVeAsync(Guid id, ResPartnerCheckVatVeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1380,7 +1201,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CheckVatVnAsync(Guid id, object vat)
+        public async Task<ResPartner> CheckVatVnAsync(Guid id, ResPartnerCheckVatVnRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -1448,51 +1269,6 @@ namespace Bamboo.Core.Application.Services
             // return super(ResPartner, self)._commercial_fields() + \
             //     ['debit_limit', 'property_account_payable_id', 'property_account_receivable_id', 'property_account_position_id',
             //      'property_payment_term_id', 'property_supplier_payment_term_id', 'credit_limit']
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_ar_afip_responsibility_type_id']
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_cl_sii_taxpayer_type']
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_eg_building_no']
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + [
-            //     'l10n_hu_group_vat',
-            // ]
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // res = super()._commercial_fields()
-            // return res + ['l10n_in_gst_treatment', 'l10n_in_pan']
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_ke_exemption_number']
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_base, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_latam_identification_type_id']
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_my_identification_type', 'l10n_my_identification_number']
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_my_edi_industrial_classification', 'l10n_my_edi_malaysian_tin']
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['sst_registration_number', 'ttx_registration_number']
-            --- ODOO METHOD SOURCE (MODULE: l10n_ph, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['branch_code']
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super(ResPartner, self)._commercial_fields() + ['nrc']
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_partner.py) ---
-            // def _commercial_fields(self):
-            // return super()._commercial_fields() + ['l10n_sa_edi_building_number',
-            //                                        'l10n_sa_edi_plot_identification',
-            //                                        'l10n_sa_additional_identification_scheme',
-            //                                        'l10n_sa_additional_identification_number']
             --- ODOO METHOD SOURCE (MODULE: product, FILE: res_partner.py) ---
             // def _commercial_fields(self):
             // return super()._commercial_fields() + ['property_product_pricelist']
@@ -1721,21 +1497,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> ComputeBranchCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ph, FILE: res_partner.py) ---
-            // def _compute_branch_code(self):
-            // for partner in self:
-            //     branch_code = '000'
-            //     if partner.country_id.code == 'PH' and partner.vat:
-            //         match = partner.__check_vat_ph_re.match(partner.vat)
-            //         branch_code = match and match.group(1) and match.group(1)[1:] or branch_code
-            //     partner.branch_code = branch_code
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> ComputeCanPublishInternalAsync()
         {
             /*
@@ -1802,42 +1563,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> ComputeCompanyRegistryInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be, FILE: res_partner.py) ---
-            // def _compute_company_registry(self):
-            // # OVERRIDE
-            // # If a belgian company has a VAT number then its company registry is its VAT Number (without country code).
-            // super()._compute_company_registry()
-            // for partner in self.filtered(lambda p: p._deduce_country_code() == 'BE' and p.vat):
-            //     vat_country, vat_number = self._split_vat(partner.vat)
-            //     if vat_country.isnumeric():
-            //         vat_country = 'be'
-            //         vat_number = partner.vat
-            //     if vat_country == 'be' and self.simple_vat_check(vat_country, vat_number):
-            //         partner.company_registry = vat_number
-            --- ODOO METHOD SOURCE (MODULE: l10n_dk, FILE: res_partner.py) ---
-            // def _compute_company_registry(self):
-            // # OVERRIDE
-            // # In Denmark, if you have a VAT number, it's also your company registry (CVR) number
-            // super()._compute_company_registry()
-            // for partner in self.filtered(lambda p: p.country_id.code == 'DK' and p.vat):
-            //     vat_country, vat_number = self._split_vat(partner.vat)
-            //     if vat_country.isnumeric():
-            //         vat_country = 'dk'
-            //         vat_number = partner.vat
-            //     if vat_country == 'dk' and self.simple_vat_check(vat_country, vat_number):
-            //         partner.company_registry = vat_number
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro, FILE: res_partner.py) ---
-            // def _compute_company_registry(self):
-            // # OVERRIDE
-            // # In Romania, if you have a VAT number, it's also your company registry (CUI) number
-            // super()._compute_company_registry()
-            // for partner in self.filtered(lambda p: p.country_id.code == 'RO' and p.vat):
-            //     vat_country, vat_number = self._split_vat(partner.vat)
-            //     if vat_country.isnumeric():
-            //         vat_country = 'ro'
-            //         vat_number = partner.vat
-            //     if vat_country == 'ro' and self.simple_vat_check(vat_country, vat_number):
-            //         partner.company_registry = vat_number
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_company_registry(self):
             // # exists to allow overrides
@@ -2029,17 +1754,6 @@ namespace Bamboo.Core.Application.Services
             //         name = f"{name} ‒ {partner.vat}"
             // 
             //     partner.display_name = name.strip()
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeDisplayPanWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def _compute_display_pan_warning(self):
-            // for partner in self:
-            //     partner.display_pan_warning = partner.vat and partner.l10n_in_pan and partner.l10n_in_pan != partner.vat[2:12]
             */
             return default;
         }
@@ -2297,232 +2011,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> ComputeL10nArFormattedVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def _compute_l10n_ar_formatted_vat(self):
-            // """ This will add some dash to the CUIT number (VAT AR) in order to show in his natural format:
-            // {person_category}-{number}-{validation_number} """
-            // recs_ar_vat = self.filtered('l10n_ar_vat')
-            // for rec in recs_ar_vat:
-            //     try:
-            //         rec.l10n_ar_formatted_vat = stdnum.ar.cuit.format(rec.l10n_ar_vat)
-            //     except Exception as error:
-            //         rec.l10n_ar_formatted_vat = rec.l10n_ar_vat
-            //         _logger.runbot("Argentinean VAT was not formatted: %s", repr(error))
-            // remaining = self - recs_ar_vat
-            // remaining.l10n_ar_formatted_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nArVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def _compute_l10n_ar_vat(self):
-            // """ We add this computed field that returns cuit (VAT AR) or nothing if this one is not set for the partner.
-            // This Validation can be also done by calling ensure_vat() method that returns the cuit (VAT AR) or error if this
-            // one is not found """
-            // recs_ar_vat = self.filtered(lambda x: x.l10n_latam_identification_type_id.l10n_ar_afip_code == '80' and x.vat)
-            // for rec in recs_ar_vat:
-            //     rec.l10n_ar_vat = stdnum.ar.cuit.compact(rec.vat)
-            // remaining = self - recs_ar_vat
-            // remaining.l10n_ar_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nEcVatValidationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: res_partner.py) ---
-            // def _compute_l10n_ec_vat_validation(self):
-            // it_ruc = self.env.ref("l10n_ec.ec_ruc", False)
-            // it_dni = self.env.ref("l10n_ec.ec_dni", False)
-            // ruc = stdnum.util.get_cc_module("ec", "ruc")
-            // ci = stdnum.util.get_cc_module("ec", "ci")
-            // for partner in self:
-            //     partner.l10n_ec_vat_validation = False
-            //     if partner and partner.l10n_latam_identification_type_id in (it_ruc, it_dni) and partner.vat:
-            //         final_consumer = verify_final_consumer(partner.vat)
-            //         if not final_consumer:
-            //             if partner.l10n_latam_identification_type_id.id == it_dni.id and not ci.is_valid(partner.vat):
-            //                 partner.l10n_ec_vat_validation = _("The VAT %s seems to be invalid as the tenth digit doesn't comply with the validation algorithm "
-            //                                                    "(could be an old VAT number)", partner.vat)
-            //             if partner.l10n_latam_identification_type_id.id == it_ruc.id and not ruc.is_valid(partner.vat):
-            //                 partner.l10n_ec_vat_validation = _("The VAT %s seems to be invalid as the tenth digit doesn't comply with the validation algorithm "
-            //                                                    "(SRI has stated that this validation is not required anymore for some VAT numbers)", partner.vat)
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nEsEdiFacturaeResidenceTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: res_partner.py) ---
-            // def _compute_l10n_es_edi_facturae_residence_type(self):
-            // eu_country_ids = self.env.ref('base.europe').country_ids.ids
-            // for partner in self:
-            //     country = partner.country_id
-            //     if country.code == 'ES':
-            //         partner.l10n_es_edi_facturae_residence_type = 'R'
-            //     elif country.id in eu_country_ids:
-            //         partner.l10n_es_edi_facturae_residence_type = 'U'
-            //     else:
-            //         partner.l10n_es_edi_facturae_residence_type = 'E'
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nGrEdiBranchNumberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: res_partner.py) ---
-            // def _compute_l10n_gr_edi_branch_number(self):
-            // for partner in self:
-            //     if partner.country_code == 'GR':
-            //         partner.l10n_gr_edi_branch_number = partner.l10n_gr_edi_branch_number or 0
-            //     else:
-            //         partner.l10n_gr_edi_branch_number = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nHuEuVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu, FILE: res_partner.py) ---
-            // def _compute_l10n_hu_eu_vat(self):
-            // for partner in self:
-            //     if partner.country_code == 'HU' and partner.vat:
-            //         partner.l10n_hu_eu_vat = partner._convert_hu_local_to_eu_vat(partner.vat)
-            //     else:
-            //         partner.l10n_hu_eu_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nIdPkpInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: res_partner.py) ---
-            // def _compute_l10n_id_pkp(self):
-            // for record in self:
-            //     record.l10n_id_pkp = record.vat and record.country_code == 'ID'
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nInGstStateWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def _compute_l10n_in_gst_state_warning(self):
-            // for partner in self:
-            //     if (
-            //         "IN" in partner.fiscal_country_codes
-            //         and partner.check_vat_in(partner.vat)
-            //     ):
-            //         if partner.vat[:2] == "99":
-            //             partner.l10n_in_gst_state_warning = _(
-            //                 "As per GSTN the country should be other than India, so it's recommended to"
-            //             )
-            //         else:
-            //             state_id = self.env['res.country.state'].search([('l10n_in_tin', '=', partner.vat[:2])], limit=1)
-            //             if state_id and state_id != partner.state_id:
-            //                 partner.l10n_in_gst_state_warning = _(
-            //                     "As per GSTN the state should be %s, so it's recommended to", state_id.name
-            //                 )
-            //             else:
-            //                 partner.l10n_in_gst_state_warning = False
-            //     else:
-            //         partner.l10n_in_gst_state_warning = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nMyEdiDisplayTinWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def _compute_l10n_my_edi_display_tin_warning(self):
-            // """ We want to display the tin warning for companies registered to use MyInvois. """
-            // # We need to sudo here, as all users having access to partners may not have the rights to access the proxy users.
-            // proxy_user = self.env.company.sudo().l10n_my_edi_proxy_user_id
-            // is_edi_used = proxy_user and proxy_user.proxy_type == 'l10n_my_edi'
-            // for partner in self:
-            //     # Users with no business number can't be validated using the api
-            //     partner.l10n_my_edi_display_tin_warning = is_edi_used and partner.l10n_my_identification_number
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nMyEdiIndustrialClassificationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: res_partner.py) ---
-            // def _compute_l10n_my_edi_industrial_classification(self):
-            // default_classification = self.env.ref('l10n_my_edi.class_00000', raise_if_not_found=False)
-            // self.filtered(lambda p: not p.l10n_my_edi_industrial_classification).l10n_my_edi_industrial_classification = default_classification
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nMyIdentificationNumberPlaceholderInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def _compute_l10n_my_identification_number_placeholder(self):
-            // """ Computes a dynamic placeholder that depends on the selected type to help the user inputs their data.
-            // The placeholders have been taken from the MyInvois doc.
-            // """
-            // for partner in self:
-            //     placeholder = 'N/A'
-            //     if partner.l10n_my_identification_type == 'NRIC':
-            //         placeholder = '830503-11-4923'
-            //     elif partner.l10n_my_identification_type == 'BRN':
-            //         placeholder = '202201234565'
-            //     elif partner.l10n_my_identification_type == 'PASSPORT':
-            //         placeholder = 'A00000000'
-            //     elif partner.l10n_my_identification_type == 'ARMY':
-            //         placeholder = '830805-13-4983'
-            //     partner.l10n_my_identification_number_placeholder = placeholder
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nMyTinValidationStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def _compute_l10n_my_tin_validation_state(self):
-            // """ The three @depends are used for the validation. If they change, we will invalidate it and expect the user to revalidate. """
-            // self.l10n_my_tin_validation_state = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: res_partner.py) ---
-            // def _compute_l10n_my_tin_validation_state(self):
-            // # EXTEND 'l10n_my_edi' to add the depends
-            // super()._compute_l10n_my_tin_validation_state()
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeL10nThBranchNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: res_partner.py) ---
-            // def _compute_l10n_th_branch_name(self):
-            // for partner in self:
-            //     if not partner.is_company or partner.country_code != 'TH':
-            //         partner.l10n_th_branch_name = ""
-            //     else:
-            //         code = partner.company_registry
-            //         partner.l10n_th_branch_name = f"Branch {code}" if code else "Headquarter"
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> ComputeLastWebsiteSoIdInternalAsync()
         {
             /*
@@ -2635,28 +2123,6 @@ namespace Bamboo.Core.Application.Services
             //             break
             //     else:
             //         partner.membership_state = 'none'
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ComputeNilveraCustomerStatusAndAliasIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_partner.py) ---
-            // def _compute_nilvera_customer_status_and_alias_id(self):
-            // if modules.module.current_test:
-            //     return
-            // for partner in self:
-            //     if partner.vat and partner.invoice_edi_format == 'ubl_tr':
-            //         try:
-            //             partner.check_nilvera_customer()
-            //         except UserError:
-            //             # In case of an internet connection issue, exit silently.
-            //             continue
-            //     else:
-            //         # Reset the alias if no VAT or UBL format changed.
-            //         partner.l10n_tr_nilvera_customer_status = 'not_checked'
-            //         partner.l10n_tr_nilvera_customer_alias_id = False
             */
             return default;
         }
@@ -3364,7 +2830,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> CopyDataAsync(Guid id, object @default)
+        public async Task<ResPartner> CopyDataAsync(Guid id, ResPartnerCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -3409,12 +2875,6 @@ namespace Bamboo.Core.Application.Services
             // if self.env.context.get('import_file'):
             //     res.env.remove_to_compute(self._fields['vies_valid'], res)
             // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_partner.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     if vals.get('vat'):
-            //         vals['vat'] = self._format_vat_cl(vals)
-            // return super().create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: mail_plugin, FILE: res_partner.py) ---
             // def create(self, vals_list):
             // partners = super().create(vals_list)
@@ -3473,7 +2933,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> CreateMembershipInvoiceAsync(Guid id, object product, object amount)
+        public async Task<ResPartner> CreateMembershipInvoiceAsync(Guid id, ResPartnerCreateMembershipInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: membership, FILE: partner.py) ---
@@ -3633,26 +3093,6 @@ namespace Bamboo.Core.Application.Services
             // if self.vat and self.vat[:2].isalpha():
             //     country_code = self.vat[:2].upper()
             // return country_code
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_partner.py) ---
-            // def _deduce_country_code(self):
-            // if self.siret:
-            //     return 'FR'
-            // return super()._deduce_country_code()
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _deduce_country_code(self):
-            // if self.l10n_it_codice_fiscale:
-            //     return 'IT'
-            // return super()._deduce_country_code()
-            --- ODOO METHOD SOURCE (MODULE: l10n_no, FILE: res_partner.py) ---
-            // def _deduce_country_code(self):
-            // if self.l10n_no_bronnoysund_number:
-            //     return 'NO'
-            // return super()._deduce_country_code()
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_partner.py) ---
-            // def _deduce_country_code(self):
-            // if self.l10n_sg_unique_entity_number:
-            //     return 'SG'
-            // return super()._deduce_country_code()
             */
             return default;
         }
@@ -3855,7 +3295,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> DoPartnerManualActionAsync(Guid id, List<Guid> partner_ids)
+        public async Task<ResPartner> DoPartnerManualActionAsync(Guid id, ResPartnerDoPartnerManualActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3884,7 +3324,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> DoPartnerManualDermanordAsync(Guid id, object followup_line)
+        public async Task<ResPartner> DoPartnerManualDermanordAsync(Guid id, ResPartnerDoPartnerManualDermanordRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3905,7 +3345,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> DoPartnerPrintAsync(Guid id, List<Guid> wizard_partner_ids, object data)
+        public async Task<ResPartner> DoPartnerPrintAsync(Guid id, ResPartnerDoPartnerPrintRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -3937,7 +3377,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> EnrichByDomainAsync(Guid id, object domain, object timeout)
+        public async Task<ResPartner> EnrichByDomainAsync(Guid id, ResPartnerEnrichByDomainRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3950,7 +3390,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> EnrichByDunsAsync(Guid id, object duns, object timeout)
+        public async Task<ResPartner> EnrichByDunsAsync(Guid id, ResPartnerEnrichByDunsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3963,7 +3403,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> EnrichByGstAsync(Guid id, object gst, object timeout)
+        public async Task<ResPartner> EnrichByGstAsync(Guid id, ResPartnerEnrichByGstRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -3976,7 +3416,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> EnrichCompanyAsync(Guid id, object company_domain, object partner_gid, object vat, object timeout)
+        public async Task<ResPartner> EnrichCompanyAsync(Guid id, ResPartnerEnrichCompanyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -4008,25 +3448,6 @@ namespace Bamboo.Core.Application.Services
             //         raise UserError(_("Partner company cannot be different from its assigned tasks' company"))
             */
             return default;
-        }
-
-        public async Task<ResPartner> EnsureVatAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def ensure_vat(self):
-            // """ This method is a helper that returns the VAT number is this one is defined if not raise an UserError.
-            // 
-            // VAT is not mandatory field but for some Argentinean operations the VAT is required, for eg  validate an
-            // electronic invoice, build a report, etc.
-            // 
-            // This method can be used to validate is the VAT is proper defined in the partner """
-            // self.ensure_one()
-            // if not self.l10n_ar_vat:
-            //     raise UserError(_('No VAT configured for partner [%i] %s', self.id, self.name))
-            // return self.l10n_ar_vat
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResPartner> EventViewAsync(Guid id)
@@ -4065,7 +3486,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FieldsViewGetAsync(Guid id, Guid view_id, object view_type, object toolbar, object submenu)
+        public async Task<ResPartner> FieldsViewGetAsync(Guid id, ResPartnerFieldsViewGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_followup, FILE: partner.py) ---
@@ -4096,7 +3517,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FindOrCreateAsync(Guid id, object email, object assert_valid_email)
+        public async Task<ResPartner> FindOrCreateAsync(Guid id, ResPartnerFindOrCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -4257,7 +3678,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> FixEuVatNumberAsync(Guid id, Guid country_id, object vat)
+        public async Task<ResPartner> FixEuVatNumberAsync(Guid id, ResPartnerFixEuVatNumberRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4313,19 +3734,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> FormatDottedVatClInternalAsync(object vat)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_partner.py) ---
-            // def _format_dotted_vat_cl(self, vat):
-            // vat_l = vat.split('-')
-            // n_vat, n_dv = vat_l[0], vat_l[1]
-            // return '%s-%s' % (format(int(n_vat), ',d').replace(',', '.'), n_dv)
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> FormatVatChAsync(Guid id, object vat)
+        public async Task<ResPartner> FormatVatChAsync(Guid id, ResPartnerFormatVatChRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4336,30 +3745,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResPartner> FormatVatClInternalAsync(object values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_partner.py) ---
-            // def _format_vat_cl(self, values):
-            // identification_types = [self.env.ref('l10n_latam_base.it_vat').id, self.env.ref('l10n_cl.it_RUT').id,
-            //                         self.env.ref('l10n_cl.it_RUN').id]
-            // country = self.env["res.country"].browse(values.get('country_id'))
-            // identification_type = self.env['l10n_latam.identification.type'].browse(
-            //     values.get('l10n_latam_identification_type_id')
-            // )
-            // partner_country_is_chile = country.code == "CL" or identification_type.country_id.code == "CL"
-            // if partner_country_is_chile and \
-            //         values.get('l10n_latam_identification_type_id') in identification_types and values.get('vat') and\
-            //         stdnum.util.get_cc_module('cl', 'vat').is_valid(values['vat']):
-            //     return stdnum.util.get_cc_module('cl', 'vat').format(values['vat']).replace('.', '').replace(
-            //         'CL', '').upper()
-            // else:
-            //     return values['vat']
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> FormatVatEuAsync(Guid id, object vat)
+        public async Task<ResPartner> FormatVatEuAsync(Guid id, ResPartnerFormatVatEuRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4371,7 +3757,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> FormatVatSmAsync(Guid id, object vat)
+        public async Task<ResPartner> FormatVatSmAsync(Guid id, ResPartnerFormatVatSmRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -4385,10 +3771,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> FormattingAddressFieldsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: res_partner.py) ---
-            // def _formatting_address_fields(self):
-            // """Returns the list of address fields usable to format addresses."""
-            // return super()._formatting_address_fields() + ['l10n_pe_district_name']
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _formatting_address_fields(self):
             // """Returns the list of address fields usable to format addresses."""
@@ -4580,7 +3962,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetAttendeeDetailAsync(Guid id, List<Guid> meeting_ids)
+        public async Task<ResPartner> GetAttendeeDetailAsync(Guid id, ResPartnerGetAttendeeDetailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: res_partner.py) ---
@@ -4648,21 +4030,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> GetCompanyRegistryLabelsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: res_partner.py) ---
-            // def _get_company_registry_labels(self):
-            // labels = super()._get_company_registry_labels()
-            // labels['AU'] = _("ACN")
-            // return labels
-            --- ODOO METHOD SOURCE (MODULE: l10n_ma, FILE: res_partner.py) ---
-            // def _get_company_registry_labels(self):
-            // labels = super()._get_company_registry_labels()
-            // labels['MA'] = _("ICE")
-            // return labels
-            --- ODOO METHOD SOURCE (MODULE: l10n_nz, FILE: res_partner.py) ---
-            // def _get_company_registry_labels(self):
-            // labels = super()._get_company_registry_labels()
-            // labels['NZ'] = _("NZBN")
-            // return labels
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _get_company_registry_labels(self):
             // return {}
@@ -4770,48 +4137,6 @@ namespace Bamboo.Core.Application.Services
             //     return self.env['account.edi.xml.ubl_bis3']
             // if invoice_edi_format == 'ubl_sg':
             //     return self.env['account.edi.xml.ubl_sg']
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'pint_anz':
-            //     return self.env['account.edi.xml.pint_anz']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_dk_oioubl, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'oioubl_201':
-            //     return self.env['account.edi.xml.oioubl_201']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'pint_jp':
-            //     return self.env['account.edi.xml.pint_jp']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'pint_my':
-            //     return self.env['account.edi.xml.pint_my']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_ubl_cii'
-            // if invoice_edi_format == 'ciusro':
-            //     return self.env['account.edi.xml.ubl_ro']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'pint_sg':
-            //     return self.env['account.edi.xml.pint_sg']
-            // return super()._get_edi_builder(invoice_edi_format)
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_partner.py) ---
-            // def _get_edi_builder(self, invoice_edi_format):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // if invoice_edi_format == 'ubl_tr':
-            //     return self.env['account.edi.xml.ubl.tr']
-            // return super()._get_edi_builder(invoice_edi_format)
             */
             return default;
         }
@@ -4959,27 +4284,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> GetIdNumberSanitizeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def _get_id_number_sanitize(self):
-            // """ Sanitize the identification number. Return the digits/integer value of the identification number
-            // If not vat number defined return 0 """
-            // self.ensure_one()
-            // if not self.vat:
-            //     return 0
-            // if self.l10n_latam_identification_type_id.l10n_ar_afip_code in ['80', '86']:
-            //     # Compact is the number clean up, remove all separators leave only digits
-            //     res = int(stdnum.ar.cuit.compact(self.vat))
-            // else:
-            //     id_number = re.sub('[^0-9]', '', self.vat)
-            //     res = int(id_number)
-            // return res
-            */
-            return default;
-        }
-
         public async Task<ResPartner> GetImportTemplatesAsync(Guid id)
         {
             /*
@@ -5042,7 +4346,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetMentionSuggestionsAsync(Guid id, object search, object limit)
+        public async Task<ResPartner> GetMentionSuggestionsAsync(Guid id, ResPartnerGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -5074,7 +4378,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetMentionSuggestionsFromChannelAsync(Guid id, Guid channel_id, object search, object limit)
+        public async Task<ResPartner> GetMentionSuggestionsFromChannelAsync(Guid id, ResPartnerGetMentionSuggestionsFromChannelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -5187,7 +4491,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(Guid id, Guid country_id)
+        public async Task<ResPartner> GetPartnerLocalisationFieldsRequiredToInvoiceAsync(Guid id, ResPartnerGetPartnerLocalisationFieldsRequiredToInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
@@ -5447,14 +4751,6 @@ namespace Bamboo.Core.Application.Services
             // # TO OVERRIDE
             // self.ensure_one()
             // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _get_suggested_invoice_edi_format(self):
-            // # EXTENDS 'account'
-            // res = super()._get_suggested_invoice_edi_format()
-            // if self.country_code == 'IT':
-            //     return 'it_edi_xml'
-            // else:
-            //     return res
             */
             return default;
         }
@@ -5523,48 +4819,6 @@ namespace Bamboo.Core.Application.Services
             //     'ubl_sg': {'countries': ['SG'], 'on_peppol': False},  # Same.
             //     'facturx': {'countries': ['FR'], 'on_peppol': False},
             // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['pint_anz'] = {'countries': ['AU', 'NZ'], 'on_peppol': True, 'sequence': 90}  # has priority over UBL_ANZ from 'account_edi_ubl_cii'
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_dk_oioubl, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['oioubl_201'] = {'countries': ['DK']}
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['pint_jp'] = {'countries': ['JP'], 'on_peppol': True}
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['pint_my'] = {'countries': ['MY'], 'on_peppol': True}
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['ciusro'] = {'countries': ['RO']}
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['pint_sg'] = {'countries': ['SG'], 'on_peppol': True, 'sequence': 90}  # has priority over UBL_SG from 'account_edi_ubl_cii'
-            // return formats_info
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_partner.py) ---
-            // def _get_ubl_cii_formats_info(self):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // formats_info = super()._get_ubl_cii_formats_info()
-            // formats_info['ubl_tr'] = {'countries': ['TR']}
-            // return formats_info
             */
             return default;
         }
@@ -5575,20 +4829,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: res_partner.py) ---
             // def _get_ubl_cii_formats(self):
             // return list(self._get_ubl_cii_formats_info().keys())
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> GetValidationModuleInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def _get_validation_module(self):
-            // self.ensure_one()
-            // if self.l10n_latam_identification_type_id.l10n_ar_afip_code in ['80', '86']:
-            //     return stdnum.ar.cuit
-            // elif self.l10n_latam_identification_type_id.l10n_ar_afip_code == '96':
-            //     return stdnum.ar.dni
             */
             return default;
         }
@@ -5634,7 +4874,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> GetWorkingHoursForAllAttendeesAsync(Guid id, List<Guid> attendee_ids, object date_from, object date_to, object everybody)
+        public async Task<ResPartner> GetWorkingHoursForAllAttendeesAsync(Guid id, ResPartnerGetWorkingHoursForAllAttendeesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_calendar, FILE: res_partner.py) ---
@@ -5651,7 +4891,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> GetWorklocationAsync(Guid id, object start_date, object end_date)
+        public async Task<ResPartner> GetWorklocationAsync(Guid id, ResPartnerGetWorklocationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_homeworking_calendar, FILE: res_partner.py) ---
@@ -5664,7 +4904,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> GoogleMapImgAsync(Guid id, object zoom, object width, object height)
+        public async Task<ResPartner> GoogleMapImgAsync(Guid id, ResPartnerGoogleMapImgRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
@@ -5684,7 +4924,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> GoogleMapLinkAsync(Guid id, object zoom)
+        public async Task<ResPartner> GoogleMapLinkAsync(Guid id, ResPartnerGoogleMapLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
@@ -5793,7 +5033,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> IapPartnerAutocompleteAddTagsAsync(Guid id, object unspsc_codes)
+        public async Task<ResPartner> IapPartnerAutocompleteAddTagsAsync(Guid id, ResPartnerIapPartnerAutocompleteAddTagsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -5890,7 +5130,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ImSearchAsync(Guid id, object name, object limit, List<Guid> excluded_ids)
+        public async Task<ResPartner> ImSearchAsync(Guid id, ResPartnerImSearchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -6055,7 +5295,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> IsValidRucEcAsync(Guid id, object vat)
+        public async Task<ResPartner> IsValidRucEcAsync(Guid id, ResPartnerIsValidRucEcRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -6065,560 +5305,6 @@ namespace Bamboo.Core.Application.Services
             // return False
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResPartner> L10nArIdentificationValidationAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_partner.py) ---
-            // def l10n_ar_identification_validation(self):
-            // for rec in self.filtered('vat'):
-            //     try:
-            //         module = rec._get_validation_module()
-            //     except Exception as error:
-            //         module = False
-            //         _logger.runbot("Argentinean document was not validated: %s", repr(error))
-            // 
-            //     if not module:
-            //         continue
-            //     try:
-            //         module.validate(rec.vat)
-            //     except module.InvalidChecksum:
-            //         raise ValidationError(_('The validation digit is not valid for "%s"',
-            //                                 rec.l10n_latam_identification_type_id.name))
-            //     except module.InvalidLength:
-            //         raise ValidationError(_('Invalid length for "%s"', rec.l10n_latam_identification_type_id.name))
-            //     except module.InvalidFormat:
-            //         raise ValidationError(_('Only numbers allowed for "%s"', rec.l10n_latam_identification_type_id.name))
-            //     except module.InvalidComponent:
-            //         valid_cuit = ('20', '23', '24', '27', '30', '33', '34', '50', '51', '55')
-            //         raise ValidationError(_('CUIT number must be prefixed with one of the following: %s', ', '.join(valid_cuit)))
-            //     except Exception as error:
-            //         raise ValidationError(repr(error))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> L10nEcGetIdentificationTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: res_partner.py) ---
-            // def _l10n_ec_get_identification_type(self):
-            // """Maps Odoo identification types to Ecuadorian ones.
-            // Useful for document type domains, electronic documents, ats, others.
-            // """
-            // self.ensure_one()
-            // 
-            // id_types_by_xmlid = {
-            //     'l10n_ec.ec_dni': 'cedula',  # DNI
-            //     'l10n_ec.ec_ruc': 'ruc',  # RUC
-            //     'l10n_ec.ec_passport': 'ec_passport',  # EC passport
-            //     'l10n_latam_base.it_pass': 'passport',  # Passport
-            //     'l10n_latam_base.it_fid': 'foreign',  # Foreign ID
-            //     'l10n_latam_base.it_vat': 'foreign',
-            // }
-            // 
-            // # This method is orm-cached, which makes it more efficient in loops than get_external_id()
-            // xmlid_by_res_id = {
-            //     self.env['ir.model.data']._xmlid_to_res_model_res_id(xmlid, raise_if_not_found=True)[1]: xmlid
-            //     for xmlid in id_types_by_xmlid
-            // }
-            // 
-            // id_type_xmlid = xmlid_by_res_id.get(self.l10n_latam_identification_type_id.id)
-            // if id_type_xmlid in id_types_by_xmlid:
-            //     return id_types_by_xmlid[id_type_xmlid]
-            // 
-            // if self.l10n_latam_identification_type_id.country_id.code != 'EC':
-            //     return 'foreign'
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nEsIsForeignInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es, FILE: res_partner.py) ---
-            // def _l10n_es_is_foreign(self):
-            // self.ensure_one()
-            // 
-            // return self.country_id.code not in ('ES', False) or (self.vat or '').startswith("ESN")
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nInGetPartnerValsByVatInternalAsync(object vat)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def _l10n_in_get_partner_vals_by_vat(self, vat):
-            // partner_data = self.enrich_by_gst(vat)
-            // for fname in list(partner_data.keys()):
-            //     if fname not in self.env['res.partner']._fields:
-            //         partner_data.pop(fname, None)
-            // partner_data.update({
-            //     'country_id': partner_data.get('country_id', {}).get('id'),
-            //     'state_id': partner_data.get('state_id', {}).get('id'),
-            //     'company_type': 'company',
-            //     'l10n_in_gst_treatment': 'regular',
-            // })
-            // return partner_data
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> L10nInVerifyGstinStatusAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_gstin_status, FILE: res_partner.py) ---
-            // def action_l10n_in_verify_gstin_status(self):
-            // self.ensure_one()
-            // self.check_access('write')
-            // if self.env.company.sudo().account_fiscal_country_id.code != 'IN':
-            //     raise UserError(_('You must be logged in an Indian company to use this feature'))
-            // if not self.vat:
-            //     raise ValidationError(_("Please enter the GSTIN"))
-            // is_production = self.env.company.sudo().l10n_in_edi_production_env
-            // params = {
-            //     "gstin_to_search": self.vat,
-            // }
-            // try:
-            //     response = self.env['iap.account']._l10n_in_connect_to_server(
-            //         is_production,
-            //         params,
-            //         '/iap/l10n_in_reports/1/public/search',
-            //         "l10n_in_gstin_status.endpoint"
-            //     )
-            // except AccessError:
-            //     raise UserError(_("Unable to connect with GST network"))
-            // if response.get('error') and any(e.get('code') == 'no-credit' for e in response['error']):
-            //     return self.env["bus.bus"]._sendone(self.env.user.partner_id, "iap_notification",
-            //         {
-            //             "type": "no_credit",
-            //             "title": _("Not enough credits to check GSTIN status"),
-            //             "get_credits_url": self.env["iap.account"].get_credits_url(service_name=IAP_SERVICE_NAME),
-            //         },
-            //     )
-            // gst_status = response.get('data', {}).get('sts', "")
-            // if gst_status.casefold() == 'active':
-            //     l10n_in_gstin_verified_status = True
-            // elif gst_status:
-            //     l10n_in_gstin_verified_status = False
-            //     date_from = response.get("data", {}).get("cxdt", '')
-            //     if date_from and re.search(r'\d', date_from):
-            //         message = _(
-            //             "GSTIN %(vat)s is %(status)s and Effective from %(date_from)s.",
-            //             vat=self.vat,
-            //             status=gst_status,
-            //             date_from=date_from,
-            //         )
-            //     else:
-            //         message = _(
-            //             "GSTIN %(vat)s is %(status)s, effective date is not available.",
-            //             vat=self.vat,
-            //             status=gst_status
-            //         )
-            //     if not is_production:
-            //         message += _(" Warning: You are currently in a test environment. The result is a dummy.")
-            //     self.message_post(body=message)
-            // else:
-            //     _logger.info("GST status check error %s", response)
-            //     if response.get('error') and any(e.get('code') == 'SWEB_9035' for e in response['error']):
-            //         raise UserError(
-            //             _("The provided GSTIN is invalid. Please check the GSTIN and try again.")
-            //         )
-            //     default_error_message = _(
-            //         "Something went wrong while fetching the GST status."
-            //         "Please Contact Support if the error persists with"
-            //         "Response: %(response)s",
-            //         response=response
-            //     )
-            //     error_messages = [
-            //         f"[{error.get('code') or _('Unknown')}] {error.get('message') or default_error_message}"
-            //         for error in response.get('error')
-            //     ]
-            //     raise UserError(
-            //         error_messages
-            //         and '\n'.join(error_messages)
-            //         or default_error_message
-            //     )
-            // self.write({
-            //     "l10n_in_gstin_verified_status": l10n_in_gstin_verified_status,
-            //     "l10n_in_gstin_verified_date": fields.Date.today(),
-            // })
-            // return {
-            //     "type": "ir.actions.client",
-            //     "tag": "display_notification",
-            //     "params": {
-            //         "type": "info",
-            //         "message": _("GSTIN Status Updated Successfully"),
-            //         "next": {"type": "ir.actions.act_window_close"},
-            //     },
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResPartner> L10nItEdiDoiOpenDeclarationsAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: res_partner.py) ---
-            // def l10n_it_edi_doi_action_open_declarations(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Declaration of Intent of %s", self.display_name),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'l10n_it_edi_doi.declaration_of_intent',
-            //     'domain': [('partner_id', '=', self.commercial_partner_id.id)],
-            //     'views': [(self.env.ref('l10n_it_edi_doi.view_l10n_it_edi_doi_tree').id, 'list'),
-            //               (self.env.ref('l10n_it_edi_doi.view_l10n_it_edi_doi_form').id, 'form')],
-            //     'context': {
-            //         'default_partner_id': self.id,
-            //     },
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> L10nItEdiExportCheckInternalAsync(object checks)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _l10n_it_edi_export_check(self, checks=None):
-            // checks = checks or ['partner_vat_codice_fiscale_missing', 'partner_address_missing']
-            // fields_to_check = {
-            //     'partner_vat_missing': {
-            //         'fields': [('vat',)],
-            //         'message': _("Partner(s) should have a VAT number."),
-            //     },
-            //     'partner_vat_codice_fiscale_missing': {
-            //         'fields': [('vat', 'l10n_it_codice_fiscale')],
-            //         'message': _("Partner(s) should have a VAT number or Codice Fiscale."),
-            //     },
-            //     'partner_country_missing': {
-            //         'fields': [('country_id',)],
-            //         'message': _("Partner(s) should have a Country when used for simplified invoices."),
-            //     },
-            //     'partner_address_missing': {
-            //         'fields': [('street', 'street2'), ('zip',), ('city',), ('country_id',)],
-            //         'message': _("Partner(s) should have a complete address, verify their Street, City, Zipcode and Country."),
-            //     },
-            // }
-            // selected_checks = {k: v for k, v in fields_to_check.items() if k in checks}
-            // single_views = [(False, 'form')]
-            // list_view = (self.env.ref('l10n_it_edi.res_partner_tree_l10n_it', raise_if_not_found=False))
-            // multi_views = [(list_view.id if list_view else False, 'list'), (False, 'form')]
-            // errors = {}
-            // for key, check in selected_checks.items():
-            //     for fields_tuple in check['fields']:
-            //         if invalid_records := self.filtered(lambda record: not any(record[field] for field in fields_tuple)):
-            //             views = single_views if len(invalid_records) == 1 else multi_views
-            //             errors[f"l10n_it_edi_{key}"] = {
-            //                 'message': check['message'],
-            //                 'action_text': _("View Partner(s)"),
-            //                 'action': invalid_records._get_records_action(name=_("Check Partner(s)"), views=views),
-            //             }
-            // return errors
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nItEdiGetValuesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _l10n_it_edi_get_values(self):
-            // """ Generates all partner values needed by l10n_it_edi XML export.
-            // 
-            //     VAT number:
-            //     If there is a VAT number and the partner is not in EU, then we use the VAT number as is,
-            //         as an alphanumeric value identifying the counterparty, up to a maximum of
-            //         28 alphanumeric characters, on which the SdI does not perform validity checks.
-            //     If there is a VAT number and the partner is in EU, then remove the country prefix
-            //     If there is no VAT and the partner is not in EU, then the exported value is 'OO99999999999'
-            //     If there is no VAT and the partner is in EU, then the exported value is '0000000'
-            //     If there is no VAT and the partner is in Italy, the VAT is not set and Codice Fiscale will be relevant in the XML.
-            //     If there is no VAT and no Codice Fiscale, the invoice is not even exported, so this case is not handled.
-            // 
-            //     Country:
-            //     First, try and deduct the country from the VAT number.
-            //     If not, take the country directly from the partner.
-            //     If there's a codice fiscale, the country is 'IT'.
-            // 
-            //     PA Index:
-            //     If the partner is in Italy, then the l10n_it_pa_index is used, and '0000000' if missing.
-            //     If the partner is not in Italy, the default 'XXXXXXX' is used.
-            // 
-            //     Codice Fiscale:
-            //     If the Tax Code is equal to the Italian VAT, it may mistakenly have the country prefix,
-            //     so we try and remove it if we can
-            // 
-            //     Zip(code):
-            //     Non-italian countries are not mapped by the Tax Agency, so it's fixed at '00000'
-            // """
-            // if not self or len(self) > 1:
-            //     return {}
-            // 
-            // europe = self.env.ref('base.europe', raise_if_not_found=False)
-            // in_eu = not europe or not self.country_id or self.country_id in europe.country_ids
-            // is_sm = self.country_id and self.country_id.code == "SM"
-            // 
-            // # VAT number and country code
-            // normalized_vat = self.vat
-            // normalized_country = self.country_code
-            // if has_vat := self.vat not in [False, '/', 'NA']:
-            //     normalized_vat = self.vat.replace(' ', '')
-            //     if in_eu:
-            //         # If there is no country-code prefix, it's domestic to Italy
-            //         if normalized_vat[:2].isdecimal():
-            //             if not normalized_country:
-            //                 normalized_country = 'IT'
-            //         # If the partner is from the EU, the country-code prefix of the VAT must be taken away
-            //         else:
-            //             if not normalized_country:
-            //                 normalized_country = normalized_vat[:2].upper()
-            //             normalized_vat = normalized_vat[2:]
-            //     # If customer is from San Marino
-            //     elif is_sm:
-            //         normalized_vat = normalized_vat if normalized_vat[:2].isdecimal() else normalized_vat[2:]
-            // 
-            // # If it has a codice fiscale (and no country), it's an Italian partner
-            // if not normalized_country and self.l10n_it_codice_fiscale:
-            //     normalized_country = 'IT'
-            // elif not has_vat and self.country_id and self.country_id.code != 'IT':
-            //     if in_eu:
-            //         normalized_vat = '0000000'
-            //     else:
-            //         normalized_vat = 'OO99999999999'
-            // 
-            // if normalized_country == 'IT':
-            //     pa_index = (self.l10n_it_pa_index or '0000000').upper()
-            //     zipcode = self.zip
-            //     state_code = self.state_id and self.state_id.code
-            // else:
-            //     # San Marino is externally integrated with the SdI.
-            //     # The country as a whole has a single fixed Destination Code.
-            //     # https://www.agenziaentrate.gov.it/portale/documents/20143/3788702/Modifiche+ProvvedimentonSanMarino+0248717-2021.pdf/429b5571-17b9-0cce-7f62-f79cf53086d7
-            //     pa_index = '2R4GTO8' if is_sm else 'XXXXXXX'
-            //     zipcode = '00000'
-            //     state_code = False
-            // 
-            // return {
-            //     'codice_fiscale': self._l10n_it_edi_normalized_codice_fiscale(),
-            //     'vat': normalized_vat,
-            //     'country_code': normalized_country,
-            //     'state_code': state_code,
-            //     'pa_index': pa_index,
-            //     'zip': zipcode,
-            //     'in_eu': in_eu,
-            //     'is_company': self.is_company,
-            //     'first_name': ' '.join(self.name.split()[:1]),
-            //     'last_name': ' '.join(self.name.split()[1:]),
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nItEdiIsPublicAdministrationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _l10n_it_edi_is_public_administration(self):
-            // """ Returns True if the destination of the FatturaPA belongs to the Public Administration. """
-            // self.ensure_one()
-            // return self.country_id.code == 'IT' and len(self.l10n_it_pa_index or '') == 6
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nItEdiNormalizedCodiceFiscaleInternalAsync(object l10n_it_codice_fiscale)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _l10n_it_edi_normalized_codice_fiscale(self, l10n_it_codice_fiscale=None):
-            // """ Normalize the Italian Tax Code for export.
-            //     If the Tax Code is equal to the Italian VAT, it may mistakenly have the country prefix,
-            //     so we try and remove it if we can
-            // """
-            // if l10n_it_codice_fiscale is None:
-            //     self.ensure_one()
-            //     l10n_it_codice_fiscale = self.l10n_it_codice_fiscale
-            // if l10n_it_codice_fiscale:
-            //     if codicefiscale._code_re.match(l10n_it_codice_fiscale):
-            //         # Personal codice
-            //         return codicefiscale.compact(l10n_it_codice_fiscale)
-            //     # Company codice
-            //     return iva.compact(l10n_it_codice_fiscale)
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nItOnchangeVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _l10n_it_onchange_vat(self):
-            // if self.vat and (
-            //     self.country_code == "IT"
-            //     if self.country_code
-            //     else self.vat.startswith("IT")
-            // ):
-            //     self.l10n_it_codice_fiscale = self._l10n_it_edi_normalized_codice_fiscale(self.vat)
-            // else:
-            //     self.l10n_it_codice_fiscale = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nMyEdiGetTinForMyinvoisInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def _l10n_my_edi_get_tin_for_myinvois(self):
-            // """ Helper to return the VAT number relevant to the situation. """
-            // self.ensure_one()
-            // return self.vat
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: res_partner.py) ---
-            // def _l10n_my_edi_get_tin_for_myinvois(self):
-            // # EXTEND 'l10n_my_edi'
-            // # When l10n_my_edi_malaysian_tin is set, it will be used instead of the VAT.
-            // # A user may want to keep the correct VAT on a foreign contact while also use myinvois with a malaysia TIN/Generic TIN
-            // # Using the Tax ID field also causes issue when base_vat is enabled, which block setting foreign VAT numbers.
-            // return self.l10n_my_edi_malaysian_tin or super()._l10n_my_edi_get_tin_for_myinvois()
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nTrNilveraValidatePartnerDetailsInternalAsync(object is_delivery_partner)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_edispatch, FILE: res_partner.py) ---
-            // def _l10n_tr_nilvera_validate_partner_details(self, is_delivery_partner=False):
-            // error_messages = {}
-            // 
-            // for record in self:
-            //     country_code = record.country_id.code
-            //     msg = []
-            //     required_fields = {
-            //         _("Street"): record.street,
-            //         _("City"): record.city,
-            //         _("State"): record.state_id,
-            //         _("Country"): record.country_id,
-            //     }
-            // 
-            //     missing_fields = [name for name, value in required_fields.items() if not value]
-            //     if country_code == 'TR' and not record.vat:
-            //         missing_fields.append(_("TCKN/VKN"))
-            // 
-            //     if (country_code == 'TR' or is_delivery_partner) and not record.zip:
-            //         missing_fields.append(_("ZIP"))
-            // 
-            //     if missing_fields:
-            //         msg.append(_("%s is required", ', '.join(missing_fields)))
-            // 
-            //     if country_code != "TR" and (
-            //         not record.l10n_tr_nilvera_edispatch_customs_zip
-            //         or len(record.l10n_tr_nilvera_edispatch_customs_zip) != 5
-            //     ):
-            //         msg.append(_("Customs ZIP of 5 characters must be present"))
-            // 
-            //     if msg:
-            //         error_messages[f"invalid_{record.name.replace(' ', '_')}"] = {
-            //             'message': _("%(name)s's %(message)s.", name=record.name, message=', '.join(msg)),
-            //             'action_text': _("View %s", record.name),
-            //             'action': record._get_records_action(name=_("View Partner"))
-            //         }
-            // return error_messages
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nUyBuildVatErrorMessageInternalAsync(object partner)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: res_partner.py) ---
-            // def _l10n_uy_build_vat_error_message(self, partner):
-            // """ Similar to _build_vat_error_message but using latam doc type name instead of vat_label
-            // NOTE: maybe can be implemented in master to l10n_latam_base for the use of different doc types """
-            // vat_label = _("CI/NIE")
-            // expected_format = _("3:402.010-2 or 93:402.010-1 (CI or NIE)")
-            // 
-            // # Catch use case where the record label is about the public user (name: False)
-            // if partner.name:
-            //     msg = "\n" + _(
-            //         "The %(vat_label)s number [%(wrong_vat)s] for %(partner_label)s does not seem to be valid."
-            //         "\nNote: the expected format is %(expected_format)s",
-            //         vat_label=vat_label,
-            //         wrong_vat=partner.vat,
-            //         partner_label=_("partner [%s]", partner.name),
-            //         expected_format=expected_format,
-            //     )
-            // else:
-            //     msg = "\n" + _(
-            //         "The %(vat_label)s number [%(wrong_vat)s] does not seem to be valid."
-            //         "\nNote: the expected format is %(expected_format)s",
-            //         vat_label=vat_label,
-            //         wrong_vat=partner.vat,
-            //         expected_format=expected_format,
-            //     )
-            // return msg
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> L10nUyCiNieIsValidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: res_partner.py) ---
-            // def _l10n_uy_ci_nie_is_valid(self):
-            // """ Check if the partner's CI or NIE number is a valid one.
-            // 
-            // CI:
-            //     1) The ID number is taken up to the second to last position, that is, the first 6 or 7 digits.
-            //     2) Each digit is multiplied by a different factor starting from right to left, the factors are:
-            //         2, 9, 8, 7, 6, 3, 4.
-            //     3) The products obtained are added:
-            //     4) The base module 10 is calculated on this result to obtain the check digit, expressed in another way,
-            //     the next number ending in zero is taken that follows the result of the addition (for the example
-            //     would be 60) subtracting the sum itself: 60 - 59 = 1. The verification digit of the example ID is 1.
-            // 
-            //     NOTE: If the ID has fewer digits, it is preceded with zeros and the mechanism described above is applied
-            // 
-            // NIE:
-            //     The calculation for the NIE is the same as that used for the CI. The only difference is that we skip the
-            //     first number
-            // 
-            // Both algorithms where extracted from Uruware's Technical Manual (section 9.2 and 9.3)
-            // 
-            // Return: False is not valid, True is valid
-            // """
-            // self.ensure_one()
-            // 
-            // # The VAT must consist only numbers (format could have these characters ":., " we can skip them later)
-            // invalid_chars = re.findall(r"[^0-9:., \-]", self.vat)
-            // if invalid_chars:
-            //     return False
-            // 
-            // ci_nie_number = re.sub("[^0-9]", "", self.vat)
-            // 
-            // # we get the validation digit, if NIE doc type we skip the first digit
-            // is_nie = self.l10n_latam_identification_type_id.l10n_uy_dgi_code == "1"
-            // verif_digit = int(ci_nie_number[-1])
-            // ci_nie_number = ci_nie_number[1:-1] if is_nie else ci_nie_number[0:-1]
-            // 
-            // # If number is < 7 digits we add 0 to the left
-            // ci_nie_number = "%07d" % int(ci_nie_number)
-            // 
-            // # If NIE > 7 digits is not valid
-            // if len(ci_nie_number) > 7:
-            //     return False
-            // 
-            // verification_vector = (2, 9, 8, 7, 6, 3, 4)
-            // num_sum = sum(int(ci_nie_number[i]) * verification_vector[i] for i in range(7))
-            // 
-            // res = -num_sum % 10
-            // return res == verif_digit
-            */
-            return default;
         }
 
         protected async Task<ResPartner> LoadPosDataDomainInternalAsync(object data)
@@ -6644,18 +5330,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResPartner> LoadPosDataFieldsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_pos, FILE: res_partner.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // if self.env.company.country_id.code == 'AR':
-            //     params += ['l10n_ar_afip_responsibility_type_id', 'l10n_latam_identification_type_id']
-            // return params
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_pos, FILE: res_partner.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // fields = super()._load_pos_data_fields(config_id)
-            // if self.env.company.country_id.code == "PE":
-            //     fields += ["city_id", "l10n_latam_identification_type_id", "l10n_pe_district"]
-            // return fields
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
             // def _load_pos_data_fields(self, config_id):
             // return [
@@ -6882,21 +5556,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> OnchangeCountryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_base, FILE: res_partner.py) ---
-            // def _onchange_country(self):
-            // country = self.country_id or self.company_id.account_fiscal_country_id or self.env.company.account_fiscal_country_id
-            // identification_type = self.l10n_latam_identification_type_id
-            // if not identification_type or (identification_type.country_id != country):
-            //     self.l10n_latam_identification_type_id = self.env['l10n_latam.identification.type'].search(
-            //         [('country_id', '=', country.id), ('is_vat', '=', True)], limit=1) or self.env.ref(
-            //             'l10n_latam_base.it_vat', raise_if_not_found=False)
-            */
-            return default;
-        }
-
         public async Task<ResPartner> OnchangeEmailAsync(Guid id)
         {
             /*
@@ -6904,59 +5563,6 @@ namespace Bamboo.Core.Application.Services
             // def onchange_email(self):
             // if not self.image_1920 and self._context.get('gravatar_image') and self.email:
             //     self.image_1920 = self._get_gravatar_image(self.email)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> OnchangeL10nInGstStatusInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_gstin_status, FILE: res_partner.py) ---
-            // def _onchange_l10n_in_gst_status(self):
-            // """
-            // Reset GST Status Whenever the `vat` of partner changes
-            // """
-            // for partner in self:
-            //     if partner.country_code == 'IN':
-            //         partner.l10n_in_gstin_verified_status = False
-            //         partner.l10n_in_gstin_verified_date = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> OnchangeL10nPeCityIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: res_partner.py) ---
-            // def _onchange_l10n_pe_city_id(self):
-            // if self.city_id and self.l10n_pe_district.city_id and self.l10n_pe_district.city_id != self.city_id:
-            //     self.l10n_pe_district = False
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> OnchangeL10nPeDistrictInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: res_partner.py) ---
-            // def _onchange_l10n_pe_district(self):
-            // if self.l10n_pe_district:
-            //     self.city_id = self.l10n_pe_district.city_id
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> OnchangeL10nSeDefaultVendorPaymentRefAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: res_partner.py) ---
-            // def onchange_l10n_se_default_vendor_payment_ref(self):
-            // if not self.l10n_se_default_vendor_payment_ref == "" and self.l10n_se_check_vendor_ocr:
-            //     reference = self.l10n_se_default_vendor_payment_ref
-            //     try:
-            //         luhn.validate(reference)
-            //     except: 
-            //         return {'warning': {'title': _('Warning'), 'message': _('Default vendor OCR number isn\'t a valid OCR number.')}}
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -7062,21 +5668,6 @@ namespace Bamboo.Core.Application.Services
             //     self.country_id = self.state_id.country_id
             */
             return default;
-        }
-
-        public async Task<ResPartner> OnchangeVatAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def onchange_vat(self):
-            // if self.vat and self.check_vat_in(self.vat):
-            //     state_id = self.env['res.country.state'].search([('l10n_in_tin', '=', self.vat[:2])], limit=1)
-            //     if state_id:
-            //         self.state_id = state_id
-            //     if self.vat[2].isalpha():
-            //         self.l10n_in_pan = self.vat[2:12]
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResPartner> OpenBusinessDocAsync(Guid id)
@@ -7214,23 +5805,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> PeUnlinkExceptMasterDataInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_pos, FILE: res_partner.py) ---
-            // def _pe_unlink_except_master_data(self):
-            // consumidor_final_anonimo = self.env.ref("l10n_pe_pos.partner_pe_cf")
-            // if consumidor_final_anonimo & self:
-            //     raise UserError(
-            //         _(
-            //             "Deleting the partner %s is not allowed because it is required by the Peruvian point of sale.",
-            //             consumidor_final_anonimo.display_name,
-            //         )
-            //     )
-            */
-            return default;
-        }
-
         protected async Task<ResPartner> PeppolEasEndpointDependsInternalAsync()
         {
             /*
@@ -7239,22 +5813,6 @@ namespace Bamboo.Core.Application.Services
             // # field dependencies of methods _compute_peppol_endpoint() and _compute_peppol_eas()
             // # because we need to extend depends in l10n modules
             // return ['country_code', 'vat', 'company_registry']
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_partner.py) ---
-            // def _peppol_eas_endpoint_depends(self):
-            // # extends account_edi_ubl_cii
-            // return super()._peppol_eas_endpoint_depends() + ['siret']
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def _peppol_eas_endpoint_depends(self):
-            // # extends account_edi_ubl_cii
-            // return super()._peppol_eas_endpoint_depends() + ['l10n_it_codice_fiscale']
-            --- ODOO METHOD SOURCE (MODULE: l10n_no, FILE: res_partner.py) ---
-            // def _peppol_eas_endpoint_depends(self):
-            // # extends account_edi_ubl_cii
-            // return super()._peppol_eas_endpoint_depends() + ['l10n_no_bronnoysund_number']
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_partner.py) ---
-            // def _peppol_eas_endpoint_depends(self):
-            // # extends account_edi_ubl_cii
-            // return super()._peppol_eas_endpoint_depends() + ['l10n_sg_unique_entity_number']
             */
             return default;
         }
@@ -7331,7 +5889,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> ReadByVatAsync(Guid id, object vat, object timeout)
+        public async Task<ResPartner> ReadByVatAsync(Guid id, ResPartnerReadByVatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner.py) ---
@@ -7534,19 +6092,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResPartner> RunViesTestInternalAsync(object vat_number, object default_country)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_partner.py) ---
-            // def _run_vies_test(self, vat_number, default_country):
-            // """Convert back the hungarian format to EU format: 12345678-1-12 => HU12345678"""
-            // if default_country and default_country.code == 'HU' and not vat_number.startswith('HU'):
-            //     vat_number = f'HU{vat_number[:8]}'
-            // return super()._run_vies_test(vat_number, default_country)
-            */
-            return default;
-        }
-
         public async Task<ResPartner> ScheduleMeetingAsync(Guid id)
         {
             /*
@@ -7565,7 +6110,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> SearchForChannelInviteAsync(Guid id, object search_term, Guid channel_id, object limit)
+        public async Task<ResPartner> SearchForChannelInviteAsync(Guid id, ResPartnerSearchForChannelInviteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
@@ -7774,7 +6319,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> SignupPrepareAsync(Guid id, object signup_type)
+        public async Task<ResPartner> SignupPrepareAsync(Guid id, ResPartnerSignupPrepareRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_partner.py) ---
@@ -7835,7 +6380,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> SimpleVatCheckAsync(Guid id, object country_code, object vat_number)
+        public async Task<ResPartner> SimpleVatCheckAsync(Guid id, ResPartnerSimpleVatCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_vat, FILE: res_partner.py) ---
@@ -7998,7 +6543,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> UpdateAddressAsync(Guid id, object vals)
+        public async Task<ResPartner> UpdateAddressAsync(Guid id, ResPartnerUpdateAddressRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -8058,97 +6603,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResPartner> UpdateStateAsPerGstinAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_partner.py) ---
-            // def action_update_state_as_per_gstin(self):
-            // self.ensure_one()
-            // state_id = self.env['res.country.state'].search([('l10n_in_tin', '=', self.vat[:2])], limit=1)
-            // self.state_id = state_id
-            // if self.ref_company_ids:
-            //     self.ref_company_ids._update_l10n_in_fiscal_position()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResPartner> ValidateCodiceFiscaleAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_partner.py) ---
-            // def validate_codice_fiscale(self):
-            // for record in self:
-            //     if record.l10n_it_codice_fiscale and (not codicefiscale.is_valid(record.l10n_it_codice_fiscale) and not iva.is_valid(record.l10n_it_codice_fiscale)):
-            //         raise UserError(_("Invalid Codice Fiscale '%s': should be like 'MRTMTT91D08F205J' for physical person and '12345670546' for businesses.", record.l10n_it_codice_fiscale))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResPartner> ValidateL10nEsEdiFacturaeAcLogicalOperationalPointInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: res_partner.py) ---
-            // def _validate_l10n_es_edi_facturae_ac_logical_operational_point(self):
-            // for p in self:
-            //     if not p.l10n_es_edi_facturae_ac_logical_operational_point:
-            //         continue
-            //     if not check_barcode_encoding(p.l10n_es_edi_facturae_ac_logical_operational_point, 'ean13'):
-            //         raise ValidationError(_('The Logical Operational Point entered is not valid.'))
-            */
-            return default;
-        }
-
-        protected async Task<ResPartner> ValidateL10nEsEdiFacturaeAcPhysicalGlnInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: res_partner.py) ---
-            // def _validate_l10n_es_edi_facturae_ac_physical_gln(self):
-            // for p in self:
-            //     if not p.l10n_es_edi_facturae_ac_physical_gln:
-            //         continue
-            //     if not check_barcode_encoding(p.l10n_es_edi_facturae_ac_physical_gln, 'ean13'):
-            //         raise ValidationError(_('The Physical GLN entered is not valid.'))
-            */
-            return default;
-        }
-
-        public async Task<ResPartner> ValidateTinAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_partner.py) ---
-            // def action_validate_tin(self):
-            // """ Calling this action will reach our EDI proxy in order to validate the TIN against the provided identification information. """
-            // self.ensure_one()
-            // if not self._l10n_my_edi_get_tin_for_myinvois() or not self.l10n_my_identification_type or not self.l10n_my_identification_number:
-            //     raise UserError(_('In order to validate the TIN, you must provide the Identification type and number.'))
-            // 
-            // # Sudo to allow a user without access to the proxy user to validate the ID if needed.
-            // proxy_user = self.env.company.sudo().l10n_my_edi_proxy_user_id
-            // if not proxy_user:
-            //     raise UserError(_("Please register for the E-Invoicing service in the settings first."))
-            // 
-            // response = proxy_user._l10n_my_edi_contact_proxy('api/l10n_my_edi/1/validate_tin', params={
-            //     'identification_values': {
-            //         'tin': self._l10n_my_edi_get_tin_for_myinvois(),
-            //         'id_type': self.l10n_my_identification_type,
-            //         'id_val': self.l10n_my_identification_number,
-            //     }
-            // })
-            // 
-            // if 'error' in response:
-            //     ref = response['error']['reference']
-            //     # No need to rollback, we don't want to be blocking on that.
-            //     if ref == 'document_tin_not_found':
-            //         self._message_log(body=_('MyInvois was not able to match the TIN with the provided identification number.\nThis may happen when using generic TIN and will not prevent you from invoicing.'))
-            //         self.l10n_my_tin_validation_state = 'invalid'
-            //     else:
-            //         self._message_log(body=_('An unexpected error occurred while validating the TIN. Please try again later.'))
-            // else:
-            //     self.l10n_my_tin_validation_state = 'valid' if response.get('success') else 'invalid'
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResPartner> ViewCertificationsAsync(Guid id)
         {
             /*
@@ -8186,7 +6640,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartner> ViewHeaderGetAsync(Guid id, Guid view_id, object view_type)
+        public async Task<ResPartner> ViewHeaderGetAsync(Guid id, ResPartnerViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
@@ -8418,18 +6872,6 @@ namespace Bamboo.Core.Application.Services
             // if self.env.context.get('import_file'):
             //     self.env.remove_to_compute(self._fields['vies_valid'], self)
             // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_partner.py) ---
-            // def write(self, values):
-            // if any(field in values for field in ['vat', 'l10n_latam_identification_type_id', 'country_id']):
-            //     for record in self:
-            //         vat_values = {
-            //             'vat': values.get('vat', record.vat),
-            //             'l10n_latam_identification_type_id': values.get(
-            //                 'l10n_latam_identification_type_id', record.l10n_latam_identification_type_id.id),
-            //             'country_id': values.get('country_id', record.country_id.id)
-            //         }
-            //         values['vat'] = self._format_vat_cl(vat_values)
-            // return super().write(values)
             --- ODOO METHOD SOURCE (MODULE: mail_plugin, FILE: res_partner.py) ---
             // def write(self, vals):
             // res = super(ResPartner, self).write(vals)

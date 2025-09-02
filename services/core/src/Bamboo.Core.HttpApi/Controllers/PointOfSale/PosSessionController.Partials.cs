@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
 {
     public partial class PosSessionController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/action-pos-session-close")]
         public async Task<IActionResult> ActionPosSessionCloseAsync(Guid id, [FromBody] PosSessionPosSessionCloseRequestDto input)
         {
-            var result = await _appService.PosSessionCloseAsync(id, input.BalancingAccount, input.AmountToBalance, input.BankPaymentMethodDiffs);
+            var result = await _appService.PosSessionCloseAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/action-pos-session-closing-control")]
         public async Task<IActionResult> ActionPosSessionClosingControlAsync(Guid id, [FromBody] PosSessionPosSessionClosingControlRequestDto input)
         {
-            var result = await _appService.PosSessionClosingControlAsync(id, input.BalancingAccount, input.AmountToBalance, input.BankPaymentMethodDiffs);
+            var result = await _appService.PosSessionClosingControlAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/action-pos-session-validate")]
         public async Task<IActionResult> ActionPosSessionValidateAsync(Guid id, [FromBody] PosSessionPosSessionValidateRequestDto input)
         {
-            var result = await _appService.PosSessionValidateAsync(id, input.BalancingAccount, input.AmountToBalance, input.BankPaymentMethodDiffs);
+            var result = await _appService.PosSessionValidateAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/close-session-from-ui")]
         public async Task<IActionResult> CloseSessionFromUiAsync(Guid id, [FromBody] PosSessionCloseSessionFromUiRequestDto input)
         {
-            var result = await _appService.CloseSessionFromUiAsync(id, input.BankPaymentMethodDiffPairs);
+            var result = await _appService.CloseSessionFromUiAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/find-product-by-barcode")]
         public async Task<IActionResult> FindProductByBarcodeAsync(Guid id, [FromBody] PosSessionFindProductByBarcodeRequestDto input)
         {
-            var result = await _appService.FindProductByBarcodeAsync(id, input.Barcode, input.ConfigId);
+            var result = await _appService.FindProductByBarcodeAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/get-pos-ui-product-pricelist-item-by-product")]
         public async Task<IActionResult> GetPosUiProductPricelistItemByProductAsync(Guid id, [FromBody] PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
         {
-            var result = await _appService.GetPosUiProductPricelistItemByProductAsync(id, input.ProductTmplIds, input.ProductIds, input.ConfigId);
+            var result = await _appService.GetPosUiProductPricelistItemByProductAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/load-data")]
         public async Task<IActionResult> LoadDataAsync(Guid id, [FromBody] PosSessionLoadDataRequestDto input)
         {
-            var result = await _appService.LoadDataAsync(id, input.ModelsToLoad, input.OnlyData);
+            var result = await _appService.LoadDataAsync(id, input);
             return Ok(result);
         }
         
@@ -132,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/log-partner-message")]
         public async Task<IActionResult> LogPartnerMessageAsync(Guid id, [FromBody] PosSessionLogPartnerMessageRequestDto input)
         {
-            var result = await _appService.LogPartnerMessageAsync(id, input.PartnerId, input.Action, input.MessageType);
+            var result = await _appService.LogPartnerMessageAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/post-closing-cash-details")]
         public async Task<IActionResult> PostClosingCashDetailsAsync(Guid id, [FromBody] PosSessionPostClosingCashDetailsRequestDto input)
         {
-            var result = await _appService.PostClosingCashDetailsAsync(id, input.CountedCash);
+            var result = await _appService.PostClosingCashDetailsAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/set-opening-control")]
         public async Task<IActionResult> SetOpeningControlAsync(Guid id, [FromBody] PosSessionSetOpeningControlRequestDto input)
         {
-            var result = await _appService.SetOpeningControlAsync(id, input.CashboxValue, input.Notes);
+            var result = await _appService.SetOpeningControlAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/try-cash-in-out")]
         public async Task<IActionResult> TryCashInOutAsync(Guid id, [FromBody] PosSessionTryCashInOutRequestDto input)
         {
-            var result = await _appService.TryCashInOutAsync(id, input._Type, input.Amount, input.Reason, input.Extras);
+            var result = await _appService.TryCashInOutAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.PointOfSale
         [Route("{id}/update-closing-control-state-session")]
         public async Task<IActionResult> UpdateClosingControlStateSessionAsync(Guid id, [FromBody] PosSessionUpdateClosingControlStateSessionRequestDto input)
         {
-            var result = await _appService.UpdateClosingControlStateSessionAsync(id, input.Notes);
+            var result = await _appService.UpdateClosingControlStateSessionAsync(id, input);
             return Ok(result);
         }
     }

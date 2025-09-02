@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrModuleModuleController
@@ -132,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/check-external-dependencies")]
         public async Task<IActionResult> CheckExternalDependenciesAsync(Guid id, [FromBody] IrModuleModuleCheckExternalDependenciesRequestDto input)
         {
-            var result = await _appService.CheckExternalDependenciesAsync(id, input.ModuleName, input.Newstate);
+            var result = await _appService.CheckExternalDependenciesAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/downstream-dependencies")]
         public async Task<IActionResult> DownstreamDependenciesAsync(Guid id, [FromBody] IrModuleModuleDownstreamDependenciesRequestDto input)
         {
-            var result = await _appService.DownstreamDependenciesAsync(id, input.KnownDeps, input.ExcludeStates);
+            var result = await _appService.DownstreamDependenciesAsync(id, input);
             return Ok(result);
         }
         
@@ -148,7 +149,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-module-info")]
         public async Task<IActionResult> GetModuleInfoAsync(Guid id, [FromBody] IrModuleModuleGetModuleInfoRequestDto input)
         {
-            var result = await _appService.GetModuleInfoAsync(id, input.Name);
+            var result = await _appService.GetModuleInfoAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/search-panel-select-range")]
         public async Task<IActionResult> SearchPanelSelectRangeAsync(Guid id, [FromBody] IrModuleModuleSearchPanelSelectRangeRequestDto input)
         {
-            var result = await _appService.SearchPanelSelectRangeAsync(id, input.FieldName);
+            var result = await _appService.SearchPanelSelectRangeAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/upstream-dependencies")]
         public async Task<IActionResult> UpstreamDependenciesAsync(Guid id, [FromBody] IrModuleModuleUpstreamDependenciesRequestDto input)
         {
-            var result = await _appService.UpstreamDependenciesAsync(id, input.KnownDeps, input.ExcludeStates);
+            var result = await _appService.UpstreamDependenciesAsync(id, input);
             return Ok(result);
         }
         
@@ -228,7 +229,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/web-read")]
         public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] IrModuleModuleWebReadRequestDto input)
         {
-            var result = await _appService.WebReadAsync(id, input.Specification);
+            var result = await _appService.WebReadAsync(id, input);
             return Ok(result);
         }
         
@@ -236,7 +237,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/web-search-read")]
         public async Task<IActionResult> WebSearchReadAsync(Guid id, [FromBody] IrModuleModuleWebSearchReadRequestDto input)
         {
-            var result = await _appService.WebSearchReadAsync(id, input.Domain, input.Specification, input.Offset, input.Limit, input.Order, input.CountLimit);
+            var result = await _appService.WebSearchReadAsync(id, input);
             return Ok(result);
         }
     }

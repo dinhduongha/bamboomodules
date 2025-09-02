@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -156,7 +157,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResLang> CopyDataAsync(Guid id, object @default)
+        public async Task<ResLang> CopyDataAsync(Guid id, ResLangCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -240,7 +241,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<string> FormatAsync(Guid id, string percent, object @value, bool grouping)
+        public async Task<string> FormatAsync(Guid id, ResLangFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
@@ -271,8 +272,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return formatted
             */
-            var entity = await Repository.GetAsync(id);
-            return default;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<object> GetActiveByInternalAsync(string field)
@@ -387,9 +387,7 @@ namespace Bamboo.Core.Application.Services
             // """ Return installed languages' (code, name) pairs sorted by name. """
             // return [(code, data.name) for code, data in self._get_active_by('code').items()]
             */
-            var entity = await Repository.GetAsync(id);
-            //return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         public async Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id)

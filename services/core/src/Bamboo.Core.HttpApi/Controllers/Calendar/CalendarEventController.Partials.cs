@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Calendar
 {
     public partial class CalendarEventController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/action-join-meeting")]
         public async Task<IActionResult> ActionJoinMeetingAsync(Guid id, [FromBody] CalendarEventJoinMeetingRequestDto input)
         {
-            var result = await _appService.JoinMeetingAsync(id, input.PartnerId);
+            var result = await _appService.JoinMeetingAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/action-mass-archive")]
         public async Task<IActionResult> ActionMassArchiveAsync(Guid id, [FromBody] CalendarEventMassArchiveRequestDto input)
         {
-            var result = await _appService.MassArchiveAsync(id, input.RecurrenceUpdateSetting);
+            var result = await _appService.MassArchiveAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/action-mass-deletion")]
         public async Task<IActionResult> ActionMassDeletionAsync(Guid id, [FromBody] CalendarEventMassDeletionRequestDto input)
         {
-            var result = await _appService.MassDeletionAsync(id, input.RecurrenceUpdateSetting);
+            var result = await _appService.MassDeletionAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/change-attendee-status")]
         public async Task<IActionResult> ChangeAttendeeStatusAsync(Guid id, [FromBody] CalendarEventChangeAttendeeStatusRequestDto input)
         {
-            var result = await _appService.ChangeAttendeeStatusAsync(id, input.Status, input.RecurrenceUpdateSetting);
+            var result = await _appService.ChangeAttendeeStatusAsync(id, input);
             return Ok(result);
         }
         
@@ -116,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/get-display-time-tz")]
         public async Task<IActionResult> GetDisplayTimeTzAsync(Guid id, [FromBody] CalendarEventGetDisplayTimeTzRequestDto input)
         {
-            var result = await _appService.GetDisplayTimeTzAsync(id, input.Tz);
+            var result = await _appService.GetDisplayTimeTzAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/get-next-alarm-date")]
         public async Task<IActionResult> GetNextAlarmDateAsync(Guid id, [FromBody] CalendarEventGetNextAlarmDateRequestDto input)
         {
-            var result = await _appService.GetNextAlarmDateAsync(id, input.EventsByAlarm);
+            var result = await _appService.GetNextAlarmDateAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Calendar
         [Route("{id}/get-unusual-days")]
         public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] CalendarEventGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input.DateFrom, input.DateTo);
+            var result = await _appService.GetUnusualDaysAsync(id, input);
             return Ok(result);
         }
         

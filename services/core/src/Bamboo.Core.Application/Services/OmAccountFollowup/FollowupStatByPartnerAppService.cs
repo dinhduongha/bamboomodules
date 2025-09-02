@@ -1,22 +1,26 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("OmAccountFollowup", Depends = new[] { "account", "mail" })]
-    public class FollowupStatByPartnerAppService : ApplicationService, IFollowupStatByPartnerAppService
+    public class FollowupStatByPartnerAppService : GenericApplicationService<FollowupStatByPartner>, IFollowupStatByPartnerAppService
     {
-        private readonly IFollowupStatByPartnerRepository _followupStatByPartnerRepository;
-        public FollowupStatByPartnerAppService(IFollowupStatByPartnerRepository followupStatByPartnerRepository) 
+
+        public FollowupStatByPartnerAppService(IRepository<FollowupStatByPartner, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _followupStatByPartnerRepository = followupStatByPartnerRepository;
+
         }
 
         protected async Task<FollowupStatByPartner> GetInvoicePartnerIdInternalAsync()
@@ -59,9 +63,7 @@ namespace Bamboo.Core.Application.Services
             //             l.partner_id, l.company_id
             //     )""")
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
-        
+            var entity = await Repository.GetAsync(id); return entity;
         }
     }
 }

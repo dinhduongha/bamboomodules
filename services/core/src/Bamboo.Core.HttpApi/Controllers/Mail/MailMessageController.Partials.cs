@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mail
 {
     public partial class MailMessageController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/export-data")]
         public async Task<IActionResult> ExportDataAsync(Guid id, [FromBody] MailMessageExportDataRequestDto input)
         {
-            var result = await _appService.ExportDataAsync(id, input.FieldsToExport);
+            var result = await _appService.ExportDataAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/fetch")]
         public async Task<IActionResult> FetchAsync(Guid id, [FromBody] MailMessageFetchRequestDto input)
         {
-            var result = await _appService.FetchAsync(id, input.FieldNames);
+            var result = await _appService.FetchAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/is-thread-message")]
         public async Task<IActionResult> IsThreadMessageAsync(Guid id, [FromBody] MailMessageIsThreadMessageRequestDto input)
         {
-            var result = await _appService.IsThreadMessageAsync(id, input.Vals);
+            var result = await _appService.IsThreadMessageAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/mark-all-as-read")]
         public async Task<IActionResult> MarkAllAsReadAsync(Guid id, [FromBody] MailMessageMarkAllAsReadRequestDto input)
         {
-            var result = await _appService.MarkAllAsReadAsync(id, input.Domain);
+            var result = await _appService.MarkAllAsReadAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/portal-message-format")]
         public async Task<IActionResult> PortalMessageFormatAsync(Guid id, [FromBody] MailMessagePortalMessageFormatRequestDto input)
         {
-            var result = await _appService.PortalMessageFormatAsync(id, input.Options);
+            var result = await _appService.PortalMessageFormatAsync(id, input);
             return Ok(result);
         }
         

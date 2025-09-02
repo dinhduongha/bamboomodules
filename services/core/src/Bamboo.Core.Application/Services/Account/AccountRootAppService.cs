@@ -1,25 +1,29 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("Account", Depends = new[] { "base_setup", "onboarding", "product", "analytic", "portal", "digest" })]
-    public class AccountRootAppService : ApplicationService, IAccountRootAppService
+    public class AccountRootAppService : GenericApplicationService<AccountRoot>, IAccountRootAppService
     {
-        private readonly IAccountRootRepository _accountRootRepository;
-        public AccountRootAppService(IAccountRootRepository accountRootRepository) 
+
+        public AccountRootAppService(IRepository<AccountRoot, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _accountRootRepository = accountRootRepository;
+
         }
 
-        public async Task<AccountRoot> BrowseAsync(Guid id, object ids)
+        public async Task<AccountRoot> BrowseAsync(Guid id, AccountRootBrowseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_root.py) ---
@@ -28,8 +32,7 @@ namespace Bamboo.Core.Application.Services
             //     ids = (ids,)
             // return super().browse(ids)
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<AccountRoot> ComputeRootInternalAsync()

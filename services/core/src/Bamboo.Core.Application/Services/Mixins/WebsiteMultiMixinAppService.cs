@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,42 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
     public class WebsiteMultiMixinAppService : ApplicationService, IWebsiteMultiMixinAppService
     {
-
-        public WebsiteMultiMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public WebsiteMultiMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionOpenLoyaltyCardsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
+            // def action_open_loyalty_cards(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id("loyalty.loyalty_card_action")
+            // action['name'] = self._program_items_name()[self.program_type]
+            // action['display_name'] = action['name']
+            // action['context'] = {
+            //     'program_type': self.program_type,
+            //     'program_item_name': self._program_items_name()[self.program_type],
+            //     'default_program_id': self.id,
+            //     # For the wizard
+            //     'default_mode': self.program_type == 'ewallet' and 'selected' or 'anonymous',
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProgramShareAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_program.py) ---
+            // def action_program_share(self):
+            // self.ensure_one()
+            // return self.env['coupon.share'].create_share_action(program=self)
+            */
+            return default;
         }
 
         public async Task<TEntity> AllTagsAsync<TEntity>(IEnumerable<TEntity> entities, object @join, object min_limit) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
@@ -976,13 +1010,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
             // def _load_pos_data_fields(self, config_id):
-            // return [
-            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
-            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
-            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
-            // ]
+            // return ['name']
             */
             return default;
         }
@@ -1016,27 +1046,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if parent_message.subtype_id and parent_message.subtype_id == self.env.ref('website_blog.mt_blog_blog_published'):
             //         subtype_id = self.env.ref('mail.mt_note').id
             // return super(Blog, self).message_post(parent_id=parent_id, subtype_id=subtype_id, **kwargs)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenLoyaltyCardsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
-            // def action_open_loyalty_cards(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id("loyalty.loyalty_card_action")
-            // action['name'] = self._program_items_name()[self.program_type]
-            // action['display_name'] = action['name']
-            // action['context'] = {
-            //     'program_type': self.program_type,
-            //     'program_item_name': self._program_items_name()[self.program_type],
-            //     'default_program_id': self.id,
-            //     # For the wizard
-            //     'default_mode': self.program_type == 'ewallet' and 'selected' or 'anonymous',
-            // }
-            // return action
             */
             return default;
         }
@@ -1077,17 +1086,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'buy_x_get_y': _('Promos'),
             //     'next_order_coupons': _('Coupons'),
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProgramShareAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: loyalty_program.py) ---
-            // def action_program_share(self):
-            // self.ensure_one()
-            // return self.env['coupon.share'].create_share_action(program=self)
             */
             return default;
         }

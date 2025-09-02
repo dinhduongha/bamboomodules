@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Stock
 {
     public partial class StockMoveLineController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/get-move-line-quant-match")]
         public async Task<IActionResult> GetMoveLineQuantMatchAsync(Guid id, [FromBody] StockMoveLineGetMoveLineQuantMatchRequestDto input)
         {
-            var result = await _appService.GetMoveLineQuantMatchAsync(id, input.MoveId, input.DirtyMoveLineIds, input.DirtyQuantIds);
+            var result = await _appService.GetMoveLineQuantMatchAsync(id, input);
             return Ok(result);
         }
         

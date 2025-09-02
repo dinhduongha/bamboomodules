@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -739,7 +740,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SurveyQuestion> ValidateQuestionAsync(Guid id, object answer, object comment)
+        public async Task<SurveyQuestion> ValidateQuestionAsync(Guid id, SurveyQuestionValidateQuestionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: survey, FILE: survey_question.py) ---

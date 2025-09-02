@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class IrActionsReportAppService : ApplicationService, IIrActionsReportAppService
     {
-
-        public IrActionsReportAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public IrActionsReportAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ActionConfigureExternalReportLayoutInternalAsync<TEntity>(IEnumerable<TEntity> entities, object report_action, Guid xml_id) where TEntity : IEntity<Guid>, IIrActionsReportable
@@ -80,23 +82,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                     NameObject("/Ff"): NumberObject(new_flags),
             //                 })
             //     writer.addPage(page)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ApplyQrCodeChCrossMaskAsync<TEntity>(IEnumerable<TEntity> entities, object width, object height, object barcode_drawing) where TEntity : IEntity<Guid>, IIrActionsReportable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: ir_actions_report.py) ---
-            // def apply_qr_code_ch_cross_mask(self, width, height, barcode_drawing):
-            // assert isinstance(barcode_drawing, ReportLabDrawing)
-            // zoom_x = barcode_drawing.transform[0]
-            // zoom_y = barcode_drawing.transform[3]
-            // cross_width = CH_QR_CROSS_SIZE_RATIO * width
-            // cross_height = CH_QR_CROSS_SIZE_RATIO * height
-            // cross_path = Path(__file__).absolute().parent / CH_QR_CROSS_FILE
-            // qr_cross = ReportLabImage((width/2 - cross_width/2) / zoom_x, (height/2 - cross_height/2) / zoom_y, cross_width / zoom_x, cross_height / zoom_y, cross_path.as_posix())
-            // barcode_drawing.add(qr_cross)
             */
             return default;
         }
@@ -308,11 +293,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetAvailableBarcodeMasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsReportable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: ir_actions_report.py) ---
-            // def get_available_barcode_masks(self):
-            // rslt = super(IrActionsReport, self).get_available_barcode_masks()
-            // rslt['ch_cross'] = self.apply_qr_code_ch_cross_mask
-            // return rslt
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
             // def get_available_barcode_masks(self):
             // """ Hook for extension.
@@ -371,14 +351,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetPaperformatAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrActionsReportable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: ir_actions_report.py) ---
-            // def get_paperformat(self):
-            // if self.env.context.get('snailmail_layout'):
-            //     if self.report_name == 'l10n_ch.qr_report_main':
-            //         return self.env.ref('l10n_ch.paperformat_euro_no_margin')
-            //     if self.report_name == 'l10n_ch.qr_report_header':
-            //         return self.env.ref('l10n_din5008.paperformat_euro_din')
-            // return super(IrActionsReport, self).get_paperformat()
             --- ODOO METHOD SOURCE (MODULE: snailmail, FILE: ir_actions_report.py) ---
             // def get_paperformat(self):
             // # force the right format (euro/A4) when sending letters, only if we are not using the l10n_DE layout
@@ -432,11 +404,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // data = super()._get_rendering_context(report, docids, data)
             // if self.env.context.get('proforma_invoice'):
             //     data['proforma'] = True
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: ir_actions_report.py) ---
-            // def _get_rendering_context(self, report, docids, data):
-            // data = super()._get_rendering_context(report, docids, data)
-            // data['din_header_spacing'] = report.get_paperformat().header_spacing
             // return data
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: ir_actions_report.py) ---
             // def _get_rendering_context(self, report, docids, data):
@@ -560,7 +527,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetValidReportsAsync<TEntity>(IEnumerable<TEntity> entities, object model, List<Guid> record_ids) where TEntity : IEntity<Guid>, IIrActionsReportable
+        public async Task<TEntity> GetValidActionReportsAsync<TEntity>(IEnumerable<TEntity> entities, object model, List<Guid> record_ids) where TEntity : IEntity<Guid>, IIrActionsReportable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions_report.py) ---
@@ -724,15 +691,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         data = data and dict(data) or {}
             //         data.update({'display_name_in_footer': True})
             //     if any(x.move_type == 'entry' for x in invoices):
-            //         raise UserError(_("Only invoices could be printed."))
-            // 
-            // return super()._pre_render_qweb_pdf(report_ref, res_ids=res_ids, data=data)
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: ir_actions_report.py) ---
-            // def _pre_render_qweb_pdf(self, report_ref, res_ids=None, data=None):
-            // # Check for reports only available for invoices.
-            // if self._get_report(report_ref).report_name == 'l10n_th.report_commercial_invoice':
-            //     invoices = self.env['account.move'].browse(res_ids)
-            //     if any(not x.is_invoice(include_receipts=True) for x in invoices):
             //         raise UserError(_("Only invoices could be printed."))
             // 
             // return super()._pre_render_qweb_pdf(report_ref, res_ids=res_ids, data=data)
@@ -1133,49 +1091,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //         for stream in stream_list:
             //             stream.close()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: ir_actions_report.py) ---
-            // def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):
-            // # OVERRIDE
-            // res = super()._render_qweb_pdf_prepare_streams(report_ref, data, res_ids)
-            // if not res_ids:
-            //     return res
-            // report = self._get_report(report_ref)
-            // if self._is_invoice_report(report_ref):
-            //     invoices = self.env[report.model].browse(res_ids)
-            // 
-            //     # Determine which invoices need a QR.
-            //     qr_inv_ids = invoices.filtered('l10n_ch_is_qr_valid').ids
-            // 
-            //     if qr_inv_ids:
-            //         qr_res = self._render_qweb_pdf_prepare_streams(
-            //             'l10n_ch.l10n_ch_qr_report',
-            //             data,
-            //             res_ids=qr_inv_ids,
-            //         )
-            // 
-            //         for invoice_id, stream in qr_res.items():
-            //             qr_pdf = OdooPdfFileReader(stream['stream'], strict=False)
-            //             res_pdf = OdooPdfFileReader(res[invoice_id]['stream'], strict=False)
-            // 
-            //             last_page = res_pdf.getPage(-1)
-            //             last_page.mergePage(qr_pdf.getPage(0))
-            // 
-            //             output_pdf = OdooPdfFileWriter()
-            // 
-            //             # Add all pages from the original PDF except the last one
-            //             for page_num in range(res_pdf.getNumPages() - 1):
-            //                 output_pdf.addPage(res_pdf.getPage(page_num))
-            // 
-            //             output_pdf.addPage(last_page)  # Add the modified last page (with the QR code merged)
-            // 
-            //             new_pdf_stream = io.BytesIO()
-            //             output_pdf.write(new_pdf_stream)
-            //             new_pdf_stream.seek(0)
-            //             res[invoice_id]['stream'].close()
-            //             res[invoice_id]['stream'] = new_pdf_stream
-            //             stream['stream'].close()
-            // 
             // return res
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: ir_actions_report.py) ---
             // def _render_qweb_pdf_prepare_streams(self, report_ref, data, res_ids=None):

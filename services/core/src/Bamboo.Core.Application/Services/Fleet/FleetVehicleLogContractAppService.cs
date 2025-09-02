@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -90,7 +91,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FleetVehicleLogContract> ComputeNextYearDateAsync(Guid id, object strdate)
+        public async Task<FleetVehicleLogContract> ComputeNextYearDateAsync(Guid id, FleetVehicleLogContractComputeNextYearDateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_log_contract.py) ---

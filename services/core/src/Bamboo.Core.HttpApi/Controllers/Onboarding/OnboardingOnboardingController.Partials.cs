@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Onboarding
 {
     public partial class OnboardingOnboardingController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Onboarding
         [Route("{id}/action-close-panel")]
         public async Task<IActionResult> ActionClosePanelAsync(Guid id, [FromBody] OnboardingOnboardingClosePanelRequestDto input)
         {
-            var result = await _appService.ClosePanelAsync(id, input.Xmlid);
+            var result = await _appService.ClosePanelAsync(id, input);
             return Ok(result);
         }
         

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountTaxController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/compute-all")]
         public async Task<IActionResult> ComputeAllAsync(Guid id, [FromBody] AccountTaxComputeAllRequestDto input)
         {
-            var result = await _appService.ComputeAllAsync(id, input.PriceUnit, input.Currency, input.Quantity, input.Product, input.Partner, input.IsRefund, input.HandlePriceInclude, input.IncludeCabaTags, input.RoundingMethod);
+            var result = await _appService.ComputeAllAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountTaxCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-tax-tags")]
         public async Task<IActionResult> GetTaxTagsAsync(Guid id, [FromBody] AccountTaxGetTaxTagsRequestDto input)
         {
-            var result = await _appService.GetTaxTagsAsync(id, input.IsRefund, input.RepartitionType);
+            var result = await _appService.GetTaxTagsAsync(id, input);
             return Ok(result);
         }
         

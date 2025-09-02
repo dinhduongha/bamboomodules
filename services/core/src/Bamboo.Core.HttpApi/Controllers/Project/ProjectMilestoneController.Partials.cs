@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Project
 {
     public partial class ProjectMilestoneController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Project
         [Route("{id}/toggle-is-reached")]
         public async Task<IActionResult> ToggleIsReachedAsync(Guid id, [FromBody] ProjectMilestoneToggleIsReachedRequestDto input)
         {
-            var result = await _appService.ToggleIsReachedAsync(id, input.IsReached);
+            var result = await _appService.ToggleIsReachedAsync(id, input);
             return Ok(result);
         }
     }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1494,7 +1495,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MrpProduction> CopyDataAsync(Guid id, object @default)
+        public async Task<MrpProduction> CopyDataAsync(Guid id, MrpProductionCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---
@@ -1892,7 +1893,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpProduction> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<MrpProduction> GetEmptyListHelpAsync(Guid id, MrpProductionGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_production.py) ---

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.WebsiteBlog
 {
     public partial class BlogBlogController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebsiteBlog
         [Route("{id}/all-tags")]
         public async Task<IActionResult> AllTagsAsync(Guid id, [FromBody] BlogBlogAllTagsRequestDto input)
         {
-            var result = await _appService.AllTagsAsync(id, input.Join, input.MinLimit);
+            var result = await _appService.AllTagsAsync(id, input);
             return Ok(result);
         }
         

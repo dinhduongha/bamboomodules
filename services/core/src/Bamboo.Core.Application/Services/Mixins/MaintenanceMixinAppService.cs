@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,26 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("maintenance", Depends = new[] { "mail" })]
     public class MaintenanceMixinAppService : ApplicationService, IMaintenanceMixinAppService
     {
-
-        public MaintenanceMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public MaintenanceMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionOpenMatchedSerialAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
+            // def action_open_matched_serial(self):
+            // self.ensure_one()
+            // action = self.env.ref('stock.action_production_lot_form', raise_if_not_found=False)
+            // if not action:
+            //     return True
+            // action_dict = action._get_action_dict()
+            // action_dict['context'] = {'search_default_name': self.serial_no}
+            // return action_dict
+            */
+            return default;
         }
 
         public async Task<TEntity> ComputeDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
@@ -112,22 +130,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
             // def _onchange_category_id(self):
             // self.technician_user_id = self.category_id.technician_user_id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenMatchedSerialAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMaintenanceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: maintenance, FILE: maintenance.py) ---
-            // def action_open_matched_serial(self):
-            // self.ensure_one()
-            // action = self.env.ref('stock.action_production_lot_form', raise_if_not_found=False)
-            // if not action:
-            //     return True
-            // action_dict = action._get_action_dict()
-            // action_dict['context'] = {'search_default_name': self.serial_no}
-            // return action_dict
             */
             return default;
         }

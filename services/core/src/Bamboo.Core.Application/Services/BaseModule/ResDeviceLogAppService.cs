@@ -1,24 +1,27 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
-
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule")]
-    public class ResDeviceLogAppService : ApplicationService, IResDeviceLogAppService
+    public class ResDeviceLogAppService : GenericApplicationService<ResDeviceLog>, IResDeviceLogAppService
     {
-        private readonly IResDeviceLogRepository _resDeviceLogRepository;
-        public ResDeviceLogAppService(IResDeviceLogRepository resDeviceLogRepository) 
+
+        public ResDeviceLogAppService(IRepository<ResDeviceLog, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _resDeviceLogRepository = resDeviceLogRepository;
+
         }
 
         protected async Task<ResDeviceLog> ComputeDisplayNameInternalAsync()
@@ -122,8 +125,7 @@ namespace Bamboo.Core.Application.Services
             //     SQL(self._query)
             // ))
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResDeviceLog> IsMobileInternalAsync(object platform)
@@ -168,8 +170,7 @@ namespace Bamboo.Core.Application.Services
             // def revoke(self):
             // return self._revoke()
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResDeviceLog> RevokeInternalAsync()

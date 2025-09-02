@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,13 +15,13 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("web_editor", Depends = new[] { "bus", "web", "html_editor" })]
     public class HtmlFieldHistoryMixinAppService : ApplicationService, IHtmlFieldHistoryMixinAppService
     {
-
-        public HtmlFieldHistoryMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public HtmlFieldHistoryMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> ArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -29,6 +31,255 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     child_tasks.action_archive()
             // self.filtered(lambda t: not t.display_in_project and t.parent_id).display_in_project = True
             // return super().action_archive()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_convert_to_subtask(self):
+            // self.ensure_one()
+            // if self.project_id:
+            //     return {
+            //         'name': _('Convert to Task/Sub-Task'),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'project.task',
+            //         'res_id': self.id,
+            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
+            //         'target': 'new',
+            //     }
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'danger',
+            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_dependent_tasks(self):
+            // self.ensure_one()
+            // return {
+            //     'res_model': 'project.task',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
+            //     'domain': [('depend_on_ids', '=', self.id)],
+            //     'name': _('Dependent Tasks'),
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_parent_task(self):
+            // return {
+            //     'name': _('Parent Task'),
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.parent_id.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_ratings(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
+            // if self.rating_count == 1:
+            //     action['view_mode'] = 'form'
+            //     action['res_id'] = self.rating_ids[0].id
+            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
+            //     return action
+            // else:
+            //     return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_task(self):
+            // return {
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_blocking(self):
+            // self.ensure_one()
+            // blockings = self.dependent_ids
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
+            // if len(blockings) == 1:
+            //     action['view_mode'] = 'form'
+            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //     action['res_id'] = blockings.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_subtasks(self):
+            // self.ensure_one()
+            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
+            // if subtasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
+            //     if len(subtasks) == 1:
+            //         action['view_mode'] = 'form'
+            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //         action['res_id'] = subtasks.id
+            //     return action
+            // return {
+            //     'name': 'Portal Sub-tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_task(self):
+            // action = self.action_open_task()
+            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_recurring_tasks(self):
+            // self.ensure_one()
+            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
+            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
+            // if recurrent_tasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
+            //     action.update({
+            //         'context': {'default_project_id': self.project_id.id},
+            //         'domain': [
+            //             ('project_id', '=', self.project_id.id),
+            //             ('recurrence_id', 'in', self.recurrence_id.ids)
+            //         ]
+            //     })
+            //     return action
+            // # If at least one recurrent task belong to another project, open the portal page
+            // return {
+            //     'name': 'Portal Recurrent Tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_view_parent_task(self):
+            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
+            //     project = self.parent_id.project_id._filtered_access('read')
+            //     if project:
+            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
+            //         if project._check_project_sharing_access():
+            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
+            //         return {
+            //             "name": "Portal Parent Task",
+            //             "type": "ir.actions.act_url",
+            //             "url": url,
+            //         }
+            //     elif self.display_parent_task_button:
+            //         return self.parent_id.get_portal_url()
+            //     # The portal user has no access to the parent task, so normally the button should be invisible.
+            //     return {}
+            // action = self.with_context({
+            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
+            // }).action_open_parent_task()
+            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
+            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_recurring_tasks(self):
+            // return {
+            //     'name': _('Tasks in Recurrence'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'project.task',
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            //     'context': {'create': False},
+            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_redirect_to_project_task_form(self):
+            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_unlink_recurrence(self):
+            // self.recurrence_id.task_ids.recurring_task = False
+            // self.recurrence_id.unlink()
             */
             return default;
         }
@@ -558,33 +809,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_convert_to_subtask(self):
-            // self.ensure_one()
-            // if self.project_id:
-            //     return {
-            //         'name': _('Convert to Task/Sub-Task'),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'project.task',
-            //         'res_id': self.id,
-            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
-            //         'target': 'new',
-            //     }
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'danger',
-            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
-            //     }
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
         {
             /*
@@ -893,24 +1117,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _default_user_ids(self):
             // return self.env.context.keys() & {'default_personal_stage_type_ids', 'default_personal_stage_type_id'} and self.env.user
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_dependent_tasks(self):
-            // self.ensure_one()
-            // return {
-            //     'res_model': 'project.task',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
-            //     'domain': [('depend_on_ids', '=', self.id)],
-            //     'name': _('Dependent Tasks'),
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            // }
             */
             return default;
         }
@@ -1404,12 +1610,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _get_versioned_fields(self):
             // return [Task.description.name]
-            --- ODOO METHOD SOURCE (MODULE: test_html_field_history, FILE: model_html_field_history_test.py) ---
-            // def _get_versioned_fields(self):
-            // return [
-            //     ModelHtmlFieldHistoryTest.versioned_field_1.name,
-            //     ModelHtmlFieldHistoryTest.versioned_field_2.name,
-            // ]
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: html_field_history_mixin.py) ---
             // def _get_versioned_fields(self):
             // """This method should be overriden
@@ -1867,57 +2067,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_parent_task(self):
-            // return {
-            //     'name': _('Parent Task'),
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.parent_id.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_ratings(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
-            // if self.rating_count == 1:
-            //     action['view_mode'] = 'form'
-            //     action['res_id'] = self.rating_ids[0].id
-            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
-            //     return action
-            // else:
-            //     return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_task(self):
-            // return {
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> PopulateMissingPersonalStagesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
         {
             /*
@@ -1967,86 +2116,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_blocking(self):
-            // self.ensure_one()
-            // blockings = self.dependent_ids
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
-            // if len(blockings) == 1:
-            //     action['view_mode'] = 'form'
-            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //     action['res_id'] = blockings.id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_subtasks(self):
-            // self.ensure_one()
-            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
-            // if subtasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
-            //     if len(subtasks) == 1:
-            //         action['view_mode'] = 'form'
-            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //         action['res_id'] = subtasks.id
-            //     return action
-            // return {
-            //     'name': 'Portal Sub-tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_task(self):
-            // action = self.action_open_task()
-            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_recurring_tasks(self):
-            // self.ensure_one()
-            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
-            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
-            // if recurrent_tasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
-            //     action.update({
-            //         'context': {'default_project_id': self.project_id.id},
-            //         'domain': [
-            //             ('project_id', '=', self.project_id.id),
-            //             ('recurrence_id', 'in', self.recurrence_id.ids)
-            //         ]
-            //     })
-            //     return action
-            // # If at least one recurrent task belong to another project, open the portal page
-            // return {
-            //     'name': 'Portal Recurrent Tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> ProjectSharingToggleIsFollowerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
         {
             /*
@@ -2060,36 +2129,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     self.sudo().message_subscribe(self.env.user.partner_id.ids)
             // return not is_follower
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_view_parent_task(self):
-            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
-            //     project = self.parent_id.project_id._filtered_access('read')
-            //     if project:
-            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
-            //         if project._check_project_sharing_access():
-            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
-            //         return {
-            //             "name": "Portal Parent Task",
-            //             "type": "ir.actions.act_url",
-            //             "url": url,
-            //         }
-            //     elif self.display_parent_task_button:
-            //         return self.parent_id.get_portal_url()
-            //     # The portal user has no access to the parent task, so normally the button should be invisible.
-            //     return {}
-            // action = self.with_context({
-            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
-            // }).action_open_parent_task()
-            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
-            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
-            // return action
             */
             return default;
         }
@@ -2196,38 +2235,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // stage_ids = stages._search(search_domain, order=stages._order)
             // return stages.browse(stage_ids)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_recurring_tasks(self):
-            // return {
-            //     'name': _('Tasks in Recurrence'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'project.task',
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            //     'context': {'create': False},
-            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_redirect_to_project_task_form(self):
-            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
-            //     'target': 'new',
-            // }
             */
             return default;
         }
@@ -2561,17 +2568,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if task.id == last_task_id_per_recurrence_id.get(task.recurrence_id.id):
             //         task.recurrence_id.unlink()
             // return super().unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IHtmlFieldHistoryMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_unlink_recurrence(self):
-            // self.recurrence_id.task_ids.recurring_task = False
-            // self.recurrence_id.unlink()
             */
             return default;
         }

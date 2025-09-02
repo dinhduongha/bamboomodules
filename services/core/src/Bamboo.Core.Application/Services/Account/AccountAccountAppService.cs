@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -920,7 +921,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountAccount> CopyDataAsync(Guid id, AccountAccountCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -951,7 +952,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAccount> CopyTranslationsAsync(Guid id, object @new, object excluded)
+        public async Task<AccountAccount> CopyTranslationsAsync(Guid id, AccountAccountCopyTranslationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
@@ -965,68 +966,6 @@ namespace Bamboo.Core.Application.Services
             //     }], dirty=True)
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public override async Task<AccountAccount> CreateAsync(AccountAccount entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def create(self, vals_list):
-            // records_list = []
-            // 
-            // for company_ids, vals_list_for_company in itertools.groupby(vals_list, lambda v: v.get('company_ids', [])):
-            //     cache = set()
-            //     vals_list_for_company = list(vals_list_for_company)
-            // 
-            //     # Determine the companies the new accounts will have.
-            //     company_ids = self._fields['company_ids'].convert_to_cache(company_ids, self.browse())
-            //     companies = self.env['res.company'].browse(company_ids)
-            //     if self.env.company in companies or not companies:
-            //         companies = self.env.company | companies  # The currently active company comes first.
-            // 
-            //     for vals in vals_list_for_company:
-            //         if 'prefix' in vals:
-            //             prefix, digits = vals.pop('prefix'), vals.pop('code_digits')
-            //             start_code = prefix.ljust(digits - 1, '0') + '1' if len(prefix) < digits else prefix
-            //             vals['code'] = self.with_company(companies[0])._search_new_account_code(start_code, cache)
-            //             cache.add(vals['code'])
-            // 
-            //         if 'code' not in vals:  # prepopulate the code for precomputed fields depending on it
-            //             for mapping_command in vals.get('code_mapping_ids', []):
-            //                 match mapping_command:
-            //                     case Command.CREATE, _, {'company_id': company_id, 'code': code} if company_id == companies[0].id:
-            //                         vals['code'] = code
-            //                         break
-            // 
-            //     new_accounts = super(AccountAccount, self.with_context(
-            //         allowed_company_ids=companies.ids,
-            //         defer_account_code_checks=True,
-            //         # Don't get a default value for `code_mapping_ids` from default_get
-            //         default_code_mapping_ids=self.env.context.get('default_code_mapping_ids', []),
-            //     )).create(vals_list_for_company)
-            // 
-            //     records_list.append(new_accounts)
-            // 
-            // records = self.env['account.account'].union(*records_list)
-            // records._ensure_code_is_unique()
-            // return records
-            --- ODOO METHOD SOURCE (MODULE: l10n_mx, FILE: account_account.py) ---
-            // def create(self, vals_list):
-            // # EXTENDS account - ensure there is a tag on created MX accounts
-            // # The computation is a bit naive and might not be correct in all cases.
-            // accounts = super().create(vals_list)
-            // debit_tag = self.env.ref('l10n_mx.tag_debit_balance_account', raise_if_not_found=False)
-            // credit_tag = self.env.ref('l10n_mx.tag_credit_balance_account', raise_if_not_found=False)
-            // if not debit_tag or not credit_tag:
-            //     return accounts
-            // mx_account_no_tags = accounts.filtered(lambda a: 'MX' in a.company_ids.mapped('country_code') and not a.tag_ids & (credit_tag + debit_tag))
-            // DEBIT_CODES = ['1', '5', '6', '7']  # all other codes are considered "credit"
-            // for account in mx_account_no_tags:
-            //     tag_id = debit_tag.id if account.code[0] in DEBIT_CODES else credit_tag.id
-            //     account.tag_ids = [Command.link(tag_id)]
-            // return accounts
-            */
-            return await base.CreateAsync(entity, fields);
         }
 
         protected async Task<AccountAccount> EnsureCodeIsUniqueInternalAsync()
@@ -1152,7 +1091,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> GetAccountGroupAsync(Guid id, object account_types)
+        public async Task<AccountAccount> GetAccountGroupAsync(Guid id, AccountAccountGetAccountGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1721,7 +1660,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, object args_list)
+        public async Task<AccountAccount> SpreadsheetFetchDebitCreditAsync(Guid id, AccountAccountSpreadsheetFetchDebitCreditRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1751,7 +1690,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(Guid id, object args_list)
+        public async Task<AccountAccount> SpreadsheetFetchPartnerBalanceAsync(Guid id, AccountAccountSpreadsheetFetchPartnerBalanceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1787,7 +1726,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(Guid id, object args_list)
+        public async Task<AccountAccount> SpreadsheetFetchResidualAmountAsync(Guid id, AccountAccountSpreadsheetFetchResidualAmountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1817,7 +1756,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAccount> SpreadsheetMoveLineActionAsync(Guid id, object args)
+        public async Task<AccountAccount> SpreadsheetMoveLineActionAsync(Guid id, AccountAccountSpreadsheetMoveLineActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: account.py) ---
@@ -1894,35 +1833,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountAccount> UnlinkBankCashAccountsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_dk, FILE: account_account.py) ---
-            // def _unlink_bank_cash_accounts(self):
-            // nb_account_to_delete_per_company = defaultdict(self.env['account.account'].browse)
-            // for account in self:
-            //     for company in account.company_ids:
-            //         if company.country_code == 'DK':
-            //             nb_account_to_delete_per_company[company] |= account
-            // 
-            // if not nb_account_to_delete_per_company:
-            //     return
-            // 
-            // grouped_counts = self.read_group(
-            //     domain=[('company_ids.account_fiscal_country_id.code', '=', 'DK'), ('account_type', '=', 'asset_cash')],
-            //     fields=['company_ids', 'id:count'],
-            //     groupby=['company_ids'],
-            // )
-            // nb_account_per_company = {self.env['res.company'].browse(entry['company_ids'][0]): entry['company_ids_count'] for entry in grouped_counts}
-            // 
-            // for company_id, count in nb_account_per_company.items():
-            //     nb_to_delete = sum(1 for account in nb_account_to_delete_per_company.get(company_id) if account.account_type == 'asset_cash')
-            //     if count - nb_to_delete < 1:
-            //         raise UserError(_("You must keep at least one bank and cash account for %(company)s!", company=company_id.name))
-            */
-            return default;
-        }
-
         protected async Task<AccountAccount> UnlinkExceptContainsJournalItemsInternalAsync()
         {
             /*
@@ -1978,48 +1888,6 @@ namespace Bamboo.Core.Application.Services
             // return {'type': 'ir.actions.client', 'tag': 'soft_reload'}
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, AccountAccount entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_account.py) ---
-            // def write(self, vals):
-            // if 'reconcile' in vals:
-            //     if vals['reconcile']:
-            //         self.filtered(lambda r: not r.reconcile)._toggle_reconcile_to_true()
-            //     else:
-            //         self.filtered(lambda r: r.reconcile)._toggle_reconcile_to_false()
-            // 
-            // if vals.get('currency_id'):
-            //     for account in self:
-            //         if self.env['account.move.line'].search_count([('account_id', '=', account.id), ('currency_id', 'not in', (False, vals['currency_id']))]):
-            //             raise UserError(_('You cannot set a currency on this account as it already has some journal entries having a different foreign currency.'))
-            // 
-            // if vals.get('deprecated') and self.env["account.tax.repartition.line"].search_count([('account_id', 'in', self.ids)], limit=1):
-            //     raise UserError(_("You cannot deprecate an account that is used in a tax distribution."))
-            // 
-            // res = super(AccountAccount, self.with_context(defer_account_code_checks=True, prefetch_fields=any(field in vals for field in ['code', 'account_type']))).write(vals)
-            // 
-            // if not self.env.context.get('defer_account_code_checks') and {'company_ids', 'code', 'code_mapping_ids'} & vals.keys():
-            //     self._ensure_code_is_unique()
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: account_account.py) ---
-            // def write(self, vals):
-            // if (
-            //     'code' in vals
-            //     and self.env.company.account_fiscal_country_id.code == 'DE'
-            //     and any(
-            //         self.env.company in a.company_ids and a.code != vals['code']
-            //         for a in self
-            //     )
-            // ):
-            //     if self.env['account.move.line'].search_count([('account_id', 'in', self.ids)], limit=1):
-            //         raise UserError(_("You can not change the code of an account."))
-            // return super().write(vals)
-            */
-            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Stock
 {
     public partial class StockPickingController
@@ -49,58 +50,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         }
         
         [HttpPost]
-        [Route("{id}/action-generate-l10n-tr-edispatch-xml")]
-        public async Task<IActionResult> ActionGenerateL10nTrEdispatchXmlAsync(Guid id, [FromBody] StockPickingGenerateL10nTrEdispatchXmlRequestDto input)
-        {
-            var result = await _appService.GenerateL10nTrEdispatchXmlAsync(id, input.IsList);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-in-ewaybill-create")]
-        public async Task<IActionResult> ActionL10nInEwaybillCreateAsync(Guid id)
-        {
-            var result = await _appService.L10nInEwaybillCreateAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-ro-edi-stock-fetch-status")]
-        public async Task<IActionResult> ActionL10nRoEdiStockFetchStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nRoEdiStockFetchStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-ro-edi-stock-send-etransport")]
-        public async Task<IActionResult> ActionL10nRoEdiStockSendEtransportAsync(Guid id)
-        {
-            var result = await _appService.L10nRoEdiStockSendEtransportAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-mark-l10n-tr-edispatch-status")]
-        public async Task<IActionResult> ActionMarkL10nTrEdispatchStatusAsync(Guid id)
-        {
-            var result = await _appService.MarkL10nTrEdispatchStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-next-transfer")]
         public async Task<IActionResult> ActionNextTransferAsync(Guid id)
         {
             var result = await _appService.NextTransferAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-l10n-in-ewaybill")]
-        public async Task<IActionResult> ActionOpenL10nInEwaybillAsync(Guid id)
-        {
-            var result = await _appService.OpenL10nInEwaybillAsync(id);
             return Ok(result);
         }
         
@@ -132,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/action-put-in-pack")]
         public async Task<IActionResult> ActionPutInPackAsync(Guid id, [FromBody] StockPickingPutInPackRequestDto input)
         {
-            var result = await _appService.PutInPackAsync(id, input.MoveLinesToPack);
+            var result = await _appService.PutInPackAsync(id, input);
             return Ok(result);
         }
         
@@ -244,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/assign-batch-user")]
         public async Task<IActionResult> AssignBatchUserAsync(Guid id, [FromBody] StockPickingAssignBatchUserRequestDto input)
         {
-            var result = await _appService.AssignBatchUserAsync(id, input.UserId);
+            var result = await _appService.AssignBatchUserAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/calculate-date-category")]
         public async Task<IActionResult> CalculateDateCategoryAsync(Guid id, [FromBody] StockPickingCalculateDateCategoryRequestDto input)
         {
-            var result = await _appService.CalculateDateCategoryAsync(id, input.Datetime);
+            var result = await _appService.CalculateDateCategoryAsync(id, input);
             return Ok(result);
         }
         
@@ -284,7 +237,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/date-category-to-domain")]
         public async Task<IActionResult> DateCategoryToDomainAsync(Guid id, [FromBody] StockPickingDateCategoryToDomainRequestDto input)
         {
-            var result = await _appService.DateCategoryToDomainAsync(id, input.DateCategory);
+            var result = await _appService.DateCategoryToDomainAsync(id, input);
             return Ok(result);
         }
         
@@ -340,7 +293,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Stock
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] StockPickingGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         

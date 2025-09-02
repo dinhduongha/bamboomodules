@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -59,16 +60,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> ButtonCreateProxyUserAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def button_create_proxy_user(self):
-            // self._create_proxy_user(self.company_id, self.l10n_it_edi_demo_mode)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResConfigSettings> ButtonDeregisterPeppolParticipantAsync(Guid id)
         {
             /*
@@ -82,22 +73,6 @@ namespace Bamboo.Core.Application.Services
             // if self.account_peppol_edi_user:
             //     self.account_peppol_edi_user._peppol_deregister_participant()
             // return True
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> ButtonL10nRoEdiGenerateTokenAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_config_settings.py) ---
-            // def button_l10n_ro_edi_generate_token(self):
-            // """ Redirects to controllers/main.py ~ `authorize` method """
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': '/l10n_ro_edi/authorize/%s' % self.company_id.id,
-            //     'target': 'new',
-            // }
             */
             var entity = await Repository.GetAsync(id); return entity;
         }
@@ -400,17 +375,6 @@ namespace Bamboo.Core.Application.Services
             // 
             // for record in self:
             //     record.company_informations = informations
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_config_settings.py) ---
-            // def _compute_company_informations(self):
-            // super()._compute_company_informations()
-            // for record in self:
-            //     if self.company_id.country_code == 'SA':
-            //         record.company_informations += _(
-            //             '\nBuilding Number: %(building_number)s, Plot Identification: %(plot_identification)s\nNeighborhood: %(neighborhood)s',
-            //             building_number=self.company_id.l10n_sa_edi_building_number,
-            //             plot_identification=self.company_id.l10n_sa_edi_plot_identification,
-            //             neighborhood=self.company_id.street2,
-            //         )
             */
             return default;
         }
@@ -563,17 +527,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> ComputeIsEdiProxyActiveInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _compute_is_edi_proxy_active(self):
-            // for config in self:
-            //     config.is_edi_proxy_active = config.company_id.account_edi_proxy_client_ids
-            */
-            return default;
-        }
-
         protected async Task<ResConfigSettings> ComputeIsEncodeUomDaysInternalAsync()
         {
             /*
@@ -592,76 +545,6 @@ namespace Bamboo.Core.Application.Services
             // def _compute_is_root_company(self):
             // for record in self:
             //     record.is_root_company = not record.company_id.parent_id
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nEuOssEuropeanCountryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_config_settings.py) ---
-            // def _compute_l10n_eu_oss_european_country(self):
-            // european_countries = self.env.ref('base.europe').country_ids
-            // for record in self:
-            //     record.l10n_eu_oss_eu_country = record.company_id.account_fiscal_country_id in european_countries
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nHuEdiIsActiveInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_config_settings.py) ---
-            // def _compute_l10n_hu_edi_is_active(self):
-            // for record in self:
-            //     record.l10n_hu_edi_is_active = record.company_id.l10n_hu_edi_server_mode in ['production', 'test']
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nItEdiDemoModeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _compute_l10n_it_edi_demo_mode(self):
-            // for config in self:
-            //     edi_user = config.company_id.l10n_it_edi_proxy_user_id
-            //     config.l10n_it_edi_demo_mode = edi_user.edi_mode or 'demo'
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nItEdiProxyCurrentStateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _compute_l10n_it_edi_proxy_current_state(self):
-            // for config in self:
-            //     proxy_user = config.company_id.l10n_it_edi_proxy_user_id
-            //     config.l10n_it_edi_proxy_current_state = 'inactive' if not proxy_user else 'demo' if proxy_user.id_client[:4] == 'demo' else 'active'
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nItEdiRegisterInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _compute_l10n_it_edi_register(self):
-            // """Needed because it expects a compute"""
-            // self.l10n_it_edi_register = False
-            */
-            return default;
-        }
-
-        protected async Task<ResConfigSettings> ComputeL10nVnEdiDefaultSymbolInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: res_config_settings.py) ---
-            // def _compute_l10n_vn_edi_default_symbol(self):
-            // ResPartner = self.env['res.partner']
-            // l10n_vn_edi_symbol_field = ResPartner._fields['l10n_vn_edi_symbol']
-            // self.l10n_vn_edi_default_symbol = l10n_vn_edi_symbol_field.get_company_dependent_fallback(ResPartner)
             */
             return default;
         }
@@ -1143,19 +1026,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> ComputeUseRootProxyUserInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _compute_use_root_proxy_user(self):
-            // for record in self:
-            //     main_company = self.company_id.root_id
-            //     edi_company = self.company_id._l10n_it_get_edi_company()
-            //     record.use_root_proxy_user = edi_company == main_company and self.company_id != main_company
-            */
-            return default;
-        }
-
         public async Task<ResConfigSettings> ConfigureFirstProviderAsync(Guid id)
         {
             /*
@@ -1193,13 +1063,6 @@ namespace Bamboo.Core.Application.Services
             // if any(config.hr_presence_control_ip or config.hr_presence_control_email for config in configs):
             //     self.env['hr.employee.base']._check_presence()
             // return configs
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_config_settings.py) ---
-            // def create(self, vals_list):
-            // records = super().create(vals_list)
-            // for record in records:
-            //     if record.company_id.l10n_hu_edi_server_mode in ['production', 'test']:
-            //         record.company_id._l10n_hu_edi_test_credentials()
-            // return records
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_config_settings.py) ---
             // def create(self, vals_list):
             // # STEP: Remove the 'pos' fields from each vals.
@@ -1288,16 +1151,6 @@ namespace Bamboo.Core.Application.Services
             // return super().create(vals_list)
             */
             return await base.CreateAsync(entity, fields);
-        }
-
-        protected async Task<ResConfigSettings> CreateProxyUserInternalAsync(Guid company_id, object edi_mode)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _create_proxy_user(self, company_id, edi_mode):
-            // self.env['account_edi_proxy_client.user']._register_proxy_user(company_id, 'l10n_it_edi', edi_mode)
-            */
-            return default;
         }
 
         public async Task<ResConfigSettings> CrmAssignLeadsAsync(Guid id)
@@ -1679,7 +1532,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> GetConfigWarningAsync(Guid id, object msg)
+        public async Task<ResConfigSettings> GetConfigWarningAsync(Guid id, ResConfigSettingsGetConfigWarningRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1751,7 +1604,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResConfigSettings> GetOptionNameAsync(Guid id, object full_field_name)
+        public async Task<ResConfigSettings> GetOptionNameAsync(Guid id, ResConfigSettingsGetOptionNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -1769,7 +1622,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> GetOptionPathAsync(Guid id, Guid menu_xml_id)
+        public async Task<ResConfigSettings> GetOptionPathAsync(Guid id, ResConfigSettingsGetOptionPathRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -2007,22 +1860,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> InverseL10nVnEdiDefaultSymbolInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: res_config_settings.py) ---
-            // def _inverse_l10n_vn_edi_default_symbol(self):
-            // for setting in self:
-            //     self.env['ir.default'].set(
-            //         'res.partner',
-            //         'l10n_vn_edi_symbol',
-            //         setting.l10n_vn_edi_default_symbol.id,
-            //         company_id=setting.company_id.id
-            //     )
-            */
-            return default;
-        }
-
         protected async Task<ResConfigSettings> InversePlsFieldsStrInternalAsync()
         {
             /*
@@ -2111,165 +1948,6 @@ namespace Bamboo.Core.Application.Services
             // }
             */
             return default;
-        }
-
-        public async Task<ResConfigSettings> L10nInCheckGstNumberAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: res_config_settings.py) ---
-            // def l10n_in_check_gst_number(self):
-            // if not self.company_id.vat:
-            //     action = {
-            //             "view_mode": "form",
-            //             "res_model": "res.company",
-            //             "type": "ir.actions.act_window",
-            //             "res_id" : self.company_id.id,
-            //             "views": [[self.env.ref("base.view_company_form").id, "form"]],
-            //     }
-            //     raise RedirectWarning(_("Please enter a GST number in company."), action, _('Go to Company'))
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> L10nInEdiBuyIapAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: res_config_settings.py) ---
-            // def l10n_in_edi_buy_iap(self):
-            // if not self.l10n_in_edi_production_env or not (self.module_l10n_in_edi or self.module_l10n_in_gstin_status):
-            //     raise ValidationError(_(
-            //         "Please ensure that at least one Indian service and production environment is enabled,"
-            //         " and save the configuration to proceed with purchasing credits."
-            //     ))
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': self.env["iap.account"].get_credits_url(service_name=IAP_SERVICE_NAME),
-            //     'target': '_new'
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> L10nInEdiEwaybillTestAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: res_config_settings.py) ---
-            // def l10n_in_edi_ewaybill_test(self):
-            // self.l10n_in_check_gst_number()
-            // response = self.env["account.edi.format"]._l10n_in_edi_ewaybill_authenticate(self.company_id)
-            // if response.get("error") or not self.company_id.sudo()._l10n_in_edi_ewaybill_token_is_valid():
-            //     error_message = _("Incorrect username or password, or the GST number on company does not match.")
-            //     if response.get("error"):
-            //         error_message = "\n".join([html_escape("[%s] %s" % (e.get("code"), e.get("message"))) for e in response["error"]])
-            //     raise UserError(error_message)
-            // return {
-            //       'type': 'ir.actions.client',
-            //       'tag': 'display_notification',
-            //       'params': {
-            //           'type': 'info',
-            //           'sticky': False,
-            //           'message': _("API credentials validated successfully"),
-            //       }
-            //   }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> L10nInEdiTestAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: res_config_settings.py) ---
-            // def l10n_in_edi_test(self):
-            // self.l10n_in_check_gst_number()
-            // response = self.env['account.edi.format']._l10n_in_edi_authenticate(self.company_id)
-            // if response.get('error'):
-            //     raise UserError("\n".join(["[%s] %s" % (e.get('code'), (e.get('message'))) for e in response['error']]))
-            // elif not self.company_id.sudo()._l10n_in_edi_token_is_valid():
-            //     raise UserError(_("Incorrect username or password, or the GST number on company does not match."))
-            // return {
-            //       'type': 'ir.actions.client',
-            //       'tag': 'display_notification',
-            //       'params': {
-            //           'type': 'info',
-            //           'sticky': False,
-            //           'message': _("API credentials validated successfully"),
-            //       }
-            //   }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> L10nMyEdiAllowProcessingAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_config_settings.py) ---
-            // def action_l10n_my_edi_allow_processing(self):
-            // """ We always expect the user to give his consent by pressing the button, in any mode, to enable the edi. """
-            // self.company_id._l10n_my_edi_create_proxy_user()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> L10nMyEdiUnregisterAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_config_settings.py) ---
-            // def action_l10n_my_edi_unregister(self):
-            // """ Send a notification to the proxy to free the ID (vat) of the user, and archive the local proxy user.
-            // Useful if there has been a misconfiguration or the user wishes to use a new database/...
-            // """
-            // proxy_user = self.env.company.l10n_my_edi_proxy_user_id
-            // if not proxy_user:
-            //     return
-            // 
-            // # Start by notifying the proxy that we wish to deregister.
-            // result = proxy_user._l10n_my_edi_contact_proxy('api/l10n_my_edi/1/unregister', {})
-            // 
-            // if not result.get('success'):
-            //     # If we get a result, it should always be successful as we only archive. If for any reason it is not, we will raise an error.
-            //     raise UserError(_("An unexpected error occurred while unregistering. Please try again later."))
-            // 
-            // # If all goes well we can deactivate the local user.
-            // proxy_user.active = False
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> NilveraPingAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_config_settings.py) ---
-            // def nilvera_ping(self):
-            // """ Test the connection and the API key. """
-            // self.check_access('read')  # To make sure not everyone can call this method as it's public.
-            // with _get_nilvera_client(self.env.company) as client:
-            //     # As there is no endpoint to ping Nilvera to make sure the connection works, try an endpoint to get the
-            //     # company's data and this way we can verify the connection and the tax ID in the same step.
-            //     response = client.request("GET", "/general/Company", handle_response=False)
-            //     if response.status_code == 200:
-            //         nilvera_registered_tax_number = response.json().get('TaxNumber')
-            //         if self.env.company.vat == nilvera_registered_tax_number:
-            //             self.env['bus.bus']._sendone(self.env.user.partner_id, 'simple_notification', {
-            //                 'type': 'success',
-            //                 'message': _("Nilvera connection successful!"),
-            //             })
-            //         else:
-            //             self.env['bus.bus']._sendone(self.env.user.partner_id, 'simple_notification', {
-            //                 'type': 'success',
-            //                 'message': _("Nilvera connection successful but the tax number on Nilvera and Odoo doesn't match. Check Nilvera."),
-            //             })
-            //     elif response.status_code == 401:
-            //         self.env['bus.bus']._sendone(self.env.user.partner_id, 'simple_notification', {
-            //             'type': 'danger',
-            //             'message': _("Nilvera connection was unsuccessful, check the API key."),
-            //         })
-            //     else:
-            //         self.env['bus.bus']._sendone(self.env.user.partner_id, 'simple_notification', {
-            //             'type': 'danger',
-            //             'message': _("An error occurred. Try again later."),
-            //         })
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResConfigSettings> OnChangeMinsInternalAsync()
@@ -2463,19 +2141,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResConfigSettings> OnchangeL10nMyEdiModeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_config_settings.py) ---
-            // def _onchange_l10n_my_edi_mode(self):
-            // """ This onchange is mostly here to improve usability by avoiding the need to save when changing the mode. """
-            // self.l10n_my_edi_proxy_user_id = self.company_id.account_edi_proxy_client_ids.filtered(
-            //     lambda u: u.proxy_type == 'l10n_my_edi' and u.edi_mode == self.l10n_my_edi_mode
-            // )
-            */
-            return default;
-        }
-
         protected async Task<ResConfigSettings> OnchangeLanguageIdsInternalAsync()
         {
             /*
@@ -2526,7 +2191,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> OnchangeModuleAsync(Guid id, object field_value, object module_name)
+        public async Task<ResConfigSettings> OnchangeModuleAsync(Guid id, ResConfigSettingsOnchangeModuleRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -2830,24 +2495,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> OpenCompanyFormAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_config_settings.py) ---
-            // def action_open_company_form(self):
-            // """ This will be used to ease the configuration by allowing to quickly access the company. """
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_id': self.env.company.id,
-            //     'res_model': 'res.company',
-            //     'target': 'new',
-            //     'view_mode': 'form',
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResConfigSettings> OpenDefaultUserAsync(Guid id)
         {
             /*
@@ -3060,16 +2707,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> RefreshEuTaxMappingAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_config_settings.py) ---
-            // def refresh_eu_tax_mapping(self):
-            // self.env.companies._map_eu_taxes()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<ResConfigSettings> RegenerateKioskKeyAsync(Guid id)
         {
             /*
@@ -3256,7 +2893,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfigSettings> RemoveDataAsync(Guid id, object o, object s)
+        public async Task<ResConfigSettings> RemoveDataAsync(Guid id, ResConfigSettingsRemoveDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_data_remove, FILE: model.py) ---
@@ -3599,32 +3236,6 @@ namespace Bamboo.Core.Application.Services
             // return True
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResConfigSettings> SetL10nItEdiRegisterDemoModeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_config_settings.py) ---
-            // def _set_l10n_it_edi_register_demo_mode(self):
-            // for config in self:
-            //     proxy_user = config.company_id.l10n_it_edi_proxy_user_id
-            // 
-            //     old_edi_mode = config.company_id.l10n_it_edi_proxy_user_id.edi_mode
-            //     edi_mode = config.l10n_it_edi_demo_mode
-            //     # If the user is trying to change from a state in which they have a registered official or testing proxy client
-            //     # to another state, we should stop them
-            //     if old_edi_mode not in ('demo', False, edi_mode):
-            //         raise UserError(_("The company has already registered with the service as 'Test' or 'Official', it cannot change."))
-            // 
-            //     if config.l10n_it_edi_register:
-            //         # If we are transitioning from a demo user
-            //         # to test or production one, then we should
-            //         # delete the old one before creating the new one.
-            //         if old_edi_mode == 'demo' and edi_mode != 'demo':
-            //             proxy_user.sudo().unlink()
-            //         self._create_proxy_user(config.company_id, edi_mode)
-            */
-            return default;
         }
 
         public async Task<ResConfigSettings> SetValuesAsync(Guid id)
@@ -4173,16 +3784,6 @@ namespace Bamboo.Core.Application.Services
             //     'target': 'new',
             //     'res_id': False,
             // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public async Task<ResConfigSettings> WebsiteTestSettingAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_website, FILE: res_config_settings.py) ---
-            // def action_website_test_setting(self):
-            // return self.env['website'].get_client_action('/')
             */
             var entity = await Repository.GetAsync(id); return entity;
         }

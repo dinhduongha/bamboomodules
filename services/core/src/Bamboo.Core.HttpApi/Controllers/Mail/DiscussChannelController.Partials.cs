@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mail
 {
     public partial class DiscussChannelController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/add-members")]
         public async Task<IActionResult> AddMembersAsync(Guid id, [FromBody] DiscussChannelAddMembersRequestDto input)
         {
-            var result = await _appService.AddMembersAsync(id, input.PartnerIds, input.GuestIds, input.InviteToRtcCall, input.OpenChatWindow, input.PostJoinedMessage);
+            var result = await _appService.AddMembersAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-change-description")]
         public async Task<IActionResult> ChannelChangeDescriptionAsync(Guid id, [FromBody] DiscussChannelChannelChangeDescriptionRequestDto input)
         {
-            var result = await _appService.ChannelChangeDescriptionAsync(id, input.Description);
+            var result = await _appService.ChannelChangeDescriptionAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-create")]
         public async Task<IActionResult> ChannelCreateAsync(Guid id, [FromBody] DiscussChannelChannelCreateRequestDto input)
         {
-            var result = await _appService.ChannelCreateAsync(id, input.Name, input.GroupId);
+            var result = await _appService.ChannelCreateAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-get")]
         public async Task<IActionResult> ChannelGetAsync(Guid id, [FromBody] DiscussChannelChannelGetRequestDto input)
         {
-            var result = await _appService.ChannelGetAsync(id, input.PartnersTo, input.Pin, input.ForceOpen);
+            var result = await _appService.ChannelGetAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-pin")]
         public async Task<IActionResult> ChannelPinAsync(Guid id, [FromBody] DiscussChannelChannelPinRequestDto input)
         {
-            var result = await _appService.ChannelPinAsync(id, input.Pinned);
+            var result = await _appService.ChannelPinAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-rename")]
         public async Task<IActionResult> ChannelRenameAsync(Guid id, [FromBody] DiscussChannelChannelRenameRequestDto input)
         {
-            var result = await _appService.ChannelRenameAsync(id, input.Name);
+            var result = await _appService.ChannelRenameAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/channel-set-custom-name")]
         public async Task<IActionResult> ChannelSetCustomNameAsync(Guid id, [FromBody] DiscussChannelChannelSetCustomNameRequestDto input)
         {
-            var result = await _appService.ChannelSetCustomNameAsync(id, input.Name);
+            var result = await _appService.ChannelSetCustomNameAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/create-group")]
         public async Task<IActionResult> CreateGroupAsync(Guid id, [FromBody] DiscussChannelCreateGroupRequestDto input)
         {
-            var result = await _appService.CreateGroupAsync(id, input.PartnersTo, input.DefaultDisplayMode, input.Name);
+            var result = await _appService.CreateGroupAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/get-mention-suggestions")]
         public async Task<IActionResult> GetMentionSuggestionsAsync(Guid id, [FromBody] DiscussChannelGetMentionSuggestionsRequestDto input)
         {
-            var result = await _appService.GetMentionSuggestionsAsync(id, input.Search, input.Limit);
+            var result = await _appService.GetMentionSuggestionsAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/set-message-pin")]
         public async Task<IActionResult> SetMessagePinAsync(Guid id, [FromBody] DiscussChannelSetMessagePinRequestDto input)
         {
-            var result = await _appService.SetMessagePinAsync(id, input.MessageId, input.Pinned);
+            var result = await _appService.SetMessagePinAsync(id, input);
             return Ok(result);
         }
     }

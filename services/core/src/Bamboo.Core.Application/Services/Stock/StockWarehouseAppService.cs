@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -101,7 +102,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> CopyDataAsync(Guid id, object @default)
+        public async Task<StockWarehouse> CopyDataAsync(Guid id, StockWarehouseCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---
@@ -372,7 +373,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockWarehouse> CreateResupplyRoutesAsync(Guid id, object supplier_warehouses)
+        public async Task<StockWarehouse> CreateResupplyRoutesAsync(Guid id, StockWarehouseCreateResupplyRoutesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_warehouse.py) ---

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -192,7 +193,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<CrmIapLeadMiningRequest> GetEmptyListHelpAsync(Guid id, CrmIapLeadMiningRequestGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_mining_request.py) ---

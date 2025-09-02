@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class IrFieldsConverterAppService : ApplicationService, IIrFieldsConverterAppService
     {
-
-        public IrFieldsConverterAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public IrFieldsConverterAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> DbIdForAsync<TEntity>(IEnumerable<TEntity> entities, object model, object field, object subfield, object @value) where TEntity : IEntity<Guid>, IIrFieldsConverterable

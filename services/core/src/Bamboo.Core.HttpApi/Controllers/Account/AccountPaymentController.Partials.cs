@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountPaymentController
@@ -25,14 +26,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/action-l10n-in-withholding-entries")]
-        public async Task<IActionResult> ActionL10nInWithholdingEntriesAsync(Guid id)
-        {
-            var result = await _appService.L10nInWithholdingEntriesAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/action-open-business-doc")]
         public async Task<IActionResult> ActionOpenBusinessDocAsync(Guid id)
         {
@@ -45,14 +38,6 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         public async Task<IActionResult> ActionOpenExpenseReportAsync(Guid id)
         {
             var result = await _appService.OpenExpenseReportAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-open-l10n-ph2307-wizard")]
-        public async Task<IActionResult> ActionOpenL10nPh2307WizardAsync(Guid id)
-        {
-            var result = await _appService.OpenL10nPh2307WizardAsync(id);
             return Ok(result);
         }
         
@@ -156,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountPaymentCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         

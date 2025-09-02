@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -54,7 +55,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<OnboardingOnboarding> ClosePanelAsync(Guid id, object xmlid)
+        public async Task<OnboardingOnboarding> ClosePanelAsync(Guid id, OnboardingOnboardingClosePanelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: onboarding, FILE: onboarding_onboarding.py) ---

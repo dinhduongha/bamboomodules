@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Product
 {
     public partial class ProductTemplateController
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ProductTemplateCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -188,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/create-product-variant")]
         public async Task<IActionResult> CreateProductVariantAsync(Guid id, [FromBody] ProductTemplateCreateProductVariantRequestDto input)
         {
-            var result = await _appService.CreateProductVariantAsync(id, input.ProductTemplateAttributeValueIds);
+            var result = await _appService.CreateProductVariantAsync(id, input);
             return Ok(result);
         }
         
@@ -196,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/get-contextual-price")]
         public async Task<IActionResult> GetContextualPriceAsync(Guid id, [FromBody] ProductTemplateGetContextualPriceRequestDto input)
         {
-            var result = await _appService.GetContextualPriceAsync(id, input.Product);
+            var result = await _appService.GetContextualPriceAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +205,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] ProductTemplateGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Product
         [Route("{id}/get-product-accounts")]
         public async Task<IActionResult> GetProductAccountsAsync(Guid id, [FromBody] ProductTemplateGetProductAccountsRequestDto input)
         {
-            var result = await _appService.GetProductAccountsAsync(id, input.FiscalPos);
+            var result = await _appService.GetProductAccountsAsync(id, input);
             return Ok(result);
         }
         

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ResPartnerAutocompleteSync> AddToQueueAsync(Guid id, Guid partner_id)
+        public async Task<ResPartnerAutocompleteSync> AddToQueueAsync(Guid id, ResPartnerAutocompleteSyncAddToQueueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner_autocomplete_sync.py) ---
@@ -32,7 +33,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResPartnerAutocompleteSync> StartSyncAsync(Guid id, object batch_size)
+        public async Task<ResPartnerAutocompleteSync> StartSyncAsync(Guid id, ResPartnerAutocompleteSyncStartSyncRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_partner_autocomplete_sync.py) ---

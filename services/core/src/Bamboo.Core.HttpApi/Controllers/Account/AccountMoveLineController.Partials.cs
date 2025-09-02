@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountMoveLineController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/action-automatic-entry")]
         public async Task<IActionResult> ActionAutomaticEntryAsync(Guid id, [FromBody] AccountMoveLineAutomaticEntryRequestDto input)
         {
-            var result = await _appService.AutomaticEntryAsync(id, input.DefaultAction);
+            var result = await _appService.AutomaticEntryAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/action-register-payment")]
         public async Task<IActionResult> ActionRegisterPaymentAsync(Guid id, [FromBody] AccountMoveLineRegisterPaymentRequestDto input)
         {
-            var result = await _appService.RegisterPaymentAsync(id, input.Ctx);
+            var result = await _appService.RegisterPaymentAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountMoveLineCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/flush-model")]
         public async Task<IActionResult> FlushModelAsync(Guid id, [FromBody] AccountMoveLineFlushModelRequestDto input)
         {
-            var result = await _appService.FlushModelAsync(id, input.Fnames);
+            var result = await _appService.FlushModelAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/flush-recordset")]
         public async Task<IActionResult> FlushRecordsetAsync(Guid id, [FromBody] AccountMoveLineFlushRecordsetRequestDto input)
         {
-            var result = await _appService.FlushRecordsetAsync(id, input.Fnames);
+            var result = await _appService.FlushRecordsetAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-invoice-line-account")]
         public async Task<IActionResult> GetInvoiceLineAccountAsync(Guid id, [FromBody] AccountMoveLineGetInvoiceLineAccountRequestDto input)
         {
-            var result = await _appService.GetInvoiceLineAccountAsync(id, input.Type, input.Product, input.Fpos, input.Company);
+            var result = await _appService.GetInvoiceLineAccountAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-views")]
         public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] AccountMoveLineGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input.Views, input.Options);
+            var result = await _appService.GetViewsAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/invalidate-model")]
         public async Task<IActionResult> InvalidateModelAsync(Guid id, [FromBody] AccountMoveLineInvalidateModelRequestDto input)
         {
-            var result = await _appService.InvalidateModelAsync(id, input.Fnames, input.Flush);
+            var result = await _appService.InvalidateModelAsync(id, input);
             return Ok(result);
         }
         
@@ -132,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/invalidate-recordset")]
         public async Task<IActionResult> InvalidateRecordsetAsync(Guid id, [FromBody] AccountMoveLineInvalidateRecordsetRequestDto input)
         {
-            var result = await _appService.InvalidateRecordsetAsync(id, input.Fnames, input.Flush);
+            var result = await _appService.InvalidateRecordsetAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/search-fetch")]
         public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] AccountMoveLineSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input.Domain, input.FieldNames, input.Offset, input.Limit, input.Order);
+            var result = await _appService.SearchFetchAsync(id, input);
             return Ok(result);
         }
     }

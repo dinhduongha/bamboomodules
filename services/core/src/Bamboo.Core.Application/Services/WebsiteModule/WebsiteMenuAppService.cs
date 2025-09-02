@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -117,7 +118,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteMenu> GetTreeAsync(Guid id, Guid website_id, Guid menu_id)
+        public async Task<WebsiteMenu> GetTreeAsync(Guid id, WebsiteMenuGetTreeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_menu.py) ---
@@ -212,7 +213,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsiteMenu> SaveAsync(Guid id, Guid website_id, object data)
+        public async Task<WebsiteMenu> SaveAsync(Guid id, WebsiteMenuSaveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_menu.py) ---

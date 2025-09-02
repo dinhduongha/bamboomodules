@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AuthPasskeyKeyCreate> MakeKeyAsync(Guid id, object registration)
+        public async Task<AuthPasskeyKeyCreate> MakeKeyAsync(Guid id, AuthPasskeyKeyCreateMakeKeyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_passkey, FILE: auth_passkey_key.py) ---

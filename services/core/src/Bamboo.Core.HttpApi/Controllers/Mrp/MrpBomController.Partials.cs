@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mrp
 {
     public partial class MrpBomController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mrp
         [Route("{id}/explode")]
         public async Task<IActionResult> ExplodeAsync(Guid id, [FromBody] MrpBomExplodeRequestDto input)
         {
-            var result = await _appService.ExplodeAsync(id, input.Product, input.Quantity, input.PickingType, input.NeverAttributeValues);
+            var result = await _appService.ExplodeAsync(id, input);
             return Ok(result);
         }
         

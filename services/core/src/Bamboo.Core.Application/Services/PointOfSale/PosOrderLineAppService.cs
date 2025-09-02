@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -37,20 +38,6 @@ namespace Bamboo.Core.Application.Services
             //     'price_subtotal_incl': taxes['total_included'],
             //     'price_subtotal': taxes['total_excluded'],
             // }
-            */
-            return default;
-        }
-
-        protected async Task<PosOrderLine> ComputeL10nInHsnCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_pos, FILE: pos_order_line.py) ---
-            // def _compute_l10n_in_hsn_code(self):
-            // indian_lines = self.filtered(lambda line: line.company_id.account_fiscal_country_id.code == 'IN')
-            // (self - indian_lines).l10n_in_hsn_code = False
-            // for line in indian_lines:
-            //     if line.product_id:
-            //         line.l10n_in_hsn_code = line.product_id.l10n_in_hsn_code
             */
             return default;
         }
@@ -176,7 +163,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosOrderLine> GetExistingLotsAsync(Guid id, Guid company_id, Guid product_id)
+        public async Task<PosOrderLine> GetExistingLotsAsync(Guid id, PosOrderLineGetExistingLotsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
@@ -363,12 +350,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosOrderLine> LoadPosDataFieldsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_pos, FILE: pos_order_line.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // if self.env.company.country_id.code == 'IN':
-            //     params += ['l10n_in_hsn_code']
-            // return params
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def _load_pos_data_fields(self, config_id):
             // return [
@@ -600,13 +581,6 @@ namespace Bamboo.Core.Application.Services
         public override async Task<List<object>> WriteAsync(List<Guid> ids, PosOrderLine entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: pos.py) ---
-            // def write(self, vals):
-            // # restrict the operation in case we are trying to write a forbidden field
-            // if set(vals).intersection(LINE_FIELDS):
-            //     if any(l.company_id._is_accounting_unalterable() and l.order_id.state in ['done', 'invoiced'] for l in self):
-            //         raise UserError(_('According to the French law, you cannot modify a point of sale order line. Forbidden fields: %s.') % ', '.join(LINE_FIELDS))
-            // return super(PosOrderLine, self).write(vals)
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_order.py) ---
             // def write(self, values):
             // if values.get('pack_lot_line_ids'):

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -239,15 +240,6 @@ namespace Bamboo.Core.Application.Services
             // xml_ids = self._get_external_ids().get(self.id, [])
             // matches = list(set(xml_ids) & set(mapping.keys()))
             // return matches and mapping[matches[0]] or 'C62'
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: uom_uom.py) ---
-            // def _get_unece_code(self):
-            // """ This depends on the mapping from https://developer.nilvera.com/en/code-lists#birim-kodlari """
-            // unece_code = super()._get_unece_code()
-            // if unece_code == 'C62':
-            //     xml_id = self.get_external_id()
-            //     if xml_id and self.id in xml_id:
-            //         return UOM_TO_UNECE_CODE.get(xml_id[self.id], 'C62')
-            // return unece_code
             */
             return default;
         }

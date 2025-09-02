@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Sms
 {
     public partial class SmsSmsController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sms
         [Route("{id}/action-set-error")]
         public async Task<IActionResult> ActionSetErrorAsync(Guid id, [FromBody] SmsSmsSetErrorRequestDto input)
         {
-            var result = await _appService.SetErrorAsync(id, input.FailureType);
+            var result = await _appService.SetErrorAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Sms
         [Route("{id}/send")]
         public async Task<IActionResult> SendAsync(Guid id, [FromBody] SmsSmsSendRequestDto input)
         {
-            var result = await _appService.SendAsync(id, input.UnlinkFailed, input.UnlinkSent, input.AutoCommit, input.RaiseException);
+            var result = await _appService.SendAsync(id, input);
             return Ok(result);
         }
     }

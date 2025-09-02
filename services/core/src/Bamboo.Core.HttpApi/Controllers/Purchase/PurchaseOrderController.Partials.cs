@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Purchase
 {
     public partial class PurchaseOrderController
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Purchase
         [Route("{id}/action-view-invoice")]
         public async Task<IActionResult> ActionViewInvoiceAsync(Guid id, [FromBody] PurchaseOrderViewInvoiceRequestDto input)
         {
-            var result = await _appService.ViewInvoiceAsync(id, input.Invoices);
+            var result = await _appService.ViewInvoiceAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Purchase
         [Route("{id}/button-approve")]
         public async Task<IActionResult> ButtonApproveAsync(Guid id, [FromBody] PurchaseOrderButtonApproveRequestDto input)
         {
-            var result = await _appService.ButtonApproveAsync(id, input.Force);
+            var result = await _appService.ButtonApproveAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Purchase
         [Route("{id}/confirm-reminder-mail")]
         public async Task<IActionResult> ConfirmReminderMailAsync(Guid id, [FromBody] PurchaseOrderConfirmReminderMailRequestDto input)
         {
-            var result = await _appService.ConfirmReminderMailAsync(id, input.ConfirmedDate);
+            var result = await _appService.ConfirmReminderMailAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Purchase
         [Route("{id}/get-confirm-url")]
         public async Task<IActionResult> GetConfirmUrlAsync(Guid id, [FromBody] PurchaseOrderGetConfirmUrlRequestDto input)
         {
-            var result = await _appService.GetConfirmUrlAsync(id, input.ConfirmType);
+            var result = await _appService.GetConfirmUrlAsync(id, input);
             return Ok(result);
         }
         
@@ -188,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Purchase
         [Route("{id}/get-localized-date-planned")]
         public async Task<IActionResult> GetLocalizedDatePlannedAsync(Guid id, [FromBody] PurchaseOrderGetLocalizedDatePlannedRequestDto input)
         {
-            var result = await _appService.GetLocalizedDatePlannedAsync(id, input.DatePlanned);
+            var result = await _appService.GetLocalizedDatePlannedAsync(id, input);
             return Ok(result);
         }
         

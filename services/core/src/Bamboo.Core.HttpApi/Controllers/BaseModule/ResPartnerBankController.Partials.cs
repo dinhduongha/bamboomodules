@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class ResPartnerBankController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/build-qr-code-base64")]
         public async Task<IActionResult> BuildQrCodeBase64Async(Guid id, [FromBody] ResPartnerBankBuildQrCodeBase64RequestDto input)
         {
-            var result = await _appService.BuildQrCodeBase64Async(id, input.Amount, input.FreeCommunication, input.StructuredCommunication, input.Currency, input.DebtorPartner, input.QrMethod, input.SilentErrors);
+            var result = await _appService.BuildQrCodeBase64Async(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/build-qr-code-url")]
         public async Task<IActionResult> BuildQrCodeUrlAsync(Guid id, [FromBody] ResPartnerBankBuildQrCodeUrlRequestDto input)
         {
-            var result = await _appService.BuildQrCodeUrlAsync(id, input.Amount, input.FreeCommunication, input.StructuredCommunication, input.Currency, input.DebtorPartner, input.QrMethod, input.SilentErrors);
+            var result = await _appService.BuildQrCodeUrlAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/check-iban")]
         public async Task<IActionResult> CheckIbanAsync(Guid id, [FromBody] ResPartnerBankCheckIbanRequestDto input)
         {
-            var result = await _appService.CheckIbanAsync(id, input.Iban);
+            var result = await _appService.CheckIbanAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/retrieve-acc-type")]
         public async Task<IActionResult> RetrieveAccTypeAsync(Guid id, [FromBody] ResPartnerBankRetrieveAccTypeRequestDto input)
         {
-            var result = await _appService.RetrieveAccTypeAsync(id, input.AccNumber);
+            var result = await _appService.RetrieveAccTypeAsync(id, input);
             return Ok(result);
         }
     }

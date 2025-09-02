@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<HrSkillType> CopyDataAsync(Guid id, object @default)
+        public async Task<HrSkillType> CopyDataAsync(Guid id, HrSkillTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_skills, FILE: hr_skill_type.py) ---

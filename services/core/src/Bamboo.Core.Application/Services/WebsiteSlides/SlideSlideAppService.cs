@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -714,7 +715,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> CopyDataAsync(Guid id, object @default)
+        public async Task<SlideSlide> CopyDataAsync(Guid id, SlideSlideCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
@@ -1596,7 +1597,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideSlide> SetViewedAsync(Guid id, object quiz_attempts_inc)
+        public async Task<SlideSlide> SetViewedAsync(Guid id, SlideSlideSetViewedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---

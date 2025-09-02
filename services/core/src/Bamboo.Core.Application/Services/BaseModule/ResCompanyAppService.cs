@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -45,16 +46,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
             // def _action_check_hash_integrity(self):
             // return self.env.ref('account.action_report_account_hash_integrity').report_action(self.id)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ActionCheckPosHashIntegrityInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: res_company.py) ---
-            // def _action_check_pos_hash_integrity(self):
-            // return self.env.ref('l10n_fr_pos_cert.action_report_pos_hash_integrity').report_action(self.id)
             */
             return default;
         }
@@ -227,38 +218,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> CheckEcoAdminIndexInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _check_eco_admin_index(self):
-            // for record in self:
-            //     if (record.l10n_it_has_eco_index
-            //         and (not record.l10n_it_eco_index_office
-            //              or not record.l10n_it_eco_index_number
-            //              or not record.l10n_it_eco_index_liquidation_state)):
-            //         raise ValidationError(_("All fields about the Economic and Administrative Index must be completed."))
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> CheckEcoIncorporatedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _check_eco_incorporated(self):
-            // """ If the business is incorporated, both these fields must be present.
-            //     We don't know whether the business is incorporated, but in any case the fields
-            //     must be both present or not present. """
-            // for record in self:
-            //     if (record.l10n_it_has_eco_index
-            //         and bool(record.l10n_it_eco_index_share_capital) ^ bool(record.l10n_it_eco_index_sole_shareholder)):
-            //         raise ValidationError(_("If one of Share Capital or Sole Shareholder is present, "
-            //                                 "then they must be both filled out."))
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> CheckFiscalyearLastDayInternalAsync()
         {
             /*
@@ -408,18 +367,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> CheckL10nInPanInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def _check_l10n_in_pan(self):
-            // for record in self:
-            //     if record.l10n_in_pan and not pan.is_valid(record.l10n_in_pan):
-            //         raise ValidationError(_('The entered PAN seems invalid. Please enter a valid PAN.'))
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> CheckPeppolEndpointInternalAsync()
         {
             /*
@@ -470,63 +417,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> CheckPosHashIntegrityInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: res_company.py) ---
-            // def _check_pos_hash_integrity(self):
-            // """Checks that all posted or invoiced pos orders have still the same data as when they were posted
-            // and raises an error with the result.
-            // """
-            // def build_order_info(order):
-            //     entry_reference = _('(Receipt ref.: %s)')
-            //     order_reference_string = order.pos_reference and entry_reference % order.pos_reference or ''
-            //     return [ctx_tz(order, 'date_order'), order.l10n_fr_hash, order.name, order_reference_string, ctx_tz(order, 'write_date')]
-            // 
-            // msg_alert = ''
-            // report_dict = {}
-            // if self._is_accounting_unalterable():
-            //     orders = self.env['pos.order'].search([('state', 'in', ['paid', 'done', 'invoiced']), ('company_id', '=', self.id),
-            //                             ('l10n_fr_secure_sequence_number', '!=', 0)], order="l10n_fr_secure_sequence_number ASC")
-            // 
-            //     if not orders:
-            //         msg_alert = (_('There isn\'t any order flagged for data inalterability yet for the company %s. This mechanism only runs for point of sale orders generated after the installation of the module France - Certification CGI 286 I-3 bis. - POS', self.env.company.name))
-            //         raise UserError(msg_alert)
-            // 
-            //     previous_hash = u''
-            //     corrupted_orders = []
-            //     for order in orders:
-            //         if order.l10n_fr_hash != order._compute_hash(previous_hash=previous_hash):
-            //             corrupted_orders.append(order.name)
-            //             msg_alert = (_('Corrupted data on point of sale order with id %s.', order.id))
-            //         previous_hash = order.l10n_fr_hash
-            //     orders.invalidate_recordset()
-            // 
-            //     orders_sorted_date = orders.sorted(lambda o: o.date_order)
-            //     start_order_info = build_order_info(orders_sorted_date[0])
-            //     end_order_info = build_order_info(orders_sorted_date[-1])
-            // 
-            //     report_dict.update({
-            //         'first_order_name': start_order_info[2],
-            //         'first_order_hash': start_order_info[1],
-            //         'first_order_date': start_order_info[0],
-            //         'last_order_name': end_order_info[2],
-            //         'last_order_hash': end_order_info[1],
-            //         'last_order_date': end_order_info[0],
-            //     })
-            //     corrupted_orders = ', '.join([o for o in corrupted_orders])
-            //     return {
-            //         'result': report_dict or 'None',
-            //         'msg_alert': msg_alert or 'None',
-            //         'printing_date': format_date(self.env,  Date.to_string( Date.today())),
-            //         'corrupted_orders': corrupted_orders or 'None'
-            //     }
-            // else:
-            //     raise UserError(_('Accounting is not unalterable for the company %s. This mechanism is designed for companies where accounting is unalterable.', self.env.company.name))
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> CheckPrepaymentPercentInternalAsync()
         {
             /*
@@ -561,24 +451,6 @@ namespace Bamboo.Core.Application.Services
             // def _check_set_account_price_include(self):
             // if any(company.sudo()._existing_accounting() for company in self):
             //     raise ValidationError("Cannot change Price Tax computation method on a company that has already started invoicing.")
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> CheckTaxRepresentativeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _check_tax_representative(self):
-            // for record in self:
-            //     if not record.l10n_it_has_tax_representative:
-            //         continue
-            //     if not record.l10n_it_tax_representative_partner_id:
-            //         raise ValidationError(_("You must select a tax representative."))
-            //     if not record.l10n_it_tax_representative_partner_id.vat:
-            //         raise ValidationError(_("Your tax representative partner must have a tax number."))
-            //     if not record.l10n_it_tax_representative_partner_id.country_id:
-            //         raise ValidationError(_("Your tax representative partner must have a country."))
             */
             return default;
         }
@@ -818,7 +690,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> ComputeFiscalyearDatesAsync(Guid id, object current_date)
+        public async Task<ResCompany> ComputeFiscalyearDatesAsync(Guid id, ResCompanyComputeFiscalyearDatesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
@@ -847,227 +719,6 @@ namespace Bamboo.Core.Application.Services
             //                 raise_if_not_found=False)
             //     if html:
             //         company.invoice_terms_html = html
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeIsFranceCountryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def _compute_is_france_country(self):
-            // for company in self:
-            //     company.is_france_country = company.country_code in self._get_france_country_codes()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nArCompanyRequiresVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_company.py) ---
-            // def _compute_l10n_ar_company_requires_vat(self):
-            // recs_requires_vat = self.filtered(lambda x: x.l10n_ar_afip_responsibility_type_id.code == '1')
-            // recs_requires_vat.l10n_ar_company_requires_vat = True
-            // remaining = self - recs_requires_vat
-            // remaining.l10n_ar_company_requires_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nEsSiiCertificateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_sii, FILE: res_company.py) ---
-            // def _compute_l10n_es_sii_certificate(self):
-            // for company in self:
-            //     if company.country_code == 'ES':
-            //         company.l10n_es_sii_certificate_id = self.env['certificate.certificate'].search(
-            //             [('company_id', '=', company.id), ('is_valid', '=', True), ('scope', '=', 'sii')],
-            //             order='date_end desc',
-            //             limit=1,
-            //         )
-            //     else:
-            //         company.l10n_es_sii_certificate_id = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nEsTbaiCertificateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _compute_l10n_es_tbai_certificate(self):
-            // for company in self:
-            //     if company.country_code == 'ES':
-            //         company.l10n_es_tbai_certificate_id = self.env['certificate.certificate'].search(
-            //             [('company_id', '=', company.id), ('is_valid', '=', True), ('scope', '=', 'tbai')],
-            //             order='date_end desc',
-            //             limit=1,
-            //         )
-            //     else:
-            //         company.l10n_es_tbai_certificate_id = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nEsTbaiIsEnabledInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _compute_l10n_es_tbai_is_enabled(self):
-            // for company in self:
-            //     company.l10n_es_tbai_is_enabled = company.country_code == 'ES' and company.l10n_es_tbai_tax_agency
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nEsTbaiLicenseHtmlInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _compute_l10n_es_tbai_license_html(self):
-            //         for company in self:
-            //             license_dict = company._get_l10n_es_tbai_license_dict()
-            //             if license_dict:
-            //                 license_dict.update({
-            //                     'tr_nif': self.env._('Licence NIF'),
-            //                     'tr_number': self.env._('Licence number'),
-            //                     'tr_name': self.env._('Software name'),
-            //                     'tr_version': self.env._('Software version')
-            //                 })
-            //                 company.l10n_es_tbai_license_html = markupsafe.Markup('''
-            // <strong>{license_name}</strong><br/>
-            // <p>
-            // <strong>{tr_nif}: </strong>{license_nif}<br/>
-            // <strong>{tr_number}: </strong>{license_number}<br/>
-            // <strong>{tr_name}: </strong>{software_name}<br/>
-            // <strong>{tr_version}: </strong>{software_version}<br/>
-            // </p>''').format(**license_dict)
-            //             else:
-            //                 company.l10n_es_tbai_license_html = markupsafe.Markup('''
-            // <strong>{tr_no_license}</strong>''').format(tr_no_license=self.env._('TicketBAI is not configured'))
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nInHsnCodeDigitAndL10nInPanInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def _compute_l10n_in_hsn_code_digit_and_l10n_in_pan(self):
-            // for record in self:
-            //     if record.country_code == "IN" and record.vat:
-            //         record.l10n_in_hsn_code_digit = "4"
-            //         record.l10n_in_pan = gstin.to_pan(record.vat) if gstin.is_valid(record.vat) else False
-            //     else:
-            //         record.l10n_in_hsn_code_digit = False
-            //         record.l10n_in_pan = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nInPanTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def _compute_l10n_in_pan_type(self):
-            // for record in self:
-            //     if pan.is_valid(record.l10n_in_pan):
-            //         record.l10n_in_pan_type = pan.info(record.l10n_in_pan)['holder_type']
-            //     else:
-            //         record.l10n_in_pan_type = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nItEdiProxyUserIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _compute_l10n_it_edi_proxy_user_id(self):
-            // for company in self:
-            //     edi_company = company._l10n_it_get_edi_company()
-            //     company.l10n_it_edi_proxy_user_id = edi_company.account_edi_proxy_client_ids.filtered(lambda x: x.proxy_type == 'l10n_it_edi')
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nKeOscuIsActiveInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke, FILE: res_company.py) ---
-            // def _compute_l10n_ke_oscu_is_active(self):
-            // """ Overridden in enterprise when the OSCU module is used in the company"""
-            // self.l10n_ke_oscu_is_active = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nMyEdiProxyUserIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_company.py) ---
-            // def _compute_l10n_my_edi_proxy_user_id(self):
-            // """ Each company is expected to have at most one proxy user for malaysia for each mode.
-            // Thus, we can easily find said user.
-            // """
-            // for company in self:
-            //     company.l10n_my_edi_proxy_user_id = company.account_edi_proxy_client_ids.filtered(
-            //         lambda u: u.proxy_type == 'l10n_my_edi' and u.edi_mode == company.l10n_my_edi_mode
-            //     )[:1]
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nMyIdentificationNumberPlaceholderInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_company.py) ---
-            // def _compute_l10n_my_identification_number_placeholder(self):
-            // """ Computes a dynamic placeholder that depends on the selected type to help the user inputs their data.
-            // The placeholders have been taken from the MyInvois doc.
-            // """
-            // for company in self:
-            //     placeholder = 'N/A'
-            //     if company.l10n_my_identification_type == 'NRIC':
-            //         placeholder = '830503-11-4923'
-            //     elif company.l10n_my_identification_type == 'BRN':
-            //         placeholder = '202201234565'
-            //     elif company.l10n_my_identification_type == 'PASSPORT':
-            //         placeholder = 'A00000000'
-            //     elif company.l10n_my_identification_type == 'ARMY':
-            //         placeholder = '830805-13-4983'
-            //     company.l10n_my_identification_number_placeholder = placeholder
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nRoEdiCallbackUrlInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_company.py) ---
-            // def _compute_l10n_ro_edi_callback_url(self):
-            // """ Callback URLs are used for generating client_id and client_secret from l10n_ro_edi's setting. """
-            // for company in self:
-            //     if company.country_code == 'RO':
-            //         company.l10n_ro_edi_callback_url = url_join(request.httprequest.url_root, 'l10n_ro_edi/callback/%s' % company.id)
-            //     else:
-            //         company.l10n_ro_edi_callback_url = False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeL10nTrNilveraPurchaseJournalIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_company.py) ---
-            // def _compute_l10n_tr_nilvera_purchase_journal_id(self):
-            // purchase_journals = self.env['account.journal'].search([('type', '=', 'purchase')])
-            // for company in self:
-            //     if not company.l10n_tr_nilvera_purchase_journal_id:
-            //         company.l10n_tr_nilvera_purchase_journal_id = purchase_journals.filtered_domain(self.env['account.journal']._check_company_domain(company))[:1]
-            //         company.l10n_tr_nilvera_purchase_journal_id.is_nilvera_journal = True
             */
             return default;
         }
@@ -1102,23 +753,6 @@ namespace Bamboo.Core.Application.Services
             // }
             // for company in self:
             //     company.multi_vat_foreign_country_ids = self.env['res.country'].browse(company_to_foreign_vat_country.get(company.id))
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ComputeOrgNumberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: res_company.py) ---
-            // def _compute_org_number(self):
-            // for company in self:
-            //     if company.account_fiscal_country_id.code == "SE" and company.vat:
-            //         org_number = re.sub(r'\D', '', company.vat)[:-2]
-            //         org_number = org_number[:6] + '-' + org_number[6:]
-            // 
-            //         company.org_number = org_number
-            //     else:
-            //         company.org_number = ''
             */
             return default;
         }
@@ -1320,42 +954,6 @@ namespace Bamboo.Core.Application.Services
             // # is created, it is not in the allowed_company_ids on the env
             // company.sudo()._create_internal_project_task()
             // return company
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def create(self, vals_list):
-            // companies = super().create(vals_list)
-            // for company in companies:
-            //     #when creating a new french company, create the securisation sequence as well
-            //     if company._is_accounting_unalterable():
-            //         sequence_fields = ['l10n_fr_closing_sequence_id']
-            //         company._create_secure_sequence(sequence_fields)
-            // return companies
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: res_company.py) ---
-            // def create(self, vals_list):
-            // companies = super().create(vals_list)
-            // for company in companies:
-            //     #when creating a new french company, create the securisation sequence as well
-            //     if company._is_accounting_unalterable():
-            //         sequence_fields = ['l10n_fr_pos_cert_sequence_id']
-            //         company._create_secure_sequence(sequence_fields)
-            // return companies
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def create(self, vals_list):
-            // res = super().create(vals_list)
-            // # Update Fiscal Positions for new branch
-            // res._update_l10n_in_fiscal_position()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_base, FILE: res_company.py) ---
-            // def create(self, vals_list):
-            // """ If exists, use specific vat identification.type for the country of the company """
-            // companies = super().create(vals_list)
-            // for company in companies:
-            //     if not company.country_id:
-            //         continue
-            //     country_vat_type = self.env['l10n_latam.identification.type'].search(
-            //         [('is_vat', '=', True), ('country_id', '=', company.country_id.id)], limit=1)
-            //     if country_vat_type:
-            //         company.partner_id.l10n_latam_identification_type_id = country_vat_type
-            // return companies
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
             // def create(self, vals_list):
             // res = super().create(vals_list)
@@ -1799,48 +1397,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<ResCompany> CreateOssAccountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _create_oss_account(self):
-            // if (
-            //     self.chart_template in EU_ACCOUNT_MAP
-            //     and (oss_account_if_exists :=
-            //         self.env['account.account'].with_company(self).search([
-            //             ('company_ids', '=', self.id),
-            //             ('code', '=', EU_ACCOUNT_MAP[self.chart_template])
-            //         ])
-            //     )
-            // ):
-            //     oss_account = oss_account_if_exists
-            // else:
-            //     sales_tax_accounts = self.env['account.tax'].search([
-            //             *self.env['account.tax']._check_company_domain(self),
-            //             ('type_tax_use', '=', 'sale'),
-            //         ]).invoice_repartition_line_ids.mapped('account_id')
-            //     if not sales_tax_accounts:
-            //         return False
-            //     new_code = self.env['account.account'].with_company(self)._search_new_account_code(sales_tax_accounts[0].with_company(self).code)
-            //     oss_account = self.env['account.account'].create({
-            //         'name': f'{sales_tax_accounts[0].name} OSS',
-            //         'code': new_code,
-            //         'account_type': sales_tax_accounts[0].account_type,
-            //         'company_ids': [Command.link(self.id)],
-            //         'tag_ids': [(4, tag.id, 0) for tag in sales_tax_accounts[0].tag_ids],
-            //     })
-            // self.env['ir.model.data'].create({
-            //     'name': f'oss_tax_account_company_{self.id}',
-            //     'module': 'l10n_eu_oss',
-            //     'model': 'account.account',
-            //     'res_id': oss_account.id,
-            //     'noupdate': True,
-            // })
-            // return oss_account
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> CreatePerCompanyLocationsInternalAsync()
         {
             /*
@@ -1989,35 +1545,6 @@ namespace Bamboo.Core.Application.Services
             //     })
             // if scrap_vals:
             //     self.env['ir.sequence'].create(scrap_vals)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> CreateSecureSequenceInternalAsync(object sequence_fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def _create_secure_sequence(self, sequence_fields):
-            // """This function creates a no_gap sequence on each company in self that will ensure
-            // a unique number is given to all posted account.move in such a way that we can always
-            // find the previous move of a journal entry on a specific journal.
-            // """
-            // for company in self:
-            //     vals_write = {}
-            //     for seq_field in sequence_fields:
-            //         if not company[seq_field]:
-            //             vals = {
-            //                 'name': _('Securisation of %(field)s - %(company)s', field=seq_field, company=company.name),
-            //                 'code': 'FRSECURE%s-%s' % (company.id, seq_field),
-            //                 'implementation': 'no_gap',
-            //                 'prefix': '',
-            //                 'suffix': '',
-            //                 'padding': 0,
-            //                 'company_id': company.id}
-            //             seq = self.env['ir.sequence'].create(vals)
-            //             vals_write[seq_field] = seq.id
-            //     if vals_write:
-            //         company.write(vals_write)
             */
             return default;
         }
@@ -2179,142 +1706,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> CronL10nGrEdiFetchInvoicesInternalAsync()
-        {
-            #if PYTHON_CODE
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: res_company.py) ---
-            // def _cron_l10n_gr_edi_fetch_invoices(self):
-            // """ Receive issued myDATA Invoices and create draft Vendor Bills based on the received XML. """
-            // gr_companies = self.env['res.company'].search([
-            //     ('l10n_gr_edi_aade_id', '!=', False),
-            //     ('l10n_gr_edi_aade_key', '!=', False),
-            // ])
-            // session = requests.Session()
-            // marks_to_create = []
-            // bill_create_list_values = []
-            // 
-            // for gr_company in gr_companies:
-            //     date_90_days_ago = (fields.Datetime.now() - timedelta(days=90)).strftime("%d/%m/%Y")
-            //     date_today = fields.Datetime.now().strftime("%d/%m/%Y")
-            // 
-            //     try:
-            //         response = session.get(
-            //             url="https://mydataapidev.aade.gr/RequestDocs" if gr_company.l10n_gr_edi_test_env else
-            //                 "https://mydatapi.aade.gr/myDATA/RequestDocs",
-            //             headers={'aade-user-id': gr_company.l10n_gr_edi_aade_id,
-            //                      'ocp-apim-subscription-key': gr_company.l10n_gr_edi_aade_key},
-            //             params={'mark': 0, 'dateFrom': date_90_days_ago, 'dateTo': date_today},
-            //             timeout=10,
-            //         )
-            //         response.raise_for_status()
-            //         root = etree.fromstring(response.content)
-            //     except (RequestException, ValueError) as err:
-            //         _logger.error("Something when wrong when fetching myDATA bill: %s", err)
-            //         continue
-            // 
-            //     for invoice_element in root.xpath('//*[local-name()="invoice"]'):
-            //         def find_value(element_name):
-            //             return invoice_element.findtext(f".//ns:{element_name}", namespaces=NS_MYDATA)
-            // 
-            //         # Make sure not to create duplicate bill in the same company
-            //         if self.env['account.move'].search_count(
-            //             domain=[
-            //                 ('l10n_gr_edi_mark', '=', find_value('mark')),
-            //                 ('company_id', '=', gr_company.id),
-            //             ],
-            //             limit=1,
-            //         ):
-            //             continue
-            // 
-            //         # Get invoice lines data
-            //         invoice_line_ids = []
-            //         for detail_element in invoice_element.xpath('.//*[local-name()="invoiceDetails"]'):
-            //             tax_amount = {'1': 24.0, '2': 13.0, '3': 6.0, '4': 17.0, '5': 9.0, '6': 4.0, '7': 0.0, '8': 0.0}[
-            //                 detail_element.findtext('.//ns:vatCategory', namespaces=NS_MYDATA)]
-            //             quantity = max(1.0, float(detail_element.findtext('.//ns:quantity', namespaces=NS_MYDATA) or 1))
-            //             price_unit = float(detail_element.findtext('.//ns:netValue', namespaces=NS_MYDATA)) / quantity
-            //             invoice_line_ids.append(Command.create({
-            //                 'price_unit': price_unit,
-            //                 'quantity': quantity,
-            //                 'tax_ids': self.env['account.tax'].search(
-            //                     domain=[('amount', '=', tax_amount), ('company_id', '=', gr_company.id)],
-            //                     limit=1,
-            //                 ),
-            //             }))
-            // 
-            //         # Collect the bill & document creation data values
-            //         bill_create_list_values.append({
-            //             'state': 'draft',
-            //             'move_type': 'in_invoice',
-            //             'company_id': gr_company.id,
-            //             'partner_id': self.env['res.partner'].search([('vat', '=', find_value('vatNumber'))], limit=1).id,
-            //             'date': fields.Date.to_date(find_value('issueDate')),
-            //             'invoice_date': fields.Date.to_date(find_value('issueDate')),
-            //             'invoice_line_ids': invoice_line_ids,
-            //             **({'l10n_gr_edi_inv_type': find_value('invoiceType')} if find_value('invoiceType') in INVOICE_TYPES_HAVE_EXPENSE else {}),
-            //         })
-            //         marks_to_create.append(find_value('mark'))
-            // 
-            // if bill_create_list_values and marks_to_create:
-            //     # Create all the fetched bills in batch
-            //     new_bills = self.env['account.move'].sudo().create(bill_create_list_values)
-            // 
-            //     # Create all the new bills document in batch
-            //     self.env['l10n_gr_edi.document'].create([
-            //         {
-            //             'state': 'bill_fetched',
-            //             'move_id': bill.id,
-            //             'mydata_mark': mark,
-            //         }
-            //         for bill, mark in zip(new_bills, marks_to_create)
-            //     ])
-            #endif
-            return default;
-        }
-
-        protected async Task<ResCompany> CronL10nRoEdiRefreshAccessTokenInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_company.py) ---
-            // def _cron_l10n_ro_edi_refresh_access_token(self):
-            // """
-            // This CRON method will be run every 30 days to refresh the following fields on the company:
-            // 
-            //  - ``l10n_ro_edi_access_token``
-            //  - ``l10n_ro_edi_refresh_token``
-            //  - ``l10n_ro_edi_access_expiry_date``
-            //  - ``l10n_ro_edi_refresh_expiry_date``
-            // """
-            // ro_companies = self.env['res.company'].sudo().search([
-            //     ('l10n_ro_edi_refresh_token', '!=', False),
-            //     ('l10n_ro_edi_client_id', '!=', False),
-            //     ('l10n_ro_edi_client_secret', '!=', False),
-            // ])
-            // session = requests.Session()
-            // for company in ro_companies:
-            //     error_cause = ''
-            //     try:
-            //         company._l10n_ro_edi_refresh_access_token(session)
-            //     except ValidationError as e:
-            //         # From access/refresh token not found after sending request
-            //         error_cause = e
-            //     except requests.exceptions.RequestException as e:
-            //         error_cause = _("Error when converting response to json: %s", e)
-            //     except binascii.Error as e:
-            //         error_cause = _("Error when decoding the access token payload: %s", e)
-            //     except Exception as e:
-            //         error_cause = _("Error when refreshing the access token: %s", e)
-            // 
-            //     if error_cause:
-            //         error_header = _("Refresh token failed [company=%(company_id)s]", company_id=company.id)
-            //         self._l10n_ro_edi_log_message(
-            //             message=f'{error_header}\n{error_cause}',
-            //             func='_cron_l10n_ro_edi_refresh_access_token',
-            //         )
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> DefaultAliasDomainIdInternalAsync()
         {
             /*
@@ -2367,16 +1758,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _default_currency_id(self):
             // return self.env.user.company_id.currency_id
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> DefaultL10nMyEdiIndustrialClassificationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_company.py) ---
-            // def _default_l10n_my_edi_industrial_classification(self):
-            // return self.env.ref('l10n_my_edi.class_00000', raise_if_not_found=False)
             */
             return default;
         }
@@ -2526,11 +1907,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResCompany> GetCompanyAddressFieldNamesInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _get_company_address_field_names(self):
-            // """ Override to add ZATCA specific address fields """
-            // return super()._get_company_address_field_names() + \
-            //     ['l10n_sa_edi_building_number', 'l10n_sa_edi_plot_identification']
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _get_company_address_field_names(self):
             // """ Return a list of fields coming from the address partner to match
@@ -2586,12 +1962,6 @@ namespace Bamboo.Core.Application.Services
             //     'fiscalyear_last_month',
             //     'account_storno',
             //     'tax_exigibility',
-            // ]
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _get_company_root_delegated_field_names(self):
-            // return super()._get_company_root_delegated_field_names() + [
-            //     'l10n_sa_api_mode',
-            //     'l10n_sa_private_key_id',
             // ]
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _get_company_root_delegated_field_names(self):
@@ -2685,7 +2055,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> GetFiscalDatesAsync(Guid id, object payload)
+        public async Task<ResCompany> GetFiscalDatesAsync(Guid id, ResCompanyGetFiscalDatesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet_account, FILE: res_company.py) ---
@@ -2711,114 +2081,6 @@ namespace Bamboo.Core.Application.Services
             // return results
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResCompany> GetFrReferenceLeaveTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_hr_holidays, FILE: res_company.py) ---
-            // def _get_fr_reference_leave_type(self):
-            // self.ensure_one()
-            // if not self.l10n_fr_reference_leave_type:
-            //     raise ValidationError(_("You must first define a reference time off type for the company."))
-            // return self.l10n_fr_reference_leave_type
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> GetFranceCountryCodesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def _get_france_country_codes(self):
-            // """Returns every country code that can be used to represent France
-            // """
-            // return ['FR', 'MF', 'MQ', 'NC', 'PF', 'RE', 'GF', 'GP', 'TF', 'BL', 'PM', 'YT', 'WF']
-            */
-            return default;
-        }
-
-        public async Task<ResCompany> GetL10nDeStnrNationalAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: res_company.py) ---
-            // def get_l10n_de_stnr_national(self):
-            // self.ensure_one()
-            // national_steuer_nummer = None
-            // 
-            // if self.l10n_de_stnr and self.country_code == 'DE':
-            //     try:
-            //         national_steuer_nummer = stdnum.de.stnr.to_country_number(self.l10n_de_stnr, self.state_id.name)
-            //     except stdnum.exceptions.InvalidComponent:
-            //         raise ValidationError(_("Your company's SteuerNummer is not compatible with your state"))
-            //     except stdnum.exceptions.InvalidFormat:
-            //         if stdnum.de.stnr.is_valid(self.l10n_de_stnr, self.state_id.name):
-            //             national_steuer_nummer = self.l10n_de_stnr
-            //         else:
-            //             raise ValidationError(_("Your company's SteuerNummer is not valid"))
-            // 
-            // elif self.l10n_de_stnr:
-            //     national_steuer_nummer = self.l10n_de_stnr
-            // 
-            // return national_steuer_nummer
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResCompany> GetL10nEsTbaiLastChainedDocumentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _get_l10n_es_tbai_last_chained_document(self):
-            // """
-            // Returns the last tbai document posted to this company's chain.
-            // That tbai document may have been received by the govt or not (eg. in case of a timeout).
-            // Only upon confirmed reception/refusal of that tbai document can another one be posted.
-            // """
-            // domain = [
-            //     ('chain_index', '!=', 0),
-            //     ('company_id', '=', self.id)
-            // ]
-            // return self.env['l10n_es_edi_tbai.document'].search(domain, limit=1, order='chain_index desc')
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> GetL10nEsTbaiLicenseDictInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _get_l10n_es_tbai_license_dict(self):
-            // self.ensure_one()
-            // if self.l10n_es_tbai_is_enabled:
-            //     if self.l10n_es_tbai_test_env:  # test env: each agency has its test license
-            //         license_key = self.l10n_es_tbai_tax_agency
-            //     else:  # production env: only one license
-            //         license_key = 'production'
-            //     license = L10N_ES_TBAI_LICENSE_DICT[license_key]
-            //     return dict(license, license_name=str(license["license_name"]))  # force translation
-            // else:
-            //     return {}
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> GetL10nEsTbaiNextChainIndexInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _get_l10n_es_tbai_next_chain_index(self):
-            // if not self.l10n_es_tbai_chain_sequence_id:
-            //     self_sudo = self.sudo()
-            //     self_sudo.l10n_es_tbai_chain_sequence_id = self_sudo.env['ir.sequence'].create({
-            //         'name': f'TicketBAI account move sequence for {self.name} (id: {self.id})',
-            //         'code': f'l10n_es.edi.tbai.account.move.{self.id}',
-            //         'implementation': 'no_gap',
-            //         'company_id': self.id,
-            //     })
-            // return self.l10n_es_tbai_chain_sequence_id.next_by_id()
-            */
-            return default;
         }
 
         protected async Task<ResCompany> GetLockDateViolationsInternalAsync(object accounting_date, object fiscalyear, object sale, object purchase, object tax, object hard)
@@ -2891,7 +2153,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> GetNewAccountCodeAsync(Guid id, object current_code, object old_prefix, object new_prefix)
+        public async Task<ResCompany> GetNewAccountCodeAsync(Guid id, ResCompanyGetNewAccountCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
@@ -2915,61 +2177,6 @@ namespace Bamboo.Core.Application.Services
             // return self.sudo().batch_payment_sequence_id.next_by_id()
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<ResCompany> GetOssAccountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _get_oss_account(self):
-            // self.ensure_one()
-            // if not (oss_account := self.env.ref(f'l10n_eu_oss.oss_tax_account_company_{self.id}', raise_if_not_found=False)):
-            //     oss_account = self._create_oss_account()
-            // return oss_account
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> GetOssTagsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _get_oss_tags(self):
-            // oss_tag = self.env.ref('l10n_eu_oss.tag_oss')
-            // country = None
-            // # Try to use the VAT country if vat is set and easily guessable
-            // if self.vat:
-            //     country_prefix = re.match('^[a-zA-Z]{2}|^', self.vat).group()
-            //     if country_prefix:
-            //         country = self.env['res.country'].search([('code', '=', country_prefix)], limit=1)
-            // # otherwise fallback on the fiscal country
-            // if not country:
-            //     country = self.account_fiscal_country_id
-            // chart_template = self.env['account.chart.template']._guess_chart_template(country)
-            // 
-            // # If that l10n module isn't installed, it means the company doesn't use any tax report for that country
-            // # and thus hasn't nor need those tax report tag
-            // is_coa_module_installed = self.env['account.chart.template']._get_chart_template_mapping()[chart_template]['installed']
-            // if not is_coa_module_installed:
-            //     chart_template = None
-            // 
-            // tag_for_country = EU_TAG_MAP.get(chart_template, {
-            //     'invoice_base_tag': None,
-            //     'invoice_tax_tag': None,
-            //     'refund_base_tag': None,
-            //     'refund_tax_tag': None,
-            // })
-            // 
-            // mapping = {}
-            // for repartition_line_key, tag_xml_id in tag_for_country.items():
-            //     tag = self.env.ref(tag_xml_id) if tag_xml_id else self.env['account.account.tag']
-            //     if tag and tag._name == "account.report.expression":
-            //         tag = tag._get_matching_tags("+")
-            //     mapping[repartition_line_key] = tag + oss_tag
-            // 
-            // return mapping
-            */
-            return default;
         }
 
         protected async Task<ResCompany> GetPeppolEdiModeInternalAsync()
@@ -3005,24 +2212,6 @@ namespace Bamboo.Core.Application.Services
             //         'company_id': self.id,
             //         'company_ids': [(6, 0, [self.id])],
             //     })
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> GetRepartitionLinesOssInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _get_repartition_lines_oss(self):
-            // self.ensure_one()
-            // oss_account, oss_tags = self._get_oss_account(), self._get_oss_tags()
-            // repartition_line_ids = {}
-            // for doc_type, rep_type in product(('invoice', 'refund'), ('base', 'tax')):
-            //     vals = {'document_type': doc_type, 'repartition_type': rep_type, 'tag_ids': [Command.link(tag.id) for tag in oss_tags[f'{doc_type}_{rep_type}_tag']]}
-            //     if oss_account:
-            //         vals['account_id'] = oss_account.id
-            //     repartition_line_ids.setdefault(doc_type, []).append(Command.create(vals))
-            // return repartition_line_ids['invoice'], repartition_line_ids['refund']
             */
             return default;
         }
@@ -3209,14 +2398,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResCompany> GetViewInternalAsync(Guid view_id, object view_type)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg, FILE: res_company.py) ---
-            // def _get_view(self, view_id=None, view_type='form', **options):
-            // arch, view = super()._get_view(view_id, view_type, **options)
-            // company_vat_label = self.env.company.country_id.vat_label
-            // if company_vat_label:
-            //     for node in arch.iterfind(".//field[@name='vat']"):
-            //         node.set("string", company_vat_label)
-            // return arch, view
             --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
             // def _get_view(self, view_id=None, view_type='form', **options):
             // arch, view = super()._get_view(view_id, view_type, **options)
@@ -3289,7 +2470,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> GoogleMapImgAsync(Guid id, object zoom, object width, object height)
+        public async Task<ResCompany> GoogleMapImgAsync(Guid id, ResCompanyGoogleMapImgRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_company.py) ---
@@ -3300,7 +2481,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResCompany> GoogleMapLinkAsync(Guid id, object zoom)
+        public async Task<ResCompany> GoogleMapLinkAsync(Guid id, ResCompanyGoogleMapLinkRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: res_company.py) ---
@@ -3477,26 +2658,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> InverseL10nTrNilveraPurchaseJournalIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera, FILE: res_company.py) ---
-            // def _inverse_l10n_tr_nilvera_purchase_journal_id(self):
-            // # dict(company: journals)
-            // journals_to_reset_grouped = self.env['account.journal'].search([
-            //     ('company_id', 'in', self.ids),
-            //     ('is_nilvera_journal', '=', True),
-            // ]).grouped('company_id')
-            // for company in self:
-            //     # This avoids having 2 or more journals from the same company with
-            //     # `is_nilvera_journal` set to True (which could occur after changes).
-            //     if journals_to_reset := journals_to_reset_grouped.get(company):
-            //         journals_to_reset.is_nilvera_journal = False
-            //     company.l10n_tr_nilvera_purchase_journal_id.is_nilvera_journal = True
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> InversePeppolPurchaseJournalIdInternalAsync()
         {
             /*
@@ -3559,502 +2720,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> IsAccountingUnalterableInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def _is_accounting_unalterable(self):
-            // if not self.vat and not self.country_id:
-            //     return False
-            // return self.country_id and self.country_id.code in self._get_france_country_codes()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nEsFreelancerInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: res_company.py) ---
-            // def _l10n_es_freelancer(self):
-            // self.ensure_one()
-            // return self.vat and re.fullmatch(r"(ES)?(\d{8}[A-Z]|[X-Z].*)", self.vat) or False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nHuEdiConfigureCompanyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_company.py) ---
-            // def _l10n_hu_edi_configure_company(self):
-            // """ Single-time configuration for companies, to be applied when l10n_hu_edi is installed
-            // or a new company is created.
-            // """
-            // for company in self:
-            //     # Set profit/loss accounts on cash rounding method
-            //     profit_account = self.env['account.chart.template'].with_company(company).ref('l10n_hu_969', raise_if_not_found=False)
-            //     loss_account = self.env['account.chart.template'].with_company(company).ref('l10n_hu_869', raise_if_not_found=False)
-            //     rounding_method = self.env.ref('l10n_hu_edi.cash_rounding_1_huf', raise_if_not_found=False)
-            //     if profit_account and loss_account and rounding_method:
-            //         rounding_method.with_company(company).write({
-            //             'profit_account_id': profit_account.id,
-            //             'loss_account_id': loss_account.id,
-            //         })
-            // 
-            //     # Activate cash rounding on the company
-            //     res_config_id = self.env['res.config.settings'].create({
-            //         'company_id': company.id,
-            //         'group_cash_rounding': True,
-            //     })
-            //     res_config_id.execute()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nHuEdiGetCredentialsDictInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_company.py) ---
-            // def _l10n_hu_edi_get_credentials_dict(self):
-            // self.ensure_one()
-            // credentials_dict = {
-            //     'vat': self.vat,
-            //     'mode': self.l10n_hu_edi_server_mode,
-            //     'username': self.l10n_hu_edi_username,
-            //     'password': self.l10n_hu_edi_password,
-            //     'signature_key': self.l10n_hu_edi_signature_key,
-            //     'replacement_key': self.l10n_hu_edi_replacement_key,
-            // }
-            // if self.l10n_hu_edi_server_mode != 'demo' and not all(credentials_dict.values()):
-            //     raise UserError(_('Missing NAV credentials for company %s', self.name))
-            // return credentials_dict
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nHuEdiRecoverTransactionsInternalAsync(object connection)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_company.py) ---
-            // def _l10n_hu_edi_recover_transactions(self, connection):
-            // """ Recover transactions that are in force but for some reason are not matched to the company's
-            // invoices, and update the invoice state correspondingly.
-            // 
-            // This can happen, for example, if the invoice sending timed out: in that case, we don't have a
-            // transaction ID for the invoice. It can also happen if for some reason the transaction ID was
-            // overwritten by a new request, but the new request fails with a 'duplicate invoice' error.
-            // 
-            // To do this, we request a list of all transactions made since l10n_hu_edi_last_transaction_recovery,
-            // and then we query the last 10 transactions whose transaction IDs are unknown by Odoo. We try to
-            // match them to invoices in Odoo, and if successful, update the invoice state.
-            // """
-            // 
-            // for company in self:
-            //     # We use the l10n_hu_edi_last_transaction_recovery time only in production mode
-            //     # to indicate which transactions to request.
-            //     # In test mode (where we expect far fewer invoices), we just take the last 24 hours.
-            //     recovery_end_time = fields.Datetime.now()
-            //     if company.l10n_hu_edi_server_mode == 'production':
-            //         recovery_start_time = company.l10n_hu_edi_last_transaction_recovery
-            //     else:
-            //         recovery_start_time = recovery_end_time - timedelta(hours=24)
-            // 
-            //     # Old invoices are already up-to-date - no need to re-check them.
-            //     invoices_to_check = self.env['account.move'].search([
-            //         ('company_id', '=', company.id),
-            //         ('l10n_hu_edi_send_time', '>=', recovery_start_time),
-            //         ('l10n_hu_edi_state', '!=', False),
-            //     ])
-            //     # Step 1: Request a list of all transactions made during the specified time interval.
-            //     page = 1
-            //     available_pages = 1
-            //     transactions = []
-            //     while page <= available_pages:
-            //         try:
-            //             transaction_list = connection.do_query_transaction_list(
-            //                 company.sudo()._l10n_hu_edi_get_credentials_dict(),
-            //                 recovery_start_time,
-            //                 recovery_end_time,
-            //                 page,
-            //             )
-            //         except L10nHuEdiConnectionError as e:
-            //             return {
-            //                 'error_title': _('Error listing transactions while attempting transaction recovery.'),
-            //                 'errors': e.errors,
-            //             }
-            // 
-            //         available_pages = transaction_list['available_pages']
-            //         transactions += transaction_list['transactions']
-            //         page += 1
-            // 
-            //     # Step 2: Query unknown transactions in reverse order (latest first) and update invoice states accordingly.
-            //     # If there are too many, we should only query the last 10, to avoid pointlessly making huge numbers of requests.
-            //     transactions_to_query = (
-            //         t for t in reversed(transactions)
-            //         if t['username'] == company.sudo().l10n_hu_edi_username
-            //             and t['source'] == 'MGM'
-            //             and t['transaction_code'] not in invoices_to_check.mapped('l10n_hu_edi_transaction_code')
-            //     )
-            // 
-            //     for transaction in islice(transactions_to_query, 10):
-            //         try:
-            //             results = connection.do_query_transaction_status(
-            //                 company.sudo()._l10n_hu_edi_get_credentials_dict(),
-            //                 transaction['transaction_code'],
-            //                 return_original_request=True,
-            //             )
-            //         except L10nHuEdiConnectionError as e:
-            //             return {
-            //                 'error_title': _('Error querying transaction while attempting transaction recovery.'),
-            //                 'errors': e.errors,
-            //             }
-            // 
-            //         for processing_result in results['processing_results']:
-            //             invoice_name = processing_result['original_xml'].findtext('data:invoiceNumber', namespaces=XML_NAMESPACES)
-            //             canonicalized_attachment = etree.canonicalize(processing_result['original_file'])
-            //             annulment_invoice_name = processing_result['original_xml'].findtext('data:annulmentReference', namespaces=XML_NAMESPACES)
-            // 
-            //             matched_invoice = invoices_to_check.filtered(
-            //                 lambda m: (
-            //                     # 1. Match invoice if the entire XML matches.
-            //                     # For performance, we first check the invoice name before trying to match the whole XML.
-            //                     (
-            //                         m.name == invoice_name
-            //                         and etree.canonicalize(base64.b64decode(m.l10n_hu_edi_attachment).decode())
-            //                             == canonicalized_attachment
-            //                     )
-            //                     or m.name == annulment_invoice_name
-            //                 ) and (
-            //                     # 2. We update the invoice state only if:
-            //                     # - the invoice doesn't have a transaction code, or
-            //                     # - it currently has a duplicate error, or
-            //                     # - the current transaction is more recent than the latest transaction on the invoice
-            //                     #   and is not a duplicate error (this avoid overwriting the state with a previous, obsolete one).
-            //                     not m.l10n_hu_edi_transaction_code
-            //                     or any(
-            //                         'INVOICE_NUMBER_NOT_UNIQUE' in error or 'ANNULMENT_IN_PROGRESS' in error
-            //                         for error in m.l10n_hu_edi_messages['errors']
-            //                     )
-            //                     or (
-            //                         transaction['send_time'] >= m.l10n_hu_edi_send_time
-            //                         and not (
-            //                             processing_result['technical_validation_messages']
-            //                             or any(
-            //                                 message['validation_error_code'] in ['INVOICE_NUMBER_NOT_UNIQUE', 'ANNULMENT_IN_PROGRESS']
-            //                                 for message in processing_result['business_validation_messages']
-            //                             )
-            //                         )
-            //                     )
-            //                 )
-            //             )
-            // 
-            //             if matched_invoice:
-            //                 # Set the correct transaction code on the matched invoice
-            //                 matched_invoice.l10n_hu_edi_transaction_code = transaction['transaction_code']
-            //                 matched_invoice._l10n_hu_edi_process_query_transaction_result(processing_result, results['annulment_status'])
-            // 
-            //     # The server might still be processing transactions from the last 6 minutes,
-            //     # so we should keep open the possibility of re-querying them.
-            //     recovery_close_time = recovery_end_time - timedelta(minutes=6)
-            //     if company.l10n_hu_edi_server_mode == 'production':
-            //         company.l10n_hu_edi_last_transaction_recovery = recovery_close_time
-            // 
-            //     # Any invoices still in a 'timeout' state that are more than 6 minutes old and could not be matched should be considered not received.
-            //     invoices_to_check.filtered(
-            //         lambda m: m.l10n_hu_edi_state == 'send_timeout' and m.l10n_hu_edi_send_time < recovery_close_time
-            //     ).write({
-            //         'l10n_hu_invoice_chain_index': 0,
-            //         'l10n_hu_edi_state': 'rejected',
-            //     })
-            // 
-            //     invoices_to_check.filtered(
-            //         lambda m: m.l10n_hu_edi_state == 'cancel_timeout' and m.l10n_hu_edi_send_time < recovery_close_time
-            //     ).write({
-            //         'l10n_hu_edi_state': 'confirmed_warning',
-            //     })
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nHuEdiTestCredentialsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: res_company.py) ---
-            // def _l10n_hu_edi_test_credentials(self):
-            // with L10nHuEdiConnection(self.env) as connection:
-            //     for company in self:
-            //         if not company.vat:
-            //             raise UserError(_('NAV Credentials: Please set the hungarian vat number on the company first!'))
-            //         try:
-            //             connection.do_token_exchange(company._l10n_hu_edi_get_credentials_dict())
-            //         except L10nHuEdiConnectionError as e:
-            //             raise UserError(
-            //                 _('Incorrect NAV Credentials! Check that your company VAT number is set correctly. \nError details: %s', e)
-            //             ) from e
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nInEdiEwaybillTokenIsValidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: res_company.py) ---
-            // def _l10n_in_edi_ewaybill_token_is_valid(self):
-            // self.ensure_one()
-            // if self.l10n_in_edi_ewaybill_auth_validity and self.l10n_in_edi_ewaybill_auth_validity > fields.Datetime.now():
-            //     return True
-            // return False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nInEdiTokenIsValidInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: res_company.py) ---
-            // def _l10n_in_edi_token_is_valid(self):
-            // self.ensure_one()
-            // if self.l10n_in_edi_token and self.l10n_in_edi_token_validity > fields.Datetime.now():
-            //     return True
-            // return False
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nItEdiExportCheckInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _l10n_it_edi_export_check(self):
-            // checks = {
-            //     'company_vat_codice_fiscale_missing': {
-            //         'fields': [('vat', 'l10n_it_codice_fiscale')],
-            //         'message': _("Company/ies should have a VAT number or Codice Fiscale."),
-            //     },
-            //     'company_address_missing': {
-            //         'fields': [('street', 'street2'), ('zip',), ('city',), ('country_id',)],
-            //         'message': _("Company/ies should have a complete address, verify their Street, City, Zipcode and Country."),
-            //     },
-            //     'company_l10n_it_tax_system_missing': {
-            //         'fields': [('l10n_it_tax_system',)],
-            //         'message': _("Company/ies should have a Tax System"),
-            //     },
-            // }
-            // errors = {}
-            // for key, check in checks.items():
-            //     for fields_tuple in check.pop('fields'):
-            //         if invalid_records := self.filtered(lambda record: not any(record[field] for field in fields_tuple)):
-            //             errors[f"l10n_it_edi_{key}"] = {
-            //                 'message': check['message'],
-            //                 'action_text': _("View Company/ies"),
-            //                 'action': invalid_records._get_records_action(name=_("Check Company Data")),
-            //             }
-            // if self.filtered(lambda x: not x.l10n_it_edi_proxy_user_id):
-            //     errors['l10n_it_edi_settings_l10n_it_edi_proxy_user_id'] = {
-            //         'message': _("You must accept the terms and conditions in the Settings to use the IT EDI."),
-            //         'action_text': _("View Settings"),
-            //         'action': {
-            //             'name': _("Settings"),
-            //             'type': 'ir.actions.act_url',
-            //             'target': 'self',
-            //             'url': '/odoo/settings#italian_edi',
-            //         },
-            //     }
-            // return errors
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nItGetEdiCompanyInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _l10n_it_get_edi_company(self):
-            // self.ensure_one()
-            // if (
-            //     self.root_id.id != self.id
-            //     and self.l10n_it_codice_fiscale == self.root_id.l10n_it_codice_fiscale
-            //     and self.vat == self.root_id.vat
-            // ):
-            //     return self.root_id
-            // else:
-            //     return self
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nMyEdiCreateProxyUserInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_company.py) ---
-            // def _l10n_my_edi_create_proxy_user(self):
-            // """ This method will create a new proxy user for the current company based on the selected mode, if no users already exists. """
-            // self.ensure_one()
-            // if not self.l10n_my_edi_proxy_user_id:
-            //     self.env['account_edi_proxy_client.user']._register_proxy_user(self, 'l10n_my_edi', self.l10n_my_edi_mode)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nMyEdiEnabledInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: res_company.py) ---
-            // def _l10n_my_edi_enabled(self):
-            // self.ensure_one()
-            // return bool(self.sudo().l10n_my_edi_proxy_user_id)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nRoEdiLogMessageInternalAsync(string message, string func)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_company.py) ---
-            // def _l10n_ro_edi_log_message(self, message: str, func: str):
-            // with self.pool.cursor() as cr:
-            //     self = self.with_env(self.env(cr=cr))
-            //     self.env['ir.logging'].sudo().create({
-            //         'name': 'l10n_ro_edi_log',
-            //         'type': 'server',
-            //         'level': 'INFO',
-            //         'dbname': self.env.cr.dbname,
-            //         'message': message,
-            //         'func': func,
-            //         'path': '',
-            //         'line': '1',
-            //     })
-            //     self.env.cr.commit()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nRoEdiProcessTokenResponseInternalAsync(object response_json)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_company.py) ---
-            // def _l10n_ro_edi_process_token_response(self, response_json):
-            // """
-            // To be called just after processing the json response from https://logincert.anaf.ro/anaf-oauth2/v1/token
-            // This method reads and process the json, and writes the token fields on the company.
-            // """
-            // self.ensure_one()
-            // if 'access_token' not in response_json or 'refresh_token' not in response_json:
-            //     raise ValidationError(_("Token not found.\nResponse: %s", response_json))
-            // 
-            // # The access_token is in JWT format, which consists of 3 parts separated by '.':
-            // # Header, Payload, and Signature. We only need the Payload part to decode the token
-            // # and get the access expiry date
-            // payload = response_json['access_token'].split('.')[1]
-            // payload += '=' * (-len(payload) % 4)
-            // decoded_payload = base64.b64decode(payload, altchars=b'-_', validate=True)
-            // access_token_obj = json.loads(decoded_payload)
-            // access_expiry_date = datetime.fromtimestamp(access_token_obj['exp'])
-            // refresh_expiry_date = datetime.now() + relativedelta(years=3)
-            // self.write({
-            //     'l10n_ro_edi_access_token': response_json['access_token'],
-            //     'l10n_ro_edi_refresh_token': response_json['refresh_token'],
-            //     'l10n_ro_edi_access_expiry_date': access_expiry_date,
-            //     'l10n_ro_edi_refresh_expiry_date': refresh_expiry_date,
-            //     'l10n_ro_edi_oauth_error': False,
-            // })
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nRoEdiRefreshAccessTokenInternalAsync(object session)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: res_company.py) ---
-            // def _l10n_ro_edi_refresh_access_token(self, session):
-            // """
-            // Uses the saved client_id, client_secret, and refresh_token on the company (self)
-            // to make request to the SPV and renew the company's token fields.
-            // """
-            // self.ensure_one()
-            // if not self.l10n_ro_edi_client_id or not self.l10n_ro_edi_client_secret:
-            //     raise UserError(_("Client ID and Client Secret field must be filled."))
-            // if not self.l10n_ro_edi_refresh_token:
-            //     raise UserError(_("Refresh token not found"))
-            // 
-            // response = session.post(
-            //     url='https://logincert.anaf.ro/anaf-oauth2/v1/token',
-            //     headers={'Content-Type': 'application/x-www-form-urlencoded'},
-            //     timeout=10,
-            //     data={
-            //         'grant_type': 'refresh_token',
-            //         'refresh_token': self.l10n_ro_edi_refresh_token,
-            //         'client_id': self.l10n_ro_edi_client_id,
-            //         'client_secret': self.l10n_ro_edi_client_secret,
-            //     },
-            // )
-            // response_json = response.json()
-            // self._l10n_ro_edi_process_token_response(response_json)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nSaCheckOrganizationUnitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _l10n_sa_check_organization_unit(self):
-            // """
-            //     Check company Organization Unit according to ZATCA specifications
-            //     Standards:
-            //         BR-KSA-39
-            //         BR-KSA-40
-            //     See https://zatca.gov.sa/ar/RulesRegulations/Taxes/Documents/20210528_ZATCA_Electronic_Invoice_XML_Implementation_Standard_vShared.pdf
-            // """
-            // self.ensure_one()
-            // if not self.vat:
-            //     return False
-            // return len(self.vat) == 15 and bool(re.match(r'^3\d{13}3$', self.vat))
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nSaEdiInverseBuildingNumberInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _l10n_sa_edi_inverse_building_number(self):
-            // for company in self:
-            //     company.partner_id.l10n_sa_edi_building_number = company.l10n_sa_edi_building_number
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nSaEdiInversePlotIdentificationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _l10n_sa_edi_inverse_plot_identification(self):
-            // for company in self:
-            //     company.partner_id.l10n_sa_edi_plot_identification = company.l10n_sa_edi_plot_identification
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> L10nSaGetCsrInvoiceTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def _l10n_sa_get_csr_invoice_type(self):
-            // """
-            //     Return the Invoice Type flag used in the CSR. 4-digit numerical input using 0 & 1 mapped to “TSCZ” where:
-            //     -   0: False/Not supported, 1: True/Supported
-            //     -   T: Tax Invoice (Standard), S: Simplified Invoice, C & Z will be used in the future and should
-            //         always be 0
-            //     For example: 1100 would mean the Solution will be generating Standard and Simplified invoices.
-            //     We can assume Odoo-powered EGS solutions will always generate both Standard & Simplified invoices
-            // :return:
-            // """
-            // return '1100'
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> LoadPosDataDomainInternalAsync(object data)
         {
             /*
@@ -4068,15 +2733,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResCompany> LoadPosDataFieldsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai_pos, FILE: res_company.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // return super()._load_pos_data_fields(config_id) + ['l10n_es_tbai_is_enabled']
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_pos, FILE: res_company.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // params = super()._load_pos_data_fields(config_id)
-            // if self.env.company.country_id.code == "ES":
-            //     params += ["street", "city", "zip", "l10n_es_simplified_invoice_limit"]
-            // return params
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_company.py) ---
             // def _load_pos_data_fields(self, config_id):
             // return [
@@ -4089,168 +2745,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> LocalizationUseDocumentsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // """ Argentinean localization use documents """
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "AR" or super()._localization_use_documents()
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "BR" or super()._localization_use_documents()
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // """ Chilean localization use documents """
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "CL" or super()._localization_use_documents()
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "EC" or super(ResCompany, self)._localization_use_documents()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // """ This method is to be inherited by localizations and return True if localization use documents """
-            // self.ensure_one()
-            // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // # OVERRIDE
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "PE" or super()._localization_use_documents()
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: res_company.py) ---
-            // def _localization_use_documents(self):
-            // """ Uruguayan localization use documents """
-            // self.ensure_one()
-            // return self.account_fiscal_country_id.code == "UY" or super()._localization_use_documents()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> MapAllEuCompaniesTaxesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _map_all_eu_companies_taxes(self):
-            // ''' Identifies EU companies and calls the _map_eu_taxes function
-            // '''
-            // eu_countries = self.env.ref('base.europe').country_ids
-            // companies = self.search([('account_fiscal_country_id', 'in', eu_countries.ids)])
-            // companies._map_eu_taxes()
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> MapEuTaxesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eu_oss, FILE: res_company.py) ---
-            // def _map_eu_taxes(self):
-            // '''Creates or updates Fiscal Positions for each EU country excluding the company's account_fiscal_country_id
-            // '''
-            // eu_countries = self.env.ref('base.europe').country_ids
-            // oss_tax_groups = self.env['ir.model.data'].search([
-            //     ('name', 'ilike', 'oss_tax_group'),
-            //     ('module', '=', 'account'),
-            //     ('model', '=', 'account.tax.group')])
-            // for company in self:
-            //     # instantiate OSS taxes on the first branch with a TAX ID, default on root company
-            //     company = company.parent_ids.filtered(lambda c: c.vat)[-1:] or company.root_id
-            //     invoice_repartition_lines, refund_repartition_lines = company._get_repartition_lines_oss()
-            //     taxes = self.env['account.tax'].search([
-            //         *self.env['account.tax']._check_company_domain(company),
-            //         ('type_tax_use', '=', 'sale'),
-            //         ('amount_type', '=', 'percent'),
-            //         ('tax_group_id', 'not in', oss_tax_groups.mapped('res_id'))
-            //     ])
-            // 
-            //     multi_tax_reports_countries_fpos = self.env['account.fiscal.position'].search([
-            //         ('foreign_vat', '!=', False),
-            //     ])
-            //     oss_countries = eu_countries - company.account_fiscal_country_id - multi_tax_reports_countries_fpos.country_id
-            //     for destination_country in oss_countries:
-            //         mapping = []
-            //         fpos = self.env['account.fiscal.position'].search([
-            //                     ('company_id', '=', company.id),
-            //                     ('country_id', '=', destination_country.id),
-            //                     ('auto_apply', '=', True),
-            //                     ('vat_required', '=', False),
-            //                     ('foreign_vat', '=', False)], limit=1)
-            //         if not fpos:
-            //             fpos = self.env['account.fiscal.position'].create({
-            //                 'name': f'OSS B2C {destination_country.name}',
-            //                 'country_id': destination_country.id,
-            //                 'company_id': company.id,
-            //                 'auto_apply': True,
-            //             })
-            // 
-            //         foreign_taxes = {tax.amount: tax for tax in fpos.tax_ids.tax_dest_id if tax.amount_type == 'percent'}
-            // 
-            //         for domestic_tax in taxes:
-            //             tax_amount = EU_TAX_MAP.get((domestic_tax.country_id.code, domestic_tax.amount, destination_country.code), False)
-            //             if tax_amount and domestic_tax not in fpos.tax_ids.tax_src_id:
-            //                 if not foreign_taxes.get(tax_amount, False):
-            //                     oss_tax_group_local_xml_id = f"{company.id}_oss_tax_group_{str(tax_amount).replace('.', '_')}_{company.account_fiscal_country_id.code}"
-            //                     if not self.env.ref(f"account.{oss_tax_group_local_xml_id}", raise_if_not_found=False):
-            //                         tg = self.env['account.tax.group'].search([
-            //                             *self.env['account.tax.group']._check_company_domain(company),
-            //                             ('tax_payable_account_id', '!=', False)], limit=1)
-            //                         self.env['ir.model.data'].create({
-            //                             'name': oss_tax_group_local_xml_id,
-            //                             'module': 'account',
-            //                             'model': 'account.tax.group',
-            //                             'res_id': self.env['account.tax.group'].create({
-            //                                 'name': f'OSS {tax_amount}%',
-            //                                 'country_id': company.account_fiscal_country_id.id,
-            //                                 'company_id': company.id,
-            //                                 'tax_payable_account_id': tg.tax_payable_account_id.id,
-            //                                 'tax_receivable_account_id': tg.tax_receivable_account_id.id,
-            //                             }).id,
-            //                             'noupdate': True,
-            //                         })
-            //                     foreign_tax_name = f'{tax_amount}% {destination_country.code} {destination_country.vat_label}'
-            //                     existing_foreign_tax = self.env['account.tax'].search([
-            //                         ('company_id', 'child_of', company.root_id.id),
-            //                         ('name', 'like', foreign_tax_name),
-            //                         ('type_tax_use', '=', 'sale'),
-            //                         ('country_id', '=', company.account_fiscal_country_id.id),
-            //                     ], order='sequence,id desc', limit=1)
-            //                     foreign_tax_copy_name = existing_foreign_tax and _('%(tax_name)s (Copy)', tax_name=existing_foreign_tax.name)
-            //                     foreign_taxes[tax_amount] = self.env['account.tax'].create({
-            //                         'name': foreign_tax_copy_name or foreign_tax_name,
-            //                         'amount': tax_amount,
-            //                         'invoice_repartition_line_ids': invoice_repartition_lines,
-            //                         'refund_repartition_line_ids': refund_repartition_lines,
-            //                         'type_tax_use': 'sale',
-            //                         'description': f"{tax_amount}%",
-            //                         'tax_group_id': self.env.ref(f'account.{oss_tax_group_local_xml_id}').id,
-            //                         'country_id': company.account_fiscal_country_id.id,
-            //                         'sequence': 1000,
-            //                         'company_id': company.id,
-            //                     })
-            //                 mapping.append((0, 0, {'tax_src_id': domestic_tax.id, 'tax_dest_id': foreign_taxes[tax_amount].id}))
-            //         if mapping:
-            //             fpos.write({
-            //                 'tax_ids': mapping
-            //             })
-            */
-            return default;
-        }
-
-        public async Task<ResCompany> OnchangeCountryAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_company.py) ---
-            // def onchange_country(self):
-            // """ Argentinean companies use round_globally as tax_calculation_rounding_method """
-            // for rec in self.filtered(lambda x: x.country_id.code == "AR"):
-            //     rec.tax_calculation_rounding_method = 'round_globally'
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<ResCompany> OnchangeCountryIdInternalAsync()
         {
             /*
@@ -4258,18 +2752,6 @@ namespace Bamboo.Core.Application.Services
             // def _onchange_country_id(self):
             // if self.country_id:
             //     self.currency_id = self.country_id.currency_id
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> OnchangeL10nItHasTaxRepreseentativeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: res_company.py) ---
-            // def _onchange_l10n_it_has_tax_represeentative(self):
-            // for company in self:
-            //     if not company.l10n_it_has_tax_representative:
-            //         company.l10n_it_tax_representative_partner_id = False
             */
             return default;
         }
@@ -4387,7 +2869,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> ReflectCodePrefixChangeAsync(Guid id, object old_code, object new_code)
+        public async Task<ResCompany> ReflectCodePrefixChangeAsync(Guid id, ResCompanyReflectCodePrefixChangeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: company.py) ---
@@ -4631,20 +3113,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ResCompany> UpdateL10nInFiscalPositionInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def _update_l10n_in_fiscal_position(self):
-            // companies_need_update_fp = self.filtered(lambda c: c.parent_ids[0].chart_template == 'in')
-            // for company in companies_need_update_fp:
-            //     ChartTemplate = self.env['account.chart.template'].with_company(company)
-            //     fiscal_position_data = ChartTemplate._get_in_account_fiscal_position()
-            //     ChartTemplate._load_data({'account.fiscal.position': fiscal_position_data})
-            */
-            return default;
-        }
-
         protected async Task<ResCompany> UpdateOpeningMoveInternalAsync(object to_update)
         {
             /*
@@ -4739,17 +3207,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCompany> UpdateStateAsPerGstinAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def action_update_state_as_per_gstin(self):
-            // self.ensure_one()
-            // self.partner_id.action_update_state_as_per_gstin()
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         protected async Task<ResCompany> ValidateFiscalyearLockInternalAsync(object values)
         {
             /*
@@ -4785,17 +3242,6 @@ namespace Bamboo.Core.Application.Services
             //         error_msg = _("There are still unreconciled bank statement lines in the period you want to lock."
             //                       "You should either reconcile or delete them.")
             //         raise ValidationError(error_msg)
-            */
-            return default;
-        }
-
-        protected async Task<ResCompany> ValidateL10nDeStnrInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: res_company.py) ---
-            // def _validate_l10n_de_stnr(self):
-            // for record in self:
-            //     record.get_l10n_de_stnr_national()
             */
             return default;
         }
@@ -4973,59 +3419,6 @@ namespace Bamboo.Core.Application.Services
             //     self.env['hr.attendance'].search(OR(search_domains))._update_overtime()
             // 
             // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: res_company.py) ---
-            // def write(self, vals):
-            // if 'l10n_ar_afip_responsibility_type_id' in vals:
-            //     for company in self:
-            //         if vals['l10n_ar_afip_responsibility_type_id'] != company.l10n_ar_afip_responsibility_type_id.id and company.sudo()._existing_accounting():
-            //             raise UserError(_('Could not change the AFIP Responsibility of this company because there are already accounting entries.'))
-            // 
-            // return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: res_company.py) ---
-            // def write(self, vals):
-            // if (
-            //     'account_fiscal_country_id' in vals
-            //     and (german_companies := self.filtered(lambda c: c.account_fiscal_country_id.code == 'DE'))
-            //     and self.env['res.country'].browse(vals['account_fiscal_country_id']).code != 'DE'
-            //     and self.env['account.move'].search_count([('company_id', 'in', german_companies.ids)], limit=1)
-            // ):
-            //     raise ValidationError(_("You cannot change the fiscal country."))
-            // return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr, FILE: res_company.py) ---
-            // def write(self, vals):
-            // res = super(ResCompany, self).write(vals)
-            // #if country changed to fr, create the securisation sequence
-            // for company in self:
-            //     if company._is_accounting_unalterable():
-            //         sequence_fields = ['l10n_fr_closing_sequence_id']
-            //         company._create_secure_sequence(sequence_fields)
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: res_company.py) ---
-            // def write(self, vals):
-            // res = super(ResCompany, self).write(vals)
-            // #if country changed to fr, create the securisation sequence
-            // for company in self:
-            //     if company._is_accounting_unalterable():
-            //         sequence_fields = ['l10n_fr_pos_cert_sequence_id']
-            //         company._create_secure_sequence(sequence_fields)
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: company.py) ---
-            // def write(self, vals):
-            // res = super().write(vals)
-            // if (vals.get('state_id') or vals.get('country_id')) and not self.env.context.get('delay_account_group_sync'):
-            //     # Update Fiscal Positions for companies setting up state for the first time
-            //     self._update_l10n_in_fiscal_position()
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: res_company.py) ---
-            // def write(self, vals):
-            // for company in self:
-            //     if 'l10n_sa_api_mode' in vals:
-            //         if company.l10n_sa_api_mode == 'prod' and vals['l10n_sa_api_mode'] != 'prod':
-            //             raise UserError(_("You cannot change the ZATCA Submission Mode once it has been set to Production"))
-            //         journals = self.env['account.journal'].search(self.env['account.journal']._check_company_domain(company))
-            //         journals._l10n_sa_reset_certificates()
-            //         journals.l10n_sa_latest_submission_hash = False
-            // return super().write(vals)
             --- ODOO METHOD SOURCE (MODULE: product, FILE: res_company.py) ---
             // def write(self, vals):
             // """Delay the automatic creation of pricelists post-company update.

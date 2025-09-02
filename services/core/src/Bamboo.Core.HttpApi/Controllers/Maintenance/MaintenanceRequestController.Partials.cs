@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Maintenance
 {
     public partial class MaintenanceRequestController
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Maintenance
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] MaintenanceRequestMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.Msg, input.CustomValues);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
         

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(Guid id, object post_move)
+        public async Task<AccountAssetDepreciationLine> CreateGroupedMoveAsync(Guid id, AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -42,7 +43,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAssetDepreciationLine> CreateMoveAsync(Guid id, object post_move)
+        public async Task<AccountAssetDepreciationLine> CreateMoveAsync(Guid id, AccountAssetDepreciationLineCreateMoveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---

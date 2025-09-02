@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrAttachmentController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/check")]
         public async Task<IActionResult> CheckAsync(Guid id, [FromBody] IrAttachmentCheckRequestDto input)
         {
-            var result = await _appService.CheckAsync(id, input.Mode, input.Values);
+            var result = await _appService.CheckAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] IrAttachmentCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/create-unique")]
         public async Task<IActionResult> CreateUniqueAsync(Guid id, [FromBody] IrAttachmentCreateUniqueRequestDto input)
         {
-            var result = await _appService.CreateUniqueAsync(id, input.ValuesList);
+            var result = await _appService.CreateUniqueAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/register-as-main-attachment")]
         public async Task<IActionResult> RegisterAsMainAttachmentAsync(Guid id, [FromBody] IrAttachmentRegisterAsMainAttachmentRequestDto input)
         {
-            var result = await _appService.RegisterAsMainAttachmentAsync(id, input.Force);
+            var result = await _appService.RegisterAsMainAttachmentAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/validate-access")]
         public async Task<IActionResult> ValidateAccessAsync(Guid id, [FromBody] IrAttachmentValidateAccessRequestDto input)
         {
-            var result = await _appService.ValidateAccessAsync(id, input.AccessToken);
+            var result = await _appService.ValidateAccessAsync(id, input);
             return Ok(result);
         }
     }

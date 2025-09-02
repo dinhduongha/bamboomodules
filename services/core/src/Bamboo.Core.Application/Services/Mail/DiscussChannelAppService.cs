@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -66,7 +67,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> AddMembersAsync(Guid id, List<Guid> partner_ids, List<Guid> guest_ids, object invite_to_rtc_call, object open_chat_window, object post_joined_message)
+        public async Task<DiscussChannel> AddMembersAsync(Guid id, DiscussChannelAddMembersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -219,7 +220,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> ChannelChangeDescriptionAsync(Guid id, object description)
+        public async Task<DiscussChannel> ChannelChangeDescriptionAsync(Guid id, DiscussChannelChannelChangeDescriptionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -230,7 +231,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DiscussChannel> ChannelCreateAsync(Guid id, object name, Guid group_id)
+        public async Task<DiscussChannel> ChannelCreateAsync(Guid id, DiscussChannelChannelCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -301,7 +302,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DiscussChannel> ChannelGetAsync(Guid id, object partners_to, object pin, object force_open)
+        public async Task<DiscussChannel> ChannelGetAsync(Guid id, DiscussChannelChannelGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -386,7 +387,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DiscussChannel> ChannelPinAsync(Guid id, object pinned)
+        public async Task<DiscussChannel> ChannelPinAsync(Guid id, DiscussChannelChannelPinRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -416,7 +417,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DiscussChannel> ChannelRenameAsync(Guid id, object name)
+        public async Task<DiscussChannel> ChannelRenameAsync(Guid id, DiscussChannelChannelRenameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -427,7 +428,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DiscussChannel> ChannelSetCustomNameAsync(Guid id, object name)
+        public async Task<DiscussChannel> ChannelSetCustomNameAsync(Guid id, DiscussChannelChannelSetCustomNameRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -837,7 +838,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> CreateGroupAsync(Guid id, object partners_to, object default_display_mode, object name)
+        public async Task<DiscussChannel> CreateGroupAsync(Guid id, DiscussChannelCreateGroupRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1243,7 +1244,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> GetMentionSuggestionsAsync(Guid id, object search, object limit)
+        public async Task<DiscussChannel> GetMentionSuggestionsAsync(Guid id, DiscussChannelGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---
@@ -1801,7 +1802,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<DiscussChannel> SetMessagePinAsync(Guid id, Guid message_id, object pinned)
+        public async Task<DiscussChannel> SetMessagePinAsync(Guid id, DiscussChannelSetMessagePinRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: discuss_channel.py) ---

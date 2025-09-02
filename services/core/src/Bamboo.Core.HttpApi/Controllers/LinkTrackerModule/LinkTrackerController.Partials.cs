@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.LinkTrackerModule
 {
     public partial class LinkTrackerController
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.LinkTrackerModule
         [Route("{id}/convert-links")]
         public async Task<IActionResult> ConvertLinksAsync(Guid id, [FromBody] LinkTrackerConvertLinksRequestDto input)
         {
-            var result = await _appService.ConvertLinksAsync(id, input.Html, input.Vals, input.Blacklist);
+            var result = await _appService.ConvertLinksAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.LinkTrackerModule
         [Route("{id}/get-url-from-code")]
         public async Task<IActionResult> GetUrlFromCodeAsync(Guid id, [FromBody] LinkTrackerGetUrlFromCodeRequestDto input)
         {
-            var result = await _appService.GetUrlFromCodeAsync(id, input.Code);
+            var result = await _appService.GetUrlFromCodeAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.LinkTrackerModule
         [Route("{id}/recent-links")]
         public async Task<IActionResult> RecentLinksAsync(Guid id, [FromBody] LinkTrackerRecentLinksRequestDto input)
         {
-            var result = await _appService.RecentLinksAsync(id, input.Filter, input.Limit);
+            var result = await _appService.RecentLinksAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.LinkTrackerModule
         [Route("{id}/search-or-create")]
         public async Task<IActionResult> SearchOrCreateAsync(Guid id, [FromBody] LinkTrackerSearchOrCreateRequestDto input)
         {
-            var result = await _appService.SearchOrCreateAsync(id, input.ValsList);
+            var result = await _appService.SearchOrCreateAsync(id, input);
             return Ok(result);
         }
     }

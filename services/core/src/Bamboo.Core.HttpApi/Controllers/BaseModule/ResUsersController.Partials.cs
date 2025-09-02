@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class ResUsersController
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/auth-oauth")]
         public async Task<IActionResult> AuthOauthAsync(Guid id, [FromBody] ResUsersAuthOauthRequestDto input)
         {
-            var result = await _appService.AuthOauthAsync(id, input.Provider, input.Params);
+            var result = await _appService.AuthOauthAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/authenticate")]
         public async Task<IActionResult> AuthenticateAsync(Guid id, [FromBody] ResUsersAuthenticateRequestDto input)
         {
-            var result = await _appService.AuthenticateAsync(id, input.Db, input.Credential, input.UserAgentEnv);
+            var result = await _appService.AuthenticateAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/change-password")]
         public async Task<IActionResult> ChangePasswordAsync(Guid id, [FromBody] ResUsersChangePasswordRequestDto input)
         {
-            var result = await _appService.ChangePasswordAsync(id, input.OldPasswd, input.NewPasswd);
+            var result = await _appService.ChangePasswordAsync(id, input);
             return Ok(result);
         }
         
@@ -188,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/check")]
         public async Task<IActionResult> CheckAsync(Guid id, [FromBody] ResUsersCheckRequestDto input)
         {
-            var result = await _appService.CheckAsync(id, input.Db, input.Uid, input.Passwd);
+            var result = await _appService.CheckAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] ResUsersCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -252,7 +253,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-selected-calendars-partner-ids")]
         public async Task<IActionResult> GetSelectedCalendarsPartnerIdsAsync(Guid id, [FromBody] ResUsersGetSelectedCalendarsPartnerIdsRequestDto input)
         {
-            var result = await _appService.GetSelectedCalendarsPartnerIdsAsync(id, input.IncludeUser);
+            var result = await _appService.GetSelectedCalendarsPartnerIdsAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +269,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-view")]
         public async Task<IActionResult> GetViewAsync(Guid id, [FromBody] ResUsersGetViewRequestDto input)
         {
-            var result = await _appService.GetViewAsync(id, input.ViewId, input.ViewType);
+            var result = await _appService.GetViewAsync(id, input);
             return Ok(result);
         }
         
@@ -276,7 +277,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-views")]
         public async Task<IActionResult> GetViewsAsync(Guid id, [FromBody] ResUsersGetViewsRequestDto input)
         {
-            var result = await _appService.GetViewsAsync(id, input.Views, input.Options);
+            var result = await _appService.GetViewsAsync(id, input);
             return Ok(result);
         }
         
@@ -284,7 +285,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/has-group")]
         public async Task<IActionResult> HasGroupAsync(Guid id, [FromBody] ResUsersHasGroupRequestDto input)
         {
-            var result = await _appService.HasGroupAsync(id, input.GroupExtId);
+            var result = await _appService.HasGroupAsync(id, input);
             return Ok(result);
         }
         
@@ -292,7 +293,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/has-groups")]
         public async Task<IActionResult> HasGroupsAsync(Guid id, [FromBody] ResUsersHasGroupsRequestDto input)
         {
-            var result = await _appService.HasGroupsAsync(id, input.GroupSpec);
+            var result = await _appService.HasGroupsAsync(id, input);
             return Ok(result);
         }
         
@@ -316,7 +317,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/new")]
         public async Task<IActionResult> NewAsync(Guid id, [FromBody] ResUsersNewRequestDto input)
         {
-            var result = await _appService.NewAsync(id, input.Values, input.Origin, input.Ref);
+            var result = await _appService.NewAsync(id, input);
             return Ok(result);
         }
         
@@ -380,7 +381,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/reset-password")]
         public async Task<IActionResult> ResetPasswordAsync(Guid id, [FromBody] ResUsersResetPasswordRequestDto input)
         {
-            var result = await _appService.ResetPasswordAsync(id, input.Login);
+            var result = await _appService.ResetPasswordAsync(id, input);
             return Ok(result);
         }
         
@@ -436,7 +437,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/signup")]
         public async Task<IActionResult> SignupAsync(Guid id, [FromBody] ResUsersSignupRequestDto input)
         {
-            var result = await _appService.SignupAsync(id, input.Values, input.Token);
+            var result = await _appService.SignupAsync(id, input);
             return Ok(result);
         }
         
@@ -460,7 +461,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/switch-tour-enabled")]
         public async Task<IActionResult> SwitchTourEnabledAsync(Guid id, [FromBody] ResUsersSwitchTourEnabledRequestDto input)
         {
-            var result = await _appService.SwitchTourEnabledAsync(id, input.Val);
+            var result = await _appService.SwitchTourEnabledAsync(id, input);
             return Ok(result);
         }
         
@@ -492,7 +493,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/web-create-users")]
         public async Task<IActionResult> WebCreateUsersAsync(Guid id, [FromBody] ResUsersWebCreateUsersRequestDto input)
         {
-            var result = await _appService.WebCreateUsersAsync(id, input.Emails);
+            var result = await _appService.WebCreateUsersAsync(id, input);
             return Ok(result);
         }
         

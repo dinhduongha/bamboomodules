@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -124,7 +125,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ApplyInheritanceSpecsAsync(Guid id, object source, object specs_tree, object pre_locate)
+        public async Task<IrUiView> ApplyInheritanceSpecsAsync(Guid id, IrUiViewApplyInheritanceSpecsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -698,7 +699,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> CopyDataAsync(Guid id, object @default)
+        public async Task<IrUiView> CopyDataAsync(Guid id, IrUiViewCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -922,7 +923,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> DefaultViewAsync(Guid id, object model, object view_type)
+        public async Task<IrUiView> DefaultViewAsync(Guid id, IrUiViewDefaultViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -941,7 +942,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> DeleteSnippetAsync(Guid id, Guid view_id, object template_key)
+        public async Task<IrUiView> DeleteSnippetAsync(Guid id, IrUiViewDeleteSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -955,7 +956,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> DistributeBrandingAsync(Guid id, object e, object branding, object parent_xpath, object index_map)
+        public async Task<IrUiView> DistributeBrandingAsync(Guid id, IrUiViewDistributeBrandingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1075,7 +1076,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ExtractEmbeddedFieldsAsync(Guid id, object arch)
+        public async Task<IrUiView> ExtractEmbeddedFieldsAsync(Guid id, IrUiViewExtractEmbeddedFieldsRequestDto input)
         {
             #if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -1085,7 +1086,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> ExtractOeStructuresAsync(Guid id, object arch)
+        public async Task<IrUiView> ExtractOeStructuresAsync(Guid id, IrUiViewExtractOeStructuresRequestDto input)
         {
             #if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -1465,7 +1466,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> GetRelatedViewsAsync(Guid id, object key, object bundles)
+        public async Task<IrUiView> GetRelatedViewsAsync(Guid id, IrUiViewGetRelatedViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -1738,7 +1739,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> InheritBrandingAsync(Guid id, object specs_tree)
+        public async Task<IrUiView> InheritBrandingAsync(Guid id, IrUiViewInheritBrandingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1808,7 +1809,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> IsNodeBrandedAsync(Guid id, object node)
+        public async Task<IrUiView> IsNodeBrandedAsync(Guid id, IrUiViewIsNodeBrandedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -1927,7 +1928,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> LocateNodeAsync(Guid id, object arch, object spec)
+        public async Task<IrUiView> LocateNodeAsync(Guid id, IrUiViewLocateNodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2126,7 +2127,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> PostprocessAndFieldsAsync(Guid id, object node, object model)
+        public async Task<IrUiView> PostprocessAndFieldsAsync(Guid id, IrUiViewPostprocessAndFieldsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2512,7 +2513,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> RenameSnippetAsync(Guid id, object name, Guid view_id, object template_key)
+        public async Task<IrUiView> RenameSnippetAsync(Guid id, IrUiViewRenameSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2528,7 +2529,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> RenderPublicAssetAsync(Guid id, object template, object values)
+        public async Task<IrUiView> RenderPublicAssetAsync(Guid id, IrUiViewRenderPublicAssetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2560,7 +2561,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ReplaceArchSectionAsync(Guid id, object section_xpath, object replacement, object replace_tail)
+        public async Task<IrUiView> ReplaceArchSectionAsync(Guid id, IrUiViewReplaceArchSectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2598,7 +2599,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> ResetArchAsync(Guid id, object mode)
+        public async Task<IrUiView> ResetArchAsync(Guid id, IrUiViewResetArchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
@@ -2621,7 +2622,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> SaveAsync(Guid id, object @value, object xpath)
+        public async Task<IrUiView> SaveAsync(Guid id, IrUiViewSaveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2685,7 +2686,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> SaveEmbeddedFieldAsync(Guid id, object el)
+        public async Task<IrUiView> SaveEmbeddedFieldAsync(Guid id, IrUiViewSaveEmbeddedFieldRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2719,7 +2720,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> SaveOeStructureAsync(Guid id, object el)
+        public async Task<IrUiView> SaveOeStructureAsync(Guid id, IrUiViewSaveOeStructureRequestDto input)
         {
             #if PYTHON_CODE
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2772,7 +2773,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> SaveSnippetAsync(Guid id, object name, object arch, object template_key, object snippet_key, object thumbnail_url)
+        public async Task<IrUiView> SaveSnippetAsync(Guid id, IrUiViewSaveSnippetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2919,7 +2920,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiView> ToEmptyOeStructureAsync(Guid id, object el)
+        public async Task<IrUiView> ToEmptyOeStructureAsync(Guid id, IrUiViewToEmptyOeStructureRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---
@@ -2931,7 +2932,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiView> ToFieldRefAsync(Guid id, object el)
+        public async Task<IrUiView> ToFieldRefAsync(Guid id, IrUiViewToFieldRefRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_ui_view.py) ---

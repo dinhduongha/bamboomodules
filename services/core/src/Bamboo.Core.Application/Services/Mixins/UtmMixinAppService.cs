@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,78 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("utm", Depends = new[] { "base", "web" })]
     public class UtmMixinAppService : ApplicationService, IUtmMixinAppService
     {
-
-        public UtmMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public UtmMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_activate_currency(self):
+            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_add_from_catalog(self):
+            // res = super().action_add_from_catalog()
+            // if res['context'].get('product_catalog_order_model') == 'account.move':
+            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_cancel(self):
+            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
+            // 
+            // For post-cancel operations, please only override :meth:`_action_cancel`.
+            // 
+            // note: self.ensure_one() if the wizard is shown.
+            // """
+            // if any(order.locked for order in self):
+            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
+            // cancel_warning = self._show_cancel_wizard()
+            // if cancel_warning:
+            //     self.ensure_one()
+            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
+            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
+            //     )
+            //     lang = self.env.context.get('lang')
+            //     template = self.env['mail.template'].browse(template_id)
+            //     if template.lang:
+            //         lang = template._render_lang(self.ids)[self.id]
+            //     ctx = {
+            //         'default_template_id': template_id,
+            //         'default_order_id': self.id,
+            //         'mark_so_as_canceled': True,
+            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     }
+            //     return {
+            //         'name': _('Cancel %s', self.type_name),
+            //         'view_mode': 'form',
+            //         'res_model': 'sale.order.cancel',
+            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
+            //         'type': 'ir.actions.act_window',
+            //         'context': ctx,
+            //         'target': 'new'
+            //     }
+            // else:
+            //     return self._action_cancel()
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
@@ -31,6 +101,68 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionCancelPeppolDocumentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move.py) ---
+            // def action_cancel_peppol_documents(self):
+            // # if the peppol_move_state is processing/done
+            // # then it means it has been already sent to peppol proxy and we can't cancel
+            // if any(move.peppol_move_state in {'processing', 'done'} for move in self):
+            //     raise UserError(_("Cannot cancel an entry that has already been sent to PEPPOL"))
+            // self.peppol_move_state = False
+            // self.sending_data = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_confirm(self):
+            // """ Confirm the given quotation(s) and set their confirmation date.
+            // 
+            // If the corresponding setting is enabled, also locks the Sale Order.
+            // 
+            // :return: True
+            // :rtype: bool
+            // :raise: UserError if trying to confirm cancelled SO's
+            // """
+            // for order in self:
+            //     error_msg = order._confirmation_error_message()
+            //     if error_msg:
+            //         raise UserError(error_msg)
+            // 
+            // self.order_line._validate_analytic_distribution()
+            // 
+            // for order in self:
+            //     if order.partner_id in order.message_partner_ids:
+            //         continue
+            //     order.message_subscribe([order.partner_id.id])
+            // 
+            // self.write(self._prepare_confirmation_values())
+            // 
+            // # Context key 'default_name' is sometimes propagated up to here.
+            // # We don't need it and it creates issues in the creation of linked records.
+            // context = self._context.copy()
+            // context.pop('default_name', None)
+            // context.pop('default_user_id', None)
+            // 
+            // self.with_context(context)._action_confirm()
+            // user = self[:1].create_uid
+            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
+            //     # Public user can confirm SO, so we check the group on any record creator.
+            //     self.action_lock()
+            // 
+            // if self.env.context.get('send_email'):
+            //     self._send_order_confirmation_mail()
+            // 
+            // return True
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionConfirmInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -41,6 +173,135 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     other documents. In this method, the SO are in 'sale' state (not yet 'done').
             // """
             // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_create_meeting(self):
+            // """ This opens Meeting's calendar view to schedule meeting on current applicant
+            //     @return: Dictionary value for created Meeting view
+            // """
+            // self.ensure_one()
+            // if not self.partner_id:
+            //     if not self.partner_name:
+            //         raise UserError(_('You must define a Contact Name for this applicant.'))
+            //     self.partner_id = self.env['res.partner'].create({
+            //         'is_company': False,
+            //         'name': self.partner_name,
+            //         'email': self.email_from,
+            //     })
+            // 
+            // partners = self.partner_id | self.department_id.manager_id.user_id.partner_id
+            // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
+            //     partners |= self.env.user.partner_id
+            // else:
+            //     partners |= self.user_id.partner_id
+            // 
+            // res = self.env['ir.actions.act_window']._for_xml_id('calendar.action_calendar_event')
+            // # As we are redirected from the hr.applicant, calendar checks rules on "hr.applicant",
+            // # in order to decide whether to allow creation of a meeting.
+            // # As interviewer does not have create right on the hr.applicant, in order to allow them
+            // # to create a meeting for an applicant, we pass 'create': True to the context.
+            // res['context'] = {
+            //     'create': True,
+            //     'default_applicant_id': self.id,
+            //     'default_candidate_id': self.candidate_id.id,
+            //     'default_partner_ids': partners.ids,
+            //     'default_user_id': self.env.uid,
+            //     'default_name': self.partner_name,
+            //     'attachment_ids': self.attachment_ids.ids
+            // }
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDebitNoteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_debit_note, FILE: account_move.py) ---
+            // def action_debit_note(self):
+            // action = self.env.ref('account_debit_note.action_view_account_move_debit')._get_action_dict()
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_draft(self):
+            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
+            // return orders.write({
+            //     'state': 'draft',
+            //     'signature': False,
+            //     'signed_by': False,
+            //     'signed_on': False,
+            // })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_duplicate(self):
+            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
+            // action['context'] = dict(self.env.context)
+            // action['context']['view_no_maturity'] = False
+            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
+            // action['res_id'] = self.copy().id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_force_register_payment(self):
+            // if any(m.move_type == 'entry' for m in self):
+            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
+            // return self.line_ids.action_register_payment()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_invoice_download_pdf(self):
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
+            //     'target': 'download',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionInvoiceDownloadUblAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move.py) ---
+            // def action_invoice_download_ubl(self):
+            // if invoices_with_ubl := self.filtered('ubl_cii_xml_id'):
+            //     return {
+            //         'type': 'ir.actions.act_url',
+            //         'url': f'/account/download_invoice_documents/{",".join(map(str, invoices_with_ubl.ids))}/ubl',
+            //         'target': 'download',
+            //     }
+            // return False
             */
             return default;
         }
@@ -63,12 +324,876 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActivateCurrencyAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        public async Task<TEntity> ActionInvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_activate_currency(self):
-            // self.currency_id.filtered(lambda currency: not currency.active).write({'active': True})
+            // def action_invoice_sent(self):
+            // """ Open a window to compose an email, with the edi invoice template
+            //     message loaded by default
+            // """
+            // self.ensure_one()
+            // 
+            // report_action = self.action_send_and_print()
+            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
+            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
+            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
+            // 
+            // return report_action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_lock(self):
+            // self.locked = True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_attachments(self):
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'ir.attachment',
+            //     'name': _('Documents'),
+            //     'context': {
+            //         'default_res_model': 'hr.applicant',
+            //         'default_res_id': self.ids[0],
+            //         'show_partner_name': 1,
+            //     },
+            //     'view_mode': 'list,form',
+            //     'views': [
+            //         (self.env.ref('hr_recruitment.ir_attachment_hr_recruitment_list_view').id, 'list'),
+            //         (False, 'form'),
+            //     ],
+            //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
+            //     'domain': [('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids), ],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_business_doc(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Order"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order',
+            //     'res_id': self.id,
+            //     'views': [(False, 'form')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_open_discount_wizard(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _("Discount"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'sale.order.discount',
+            //     'view_mode': 'form',
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenEmployeeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_employee(self):
+            // self.ensure_one()
+            // return self.candidate_id.action_open_employee()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenExpenseReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_move.py) ---
+            // def action_open_expense_report(self):
+            // self.ensure_one()
+            // return {
+            //     'name': self.expense_sheet_id.name,
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'views': [(False, 'form')],
+            //     'res_model': 'hr.expense.sheet',
+            //     'res_id': self.expense_sheet_id.id
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenOtherApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_other_applications(self):
+            // self.ensure_one()
+            // similar_candidates = (
+            //     self.env["hr.candidate"]
+            //     .with_context(active_test=False)
+            //     .search(self.candidate_id._get_similar_candidates_domain())
+            //     - self.candidate_id
+            // )
+            // return {
+            //     'name': _('Other Applications'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'hr.applicant',
+            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
+            //     'domain': [('id', 'in', (self.candidate_id.applicant_ids + similar_candidates.applicant_ids).ids)],
+            //     'context': {
+            //         'active_test': False,
+            //         'search_default_stage': 1,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
+            // def action_post(self):
+            // # inherit of the function from account.move to validate a new tax and the priceunit of a downpayment
+            // res = super(AccountMove, self).action_post()
+            // 
+            // # We cannot change lines content on locked SO, changes on invoices are not forwarded to the SO if the SO is locked
+            // dp_lines = self.line_ids.sale_line_ids.filtered(lambda l: l.is_downpayment and not l.display_type)
+            // dp_lines._compute_name()  # Update the description of DP lines (Draft -> Posted)
+            // downpayment_lines = dp_lines.filtered(lambda sol: not sol.order_id.locked)
+            // other_so_lines = downpayment_lines.order_id.order_line - downpayment_lines
+            // real_invoices = set(other_so_lines.invoice_lines.move_id)
+            // for so_dpl in downpayment_lines:
+            //     so_dpl.price_unit = so_dpl._get_downpayment_line_price_unit(real_invoices)
+            //     so_dpl.tax_id = so_dpl.invoice_lines.tax_ids
+            // 
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_preview_sale_order(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'target': 'self',
+            //     'url': self.get_portal_url(),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_print_pdf(self):
+            // self.ensure_one()
+            // return self.env.ref('account.account_invoices').report_action(self.id)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProcessEdiWebServicesAsync<TEntity>(IEnumerable<TEntity> entities, object with_commit) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi, FILE: account_move.py) ---
+            // def action_process_edi_web_services(self, with_commit=True):
+            // docs = self.edi_document_ids.filtered(lambda d: d.state in ('to_send', 'to_cancel') and d.blocking_level != 'error')
+            // docs._process_documents_web_services(with_commit=with_commit)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPurchaseMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
+            // def action_purchase_matching(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("Purchase Matching"),
+            //     'res_model': 'purchase.bill.line.match',
+            //     'domain': [
+            //         ('partner_id', 'in', (self.partner_id | self.partner_id.commercial_partner_id).ids),
+            //         ('company_id', 'in', self.env.company.ids),
+            //         ('account_move_id', 'in', [self.id, False]),
+            //     ],
+            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_send(self):
+            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
+            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
+            // lang = self.env.context.get('lang')
+            // 
+            // ctx = {
+            //     'default_model': 'sale.order',
+            //     'default_res_ids': self.ids,
+            //     'default_composition_mode': 'comment',
+            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
+            //     'email_notification_allow_footer': True,
+            //     'proforma': self.env.context.get('proforma', False),
+            // }
+            // 
+            // if len(self) > 1:
+            //     ctx['default_composition_mode'] = 'mass_mail'
+            // else:
+            //     ctx.update({
+            //         'force_email': True,
+            //         'model_description': self.with_context(lang=lang).type_name,
+            //     })
+            //     if not self.env.context.get('hide_default_template'):
+            //         mail_template = self._find_mail_template()
+            //         if mail_template:
+            //             ctx.update({
+            //                 'default_template_id': mail_template.id,
+            //                 'mark_so_as_sent': True,
+            //             })
+            //         if mail_template and mail_template.lang:
+            //             lang = mail_template._render_lang(self.ids)[self.id]
+            //     else:
+            //         for order in self:
+            //             order._portal_ensure_token()
+            // 
+            // action = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mail.compose.message',
+            //     'views': [(False, 'form')],
+            //     'view_id': False,
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            // if (
+            //     self.env.context.get('check_document_layout')
+            //     and not self.env.context.get('discard_logo_check')
+            //     and self.env.is_admin()
+            //     and not self.env.company.external_report_layout_id
+            // ):
+            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
+            //         action,
+            //     )
+            //     # Need to remove this context for windows action
+            //     action.pop('close_on_report_download', None)
+            //     layout_action['context']['dialog_size'] = 'extra-large'
+            //     return layout_action
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_quotation_sent(self):
+            // """ Mark the given draft quotation(s) as sent.
+            // 
+            // :raise: UserError if any given SO is not in draft state.
+            // """
+            // if any(order.state != 'draft' for order in self):
+            //     raise UserError(_("Only draft orders can be marked as sent directly."))
+            // 
+            // for order in self:
+            //     order.message_subscribe(partner_ids=order.partner_id.ids)
+            // 
+            // self.write({'state': 'sent'})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_register_payment(self):
+            // if any(m.state != 'posted' for m in self):
+            //     raise UserError(_("You can only register payment for posted journal entries."))
+            // return self.action_force_register_payment()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_reschedule_meeting(self):
+            // self.ensure_one()
+            // action = self.action_schedule_meeting(smart_calendar=False)
+            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // if next_activity.calendar_event_id:
+            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRetryEdiDocumentsErrorAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_edi, FILE: account_move.py) ---
+            // def action_retry_edi_documents_error(self):
+            // self._retry_edi_documents_error_hook()
+            // self.edi_document_ids.write({'error': False, 'blocking_level': False})
+            // self.action_process_edi_web_services()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_reverse(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
+            // 
+            // if self.is_invoice():
+            //     action['name'] = _('Credit Note')
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_schedule_meeting(self, smart_calendar=True):
+            // """ Open meeting's calendar view to schedule meeting on current opportunity.
+            // 
+            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
+            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
+            //     :return dict: dictionary value for created Meeting view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
+            // partner_ids = self.env.user.partner_id.ids
+            // if self.partner_id:
+            //     partner_ids.append(self.partner_id.id)
+            // current_opportunity_id = self.id if self.type == 'opportunity' else False
+            // action['context'] = {
+            //     'search_default_opportunity_id': current_opportunity_id,
+            //     'default_opportunity_id': current_opportunity_id,
+            //     'default_partner_id': self.partner_id.id,
+            //     'default_partner_ids': partner_ids,
+            //     'default_team_id': self.team_id.id,
+            //     'default_name': self.name,
+            // }
+            // 
+            // # 'Smart' calendar view : get the most relevant time period to display to the user.
+            // if current_opportunity_id and smart_calendar:
+            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
+            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_send_and_print(self):
+            // self.env['account.move.send']._check_move_constrains(self)
+            // return {
+            //     'name': _("Print & Send"),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
+            //     'target': 'new',
+            //     'context': {
+            //         'active_model': 'account.move',
+            //         'active_ids': self.ids,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_send_email(self):
+            // return {
+            //     'name': _('Send Email'),
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'view_mode': 'form',
+            //     'res_model': 'applicant.send.mail',
+            //     'context': {
+            //         'default_applicant_ids': self.ids,
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_automated_probability(self):
+            // self.write({'probability': self.automated_probability})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_lost(self, **additional_values):
+            // """ Lost semantic: probability = 0 or active = False """
+            // res = self.action_archive()
+            // if additional_values:
+            //     self.write(dict(additional_values))
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won(self):
+            // """ Won semantic: probability = 100 (active untouched) """
+            // self.action_unarchive()
+            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
+            // leads_by_won_stage = {}
+            // for lead in self:
+            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
+            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
+            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
+            //     # sequence than any "won" stage. But while this is not the case, searching
+            //     # for the "won" stage while alterning the sequence order (see below) will correctly
+            //     # handle such a case :
+            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
+            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
+            //     #       not in [x (won)] nor [z (won)]
+            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
+            //     if not stage_id:
+            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
+            //     if stage_id in leads_by_won_stage:
+            //         leads_by_won_stage[stage_id] += lead
+            //     else:
+            //         leads_by_won_stage[stage_id] = lead
+            // for won_stage_id, leads in leads_by_won_stage.items():
+            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won_rainbowman(self):
+            // self.ensure_one()
+            // self.action_set_won()
+            // 
+            // message = self._get_rainbowman_message()
+            // if message:
+            //     return {
+            //         'effect': {
+            //             'fadeout': 'slow',
+            //             'message': message,
+            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
+            //             'type': 'rainbow_man',
+            //         }
+            //     }
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_show_potential_duplicates(self):
+            // """ Open kanban view to display duplicate leads or opportunity.
+            //     :return dict: dictionary value for created kanban view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
+            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
+            // action['context'] = {
+            //     'active_test': False,
+            //     'create': False
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_snooze(self):
+            // self.ensure_one()
+            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // my_next_activity.action_snooze()
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_switch_move_type(self):
+            // if any(move.posted_before for move in self):
+            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
+            // if any(move.move_type == "entry" for move in self):
+            //     raise ValidationError(_("This action isn't available for this document."))
+            // 
+            // for move in self:
+            //     in_out, old_move_type = move.move_type.split('_')
+            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
+            //     move.name = False
+            //     move.write({
+            //         'move_type': new_move_type,
+            //         'currency_id': move.currency_id.id,
+            //         'fiscal_position_id': move.fiscal_position_id.id,
+            //     })
+            //     if move.amount_total < 0:
+            //         move.write({
+            //             'line_ids': [
+            //                 Command.update(line.id, {'quantity': -line.quantity})
+            //                 for line in move.line_ids
+            //                 if line.display_type == 'product'
+            //             ]
+            //         })
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_toggle_block_payment(self):
+            // self.ensure_one()
+            // if self.payment_state == 'blocked':
+            //     self.payment_state = 'not_paid'
+            //     self.env.add_to_compute(self._fields['payment_state'], self)
+            // else:
+            //     if self.payment_state in ('paid', 'in_payment'):
+            //         raise UserError(_("You can't block a paid invoice."))
+            //     self.payment_state = 'blocked'
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_unlock(self):
+            // self.locked = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
+            // def action_update_fpos_values(self):
+            // self.invoice_line_ids._compute_price_unit()
+            // self.invoice_line_ids._compute_tax_ids()
+            // self.line_ids._compute_account_id()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_prices(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_prices()
+            // 
+            // if self.pricelist_id:
+            //     message = _("Product prices have been recomputed according to pricelist %s.",
+            //         self.pricelist_id._get_html_link())
+            // else:
+            //     message = _("Product prices have been recomputed.")
+            // self.message_post(body=message)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_update_taxes(self):
+            // self.ensure_one()
+            // 
+            // self._recompute_taxes()
+            // 
+            // if self.partner_id:
+            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
+            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
+            //     )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewDebitNotesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_debit_note, FILE: account_move.py) ---
+            // def action_view_debit_notes(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Debit Notes'),
+            //     'res_model': 'account.move',
+            //     'view_mode': 'list,form',
+            //     'domain': [('debit_origin_id', '=', self.id)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            // def action_view_invoice(self, invoices=False):
+            // if not invoices:
+            //     invoices = self.mapped('invoice_ids')
+            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
+            // if len(invoices) > 1:
+            //     action['domain'] = [('id', 'in', invoices.ids)]
+            // elif len(invoices) == 1:
+            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
+            //     if 'views' in action:
+            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
+            //     else:
+            //         action['views'] = form_view
+            //     action['res_id'] = invoices.id
+            // else:
+            //     action = {'type': 'ir.actions.act_window_close'}
+            // 
+            // context = {
+            //     'default_move_type': 'out_invoice',
+            // }
+            // if len(self) == 1:
+            //     context.update({
+            //         'default_partner_id': self.partner_id.id,
+            //         'default_partner_shipping_id': self.partner_shipping_id.id,
+            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
+            //         'default_invoice_origin': self.name,
+            //     })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewLandedCostsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: account_move.py) ---
+            // def action_view_landed_costs(self):
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
+            // domain = [('id', 'in', self.landed_costs_ids.ids)]
+            // context = dict(self.env.context, default_vendor_bill_id=self.id)
+            // views = [(self.env.ref('stock_landed_costs.view_stock_landed_cost_tree2').id, 'list'), (False, 'form'), (False, 'kanban')]
+            // return dict(action, domain=domain, context=context, views=views)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewPaymentTransactionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
+            // def action_view_payment_transactions(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('payment.action_payment_transaction')
+            // 
+            // if len(self.transaction_ids) == 1:
+            //     action['view_mode'] = 'form'
+            //     action['res_id'] = self.transaction_ids.id
+            //     action['views'] = []
+            // else:
+            //     action['domain'] = [('id', 'in', self.transaction_ids.ids)]
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSourcePurchaseOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
+            // def action_view_source_purchase_orders(self):
+            // self.ensure_one()
+            // source_orders = self.line_ids.purchase_line_id.order_id
+            // result = self.env['ir.actions.act_window']._for_xml_id('purchase.purchase_form_action')
+            // if len(source_orders) > 1:
+            //     result['domain'] = [('id', 'in', source_orders.ids)]
+            // elif len(source_orders) == 1:
+            //     result['views'] = [(self.env.ref('purchase.purchase_order_form', False).id, 'form')]
+            //     result['res_id'] = source_orders.id
+            // else:
+            //     result = {'type': 'ir.actions.act_window_close'}
+            // return result
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSourceSaleOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
+            // def action_view_source_sale_orders(self):
+            // self.ensure_one()
+            // source_orders = self.line_ids.sale_line_ids.order_id
+            // result = self.env['ir.actions.act_window']._for_xml_id('sale.action_orders')
+            // if len(source_orders) > 1:
+            //     result['domain'] = [('id', 'in', source_orders.ids)]
+            // elif len(source_orders) == 1:
+            //     result['views'] = [(self.env.ref('sale.view_order_form', False).id, 'form')]
+            //     result['res_id'] = source_orders.id
+            // else:
+            //     result = {'type': 'ir.actions.act_window_close'}
+            // return result
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewStatisticsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
+            // def action_view_statistics(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('link_tracker.link_tracker_click_action_statistics')
+            // action['domain'] = [('link_id', '=', self.id)]
+            // action['context'] = dict(self._context, create=False)
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTimesheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: account_move.py) ---
+            // def action_view_timesheet(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _('Timesheets'),
+            //     'domain': [('project_id', '!=', False)],
+            //     'res_model': 'account.analytic.line',
+            //     'view_id': False,
+            //     'view_mode': 'list,form',
+            //     'help': _("""
+            //         <p class="o_view_nocontent_smiling_face">
+            //             Record timesheets
+            //         </p><p>
+            //             You can register and track your workings hours by project every
+            //             day. Every time spent on a project will become a cost and can be re-invoiced to
+            //             customers if required.
+            //         </p>
+            //     """),
+            //     'limit': 80,
+            //     'context': {
+            //         'default_project_id': self.id,
+            //         'search_default_project_id': [self.id]
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewWipProductionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: account_move.py) ---
+            // def action_view_wip_production(self):
+            // self.ensure_one()
+            // action = {
+            //     'res_model': 'mrp.production',
+            //     'type': 'ir.actions.act_window',
+            // }
+            // if len(self.wip_production_ids) == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'res_id': self.wip_production_ids.id,
+            //     })
+            // else:
+            //     action.update({
+            //         'name': _("WIP MOs of %s", self.name),
+            //         'domain': [('id', 'in', self.wip_production_ids.ids)],
+            //         'view_mode': 'list,form',
+            //     })
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionVisitPageAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
+            // def action_visit_page(self):
+            // return {
+            //     'name': _("Visit Webpage"),
+            //     'type': 'ir.actions.act_url',
+            //     'url': self.url,
+            //     'target': 'new',
+            // }
             */
             return default;
         }
@@ -113,19 +1238,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             special_type='early_payment',
             //         ))
             // return epd_lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> AddFromCatalogAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_add_from_catalog(self):
-            // res = super().action_add_from_catalog()
-            // if res['context'].get('product_catalog_order_model') == 'account.move':
-            //     res['search_view_id'] = [self.env.ref('account.product_view_search_catalog').id, 'search']
-            // return res
             */
             return default;
         }
@@ -316,27 +1428,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> BuildInvoiceReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object p3) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_si, FILE: account_move.py) ---
-            // def _build_invoice_reference(self, p3):
-            // """Builds the reference using a shared structure for both methods."""
-            // p1 = str(self.journal_id.id)
-            // p2 = str(self.invoice_date.year)[-2:]
-            // reference_base = f"{p1}-{p2}-{p3}"
-            // 
-            // # Calculate check digit
-            // digits = [int(d) for d in reference_base if d.isdigit()]
-            // weights = list(range(2, 14))[:len(digits)]
-            // weighted_sum = sum(d * w for d, w in zip(reversed(digits), weights))
-            // check_digit = 11 - (weighted_sum % 11)
-            // check_digit = 0 if check_digit in (10, 11) else check_digit
-            // return f"SI01 {reference_base}{check_digit}"
-            */
-            return default;
-        }
-
         public async Task<TEntity> ButtonAbandonCancelPostedPostedMovesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -398,38 +1489,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.message_post(body=_("A cancellation of the EDI has been requested."))
             // 
             // to_cancel_documents.write({'state': 'to_cancel', 'error': False, 'blocking_level': False})
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: account_move.py) ---
-            // def button_cancel_posted_moves(self):
-            // """Mark the edi.document related to this move to be canceled."""
-            // reason_and_remarks_not_set = self.env["account.move"]
-            // for move in self:
-            //     send_l10n_in_edi = move.edi_document_ids.filtered(lambda doc: doc.edi_format_id.code == "in_einvoice_1_03")
-            //     # check submitted E-invoice does not have reason and remarks
-            //     # because it's needed to cancel E-invoice
-            //     if send_l10n_in_edi and (not move.l10n_in_edi_cancel_reason or not move.l10n_in_edi_cancel_remarks):
-            //         reason_and_remarks_not_set += move
-            // if reason_and_remarks_not_set:
-            //     raise UserError(_(
-            //         "To cancel E-invoice set cancel reason and remarks at Other info tab in invoices: \n%s",
-            //         ("\n".join(reason_and_remarks_not_set.mapped("name"))),
-            //     ))
-            // return super().button_cancel_posted_moves()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def button_cancel_posted_moves(self):
-            // """Mark the edi.document related to this move to be canceled."""
-            // reason_and_remarks_not_set = self.env["account.move"]
-            // for move in self:
-            //     send_l10n_in_edi_ewaybill = move.edi_document_ids.filtered(lambda doc: doc.edi_format_id.code == "in_ewaybill_1_03")
-            //     # check submitted E-waybill does not have reason and remarks
-            //     # because it's needed to cancel E-waybill
-            //     if send_l10n_in_edi_ewaybill and (not move.l10n_in_edi_cancel_reason or not move.l10n_in_edi_cancel_remarks):
-            //         reason_and_remarks_not_set += move
-            // if reason_and_remarks_not_set:
-            //     raise UserError(_(
-            //         "To cancel E-waybill set cancel reason and remarks at E-waybill tab in: \n%s",
-            //         ("\n".join(reason_and_remarks_not_set.mapped("name"))),
-            //     ))
-            // return super().button_cancel_posted_moves()
             */
             return default;
         }
@@ -522,58 +1581,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // if not self.need_cancel_request:
             //     raise UserError(_("You can only request a cancellation for invoice sent to the government."))
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def button_request_cancel(self):
-            // # EXTEND 'account'
-            // if self._need_cancel_request() and self.l10n_hu_edi_state in ['confirmed', 'confirmed_warning']:
-            //     return {
-            //         "name": _("Technical Annulment"),
-            //         "type": "ir.actions.act_window",
-            //         "view_type": "form",
-            //         "view_mode": "form",
-            //         "res_model": "l10n_hu_edi.cancellation",
-            //         "target": "new",
-            //         "context": {"default_invoice_id": self.id},
-            //     }
-            // 
-            // return super().button_request_cancel()
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def button_request_cancel(self):
-            // # EXTENDS 'account'
-            // super().button_request_cancel()
-            // 
-            // if self._need_cancel_request() and self.l10n_my_edi_state in ['valid', 'rejected']:
-            //     self._l10n_my_edi_check_can_update_status()
-            // 
-            //     return {
-            //         "name": _("Cancel Document"),
-            //         "type": "ir.actions.act_window",
-            //         "view_type": "form",
-            //         "view_mode": "form",
-            //         "res_model": "l10n_my_edi.document.status.update",
-            //         "target": "new",
-            //         "context": {
-            //             "default_invoice_id": self.id,
-            //             "default_new_status": 'cancelled',
-            //         },
-            //     }
-            // 
-            // return super().button_request_cancel()
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def button_request_cancel(self):
-            // # EXTEND 'account'
-            // if self._l10n_vn_need_cancel_request():
-            //     return {
-            //         'name': _('Invoice Cancellation'),
-            //         'type': 'ir.actions.act_window',
-            //         'view_type': 'form',
-            //         'view_mode': 'form',
-            //         'res_model': 'l10n_vn_edi_viettel.cancellation',
-            //         'target': 'new',
-            //         'context': {'default_invoice_id': self.id},
-            //     }
-            // 
-            // return super().button_request_cancel()
             */
             return default;
         }
@@ -638,10 +1645,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // lock_date = self.company_id._get_user_fiscal_lock_date(self.journal_id)
             // return not self.inalterable_hash and self.date > lock_date
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _can_be_unlinked(self):
-            // self.ensure_one()
-            // return (self.country_code != 'IN' or not self.posted_before) and super()._can_be_unlinked()
             */
             return default;
         }
@@ -670,76 +1673,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // self.ensure_one()
             // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: account_move.py) ---
-            // def _can_force_cancel(self):
-            // # OVERRIDE
-            // self.ensure_one()
-            // return any(document.edi_format_id.code == 'in_einvoice_1_03' and document.state == 'to_cancel' for document in self.edi_document_ids) or super()._can_force_cancel()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def _can_force_cancel(self):
-            // # OVERRIDE
-            // self.ensure_one()
-            // return any(document.edi_format_id.code == 'in_ewaybill_1_03' and document.state == 'to_cancel' for document in self.edi_document_ids) or super()._can_force_cancel()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_cancel(self):
-            // """ Cancel SO after showing the cancel wizard when needed. (cfr :meth:`_show_cancel_wizard`)
-            // 
-            // For post-cancel operations, please only override :meth:`_action_cancel`.
-            // 
-            // note: self.ensure_one() if the wizard is shown.
-            // """
-            // if any(order.locked for order in self):
-            //     raise UserError(_("You cannot cancel a locked order. Please unlock it first."))
-            // cancel_warning = self._show_cancel_wizard()
-            // if cancel_warning:
-            //     self.ensure_one()
-            //     template_id = self.env['ir.model.data']._xmlid_to_res_id(
-            //         'sale.mail_template_sale_cancellation', raise_if_not_found=False
-            //     )
-            //     lang = self.env.context.get('lang')
-            //     template = self.env['mail.template'].browse(template_id)
-            //     if template.lang:
-            //         lang = template._render_lang(self.ids)[self.id]
-            //     ctx = {
-            //         'default_template_id': template_id,
-            //         'default_order_id': self.id,
-            //         'mark_so_as_canceled': True,
-            //         'default_email_layout_xmlid': "mail.mail_notification_layout_with_responsible_signature",
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     }
-            //     return {
-            //         'name': _('Cancel %s', self.type_name),
-            //         'view_mode': 'form',
-            //         'res_model': 'sale.order.cancel',
-            //         'view_id': self.env.ref('sale.sale_order_cancel_view_form').id,
-            //         'type': 'ir.actions.act_window',
-            //         'context': ctx,
-            //         'target': 'new'
-            //     }
-            // else:
-            //     return self._action_cancel()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CancelPeppolDocumentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_peppol, FILE: account_move.py) ---
-            // def action_cancel_peppol_documents(self):
-            // # if the peppol_move_state is processing/done
-            // # then it means it has been already sent to peppol proxy and we can't cancel
-            // if any(move.peppol_move_state in {'processing', 'done'} for move in self):
-            //     raise UserError(_("Cannot cancel an entry that has already been sent to PEPPOL"))
-            // self.peppol_move_state = False
-            // self.sending_data = False
             */
             return default;
         }
@@ -778,31 +1711,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckArgentineanInvoiceTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _check_argentinean_invoice_taxes(self):
-            // 
-            // # check vat on companies thats has it (Responsable inscripto)
-            // for inv in self.filtered(lambda x: x.company_id.l10n_ar_company_requires_vat):
-            //     purchase_aliquots = 'not_zero'
-            //     # we require a single vat on each invoice line except from some purchase documents
-            //     if inv.move_type in ['in_invoice', 'in_refund'] and inv.l10n_latam_document_type_id.purchase_aliquots == 'zero':
-            //         purchase_aliquots = 'zero'
-            //     for line in inv.mapped('invoice_line_ids').filtered(lambda x: x.display_type not in ('line_section', 'line_note')):
-            //         vat_taxes = line.tax_ids.filtered(lambda x: x.tax_group_id.l10n_ar_vat_afip_code)
-            //         if len(vat_taxes) != 1:
-            //             raise UserError(_("There should be a single tax from the “VAT“ tax group per line, but this is not the case for line “%s”. Please add a tax to this line or check the tax configuration's advanced options for the corresponding field “Tax Group”.", line.name))
-            // 
-            //         elif purchase_aliquots == 'zero' and vat_taxes.tax_group_id.l10n_ar_vat_afip_code != '0':
-            //             raise UserError(_('On invoice id “%s” you must use VAT Not Applicable on every line.', inv.id))
-            //         elif purchase_aliquots == 'not_zero' and vat_taxes.tax_group_id.l10n_ar_vat_afip_code == '0':
-            //             raise UserError(_('On invoice id “%s” you must use a VAT tax that is not VAT Not Applicable', inv.id))
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckBalancedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object container) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -824,68 +1732,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for move in unbalanced_moves:
             //         error_msg += f"  - {self.browse(move[0]).name}\n"
             //         raise UserError(error_msg)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckCn2anAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cn, FILE: account_move.py) ---
-            // def check_cn2an(self):
-            // return an2cn
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckDocumentTypesPostInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _check_document_types_post(self):
-            // for rec in self.filtered(
-            //         lambda r: r.company_id.account_fiscal_country_id.code == "CL" and
-            //                   r.journal_id.type in ['sale', 'purchase']):
-            //     tax_payer_type = rec.partner_id.l10n_cl_sii_taxpayer_type
-            //     vat = rec.partner_id.vat
-            //     country_id = rec.partner_id.country_id
-            //     latam_document_type_code = rec.l10n_latam_document_type_id.code
-            //     if (rec.journal_id.type == 'purchase' and tax_payer_type == '4' and country_id.code != 'CL' and
-            //         latam_document_type_code == '61' and
-            //        '46' in rec.l10n_cl_reference_ids.mapped('l10n_cl_reference_doc_type_selection')):
-            //         continue
-            //     if (not tax_payer_type or not vat) and (country_id.code == "CL" and latam_document_type_code
-            //                                           and latam_document_type_code not in ['35', '38', '39', '41']):
-            //         raise ValidationError(_('Tax payer type and vat number are mandatory for this type of '
-            //                                 'document. Please set the current tax payer type of this customer'))
-            //     if rec.journal_id.type == 'sale' and rec.journal_id.l10n_latam_use_documents:
-            //         if country_id.code != "CL":
-            //             if not ((tax_payer_type == '4' and latam_document_type_code in ['110', '111', '112']) or (
-            //                     tax_payer_type == '3' and latam_document_type_code in ['39', '41', '61', '56'])):
-            //                 raise ValidationError(_(
-            //                     'Document types for foreign customers must be export type (codes 110, 111 or 112) or you should define the customer as an end consumer and use receipts (codes 39 or 41)'))
-            //     if rec.journal_id.type == 'purchase' and rec.journal_id.l10n_latam_use_documents:
-            //         if vat != SII_VAT and latam_document_type_code == '914':
-            //             raise ValidationError(_('The DIN document is intended to be used only with RUT 60805000-0'
-            //                                     ' (Tesorería General de La República)'))
-            //         if not tax_payer_type or not vat:
-            //             if country_id.code == "CL" and latam_document_type_code not in [
-            //                     '35', '38', '39', '41']:
-            //                 raise ValidationError(_('Tax payer type and vat number are mandatory for this type of '
-            //                                         'document. Please set the current tax payer type of this supplier'))
-            //         if tax_payer_type == '2' and latam_document_type_code not in ['70', '71', '56', '61']:
-            //             raise ValidationError(_('The tax payer type of this supplier is incorrect for the selected type'
-            //                                     ' of document.'))
-            //         if tax_payer_type in ['1', '3']:
-            //             if latam_document_type_code in ['70', '71']:
-            //                 raise ValidationError(_('The tax payer type of this supplier is not entitled to deliver '
-            //                                         'fees documents'))
-            //             if latam_document_type_code in ['110', '111', '112']:
-            //                 raise ValidationError(_('The tax payer type of this supplier is not entitled to deliver '
-            //                                         'imports documents'))
-            //         if (tax_payer_type == '4' or country_id.code != "CL") and latam_document_type_code != '46':
-            //             raise ValidationError(_('You need a journal without the use of documents for foreign '
-            //                                     'suppliers'))
             */
             return default;
         }
@@ -948,24 +1794,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         and move_applicability.get('cancel'):
             //         return False
             // return True
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_sii, FILE: account_move.py) ---
-            // def _check_edi_documents_for_reset_to_draft(self):
-            // docs = self.edi_document_ids.filtered(lambda d: d.edi_format_id._needs_web_services())
-            // if len(docs) == 1 and docs.edi_format_id.code == 'es_sii' and docs.state != 'to_cancel':
-            //     return True
-            // return super()._check_edi_documents_for_reset_to_draft()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckFapiaoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cn, FILE: account_move.py) ---
-            // def _check_fapiao(self):
-            // for record in self:
-            //     if record.fapiao and (len(record.fapiao) != 8 or not record.fapiao.isdecimal()):
-            //         raise ValidationError(_("Fapiao number is an 8-digit number. Please enter a correct one."))
             */
             return default;
         }
@@ -1010,35 +1838,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckInvoiceTypeDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _check_invoice_type_document_type(self):
-            // """ LATAM module define that we are not able to use debit_note or invoice document types in an invoice refunds,
-            // However for Argentinian Document Type's 99 (internal type = invoice) we are able to used in a refund invoices.
-            // 
-            // In this method we exclude the argentinian documents that can be used as invoice and refund from the generic
-            // constraint """
-            // docs_used_for_inv_and_ref = self.filtered(
-            //     lambda x: x.country_code == 'AR' and
-            //     x.l10n_latam_document_type_id.code in self._get_l10n_ar_codes_used_for_inv_and_ref() and
-            //     x.move_type in ['out_refund', 'in_refund'])
-            // 
-            // super(AccountMove, self - docs_used_for_inv_and_ref)._check_invoice_type_document_type()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _check_invoice_type_document_type(self):
-            // for rec in self.filtered('l10n_latam_document_type_id.internal_type'):
-            //     internal_type = rec.l10n_latam_document_type_id.internal_type
-            //     invoice_type = rec.move_type
-            //     if internal_type in ['debit_note', 'invoice'] and invoice_type in ['out_refund', 'in_refund']:
-            //         raise ValidationError(_('You can not use a %s document type with a refund invoice', internal_type))
-            //     elif internal_type == 'credit_note' and invoice_type in ['out_invoice', 'in_invoice']:
-            //         raise ValidationError(_('You can not use a %s document type with a invoice', internal_type))
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckJournalMoveTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -1056,82 +1855,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckL10nItEdiAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def action_check_l10n_it_edi(self):
-            // self.ensure_one()
-            // if not self.l10n_it_edi_transaction and self.l10n_it_edi_state not in WAITING_STATES:
-            //     raise UserError(_("This move is not waiting for updates from the SdI."))
-            // if self.l10n_it_edi_state == 'being_sent':
-            //     return {'type': 'ir.actions.client', 'tag': 'reload'}
-            // self._l10n_it_edi_update_send_state()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckL10nItEdiDoiIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _check_l10n_it_edi_doi_id(self):
-            // for move in self:
-            //     validity_errors = move.l10n_it_edi_doi_id._get_validity_errors(
-            //         move.company_id, move.partner_id.commercial_partner_id, move.currency_id
-            //     )
-            //     if validity_errors:
-            //         raise UserError('\n'.join(validity_errors))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckL10nLatamDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _check_l10n_latam_documents(self):
-            // """ This constraint checks that if a invoice is posted and does not have a document type configured will raise
-            // an error. This only applies to invoices related to journals that has the "Use Documents" set as True.
-            // And if the document type is set then check if the invoice number has been set, because a posted invoice
-            // without a document number is not valid in the case that the related journals has "Use Docuemnts" set as True """
-            // validated_invoices = self.filtered(lambda x: x.l10n_latam_use_documents and x.state == 'posted')
-            // without_doc_type = validated_invoices.filtered(lambda x: not x.l10n_latam_document_type_id)
-            // if without_doc_type:
-            //     raise ValidationError(_(
-            //         'The journal require a document type but not document type has been selected on invoices %s.',
-            //         without_doc_type.ids
-            //     ))
-            // without_number = validated_invoices.filtered(
-            //     lambda x: not x.l10n_latam_document_number and x.l10n_latam_manual_document_number)
-            // if without_number:
-            //     raise ValidationError(_(
-            //         'Please set the document number on the following invoices %s.',
-            //         without_number.ids
-            //     ))
-            */
-            return default;
-        }
-
         public async Task<TEntity> CheckMoveSequenceChainAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def check_move_sequence_chain(self):
             // return self.filtered(lambda move: move.name != '/')._is_end_of_seq_chain()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckMovesUseDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _check_moves_use_documents(self):
-            // """ Do not let to create not invoices entries in journals that use documents """
-            // not_invoices = self.filtered(lambda x: x.company_id.account_fiscal_country_id.code == "AR" and x.journal_id.type in ['sale', 'purchase'] and x.l10n_latam_use_documents and not x.is_invoice())
-            // if not_invoices:
-            //     raise ValidationError(_("The selected Journal can't be used in this transaction, please select one that doesn't use documents as these are just for Invoices."))
             */
             return default;
         }
@@ -1155,19 +1884,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             quote_company=order.company_id.display_name,
             //             bad_products=', '.join(bad_products.mapped('display_name')),
             //         ))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CheckPostedIfActiveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _check_posted_if_active(self):
-            // """ Enforce the constraint that you cannot reset to draft / cancel a posted invoice if it was already sent to NAV. """
-            // for move in self:
-            //     if move.state in ['draft', 'cancel'] and move.l10n_hu_edi_state not in [False, 'rejected', 'cancelled']:
-            //         raise ValidationError(_('Cannot reset to draft or cancel invoice %s because an electronic document was already sent to NAV!', move.name))
             */
             return default;
         }
@@ -1345,20 +2061,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComposeInfoMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object tags) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _compose_info_message(self, tree, tags):
-            // result = ""
-            // for tag in tags if isinstance(tags, list) else [tags]:
-            //     for el in tree.xpath(tag):
-            //         result += self._l10n_it_edi_format_errors("", [f'{subel.tag}: {subel.text}' for subel in el.iter()])
-            // return result
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeAbnormalWarningsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -1510,25 +2212,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         continue
             //     if move.pos_session_ids:
             //         move.always_tax_exigible = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeAmountExtendedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _compute_amount_extended(self):
-            // for move in self:
-            //     totals = {None: 0.0, 'vat':0.0, 'withholding': 0.0, 'pension_fund': 0.0}
-            //     if move.is_invoice(True):
-            //         for line in [line for line in move.line_ids if line.tax_line_id]:
-            //             kind = line.tax_line_id._l10n_it_get_tax_kind()
-            //             totals[kind] -= line.balance
-            //     move.l10n_it_amount_vat_signed = totals['vat']
-            //     move.l10n_it_amount_withholding_signed = totals['withholding']
-            //     move.l10n_it_amount_pension_fund_signed = totals['pension_fund']
-            //     move.l10n_it_amount_before_withholding_signed = move.amount_untaxed_signed + totals['vat'] + totals['pension_fund']
             */
             return default;
         }
@@ -1712,32 +2395,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.auto_post in ('no', 'at_date'):
             //         record.auto_post_until = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeAvailableRangeCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _compute_available_range_count(self):
-            // # Only invoices under Indonesian company needs computation for l10n_id_available_range_count
-            // id_moves = self.filtered(lambda x: x.country_code == 'ID')
-            // other_moves = self - id_moves
-            // 
-            // if other_moves:
-            //     other_moves.l10n_id_available_range_count = 0
-            // 
-            // if id_moves:
-            //     range_count_per_company = dict(
-            //         self.env['l10n_id_efaktur.efaktur.range']._read_group(
-            //             [('available', '>', 0), ('company_id', 'in', id_moves.company_id.ids)],
-            //             ['company_id'],
-            //             ['__count']
-            //         )
-            //     )
-            //     for company_id, moves in id_moves.grouped('company_id').items():
-            //         moves.l10n_id_available_range_count = range_count_per_company.get(company_id, 0)
             */
             return default;
         }
@@ -1963,12 +2620,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         self.env.add_to_compute(move.line_ids._fields['date'], move.line_ids)
             //         # might be protected because `_get_accounting_date` requires the `name`
             //         self.env.add_to_compute(self._fields['name'], move)
-            --- ODOO METHOD SOURCE (MODULE: l10n_cz, FILE: account_move.py) ---
-            // def _compute_date(self):
-            // super()._compute_date()
-            // for move in self:
-            //     if move.country_code == 'CZ' and move.taxable_supply_date and move.state == 'draft' and not move.statement_line_id:
-            //         move.date = move.taxable_supply_date
             */
             return default;
         }
@@ -2049,26 +2700,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     date_create = fields.Datetime.from_string(lead.create_date).replace(microsecond=0)
             //     date_open = fields.Datetime.from_string(lead.date_open)
             //     lead.day_open = abs((date_open - date_create).days)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeDdtIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _compute_ddt_ids(self):
-            // it_out_invoices = self.filtered(lambda i: i.move_type == 'out_invoice' and i.company_id.account_fiscal_country_id.code == 'IT')
-            // for invoice in it_out_invoices:
-            //     invoice_line_pickings = invoice._get_ddt_values()
-            //     pickings = self.env['stock.picking']
-            //     for picking in invoice_line_pickings:
-            //         pickings |= picking
-            //     invoice.l10n_it_ddt_ids = pickings
-            //     invoice.l10n_it_ddt_count = len(pickings)
-            // for invoice in self - it_out_invoices:
-            //     invoice.l10n_it_ddt_ids = self.env['stock.picking']
-            //     invoice.l10n_it_ddt_count = 0
             */
             return default;
         }
@@ -2296,14 +2927,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             and move_applicability.get('cancel'):
             //             move.edi_show_cancel_button = True
             //             break
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _compute_edi_show_cancel_button(self):
-            // """
-            //     Override to hide the EDI Cancellation button at all times for ZATCA Invoices
-            // """
-            // super()._compute_edi_show_cancel_button()
-            // for move in self.filtered(lambda m: m.is_invoice() and m.country_code == 'SA'):
-            //     move.edi_show_cancel_button = False
             */
             return default;
         }
@@ -2397,55 +3020,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeEtaLongIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def _compute_eta_long_id(self):
-            // for rec in self:
-            //     response_data = rec.l10n_eg_eta_json_doc_id and json.loads(rec.l10n_eg_eta_json_doc_id.raw).get('response')
-            //     if response_data:
-            //         rec.l10n_eg_long_id = response_data.get('l10n_eg_long_id')
-            //     else:
-            //         rec.l10n_eg_long_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeEtaQrCodeStrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def _compute_eta_qr_code_str(self):
-            // for move in self:
-            //     if move.invoice_date and move.l10n_eg_uuid and move.l10n_eg_long_id:
-            //         is_prod = move.company_id.l10n_eg_production_env
-            //         base_url = self.env['account.edi.format']._l10n_eg_get_eta_qr_domain(production_enviroment=is_prod)
-            //         qr_code_str = '%s/documents/%s/share/%s' % (base_url, move.l10n_eg_uuid, move.l10n_eg_long_id)
-            //         move.l10n_eg_qr_code = qr_code_str
-            //     else:
-            //         move.l10n_eg_qr_code = ''
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeEtaResponseDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def _compute_eta_response_data(self):
-            // for rec in self:
-            //     response_data = rec.l10n_eg_eta_json_doc_id and json.loads(rec.l10n_eg_eta_json_doc_id.raw).get('response')
-            //     if response_data:
-            //         rec.l10n_eg_uuid = response_data.get('l10n_eg_uuid')
-            //         rec.l10n_eg_submission_number = response_data.get('l10n_eg_submission_number')
-            //     else:
-            //         rec.l10n_eg_uuid = False
-            //         rec.l10n_eg_submission_number = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeExpectedCurrencyRateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -2461,12 +3035,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         )
             //     else:
             //         move.expected_currency_rate = 1
-            --- ODOO METHOD SOURCE (MODULE: l10n_cz, FILE: account_move.py) ---
-            // def _compute_expected_currency_rate(self):
-            // super()._compute_expected_currency_rate()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_expected_currency_rate(self):
-            // super()._compute_expected_currency_rate()
             */
             return default;
         }
@@ -2537,28 +3105,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if fpos_id_before != cache[key] and order.order_line:
             //         order.show_update_fpos = True
             //     order.fiscal_position_id = cache[key]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeFromL10nGrEdiDocumentIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_from_l10n_gr_edi_document_ids(self):
-            // self.l10n_gr_edi_state = False
-            // self.l10n_gr_edi_mark = False
-            // self.l10n_gr_edi_cls_mark = False
-            // self.l10n_gr_edi_attachment_id = False
-            // 
-            // for move in self:
-            //     for document in move.l10n_gr_edi_document_ids.sorted():
-            //         if document.state in ('invoice_sent', 'bill_fetched', 'bill_sent'):
-            //             move.l10n_gr_edi_state = document.state
-            //             move.l10n_gr_edi_mark = document.mydata_mark
-            //             move.l10n_gr_edi_cls_mark = document.mydata_cls_mark
-            //             move.l10n_gr_edi_attachment_id = document.attachment_id
-            //             break
             */
             return default;
         }
@@ -2634,11 +3180,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_highest_name(self):
             // for record in self:
             //     record.highest_name = record._get_last_sequence()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_highest_name(self):
-            // manual_records = self.filtered('l10n_latam_manual_document_number')
-            // manual_records.highest_name = ''
-            // super(AccountMove, self - manual_records)._compute_highest_name()
             */
             return default;
         }
@@ -2679,14 +3220,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for move in self:
             //     if move.is_invoice(include_receipts=True):
             //         move.invoice_currency_rate = move.expected_currency_rate
-            --- ODOO METHOD SOURCE (MODULE: l10n_cz, FILE: account_move.py) ---
-            // def _compute_invoice_currency_rate(self):
-            // # In the Czech Republic, the currency rate should be based on the taxable supply date.
-            // super()._compute_invoice_currency_rate()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_invoice_currency_rate(self):
-            // # In Hungary, the currency rate should be based on the delivery date.
-            // super()._compute_invoice_currency_rate()
             */
             return default;
         }
@@ -2930,1169 +3463,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeKodeTransaksiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _compute_kode_transaksi(self):
-            // for move in self:
-            //     move.l10n_id_kode_transaksi = move.partner_id.commercial_partner_id.l10n_id_kode_transaksi
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nArAfipConceptInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _compute_l10n_ar_afip_concept(self):
-            // recs_afip = self.filtered(lambda x: x.company_id.account_fiscal_country_id.code == "AR" and x.l10n_latam_use_documents)
-            // for rec in recs_afip:
-            //     rec.l10n_ar_afip_concept = rec._get_concept()
-            // remaining = self - recs_afip
-            // remaining.l10n_ar_afip_concept = ''
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nArWithholdingIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_ar_withholding_ids(self):
-            // for move in self:
-            //     move.l10n_ar_withholding_ids = move.line_ids.filtered(lambda l: l.tax_line_id.l10n_ar_withholding_payment_type)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nBgDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_bg_ledger, FILE: account_move.py) ---
-            // def _compute_l10n_bg_document_number(self):
-            // for move in self:
-            //     if move.state == 'draft':
-            //         move.l10n_bg_document_number = ""
-            //     elif move.is_sale_document(include_receipts=True):
-            //         move.l10n_bg_document_number = move.name
-            //     else:
-            //         move.l10n_bg_document_number = move.ref
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nBgDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_bg_ledger, FILE: account_move.py) ---
-            // def _compute_l10n_bg_document_type(self):
-            // for move in self:
-            //     if move.journal_id:
-            //         if 'debit_origin_id' in self._fields and move.debit_origin_id:
-            //             move.l10n_bg_document_type = move.journal_id.l10n_bg_debit_notes
-            //         elif move.move_type in ('out_invoice', 'in_invoice'):
-            //             move.l10n_bg_document_type = move.journal_id.l10n_bg_customer_invoice
-            //         elif move.move_type in ('in_refund', 'out_refund'):
-            //             move.l10n_bg_document_type = move.journal_id.l10n_bg_credit_notes
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nChQrIsValidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def _compute_l10n_ch_qr_is_valid(self):
-            // for move in self:
-            //     error_messages = move.partner_bank_id._get_error_messages_for_qr('ch_qr', move.partner_id, move.currency_id)
-            //     move.l10n_ch_is_qr_valid = (
-            //         move.move_type == 'out_invoice' and
-            //         not error_messages and
-            //         (
-            //             # QR codes must be printed on all Swiss transactions
-            //             move.company_id.account_fiscal_country_id.code == 'CH' or
-            //             (
-            //                 # QR code is also printed if the fiscal country is not Switzerland but the receivale account is eligible
-            //                 move.partner_bank_id.acc_type == 'iban' and
-            //                 (iban := (move.partner_bank_id.acc_number or '').replace(' ', '')).startswith('CH') and
-            //                 iban[4:9].isdigit() and
-            //                 30000 <= int(iban[4:9]) <= 31999
-            //             )
-            //         )
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nEsEdiIsRequiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_sii, FILE: account_move.py) ---
-            // def _compute_l10n_es_edi_is_required(self):
-            // for move in self:
-            //     has_tax = True
-            //     # Check it is not an importation invoice (which will be report through the DUA invoice)
-            //     if move.is_purchase_document():
-            //         taxes = move.invoice_line_ids.tax_ids
-            //         has_tax = any(t.l10n_es_type and t.l10n_es_type != 'ignore' for t in taxes)
-            //     move.l10n_es_edi_is_required = move.is_invoice() \
-            //                                    and move.country_code == 'ES' \
-            //                                    and move.company_id.l10n_es_sii_tax_agency \
-            //                                    and has_tax
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nEsIsSimplifiedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es, FILE: account_move.py) ---
-            // def _compute_l10n_es_is_simplified(self):
-            // simplified_partner = self.env.ref('l10n_es.partner_simplified', raise_if_not_found=False)
-            // for move in self:
-            //     currency_id = move.currency_id or move.company_id.currency_id
-            //     move.l10n_es_is_simplified = (move.country_code == 'ES') and (
-            //         (not move.partner_id and move.move_type in ('in_receipt', 'out_receipt'))
-            //         or (simplified_partner and move.partner_id == simplified_partner)
-            //         or (move.move_type in ('out_invoice', 'out_refund')
-            //             and not move.commercial_partner_id.vat
-            //             and currency_id.compare_amounts(abs(move.amount_total_signed), move.company_id.l10n_es_simplified_invoice_limit) <= 0
-            //             and move.commercial_partner_id.country_id in self.env.ref('base.europe').country_ids
-            //         )
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_pos, FILE: account_move.py) ---
-            // def _compute_l10n_es_is_simplified(self):
-            // super()._compute_l10n_es_is_simplified()
-            // for move in self:
-            //     if move.pos_order_ids:
-            //         move.l10n_es_is_simplified = move.pos_order_ids[0].is_l10n_es_simplified_invoice
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nEsTbaiIsRequiredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _compute_l10n_es_tbai_is_required(self):
-            // for move in self:
-            //     move.l10n_es_tbai_is_required = (
-            //         move.company_id.l10n_es_tbai_is_enabled
-            //         and (
-            //             move.is_sale_document()
-            //             or move.is_purchase_document() and move.company_id.l10n_es_tbai_tax_agency == 'bizkaia'
-            //         )
-            //         and any(not line._l10n_es_tbai_is_ignored() for line in move.invoice_line_ids)
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nEsTbaiStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _compute_l10n_es_tbai_state(self):
-            // for move in self:
-            //     state = 'to_send' if move.l10n_es_tbai_is_required else None
-            //     if move.l10n_es_tbai_post_document_id and move.l10n_es_tbai_post_document_id.state == 'accepted':
-            //         state = 'sent'
-            //     if move.l10n_es_tbai_cancel_document_id and move.l10n_es_tbai_cancel_document_id.state == 'accepted':
-            //         state = 'cancelled'
-            // 
-            //     move.l10n_es_tbai_state = state
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nFrIsCompanyFrenchInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_account, FILE: account_move.py) ---
-            // def _compute_l10n_fr_is_company_french(self):
-            // for record in self:
-            //     record.l10n_fr_is_company_french = record.country_code in record.company_id._get_france_country_codes()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiAlertsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_alerts(self):
-            // for move in self:
-            //     # Warnings are only calculated when the move state is posted.
-            //     # We use `._origin` to make sure the validated move have all the needed data for validation.
-            //     if move._l10n_gr_edi_eligible_for_mydata():
-            //         move.l10n_gr_edi_alerts = move._origin._l10n_gr_edi_get_pre_error_dict()
-            //     else:
-            //         move.l10n_gr_edi_alerts = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiAvailableInvTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_available_inv_type(self):
-            // for move in self:
-            //     if move.is_sale_document(include_receipts=True):
-            //         move.l10n_gr_edi_available_inv_type = ','.join(INVOICE_TYPES_HAVE_INCOME)
-            //     elif move.is_purchase_document(include_receipts=True):
-            //         move.l10n_gr_edi_available_inv_type = ','.join(INVOICE_TYPES_HAVE_EXPENSE)
-            //     else:  # move.move_type == 'entry'
-            //         move.l10n_gr_edi_available_inv_type = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiEnableFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_enable_fields(self):
-            // for move in self:
-            //     common_send_requirements = all((
-            //         move._l10n_gr_edi_eligible_for_mydata(),
-            //         move.l10n_gr_edi_state in (False, 'bill_fetched'),
-            //     ))
-            //     move.l10n_gr_edi_enable_view_mydata = all((
-            //         move.country_code == 'GR',
-            //         move.is_invoice(include_receipts=True),
-            //     ))
-            //     move.l10n_gr_edi_enable_send_invoices = all((
-            //         common_send_requirements,
-            //         move.is_sale_document(include_receipts=True),
-            //     ))
-            //     move.l10n_gr_edi_enable_send_expense_classification = all((
-            //         common_send_requirements,
-            //         move.is_purchase_document(include_receipts=True),
-            //         move.l10n_gr_edi_mark,
-            //     ))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiInvTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_inv_type(self):
-            // for move in self:
-            //     if move.country_code == 'GR':
-            //         if move.l10n_gr_edi_inv_type or move.move_type == 'entry':
-            //             # If we have previously calculated the inv_type, reuse it here.
-            //             # For entry moves, we want the inv_type to be False. (we don't send anything to myDATA on entry moves)
-            //             move.l10n_gr_edi_inv_type = move.l10n_gr_edi_inv_type
-            //         elif move.move_type in ('out_refund', 'in_refund'):
-            //             # inv_type specific for credit notes
-            //             if move.l10n_gr_edi_correlation_id:
-            //                 # when possible, we must add the associate invoice/bill mark (id)
-            //                 move.l10n_gr_edi_inv_type = '5.1'
-            //             else:
-            //                 move.l10n_gr_edi_inv_type = '5.2'
-            //         else:  # move.move_type in ('out_invoice', 'in_invoice', 'out_receipt', 'in_receipt')
-            //             inv_type = '1.1' if move.move_type == 'out_invoice' else '13.1'
-            //             preferred_clss = move.fiscal_position_id.l10n_gr_edi_preferred_classification_ids.filtered(
-            //                 lambda p: p.l10n_gr_edi_inv_type in (move.l10n_gr_edi_available_inv_type or "").split(','))
-            //             if preferred_clss:
-            //                 inv_type = preferred_clss[0].l10n_gr_edi_inv_type
-            //             move.l10n_gr_edi_inv_type = inv_type
-            //     else:
-            //         move.l10n_gr_edi_inv_type = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiNeedFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_need_fields(self):
-            // for move in self:
-            //     move.l10n_gr_edi_need_correlated = all((
-            //         move.l10n_gr_edi_inv_type in TYPES_WITH_CORRELATE_INVOICE,
-            //         move.is_sale_document(include_receipts=True),
-            //     ))
-            //     move.l10n_gr_edi_need_payment_method = move.l10n_gr_edi_inv_type in TYPES_WITH_MANDATORY_PAYMENT
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nGrEdiPaymentMethodInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_l10n_gr_edi_payment_method(self):
-            // for move in self:
-            //     if move.country_code == 'GR':
-            //         move.l10n_gr_edi_payment_method = move.l10n_gr_edi_payment_method or '1'
-            //     else:
-            //         move.l10n_gr_edi_payment_method = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nHuEdiAttachmentFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_l10n_hu_edi_attachment_filename(self):
-            // for move in self:
-            //     move.l10n_hu_edi_attachment_filename = f'{move.name.replace("/", "_")}.xml' if move.name else 'nav30.xml'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nIdCoretaxAddInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def _compute_l10n_id_coretax_add_info(self):
-            // for move in self:
-            //     if move.l10n_id_kode_transaksi == "07":
-            //         digits = move.l10n_id_coretax_facility_info_07
-            //         if digits:
-            //             move.l10n_id_coretax_add_info_07 = f"TD.005{digits[-2:]}"
-            //     elif move.l10n_id_kode_transaksi == "08":
-            //         digits = move.l10n_id_coretax_facility_info_08
-            //         if digits:
-            //             move.l10n_id_coretax_add_info_08 = f"TD.005{digits[-2:]}"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nIdCoretaxEfakturAvailableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def _compute_l10n_id_coretax_efaktur_available(self):
-            // """ Similar use case as l10n_id_need_kode_transaksi from l10n_id_efaktur
-            // 
-            // helps to check whether or not some fields need to be visible or not
-            // """
-            // for move in self:
-            //     move.l10n_id_coretax_efaktur_available = (
-            //         move.partner_id.l10n_id_pkp
-            //         and move.country_code == 'ID'
-            //         and move.move_type == 'out_invoice'
-            //         and move.line_ids.tax_ids
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nIdCoretaxFacilityInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def _compute_l10n_id_coretax_facility_info(self):
-            // for move in self:
-            //     if move.l10n_id_kode_transaksi == "07":
-            //         digits = move.l10n_id_coretax_add_info_07
-            //         if digits:
-            //             move.l10n_id_coretax_facility_info_07 = f"TD.011{digits[-2:]}"
-            //     elif move.l10n_id_kode_transaksi == "08":
-            //         digits = move.l10n_id_coretax_add_info_08
-            //         if digits:
-            //             move.l10n_id_coretax_facility_info_08 = f"TD.011{digits[-2:]}"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInDisplayHigherTcsButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_in_display_higher_tcs_button(self):
-            // for move in self:
-            //     move.l10n_in_display_higher_tcs_button = (
-            //         move.l10n_in_warning
-            //         and move.l10n_in_warning.get('lower_tcs_tax')
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInEdiEwaybillDirectInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def _compute_l10n_in_edi_ewaybill_direct(self):
-            // for move in self:
-            //     base = self.env["account.edi.format"]._l10n_in_edi_ewaybill_base_irn_or_direct(move)
-            //     move.l10n_in_edi_ewaybill_direct_api = base == "direct"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInEdiEwaybillShowSendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def _compute_l10n_in_edi_ewaybill_show_send_button(self):
-            // edi_format = self.env.ref('l10n_in_edi_ewaybill.edi_in_ewaybill_json_1_03', raise_if_not_found=False)
-            // if not edi_format:
-            //     self.l10n_in_edi_ewaybill_show_send_button = False
-            //     return
-            // posted_moves = self.filtered(lambda x: x.move_type in ('out_invoice', 'in_invoice', 'in_refund') and x.state == 'posted' and x.country_code == "IN")
-            // for move in posted_moves:
-            //     already_sent = move.edi_document_ids.filtered(lambda x: x.edi_format_id == edi_format and x.state in ('sent', 'to_cancel', 'to_send'))
-            //     if already_sent:
-            //         move.l10n_in_edi_ewaybill_show_send_button = False
-            //     else:
-            //         move.l10n_in_edi_ewaybill_show_send_button = True
-            // (self - posted_moves).l10n_in_edi_ewaybill_show_send_button = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInEdiShowCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: account_move.py) ---
-            // def _compute_l10n_in_edi_show_cancel(self):
-            // for invoice in self:
-            //     invoice.l10n_in_edi_show_cancel = bool(invoice.edi_document_ids.filtered(
-            //         lambda i: i.edi_format_id.code == "in_einvoice_1_03"
-            //         and i.state in ("sent", "to_cancel", "cancelled")
-            //     ))
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def _compute_l10n_in_edi_show_cancel(self):
-            // super()._compute_l10n_in_edi_show_cancel()
-            // for invoice in self:
-            //     if invoice.edi_document_ids.filtered(lambda i: i.edi_format_id.code == "in_ewaybill_1_03" and i.state in ("sent", "to_cancel", "cancelled")):
-            //         invoice.l10n_in_edi_show_cancel = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInGstTreatmentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _compute_l10n_in_gst_treatment(self):
-            // indian_invoice = self.filtered(lambda m: m.country_code == 'IN')
-            // for record in indian_invoice:
-            //     if record.state == 'draft':
-            //         gst_treatment = record.partner_id.l10n_in_gst_treatment
-            //         if not gst_treatment:
-            //             gst_treatment = 'unregistered'
-            //             if record.partner_id.country_id.code == 'IN' and record.partner_id.vat:
-            //                 gst_treatment = 'regular'
-            //             elif record.partner_id.country_id and record.partner_id.country_id.code != 'IN':
-            //                 gst_treatment = 'overseas'
-            //         record.l10n_in_gst_treatment = gst_treatment
-            // (self - indian_invoice).l10n_in_gst_treatment = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInPartnerGstinStatusAndDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_gstin_status, FILE: account_move.py) ---
-            // def _compute_l10n_in_partner_gstin_status_and_date(self):
-            // for move in self:
-            //     if move.country_code == 'IN' and move.payment_state not in ['paid', 'reversed'] and move.state != 'cancel':
-            //         move.l10n_in_partner_gstin_status = move.partner_id.l10n_in_gstin_verified_status
-            //         move.l10n_in_gstin_verified_date = move.partner_id.l10n_in_gstin_verified_date
-            //     else:
-            //         move.l10n_in_partner_gstin_status = False
-            //         move.l10n_in_gstin_verified_date = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInShowGstinStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_gstin_status, FILE: account_move.py) ---
-            // def _compute_l10n_in_show_gstin_status(self):
-            // indian_moves = self.filtered(lambda m: m.country_code == 'IN')
-            // (self - indian_moves).l10n_in_show_gstin_status = False
-            // for move in indian_moves:
-            //     move.l10n_in_show_gstin_status = (
-            //         move.partner_id
-            //         and move.state == 'posted'
-            //         and move.move_type != 'entry'
-            //         and move.payment_state not in ['paid', 'reversed']
-            //         and move.l10n_in_gst_treatment in ['regular', 'composition', 'special_economic_zone', 'deemed_export', 'uin_holders']
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInStateIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _compute_l10n_in_state_id(self):
-            // for move in self:
-            //     if move.country_code == 'IN' and move.is_sale_document(include_receipts=True):
-            //         partner_state = (
-            //             move.partner_id.commercial_partner_id == move.partner_shipping_id.commercial_partner_id
-            //             and move.partner_shipping_id.state_id
-            //             or move.partner_id.state_id
-            //         )
-            //         if not partner_state:
-            //             partner_state = move.partner_id.commercial_partner_id.state_id or move.company_id.state_id
-            //         country_code = partner_state.country_id.code or move.country_code
-            //         if country_code == 'IN':
-            //             move.l10n_in_state_id = partner_state
-            //         else:
-            //             move.l10n_in_state_id = self.env.ref('l10n_in.state_in_oc', raise_if_not_found=False)
-            //     elif move.country_code == 'IN' and move.journal_id.type == 'purchase':
-            //         move.l10n_in_state_id = move.company_id.state_id
-            //     else:
-            //         move.l10n_in_state_id = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_pos, FILE: account_move.py) ---
-            // def _compute_l10n_in_state_id(self):
-            // res = super()._compute_l10n_in_state_id()
-            // to_compute = self.filtered(lambda m: m.country_code == 'IN' and not m.l10n_in_state_id and m.journal_id.type == 'general' and (m.pos_session_ids or m.reversed_pos_order_id))
-            // for move in to_compute:
-            //     move.l10n_in_state_id = move.company_id.state_id
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInTcsTdsWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_in_tcs_tds_warning(self):
-            // def _group_by_section_alert(invoice_lines):
-            //     group_by_lines = {}
-            //     for line in invoice_lines:
-            //         group_key = line.account_id.l10n_in_tds_tcs_section_id
-            //         if group_key and not line.company_currency_id.is_zero(line.price_total):
-            //             group_by_lines.setdefault(group_key, [])
-            //             group_by_lines[group_key].append(line)
-            //     return group_by_lines
-            // 
-            // def _is_section_applicable(section_alert, threshold_sums, invoice_currency_rate, lines):
-            //     lines_total = sum(
-            //             (line.price_total * invoice_currency_rate) if section_alert.consider_amount == 'total_amount' else line.balance
-            //             for line in lines
-            //         )
-            //     if section_alert.is_aggregate_limit:
-            //         aggregate_period_key = section_alert.consider_amount == 'total_amount' and 'price_total' or 'balance'
-            //         aggregate_total = threshold_sums.get(section_alert.aggregate_period, {}).get(aggregate_period_key)
-            //         if move.state == 'draft':
-            //             aggregate_total += lines_total
-            //         if aggregate_total > section_alert.aggregate_limit:
-            //             return True
-            //     return (
-            //         section_alert.is_per_transaction_limit
-            //         and lines_total > section_alert.per_transaction_limit
-            //     )
-            // 
-            // for move in self:
-            //     if move.country_code == 'IN' and move.move_type in ['in_invoice', 'out_invoice']:
-            //         warning = set()
-            //         commercial_partner_id = move.commercial_partner_id
-            //         existing_section = (self.l10n_in_withhold_move_ids.line_ids + move.line_ids).tax_ids.l10n_in_section_id
-            //         for section_alert, lines in _group_by_section_alert(move.invoice_line_ids).items():
-            //             if (
-            //                 (section_alert not in existing_section
-            //                 or [line for line in lines if section_alert not in line.tax_ids.l10n_in_section_id])
-            //                 and move._l10n_in_is_warning_applicable(section_alert)
-            //                 and _is_section_applicable(
-            //                     section_alert,
-            //                     move._get_sections_aggregate_sum_by_pan(
-            //                         section_alert,
-            //                         commercial_partner_id
-            //                     ),
-            //                     move.invoice_currency_rate,
-            //                     lines
-            //                 )
-            //             ):
-            //                 warning.add(section_alert.id)
-            //         warning_sections = self.env['l10n_in.section.alert'].browse(warning)
-            //         if warning_sections:
-            //             move.l10n_in_tcs_tds_warning = warning_sections._get_warning_message()
-            //         else:
-            //             move.l10n_in_tcs_tds_warning = False
-            //     else:
-            //         move.l10n_in_tcs_tds_warning = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInTotalWithholdingAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_in_total_withholding_amount(self):
-            // for move in self:
-            //     move.l10n_in_total_withholding_amount = sum(move.l10n_in_withhold_move_ids.filtered(
-            //         lambda m: m.state == 'posted').l10n_in_withholding_line_ids.mapped('l10n_in_withhold_tax_amount'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _compute_l10n_in_warning(self):
-            // 
-            // def build_warning(record, action_name, message, views, domain=False):
-            //     return {
-            //         'message': message,
-            //         'action_text': self.env._("View %s", action_name),
-            //         'action': record._get_records_action(name=self.env._("Check %s", action_name), target='current', views=views, domain=domain or [])
-            //     }
-            // 
-            // indian_invoice = self.filtered(lambda m: m.country_code == 'IN' and m.move_type != 'entry')
-            // for move in indian_invoice:
-            //     filtered_lines = move.invoice_line_ids.filtered(lambda line: line.display_type == 'product' and line.tax_ids and line._origin)
-            //     if move.company_id.l10n_in_hsn_code_digit and filtered_lines:
-            //         lines = self.env['account.move.line']
-            //         for line in filtered_lines:
-            //             if (line.l10n_in_hsn_code and (not re.match(r'^\d{4}$|^\d{6}$|^\d{8}$', line.l10n_in_hsn_code) or len(line.l10n_in_hsn_code) < int(move.company_id.l10n_in_hsn_code_digit))) or not line.l10n_in_hsn_code:
-            //                 lines |= line._origin
-            // 
-            //         digit_suffixes = {
-            //             '4': _("4 digits, 6 digits or 8 digits"),
-            //             '6': _("6 digits or 8 digits"),
-            //             '8': _("8 digits")
-            //         }
-            //         msg = _("Ensure that the HSN/SAC Code consists either %s in invoice lines",
-            //             digit_suffixes.get(move.company_id.l10n_in_hsn_code_digit, _("Invalid HSN/SAC Code digit"))
-            //         )
-            //         move.l10n_in_warning = {
-            //             'invalid_hsn_code_length': build_warning(
-            //                 message=msg,
-            //                 action_name=_("Journal Items(s)"),
-            //                 record=lines,
-            //                 views=[(self.env.ref("l10n_in.view_move_line_tree_hsn_l10n_in").id, "list")],
-            //                 domain=[('id', 'in', lines.ids)]
-            //             )
-            //         } if lines else {}
-            //     else:
-            //         move.l10n_in_warning = {}
-            // (self - indian_invoice).l10n_in_warning = {}
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_in_warning(self):
-            // super()._compute_l10n_in_warning()
-            // for move in self:
-            //     warnings = move.l10n_in_warning or {}
-            //     lines = move._get_l10n_in_invalid_tax_lines()
-            //     if lines:
-            //         warnings['lower_tcs_tax'] = {
-            //                 'message': _("As the Partner's PAN missing/invalid apply TCS at the higher rate."),
-            //                 'action_text': _("View Journal Items(s)"),
-            //                 'action': lines._get_records_action(
-            //                     name=_("Journal Items(s)"),
-            //                     target='current',
-            //                     views=[(self.env.ref("l10n_in_withholding.view_move_line_tree_l10n_in").id, "list")],
-            //                     domain=[('id', 'in', lines.ids)]
-            //                 )
-            //         }
-            //         move.l10n_in_warning = warnings
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nInWithholdingLineIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _compute_l10n_in_withholding_line_ids(self):
-            // # Compute the withholding lines for the move
-            // for move in self:
-            //     if move.l10n_in_is_withholding:
-            //         move.l10n_in_withholding_line_ids = move.line_ids.filtered('tax_ids')
-            //     else:
-            //         move.l10n_in_withholding_line_ids = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd, FILE: account_move.py) ---
-            // def _compute_l10n_it_document_type(self):
-            // document_type = self.env['l10n_it.document.type'].search([]).grouped('code')
-            // for move in self:
-            //     if move.country_code != 'IT' or move.l10n_it_document_type or move.state != 'posted':
-            //         continue
-            // 
-            //     move.l10n_it_document_type = document_type.get(move._l10n_it_edi_get_document_type())
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiDoiAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_doi_amount(self):
-            // """
-            // Consider all the lines in self that belong to declaration of intent `declaration`
-            // and have the special declaration of intent tax applied.
-            // This function computes the signed sum of the price_total of all those lines
-            // (the tax amount of the lines is always 0).
-            // The direction_sign determines the sign: 1 (-1) for inbound (outbound) types.
-            // """
-            // for move in self:
-            //     tax = move.company_id.l10n_it_edi_doi_tax_id
-            //     if not tax or not move.l10n_it_edi_doi_id:
-            //         move.l10n_it_edi_doi_amount = 0
-            //         continue
-            //     declaration_lines = move.invoice_line_ids.filtered(
-            //         # The declaration tax cannot be used with other taxes on a single line
-            //         # (checked in `_post`)
-            //         lambda line: line.tax_ids.ids == tax.ids
-            //     )
-            //     move.l10n_it_edi_doi_amount = sum(declaration_lines.mapped('price_total')) * -move.direction_sign
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiDoiDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_doi_date(self):
-            // for move in self:
-            //     move.l10n_it_edi_doi_date = move.invoice_date or fields.Date.context_today(self)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiDoiIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_doi_id(self):
-            // for move in self:
-            //     if not move.l10n_it_edi_doi_use or move.state != 'draft' and not move.l10n_it_edi_doi_id:
-            //         move.l10n_it_edi_doi_id = False
-            //         continue
-            //     partner = move.partner_id.commercial_partner_id
-            // 
-            //     # Avoid a query or changing a manually set declaration of intent
-            //     # (if the declaration is still valid).
-            //     validity_warnings = move.l10n_it_edi_doi_id._get_validity_warnings(
-            //         move.company_id, partner, move.currency_id, move.l10n_it_edi_doi_date
-            //     )
-            //     if move.l10n_it_edi_doi_id and not validity_warnings:
-            //         continue
-            // 
-            //     declaration = self.env['l10n_it_edi_doi.declaration_of_intent']\
-            //         ._fetch_valid_declaration_of_intent(move.company_id, partner, move.currency_id, move.l10n_it_edi_doi_date)
-            //     move.l10n_it_edi_doi_id = declaration
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiDoiUseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_doi_use(self):
-            // sale_types = self.env['account.move'].get_sale_types()
-            // for move in self:
-            //     move.l10n_it_edi_doi_use = (
-            //         move.l10n_it_edi_doi_id
-            //         or (move.country_code == "IT" and move.move_type in sale_types)
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiDoiWarningInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_doi_warning(self):
-            // for move in self:
-            //     move.l10n_it_edi_doi_warning = ''
-            //     declaration = move.l10n_it_edi_doi_id
-            // 
-            //     show_warning = (
-            //         declaration
-            //         and move.is_sale_document(include_receipts=False)
-            //         and move.state != 'cancel'
-            //     )
-            //     if not show_warning:
-            //         continue
-            // 
-            //     declaration_invoiced = declaration.invoiced
-            //     declaration_not_yet_invoiced = declaration.not_yet_invoiced
-            //     if move.state != 'posted':  # exactly the 'posted' invoices are included in declaration.invoiced
-            //         # Here we replicate what would happen when posting the invoice.
-            //         # Note: lines manually added to a move linked to a sales order are not added to the sales order
-            //         declaration_invoiced += move.l10n_it_edi_doi_amount
-            //         additional_invoiced_qty = {}
-            //         linked_orders = self.env['sale.order']
-            //         for invoice_line in move.invoice_line_ids:
-            //             for sale_line in invoice_line.sale_line_ids:
-            //                 order = sale_line.order_id
-            //                 if order.l10n_it_edi_doi_id == declaration:
-            //                     linked_orders |= order
-            //                 qty_invoiced = invoice_line.product_uom_id._compute_quantity(invoice_line.quantity, sale_line.product_uom) * -move.direction_sign
-            //                 sale_line_id = sale_line.ids[0]  # do not just use `id` in case of NewId
-            //                 additional_invoiced_qty[sale_line_id] = additional_invoiced_qty.get(sale_line_id, 0) + qty_invoiced
-            //         for order in linked_orders:
-            //             not_yet_invoiced = order.l10n_it_edi_doi_not_yet_invoiced
-            //             not_yet_invoiced_after_posting = order._l10n_it_edi_doi_get_amount_not_yet_invoiced(
-            //                 declaration,
-            //                 additional_invoiced_qty=additional_invoiced_qty,
-            //             )
-            //             declaration_not_yet_invoiced -= not_yet_invoiced - not_yet_invoiced_after_posting
-            // 
-            //     validity_warnings = declaration._get_validity_warnings(
-            //         move.company_id, move.commercial_partner_id, move.currency_id, move.l10n_it_edi_doi_date,
-            //         invoiced_amount=declaration_invoiced,
-            //     )
-            // 
-            //     threshold_warning = declaration._build_threshold_warning_message(declaration_invoiced, declaration_not_yet_invoiced)
-            // 
-            //     move.l10n_it_edi_doi_warning = '{}\n\n{}'.format('\n'.join(validity_warnings), threshold_warning).strip()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItEdiIsSelfInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _compute_l10n_it_edi_is_self_invoice(self):
-            // """
-            //     Italian EDI requires Vendor bills coming from EU countries to be sent as self-invoices.
-            //     We recognize these cases based on the taxes that target the VJ tax grids, which imply
-            //     the use of VAT External Reverse Charge.
-            // """
-            // purchases = self.filtered(lambda m: m.is_purchase_document())
-            // others = self - purchases
-            // for move in others:
-            //     move.l10n_it_edi_is_self_invoice = False
-            // if purchases:
-            //     it_tax_report_vj_lines = self.env['account.report.line'].sudo().search([
-            //         ('report_id.country_id.code', '=', 'IT'),
-            //         ('code', '=like', 'VJ%')
-            //     ])
-            //     vj_lines_tags = it_tax_report_vj_lines.expression_ids._get_matching_tags()
-            //     for move in purchases:
-            //         invoice_lines_tags = move.line_ids.tax_tag_ids
-            //         ids_intersection = set(invoice_lines_tags.ids) & set(vj_lines_tags.ids)
-            //         move.l10n_it_edi_is_self_invoice = bool(ids_intersection)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItPartnerPaInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _compute_l10n_it_partner_pa(self):
-            // for move in self:
-            //     partner = move.commercial_partner_id
-            //     move.l10n_it_partner_pa = partner and (partner._l10n_it_edi_is_public_administration() or len(partner.l10n_it_pa_index or '') == 7)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nItPaymentMethodInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd, FILE: account_move.py) ---
-            // def _compute_l10n_it_payment_method(self):
-            // if self.env.company.account_fiscal_country_id.code != 'IT':
-            //     return
-            // 
-            // move_lines_per_matching_number = self.env['account.move.line'].search([
-            //     ('matching_number', 'in', self.line_ids.filtered('matching_number').mapped('matching_number')),
-            //     ('company_id', '=', self.env.company.id),
-            // ]).grouped('matching_number')
-            // 
-            // for move in self:
-            //     matching_numbers = move.line_ids.filtered('matching_number').mapped('matching_number')
-            //     if matching_numbers:
-            //         # We use matching_numbers[0] directly, assuming there's a valid key in the dictionary.
-            //         matching_lines = move_lines_per_matching_number.get(matching_numbers[0])
-            //         if matching_lines and matching_lines.payment_id:
-            //             payment_method_line = matching_lines.payment_id.payment_method_line_id[0]
-            //             if payment_method_line:
-            //                 move.l10n_it_payment_method = payment_method_line.l10n_it_payment_method
-            //                 continue  # Skip to the next move
-            //     if linked_payment := move.matched_payment_ids.filtered(lambda p: p.state != 'draft')[:1]:
-            //         move.l10n_it_payment_method = linked_payment.payment_method_line_id.l10n_it_payment_method
-            //         continue
-            // 
-            //     # Default handling if no valid matching lines found or if conditions don't match
-            //     move.l10n_it_payment_method = move.origin_payment_id.payment_method_line_id.l10n_it_payment_method or move.l10n_it_payment_method or 'MP05'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nJoEdiComputedXmlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _compute_l10n_jo_edi_computed_xml(self):
-            // for invoice in self:
-            //     if invoice.state == 'posted' and invoice.l10n_jo_edi_is_needed:
-            //         xml_content = self.env['account.edi.xml.ubl_21.jo']._export_invoice(invoice)[0]
-            //         invoice.l10n_jo_edi_computed_xml = base64.b64encode(xml_content)
-            //     else:
-            //         invoice.l10n_jo_edi_computed_xml = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nJoEdiInvoiceTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _compute_l10n_jo_edi_invoice_type(self):
-            // for move in self.filtered(lambda m: m.l10n_jo_edi_is_needed and m.l10n_jo_edi_invoice_type != 'development'):
-            //     country_code = move.commercial_partner_id.country_code
-            //     if country_code == 'JO':
-            //         move.l10n_jo_edi_invoice_type = 'local'
-            //     elif country_code:
-            //         move.l10n_jo_edi_invoice_type = 'export'
-            //     else:
-            //         move.l10n_jo_edi_invoice_type = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nJoEdiIsNeededInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _compute_l10n_jo_edi_is_needed(self):
-            // for move in self:
-            //     move.l10n_jo_edi_is_needed = (
-            //         move.country_code == "JO"
-            //         and move.move_type in ("out_invoice", "out_refund")
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nJoEdiUuidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _compute_l10n_jo_edi_uuid(self):
-            // for invoice in self:
-            //     if invoice.l10n_jo_edi_is_needed and not invoice.l10n_jo_edi_uuid:
-            //         invoice.l10n_jo_edi_uuid = uuid.uuid4()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nKeCuShowSendButtonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _compute_l10n_ke_cu_show_send_button(self):
-            // for move in self:
-            //     move.l10n_ke_cu_show_send_button = (
-            //         move.country_code == 'KE'
-            //         and not move.l10n_ke_cu_qrcode
-            //         and move.state == 'posted'
-            //         and move.move_type in ['out_invoice', 'out_refund']
-            //         and not move.company_id.l10n_ke_oscu_is_active
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nLatamAvailableDocumentTypesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_l10n_latam_available_document_types(self):
-            // self.l10n_latam_available_document_type_ids = False
-            // for rec in self.filtered(lambda x: x.journal_id and x.l10n_latam_use_documents and x.partner_id):
-            //     rec.l10n_latam_available_document_type_ids = self.env['l10n_latam.document.type'].search(rec._get_l10n_latam_documents_domain())
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nLatamDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_l10n_latam_document_number(self):
-            // recs_with_name = self.filtered(lambda x: x.name and x.name != "/")
-            // for rec in recs_with_name:
-            //     name = rec.name
-            //     doc_code_prefix = rec.l10n_latam_document_type_id.doc_code_prefix
-            //     if doc_code_prefix and name:
-            //         name = name.split(" ", 1)[-1]
-            //     rec.l10n_latam_document_number = name
-            // remaining = self - recs_with_name
-            // remaining.l10n_latam_document_number = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nLatamDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: account_move.py) ---
-            // def _compute_l10n_latam_document_type(self):
-            // """ Override for debit notes. This sets the same document type as the one on the origin. Cannot
-            //  override the defaults in the account.move.debit wizard because l10n_latam_invoice_document explicitly
-            //  calls _compute_l10n_latam_document_type() after the debit note is created. """
-            // br_debit_notes = self.filtered(lambda m: m.state == "draft" and m.country_code == "BR" and m.debit_origin_id.l10n_latam_document_type_id)
-            // for move in br_debit_notes:
-            //     move.l10n_latam_document_type_id = move.debit_origin_id.l10n_latam_document_type_id
-            // 
-            // return super(AccountMove, self - br_debit_notes)._compute_l10n_latam_document_type()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_l10n_latam_document_type(self):
-            // for rec in self.filtered(lambda x: x.state == 'draft' and (not x.posted_before if x.move_type in ['out_invoice', 'out_refund'] else True)):
-            //     document_types = rec.l10n_latam_available_document_type_ids._origin
-            //     if rec.l10n_latam_document_type_id not in document_types:
-            //         rec.l10n_latam_document_type_id = document_types and document_types[0].id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nLatamManualDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_l10n_latam_manual_document_number(self):
-            // """ Indicates if this document type uses a sequence or if the numbering is made manually """
-            // recs_with_journal_id = self.filtered(lambda x: x.journal_id and x.journal_id.l10n_latam_use_documents)
-            // for rec in recs_with_journal_id:
-            //     rec.l10n_latam_manual_document_number = rec._is_manual_document_number()
-            // remaining = self - recs_with_journal_id
-            // remaining.l10n_latam_manual_document_number = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nMyEdiDisplayTaxExemptionReasonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _compute_l10n_my_edi_display_tax_exemption_reason(self):
-            // """ Some users will never use tax-exempt taxes, so it's better to only show the field when necessary. """
-            // for move in self:
-            //     should_display = move._l10n_my_edi_uses_edi() and any(tax.l10n_my_tax_type == 'E' for tax in move.invoice_line_ids.tax_ids)
-            //     move.l10n_my_edi_display_tax_exemption_reason = should_display
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nMyInvoiceNeedEdiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _compute_l10n_my_invoice_need_edi(self):
-            // for move in self:
-            //     # We return true for malaysian invoices which are not sent yet, sent but awaiting validation or valid.
-            //     move.l10n_my_invoice_need_edi = bool(
-            //         move.is_invoice()
-            //         and move.state == 'posted'
-            //         and move.country_code == 'MY'
-            //         and move.l10n_my_edi_state in (False, 'in_progress', 'valid')
-            //         and move.company_id.l10n_my_edi_proxy_user_id
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nRoEdiStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _compute_l10n_ro_edi_state(self):
-            // self.l10n_ro_edi_state = False
-            // for move in self:
-            //     for document in move.l10n_ro_edi_document_ids.sorted():
-            //         if document.state in ('invoice_sent', 'invoice_validated'):
-            //             move.l10n_ro_edi_state = document.state
-            //             break
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nRsEdiIsEligibleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _compute_l10n_rs_edi_is_eligible(self):
-            // for move in self:
-            //     move.l10n_rs_edi_is_eligible = move.country_code == 'RS' and move.is_sale_document() and move.l10n_rs_edi_state in (False, 'sending_failed')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nRsEdiUuidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _compute_l10n_rs_edi_uuid(self):
-            // for move in self:
-            //     if move.l10n_rs_edi_is_eligible and not move.l10n_rs_edi_uuid:
-            //         move.l10n_rs_edi_uuid = uuid.uuid4()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nRsTaxDateObligationsCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _compute_l10n_rs_tax_date_obligations_code(self):
-            // for move in self:
-            //     if move.country_code == 'RS':
-            //         move.l10n_rs_tax_date_obligations_code = '3'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nVnEdiInvoiceStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _compute_l10n_vn_edi_invoice_state(self):
-            // """ Automatically set the state to payment_state_to_update when the payment state is updated.
-            // 
-            // This is a bit simplistic, as it can be wrongly set (for example, no need to send when going from in_payment to paid)
-            // But this shouldn't be an issue since the logic to send the update will check if anything need to change.
-            // """
-            // for invoice in self:
-            //     if invoice.country_code == 'VN' and invoice.l10n_vn_edi_invoice_state == 'sent':
-            //         invoice.l10n_vn_edi_invoice_state = 'payment_state_to_update'
-            //     else:
-            //         invoice.l10n_vn_edi_invoice_state = invoice.l10n_vn_edi_invoice_state
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeL10nVnEdiInvoiceSymbolInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _compute_l10n_vn_edi_invoice_symbol(self):
-            // """ Use the property l10n_vn_edi_symbol to set a default invoice symbol. """
-            // for invoice in self:
-            //     if invoice.country_code == 'VN':
-            //         # Even if there was a value already set, we assume that it should be updated if the partner is changed.
-            //         invoice.l10n_vn_edi_invoice_symbol = invoice.partner_id.l10n_vn_edi_symbol
-            //     else:
-            //         invoice.l10n_vn_edi_invoice_symbol = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeLandedCostsVisibleInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -4176,12 +3546,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     ]).mapped('sequence_number'))
             //     for move in moves:
             //         move.made_sequence_gap = move.sequence_number > 1 and (move.sequence_number - 1) not in previous_numbers
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_made_sequence_gap(self):
-            // use_documents_moves = self.filtered(lambda m: m.journal_id.l10n_latam_use_documents)
-            // use_documents_moves.made_sequence_gap = False
-            // if other_moves := self - use_documents_moves:
-            //     super(AccountMove, other_moves)._compute_made_sequence_gap()
             */
             return default;
         }
@@ -4238,20 +3602,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeMessageHtmlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_message_html(self):
-            // for move in self:
-            //     if move.l10n_hu_edi_messages:
-            //         move.l10n_hu_edi_message_html = self.env['account.move.send']._format_error_html(move.l10n_hu_edi_messages)
-            //     else:
-            //         move.l10n_hu_edi_message_html = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> ComputeMobileInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -4300,12 +3650,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.name_placeholder = sequence_format_string.format(**sequence_format_values)
             //     else:
             //         move.name_placeholder = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _compute_name_placeholder(self):
-            // use_documents_moves = self.filtered(lambda m: m.journal_id.l10n_latam_use_documents)
-            // use_documents_moves.name_placeholder = False
-            // if other_moves := self - use_documents_moves:
-            //     super(AccountMove, other_moves)._compute_name_placeholder()
             */
             return default;
         }
@@ -4327,11 +3671,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         narration = _('Terms & Conditions: %s', baseurl)
             //         del context
             //     move.narration = narration or False
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _compute_narration(self):
-            // super()._compute_narration()
-            // # Only update translations of real records
-            // self.filtered('id')._load_narration_translation()
             */
             return default;
         }
@@ -4343,44 +3682,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_need_cancel_request(self):
             // for move in self:
             //     move.need_cancel_request = move._need_cancel_request()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_need_cancel_request(self):
-            // # EXTEND 'account' to add dependencies
-            // return super()._compute_need_cancel_request()
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _compute_need_cancel_request(self):
-            // # EXTENDS 'account'
-            // super()._compute_need_cancel_request()
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _compute_need_cancel_request(self):
-            // # EXTEND 'account' to add dependencies
-            // return super()._compute_need_cancel_request()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeNeedKodeTransaksiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _compute_need_kode_transaksi(self):
-            // for move in self:
-            //     # If there are no taxes at all on every line (0% taxes counts as having a tax) then we don't need a kode transaksi
-            //     move.l10n_id_need_kode_transaksi = (
-            //         move.commercial_partner_id.l10n_id_pkp
-            //         and not move.l10n_id_tax_number
-            //         and move.move_type == 'out_invoice'
-            //         and move.country_code == 'ID'
-            //         and move.invoice_line_ids.tax_ids
-            //     )
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def _compute_need_kode_transaksi(self):
-            // """ OVERRIDE: l10n_id_efaktur
-            // 
-            // By setting this l10n_id_need_kode_transaksi, we can prevent the old E-Faktur flow to be
-            // triggered(i.e. efaktur range consumption).
-            // """
-            // self.l10n_id_need_kode_transaksi = False
             */
             return default;
         }
@@ -4692,41 +3993,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_payment_count(self):
             // for invoice in self:
             //     invoice.payment_count = len(invoice.matched_payment_ids)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePaymentReferenceFinnishAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def compute_payment_reference_finnish(self, number):
-            // # Drop all non-numeric characters
-            // invoice_number = self.number2numeric(number)
-            // 
-            // # Calculate the Finnish check digit
-            // check_digit = self.get_finnish_check_digit(invoice_number)
-            // 
-            // return invoice_number + check_digit
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputePaymentReferenceFinnishRfAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def compute_payment_reference_finnish_rf(self, number):
-            // # Drop all non-numeric characters
-            // invoice_number = self.number2numeric(number)
-            // 
-            // # Calculate the Finnish check digit
-            // invoice_number += self.get_finnish_check_digit(invoice_number)
-            // 
-            // # Calculate the RF check digits
-            // rf_check_digits = self.get_rf_check_digits(invoice_number)
-            // 
-            // return 'RF' + rf_check_digits + invoice_number
             */
             return default;
         }
@@ -5142,19 +4408,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.preferred_payment_method_line_id = partner.property_inbound_payment_method_line_id
             //     else:
             //         move.preferred_payment_method_line_id = partner.property_outbound_payment_method_line_id
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _compute_preferred_payment_method_line_id(self):
-            // super()._compute_preferred_payment_method_line_id()
-            // 
-            // for move in self.filtered(lambda m: m.partner_id and m.l10n_jo_edi_is_needed):
-            //     expected_type = 'bank' if move.partner_id.is_company or move.partner_id.parent_id else 'cash'
-            //     journal = self.env['account.journal'].search([
-            //         ('type', '=', expected_type),
-            //         ('company_id', '=', move.company_id.id),
-            //         ('inbound_payment_method_line_ids', '!=', False),
-            //     ], limit=1)
-            //     if journal and (payment_method_line := journal.inbound_payment_method_line_ids[0]):
-            //         move.preferred_payment_method_line_id = payment_method_line
             */
             return default;
         }
@@ -5224,79 +4477,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move.purchase_order_name = move.invoice_line_ids.purchase_order_id.display_name
             //     else:
             //         move.purchase_order_name = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeQrCodeStrInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            #if PYTHON_CODE
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: account_move.py) ---
-            // def _compute_qr_code_str(self):
-            // """ Generate the qr code for Saudi e-invoicing. Specs are available at the following link at page 23
-            // https://zatca.gov.sa/ar/E-Invoicing/SystemsDevelopers/Documents/20210528_ZATCA_Electronic_Invoice_Security_Features_Implementation_Standards_vShared.pdf
-            // """
-            // def get_qr_encoding(tag, field):
-            //     company_name_byte_array = field.encode()
-            //     company_name_tag_encoding = tag.to_bytes(length=1, byteorder='big')
-            //     company_name_length_encoding = len(company_name_byte_array).to_bytes(length=1, byteorder='big')
-            //     return company_name_tag_encoding + company_name_length_encoding + company_name_byte_array
-            // 
-            // for record in self:
-            //     qr_code_str = ''
-            //     if record.l10n_sa_confirmation_datetime and record.company_id.vat:
-            //         seller_name_enc = get_qr_encoding(1, record.company_id.display_name)
-            //         company_vat_enc = get_qr_encoding(2, record.company_id.vat)
-            //         time_sa = fields.Datetime.context_timestamp(self.with_context(tz='Asia/Riyadh'), record.l10n_sa_confirmation_datetime)
-            //         timestamp_enc = get_qr_encoding(3, time_sa.isoformat())
-            //         totals = record._get_l10n_sa_totals()
-            //         invoice_total_enc = get_qr_encoding(4, float_repr(abs(totals['total_amount']), 2))
-            //         total_vat_enc = get_qr_encoding(5, float_repr(abs(totals['total_tax']), 2))
-            // 
-            //         str_to_encode = seller_name_enc + company_vat_enc + timestamp_enc + invoice_total_enc + total_vat_enc
-            //         qr_code_str = base64.b64encode(str_to_encode).decode()
-            //     record.l10n_sa_qr_code_str = qr_code_str
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _compute_qr_code_str(self):
-            // """ Override to update QR code generation in accordance with ZATCA Phase 2"""
-            // phase_one_moves = self.env['account.move']
-            // for move in self:
-            //     zatca_document = move.edi_document_ids.filtered(lambda d: d.edi_format_id.code == 'sa_zatca')
-            //     if move.country_code == 'SA' and move.move_type in ('out_invoice', 'out_refund') and zatca_document and move.state != 'draft':
-            //         qr_code_str = ''
-            //         if move._l10n_sa_is_simplified():
-            //             x509_cert_sudo = move.journal_id.sudo().l10n_sa_production_csid_certificate_id
-            //             xml_content = self.env.ref('l10n_sa_edi.edi_sa_zatca')._l10n_sa_generate_zatca_template(move)
-            //             qr_code_str = move._l10n_sa_get_qr_code(move.journal_id, xml_content, x509_cert_sudo,
-            //                                                     move.l10n_sa_invoice_signature, True)
-            //             qr_code_str = b64encode(qr_code_str).decode()
-            //         elif zatca_document.state == 'sent' and zatca_document.sudo().attachment_id.datas:
-            //             document_xml = zatca_document.attachment_id.with_context(bin_size=False).datas.decode()
-            //             root = etree.fromstring(b64decode(document_xml))
-            //             qr_node = root.xpath('//*[local-name()="ID"][text()="QR"]/following-sibling::*/*')[0]
-            //             qr_code_str = qr_node.text
-            //         move.l10n_sa_qr_code_str = qr_code_str
-            //     else:
-            //         # In the case where the Invoice is not a ZATCA invoice, or is Phase 1, or is not confirmed,
-            //         # we call super to trigger the initial QR code generation for Phase 1
-            //         phase_one_moves |= move
-            // super(AccountMove, phase_one_moves)._compute_qr_code_str()
-            #endif
-            return default;
-        }
-
-        public async Task<TEntity> ComputeQrrNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_ref) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def _compute_qrr_number(self, invoice_ref):
-            // # keep only the last digits if it exceed boundaries
-            // ref_payload_len = L10N_CH_QRR_NUMBER_LENGTH - 1
-            // extra = len(invoice_ref) - ref_payload_len
-            // if extra > 0:
-            //     invoice_ref = invoice_ref[extra:]
-            // internal_ref = invoice_ref.zfill(ref_payload_len)
-            // return mod10r(internal_ref)
             */
             return default;
         }
@@ -5472,55 +4652,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _compute_show_delivery_date(self):
             // for move in self:
             //     move.show_delivery_date = move.delivery_date and move.is_sale_document()
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: account_move.py) ---
-            // def _compute_show_delivery_date(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_delivery_date()
-            // for move in self:
-            //     if move.country_code == 'DE':
-            //         move.show_delivery_date = move.is_sale_document()
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_account, FILE: account_move.py) ---
-            // def _compute_show_delivery_date(self):
-            // # EXTEND 'account'
-            // super()._compute_show_delivery_date()
-            // for move in self.filtered(lambda m: m.country_code == 'FR'):
-            //     move.show_delivery_date = move.is_sale_document()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu, FILE: account_move.py) ---
-            // def _compute_show_delivery_date(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_delivery_date()
-            // for move in self:
-            //     if move.country_code == 'HU':
-            //         move.show_delivery_date = move.is_sale_document()
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _compute_show_delivery_date(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_delivery_date()
-            // for move in self:
-            //     if move.l10n_rs_edi_is_eligible:
-            //         move.show_delivery_date = True
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: account_move.py) ---
-            // def _compute_show_delivery_date(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_delivery_date()
-            // for move in self:
-            //     if move.country_code == 'SA':
-            //         move.show_delivery_date = move.is_sale_document()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeShowKodeTransaksiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _compute_show_kode_transaksi(self):
-            // for move in self:
-            //     move.l10n_id_show_kode_transaksi = (
-            //         move.commercial_partner_id.l10n_id_pkp
-            //         and move.move_type == 'out_invoice'
-            //         and move.country_code == 'ID'
-            //     )
             */
             return default;
         }
@@ -5565,74 +4696,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for move in self:
             //     if not move._check_edi_documents_for_reset_to_draft():
             //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTENDS account_edi account.move
-            // super()._compute_show_reset_to_draft_button()
-            // 
-            // for move in self:
-            //     if move.l10n_es_tbai_chain_index:
-            //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTENDS 'account'
-            // """ Prevent user from resetting the move to draft if it's already sent to myDATA """
-            // super()._compute_show_reset_to_draft_button()
-            // for move in self:
-            //     if move.l10n_gr_edi_state in ('invoice_sent', 'bill_sent'):
-            //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // super()._compute_show_reset_to_draft_button()
-            // self.filtered(lambda m: m.l10n_hu_edi_state not in [False, 'rejected', 'cancelled']).show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // for move in self:
-            //     move.show_reset_to_draft_button = not move.l10n_it_edi_transaction and move.show_reset_to_draft_button
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // self.filtered(lambda move: move.l10n_jo_edi_state == 'sent').show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTEND 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // self.filtered(lambda m: m.l10n_my_edi_state and m.l10n_my_edi_state not in CANCELLED_STATES).show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // """ Prevent user to reset move to draft when there's an
-            //     active sending document or a successful response has been received """
-            // # EXTENDS 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // for move in self:
-            //     if move.l10n_ro_edi_state in ('invoice_sent', 'invoice_validated'):
-            //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTENDS 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // for move in self:
-            //     if move.show_reset_to_draft_button and move.l10n_rs_edi_state == 'sent':
-            //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // """
-            //     Override to hide the Reset to Draft button for ZATCA Invoices that have been successfully submitted
-            // """
-            // super()._compute_show_reset_to_draft_button()
-            // for move in self:
-            //     # An invoice should only have an index chain if it was successfully submitted without rejection,
-            //     # or if the submission timed out. In both cases, a user should not be able to reset it to draft.
-            //     if move.l10n_sa_chain_index:
-            //         move.show_reset_to_draft_button = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _compute_show_reset_to_draft_button(self):
-            // # EXTEND 'account'
-            // super()._compute_show_reset_to_draft_button()
-            // self.filtered(lambda m: m._l10n_vn_need_cancel_request()).show_reset_to_draft_button = False
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: account_move.py) ---
             // def _compute_show_reset_to_draft_button(self):
             // super()._compute_show_reset_to_draft_button()
@@ -6019,53 +5082,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ConfirmAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_confirm(self):
-            // """ Confirm the given quotation(s) and set their confirmation date.
-            // 
-            // If the corresponding setting is enabled, also locks the Sale Order.
-            // 
-            // :return: True
-            // :rtype: bool
-            // :raise: UserError if trying to confirm cancelled SO's
-            // """
-            // for order in self:
-            //     error_msg = order._confirmation_error_message()
-            //     if error_msg:
-            //         raise UserError(error_msg)
-            // 
-            // self.order_line._validate_analytic_distribution()
-            // 
-            // for order in self:
-            //     if order.partner_id in order.message_partner_ids:
-            //         continue
-            //     order.message_subscribe([order.partner_id.id])
-            // 
-            // self.write(self._prepare_confirmation_values())
-            // 
-            // # Context key 'default_name' is sometimes propagated up to here.
-            // # We don't need it and it creates issues in the creation of linked records.
-            // context = self._context.copy()
-            // context.pop('default_name', None)
-            // context.pop('default_user_id', None)
-            // 
-            // self.with_context(context)._action_confirm()
-            // user = self[:1].create_uid
-            // if user and user.sudo().has_group('sale.group_auto_done_setting'):
-            //     # Public user can confirm SO, so we check the group on any record creator.
-            //     self.action_lock()
-            // 
-            // if self.env.context.get('send_email'):
-            //     self._send_order_confirmation_mail()
-            // 
-            // return True
-            */
-            return default;
-        }
-
         public async Task<TEntity> ConfirmationErrorMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -6084,41 +5100,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     return _("A line on these orders missing a product, you cannot confirm it.")
             // 
             // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConstrainsL10nIdTaxNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _constrains_l10n_id_tax_number(self):
-            // for record in self.filtered('l10n_id_tax_number'):
-            //     if record.l10n_id_tax_number != re.sub(r'\D', '', record.l10n_id_tax_number):
-            //         record.l10n_id_tax_number = re.sub(r'\D', '', record.l10n_id_tax_number)
-            //     if len(record.l10n_id_tax_number) != 16:
-            //         raise UserError(_('A tax number should have 16 digits'))
-            //     elif record.l10n_id_tax_number[:2] not in dict(self._fields['l10n_id_kode_transaksi'].selection).keys():
-            //         raise UserError(_('A tax number must begin by a valid Kode Transaksi'))
-            //     elif record.l10n_id_tax_number[2] not in ('0', '1'):
-            //         raise UserError(_('The third digit of a tax number must be 0 or 1'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConstraintKodePpnInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _constraint_kode_ppn(self):
-            // ppn_tag = self.env.ref('l10n_id.ppn_tag')
-            // for move in self.filtered(lambda m: m.l10n_id_need_kode_transaksi and m.l10n_id_kode_transaksi != '08'):
-            //     if any(ppn_tag.id in line.tax_tag_ids.ids for line in move.line_ids if line.display_type == 'product') \
-            //             and any(ppn_tag.id not in line.tax_tag_ids.ids for line in move.line_ids if line.display_type == 'product'):
-            //         raise UserError(_('Cannot mix VAT subject and Non-VAT subject items in the same invoice with this kode transaksi.'))
-            // for move in self.filtered(lambda m: m.l10n_id_need_kode_transaksi and m.l10n_id_kode_transaksi == '08'):
-            //     if any(ppn_tag.id in line.tax_tag_ids.ids for line in move.line_ids if line.display_type == 'product'):
-            //         raise UserError('Kode transaksi 08 is only for non VAT subject items.')
             */
             return default;
         }
@@ -6183,19 +5164,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     stage = self._stage_find(team_id=new_team_id)
             //     upd_values['stage_id'] = stage.id
             // return upd_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ConvertToAmountInWordInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cn, FILE: account_move.py) ---
-            // def _convert_to_amount_in_word(self, number):
-            // """Convert number to ``amount in words`` for Chinese financial usage."""
-            // if not self.check_cn2an():
-            //     return None
-            // return an2cn(number, 'rmb')
             */
             return default;
         }
@@ -6271,23 +5239,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             //     if not record.auto_post_until or next_date <= record.auto_post_until:  # recurrence continues
             //         record.copy(default=record._get_fields_to_copy_recurring_entries({'date': next_date}))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CountAttachmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cn, FILE: account_move.py) ---
-            // def _count_attachments(self):
-            // domains = [[('res_model', '=', 'account.move'), ('res_id', '=', self.id)]]
-            // statement_ids = self.line_ids.mapped('statement_id')
-            // payment_ids = self.line_ids.mapped('payment_id')
-            // if statement_ids:
-            //     domains.append([('res_model', '=', 'account.bank.statement'), ('res_id', 'in', statement_ids.ids)])
-            // if payment_ids:
-            //     domains.append([('res_model', '=', 'account.payment'), ('res_id', 'in', payment_ids.ids)])
-            // return self.env['ir.attachment'].search_count(expression.OR(domains))
             */
             return default;
         }
@@ -6672,49 +5623,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_create_meeting(self):
-            // """ This opens Meeting's calendar view to schedule meeting on current applicant
-            //     @return: Dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // if not self.partner_id:
-            //     if not self.partner_name:
-            //         raise UserError(_('You must define a Contact Name for this applicant.'))
-            //     self.partner_id = self.env['res.partner'].create({
-            //         'is_company': False,
-            //         'name': self.partner_name,
-            //         'email': self.email_from,
-            //     })
-            // 
-            // partners = self.partner_id | self.department_id.manager_id.user_id.partner_id
-            // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
-            //     partners |= self.env.user.partner_id
-            // else:
-            //     partners |= self.user_id.partner_id
-            // 
-            // res = self.env['ir.actions.act_window']._for_xml_id('calendar.action_calendar_event')
-            // # As we are redirected from the hr.applicant, calendar checks rules on "hr.applicant",
-            // # in order to decide whether to allow creation of a meeting.
-            // # As interviewer does not have create right on the hr.applicant, in order to allow them
-            // # to create a meeting for an applicant, we pass 'create': True to the context.
-            // res['context'] = {
-            //     'create': True,
-            //     'default_applicant_id': self.id,
-            //     'default_candidate_id': self.candidate_id.id,
-            //     'default_partner_ids': partners.ids,
-            //     'default_user_id': self.env.uid,
-            //     'default_name': self.partner_name,
-            //     'attachment_ids': self.attachment_ids.ids
-            // }
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> CreateOrderFromAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> attachment_ids) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -6861,136 +5769,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CronL10nItEdiDownloadAndUpdateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def cron_l10n_it_edi_download_and_update(self):
-            // """ Crons run with sudo(), with empty recordset. Remember that. """
-            // retrigger = False
-            // for proxy_user in self.env['account_edi_proxy_client.user'].search([('proxy_type', '=', 'l10n_it_edi')]):
-            //     proxy_user = proxy_user.with_company(proxy_user.company_id)
-            //     if proxy_user.edi_mode != 'demo':
-            //         moves_to_check = self.search([
-            //             ('company_id', '=', proxy_user.company_id.id),
-            //             ('l10n_it_edi_transaction', '!=', False),
-            //             ('l10n_it_edi_state', 'in', WAITING_STATES)
-            //         ])
-            //         if moves_to_check:
-            //             moves_to_check._l10n_it_edi_update_send_state()
-            //         retrigger = retrigger or self._l10n_it_edi_download_invoices(proxy_user)
-            // 
-            // # Retrigger download if there are still some on the server
-            // if retrigger:
-            //     _logger.info('Retriggering "Receive invoices from the SdI"...')
-            //     self.env.ref('l10n_it_edi.ir_cron_l10n_it_edi_download_and_update')._trigger()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CronL10nMyEdiSynchronizeMyinvoisInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _cron_l10n_my_edi_synchronize_myinvois(self):
-            // """
-            // This cron is based on the recommended method to fetch the status of the documents according to their doc.
-            // MAX_SUBMISSION_UPDATE defines how many submissions to process in a single cron run.
-            // """
-            // # First step is to get the invoices for which the status is not yet final.
-            // # A invoice whose status will not change anymore is: (cancelled or invalid) or has been validated more than 74h ago.
-            // # /!\ when an invoice validation is pending, l10n_my_edi_validation_time is still None. These also need to be updated.
-            // datetime_threshold = datetime.datetime.now() - datetime.timedelta(hours=74)
-            // # We always want to fetch in_progress invoices, it's very likely that their status is already there.
-            // invoice_domain = [("l10n_my_edi_state", "=", "in_progress")]
-            // # For valid invoices, we want them if their l10n_my_edi_validation_time is less than 74h ago, and if their l10n_my_edi_retry_at in the past.
-            // invoice_domain = expression.OR([invoice_domain, [
-            //     ('l10n_my_edi_state', '=', 'valid'),
-            //     ('l10n_my_edi_validation_time', '>', datetime_threshold),
-            //     '|',
-            //     ('l10n_my_edi_retry_at', '<=', datetime.datetime.now()),
-            //     ('l10n_my_edi_retry_at', '=', False),
-            // ]])
-            // grouped_invoices = self.env["account.move"]._read_group(
-            //     invoice_domain,
-            //     groupby=["company_id", "l10n_my_edi_submission_uid"],
-            //     aggregates=["id:recordset"],
-            //     limit=MAX_SUBMISSION_UPDATE,
-            // )
-            // invoice_count = self.search_count(invoice_domain)  # Count the total amount of invoices to process.
-            // 
-            // processed_invoices = 0
-            // for company, submission_uid, invoices in grouped_invoices:
-            //     if not company.l10n_my_edi_proxy_user_id:
-            //         continue
-            // 
-            //     error, status_fetch_result = self._l10n_my_get_submission_status(
-            //         submission_uid, company.l10n_my_edi_proxy_user_id
-            //     )
-            //     if error:
-            //         raise UserError(error)  # We do not expect errors here so raising is a correct solution.
-            // 
-            //     for invoice in invoices:
-            //         invoice_result = status_fetch_result.get(invoice.l10n_my_edi_external_uuid)
-            //         if not invoice_result:
-            //             continue
-            // 
-            //         # For valid invoices, we always want to update the try time; it's pointless to fetch too often.
-            //         if invoice.l10n_my_edi_state == "valid" or invoice_result["status"] == "valid":
-            //             invoice.l10n_my_edi_retry_at = fields.Datetime.now() + datetime.timedelta(hours=1)
-            // 
-            //         if invoice_result["status"] == invoice.l10n_my_edi_state:
-            //             continue
-            // 
-            //         # If the state changed, we update the invoice with the new state and an eventual reason.
-            //         invoice._l10n_my_edi_set_status(
-            //             state=invoice_result["status"],
-            //             message=_(
-            //                 "This invoice has been %(status)s for reason: %(reason)s",
-            //                 status=invoice_result["status"],
-            //                 reason=invoice_result["reason"],
-            //             )
-            //             if invoice_result.get("reason")
-            //             else None,
-            //         )
-            //         if invoice.l10n_my_edi_state == "valid":
-            //             invoice._update_validation_fields(invoice_result)
-            // 
-            //     processed_invoices += len(invoices)
-            //     # Commit if we can, in case an issue arises later.
-            //     if self._can_commit():
-            //         self.env['ir.cron']._notify_progress(done=processed_invoices, remaining=invoice_count - processed_invoices)
-            //         self._cr.commit()
-            // 
-            //     time.sleep(0.3)  # There is a limit of how many calls we can do, so we pace ourselves
-            // self.env['ir.cron']._notify_progress(done=processed_invoices, remaining=invoice_count - processed_invoices)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CronNilveraGetInvoiceStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _cron_nilvera_get_invoice_status(self):
-            // invoices_to_update = self.env['account.move'].search([
-            //     ('l10n_tr_nilvera_send_status', 'in', ['waiting', 'sent']),
-            // ])
-            // invoices_to_update._l10n_tr_nilvera_get_submitted_document_status()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CronNilveraGetNewDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _cron_nilvera_get_new_documents(self):
-            // self._l10n_tr_nilvera_get_documents()
-            */
-            return default;
-        }
-
         public async Task<TEntity> CronUpdateAutomatedProbabilitiesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -7004,29 +5782,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self._rebuild_pls_frequency_table()
             // self._update_automated_probabilities()
             // _logger.info("Predictive Lead Scoring : Cron duration = %d seconds" % ((datetime.now() - cron_start_date).total_seconds()))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DebitNoteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_debit_note, FILE: account_move.py) ---
-            // def action_debit_note(self):
-            // action = self.env.ref('account_debit_note.action_view_account_move_debit')._get_action_dict()
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DeduceSequenceNumberResetInternalAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _deduce_sequence_number_reset(self, name):
-            // if self.l10n_latam_use_documents:
-            //     return 'never'
-            // return super(AccountMove, self)._deduce_sequence_number_reset(name)
             */
             return default;
         }
@@ -7167,209 +5922,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DownloadCsvAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def download_csv(self):
-            // return self.l10n_id_efaktur_document.action_download()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DownloadEfakturAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def download_efaktur(self):
-            // """Collect the data and execute function _generate_efaktur."""
-            // for record in self:
-            //     if record.state == 'draft':
-            //         raise ValidationError(_('Could not download E-faktur in draft state'))
-            //     if not record.country_code == 'ID':
-            //         raise ValidationError(_("E-faktur is only available on invoices under Indonesian companies"))
-            //     if not record.partner_id.commercial_partner_id.l10n_id_pkp:
-            //         raise ValidationError(_("E-faktur is only available for taxable customers"))
-            //     if not record.move_type == 'out_invoice':
-            //         raise ValidationError(_("E-faktur is only available for invoices"))
-            //     if not record.line_ids.tax_ids:
-            //         raise ValidationError(_('E-faktur is not available for invoices without any taxes.'))
-            //     if not record.l10n_id_tax_number:
-            //         raise ValidationError(_("Please reset %(move_number)s to draft and post it again to generate the eTax number", move_number=record.name))
-            // 
-            // # Should prevent users from generating e-Faktur document on invoices across multi-company.
-            // # Allowing it will cause issues on the invoice/eFaktur document record rule
-            // if len(self.company_id) > 1:
-            //     raise UserError(_("You are not allowed to generate e-Faktur document from invoices coming from different companies"))
-            // 
-            // # All invoices in self have no documents; we can create a new one for them.
-            // # Or all invoices in self have a document, but it's the same one. Special use case but we allow downloading it.
-            // if not self.l10n_id_efaktur_document:
-            //     self.l10n_id_efaktur_document = self.env['l10n_id_efaktur.document'].create({
-            //         'invoice_ids': self.ids,
-            //         'company_id': self.company_id.id,
-            //     })
-            //     self.l10n_id_efaktur_document.action_regenerate()
-            // # If there is more than one document, or all invoices for a document were not selected, the resulting file could cause mistakes;
-            // # They could get a file with additional invoices for example. In this case, we redirect them to the document view to make it clearer.
-            // elif len(self.l10n_id_efaktur_document) > 1 or set(self.l10n_id_efaktur_document.invoice_ids.ids) != set(self.ids):
-            //     action_error = {
-            //         'name': _('Document Mismatch'),
-            //         'view_mode': 'list',
-            //         'res_model': 'l10n_id_efaktur.document',
-            //         'type': 'ir.actions.act_window',
-            //         'views': [[False, 'list'], [False, 'form']],
-            //         'domain': [('id', 'in', self.l10n_id_efaktur_document.ids)],
-            //     }
-            //     msg = _("The selected invoices are partially part of one or more e-faktur documents.\n"
-            //             "Please download them from the e-faktur documents directly.")
-            //     raise RedirectWarning(msg, action_error, _("Display Related Documents"))
-            // 
-            // return self.download_csv()
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def download_efaktur(self):
-            // """OVERRIDE l10n_id_efaktur
-            // 
-            // Change the flow of efaktur downloading. Collects data needed for efaktur and generate the
-            // xml file.
-            // """
-            // # Pre-download checks
-            // 
-            // # Should prevent users from generating e-Faktur document on invoices across multi-company.
-            // # Allowing it will cause issues on the invoice/eFaktur document record rule
-            // if len(self.company_id) > 1:
-            //     raise UserError(_("You are not allowed to generate e-Faktur document from invoices coming from different companies"))
-            // 
-            // err_messages = []
-            // 
-            // if not self.company_id.vat:
-            //     err_messages.append(_("Your company's VAT hasn't been configured yet"))
-            // 
-            // # check for every customer
-            // for partner in self.partner_id:
-            //     comm = partner.commercial_partner_id
-            //     if not comm.l10n_id_pkp:
-            //         err_messages.append(_("Customer %s is not taxable, tick ID PKP if necessary", comm.name))
-            //     if comm.l10n_id_buyer_document_type != 'TIN' and not comm.l10n_id_buyer_document_number:
-            //         err_messages.append(_("Document number for customer %s hasn't been filled in", comm.name))
-            //     if not comm.vat:
-            //         err_messages.append(_("NPWP for customer %s hasn't been filled in yet", comm.name))
-            //     if not comm.country_id:
-            //         err_messages.append(_("No country is set for customer %s", comm.name))
-            // 
-            // # check for every invoice
-            // for record in self:
-            //     if record.state == 'draft':
-            //         err_messages.append(_('Invoice %s is in draft state', record.name))
-            //     if not record.country_code == 'ID':
-            //         err_messages.append(_("Invoice %s is not under Indonesian company", record.name))
-            //     if not record.move_type == 'out_invoice':
-            //         err_messages.append(_("Entry %s is not an invoice", record.name))
-            //     if not record.line_ids.tax_ids:
-            //         err_messages.append(_("Invoice %s does not contain any taxes", record.name))
-            //     if record.l10n_id_kode_transaksi == "07":
-            //         if not (record.l10n_id_coretax_add_info_07 and record.l10n_id_coretax_facility_info_07):
-            //             err_messages.append(_("Invoice %s doesn't contain the Additional info and Facility Stamp yet (Kode 07)", record.name))
-            //     if record.l10n_id_kode_transaksi == "08":
-            //         if not (record.l10n_id_coretax_add_info_08 and record.l10n_id_coretax_facility_info_08):
-            //             err_messages.append(_("Invoice %s doesn't contain the Additional info and Facility Stamp yet (Kode 08)", record.name))
-            // 
-            // if err_messages:
-            //     err_messages = [_('Unable to download E-faktur fot he following reasons(s):')] + err_messages
-            //     raise ValidationError('\n - '.join(err_messages))
-            // 
-            // # All invoices in self have no documents; we can create a new one for them.
-            // # Or all invoices in self have a document, but it's the same one. Special use case but we allow downloading it.
-            // if not self.l10n_id_coretax_document:
-            //     self.l10n_id_coretax_document = self.env['l10n_id_efaktur_coretax.document'].create({
-            //         'invoice_ids': self.ids,
-            //         'company_id': self.company_id.id,
-            //     })
-            //     self.l10n_id_coretax_document._generate_xml()
-            // 
-            // # If there is more than one document, or all invoices for a document were not selected, the resulting file could cause mistakes;
-            // # They could get a file with additional invoices for example. In this case, we redirect them to the document view to make it clearer.
-            // elif len(self.l10n_id_coretax_document) > 1 or set(self.l10n_id_coretax_document.invoice_ids.ids) != set(self.ids):
-            //     action_error = {
-            //         'name': _('Document Mismatch'),
-            //         'view_mode': 'list',
-            //         'res_model': 'l10n_id_efaktur_coretax.document',
-            //         'type': 'ir.actions.act_window',
-            //         'views': [[False, 'list'], [False, 'form']],
-            //         'domain': [('id', 'in', self.l10n_id_coretax_document.ids)],
-            //     }
-            //     msg = _("The selected invoices are partially part of one or more e-faktur documents.\n"
-            //             "Please download them from the e-faktur documents directly.")
-            //     raise RedirectWarning(msg, action_error, _("Display Related Documents"))
-            // 
-            // return self.download_xml()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DownloadL10nJoEdiComputedXmlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def download_l10n_jo_edi_computed_xml(self):
-            // if error_message := self._l10n_jo_validate_config() or self._l10n_jo_validate_fields():
-            //     raise ValidationError(_("The following errors have to be fixed in order to create an XML:\n") + error_message)
-            // params = url_encode({
-            //     'model': self._name,
-            //     'id': self.id,
-            //     'field': 'l10n_jo_edi_computed_xml',
-            //     'filename': self._l10n_jo_edi_get_xml_attachment_name(),
-            //     'mimetype': 'application/xml',
-            //     'download': 'true',
-            // })
-            // return {'type': 'ir.actions.act_url', 'url': '/web/content/?' + params, 'target': 'new'}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DownloadXmlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def download_xml(self):
-            // return self.l10n_id_coretax_document.action_download()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DraftAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_draft(self):
-            // orders = self.filtered(lambda s: s.state in ['cancel', 'sent'])
-            // return orders.write({
-            //     'state': 'draft',
-            //     'signature': False,
-            //     'signed_by': False,
-            //     'signed_on': False,
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_duplicate(self):
-            // # offer the possibility to duplicate thanks to a button instead of a hidden menu, which is more visible
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_move_journal_line")
-            // action['context'] = dict(self.env.context)
-            // action['context']['view_no_maturity'] = False
-            // action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
-            // action['res_id'] = self.copy().id
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> EdiAllowButtonDraftInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -7377,12 +5929,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _edi_allow_button_draft(self):
             // self.ensure_one()
             // return not self.edi_show_cancel_button
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_sii, FILE: account_move.py) ---
-            // def _edi_allow_button_draft(self):
-            // docs = self.edi_document_ids.filtered(lambda d: d.edi_format_id._needs_web_services())
-            // if len(docs) == 1 and docs.edi_format_id.code == 'es_sii' and docs.state != 'to_cancel':
-            //     return True
-            // return super()._edi_allow_button_draft()
             */
             return default;
         }
@@ -7923,16 +6469,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> FloatReprFloatRoundInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @value, object decimal_places) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _float_repr_float_round(self, value, decimal_places):
-            // return float_repr(float_round(value, decimal_places), decimal_places)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ForceLinesToInvoicePolicyOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -7948,28 +6484,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if line.state == 'sale':
             //         # No need to set 0 as it is already the standard logic in the compute method.
             //         line.qty_to_invoice = line.product_uom_qty - line.qty_invoiced
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ForceRegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_force_register_payment(self):
-            // if any(m.move_type == 'entry' for m in self):
-            //     raise UserError(_("You cannot register payments for miscellaneous entries."))
-            // return self.line_ids.action_register_payment()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> FormatLangTotalsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @value, object currency) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _format_lang_totals(self, value, currency):
-            // return formatLang(self.env, value, currency_obj=currency)
             */
             return default;
         }
@@ -8105,40 +6619,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GenerateMyinvoisQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _generate_myinvois_qr_code(self):
-            // """ Generate the qr code which should be embedded into the invoices PDF """
-            // self.ensure_one()
-            // 
-            // if not self.l10n_my_edi_invoice_long_id:  # Only valid invoices have a long id
-            //     return None
-            // 
-            // # We need to add the portal url to the qr
-            // proxy_user = self._l10n_my_edi_ensure_proxy_user()
-            // if proxy_user.edi_mode == 'prod':
-            //     portal_url = "myinvois.hasil.gov.my"
-            // else:
-            //     portal_url = "preprod.myinvois.hasil.gov.my"
-            // 
-            // try:
-            //     qr_code = self.env['ir.actions.report'].barcode(
-            //         barcode_type='QR',
-            //         width=128,
-            //         height=128,
-            //         humanreadable=1,
-            //         value=f'https://{portal_url}/{self.l10n_my_edi_external_uuid}/share/{self.l10n_my_edi_invoice_long_id}',
-            //     )
-            // except (ValueError, AttributeError):
-            //     raise werkzeug.exceptions.HTTPException(description='Cannot convert into QR Code.')
-            // 
-            // return image_data_uri(base64.b64encode(qr_code))
-            */
-            return default;
-        }
-
         public async Task<TEntity> GenerateQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object silent_errors) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -8184,29 +6664,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.qr_code_method = qr_code_method
             // 
             // return rslt
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def _generate_qr_code(self, silent_errors=False):
-            // """
-            // Adds information about which invoice is triggering the creation of the QR-Code, so that we can link both together.
-            // """
-            // # EXTENDS account
-            // return super(
-            //     AccountMove,
-            //     self.with_context(qris_model="account.move", qris_model_id=str(self.id)),
-            // )._generate_qr_code(silent_errors)
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _generate_qr_code(self, silent_errors=False):
-            // self.ensure_one()
-            // if self.company_id.country_code == 'IN' and self.company_id.l10n_in_upi_id:
-            //     payment_url = 'upi://pay?pa=%s&pn=%s&am=%s&tr=%s&tn=%s' % (
-            //         self.company_id.l10n_in_upi_id,
-            //         self.company_id.name,
-            //         self.amount_residual,
-            //         self.payment_reference or self.name,
-            //         ("Payment for %s" % self.name))
-            //     barcode = self.env['ir.actions.report'].barcode(barcode_type="QR", value=payment_url, width=120, height=120)
-            //     return image_data_uri(base64.b64encode(barcode))
-            // return super()._generate_qr_code(silent_errors)
             */
             return default;
         }
@@ -8278,18 +6735,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_action_per_item(self):
             // action = self.env.ref('account.action_move_out_invoice_type').id
             // return {invoice.id: action for invoice in self}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetAfipInvoiceConceptsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_afip_invoice_concepts(self):
-            // """ Return the list of values of the selection field. """
-            // return [('1', 'Products / Definitive export of goods'), ('2', 'Services'), ('3', 'Products and Services'),
-            //         ('4', '4-Other (export)')]
             */
             return default;
         }
@@ -8427,26 +6872,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.journal_id.default_account_id:
             //     return self.journal_id.default_account_id.id
             // return self.company_id.account_journal_suspense_account_id.id
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: account_move.py) ---
-            // def _get_automatic_balancing_account(self):
-            // """ Override to manage the DGST use case.
-            // We want the automatic line to balance the DGST account to itself, as we only want the tax lines to have a real
-            // impact.
-            // """
-            // # OVERRIDE account
-            // self.ensure_one()
-            // 
-            // # We only consider moves comprised of a single DGST line. (one invoice line, one tax)
-            // has_single_line = len(self.invoice_line_ids) == 1 and len(self.invoice_line_ids.tax_ids) == 1
-            // if has_single_line and self.move_type == 'entry':
-            //     # We identify that it is DGST based on a tag on the account.
-            //     # This is the simplest solution to keep it configurable while avoiding a new setting for a niche feature.
-            //     # At worse, they don't get the correct account assigned automatically and need manual adjustment.
-            //     with_dgst_account = self.invoice_line_ids.account_id.tag_ids == self.env.ref("l10n_au.account_tag_dgst")
-            //     if with_dgst_account:
-            //         # In this case, we want the balancing line to balance IN THE SAME ACCOUNT.
-            //         return self.invoice_line_ids.account_id.id
-            // return super()._get_automatic_balancing_account()
             */
             return default;
         }
@@ -8570,36 +6995,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetConceptInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_concept(self):
-            // """ Method to get the concept of the invoice considering the type of the products on the invoice """
-            // self.ensure_one()
-            // invoice_lines = self.invoice_line_ids.filtered(lambda x: x.display_type not in ('line_note', 'line_section'))
-            // product_types = set([x.product_id.type for x in invoice_lines if x.product_id])
-            // consumable = {'consu'}
-            // service = set(['service'])
-            // # on expo invoice you can mix services and products
-            // expo_invoice = self.l10n_latam_document_type_id.code in ['19', '20', '21']
-            // 
-            // # WSFEX 1668 - If Expo invoice and we have a "IVA Liberado – Ley Nº 19.640" (Zona Franca) partner
-            // # then AFIP concept to use should be type "Others (4)"
-            // is_zona_franca = self.partner_id.l10n_ar_afip_responsibility_type_id == self.env.ref("l10n_ar.res_IVA_LIB")
-            // # Default value "product"
-            // afip_concept = '1'
-            // if expo_invoice and is_zona_franca:
-            //     afip_concept = '4'
-            // elif product_types == service:
-            //     afip_concept = '2'
-            // elif product_types - consumable and product_types - service and not expo_invoice:
-            //     afip_concept = '3'
-            // return afip_concept
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetConfirmationTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -8673,58 +7068,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetDdtValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _get_ddt_values(self):
-            // """
-            // We calculate the link between the invoice lines and the deliveries related to the invoice through the
-            // links with the sale order(s).  We assume that the first picking was invoiced first. (FIFO)
-            // :return: a dictionary with as key the picking and value the invoice line numbers (by counting)
-            // """
-            // self.ensure_one()
-            // # We don't consider returns/credit notes as we suppose they will lead to more deliveries/invoices as well
-            // if self.move_type != "out_invoice" or self.state != 'posted':
-            //     return {}
-            // line_count = 0
-            // invoice_line_pickings = {}
-            // for line in self.invoice_line_ids.filtered(lambda l: l.display_type not in ('line_note', 'line_section')):
-            //     line_count += 1
-            //     done_moves_related = line.sale_line_ids.mapped('move_ids').filtered(
-            //         lambda m: m.state == 'done' and m.location_dest_id.usage == 'customer' and m.picking_type_id.code == 'outgoing')
-            //     if len(done_moves_related) <= 1:
-            //         if done_moves_related and line_count not in invoice_line_pickings.get(done_moves_related.picking_id, []):
-            //             invoice_line_pickings.setdefault(done_moves_related.picking_id, []).append(line_count)
-            //     else:
-            //         total_invoices = done_moves_related.mapped('sale_line_id.invoice_lines').filtered(
-            //             lambda l: l.move_id.state == 'posted' and l.move_id.move_type == 'out_invoice').sorted(lambda l: (l.move_id.invoice_date, l.move_id.id))
-            //         total_invs = [(i.product_uom_id._compute_quantity(i.quantity, i.product_id.uom_id), i) for i in total_invoices]
-            //         inv = total_invs.pop(0)
-            //         # Match all moves and related invoice lines FIFO looking for when the matched invoice_line matches line
-            //         for move in done_moves_related.sorted(lambda m: (m.date, m.id)):
-            //             rounding = move.product_uom.rounding
-            //             move_qty = move.product_qty
-            //             while (float_compare(move_qty, 0, precision_rounding=rounding) > 0):
-            //                 if float_compare(inv[0], move_qty, precision_rounding=rounding) > 0:
-            //                     inv = (inv[0] - move_qty, inv[1])
-            //                     invoice_line = inv[1]
-            //                     move_qty = 0
-            //                 if float_compare(inv[0], move_qty, precision_rounding=rounding) <= 0:
-            //                     move_qty -= inv[0]
-            //                     invoice_line = inv[1]
-            //                     if total_invs:
-            //                         inv = total_invs.pop(0)
-            //                     else:
-            //                         move_qty = 0 #abort when not enough matched invoices
-            //                 # If in our FIFO iteration we stumble upon the line we were checking
-            //                 if invoice_line == line and line_count not in invoice_line_pickings.get(move.picking_id, []):
-            //                     invoice_line_pickings.setdefault(move.picking_id, []).append(line_count)
-            // return invoice_line_pickings
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetDefaultPaymentLinkValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -8787,21 +7130,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetEcFormattedSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _get_ec_formatted_sequence(self, number=0):
-            // return "%s %s-%s-%09d" % (
-            //     self.l10n_latam_document_type_id.doc_code_prefix,
-            //     self.journal_id.l10n_ec_entity,
-            //     self.journal_id.l10n_ec_emission,
-            //     number,
-            // )
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetEdiAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_format) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -8858,24 +7186,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     if ubl_cii_xml_builder is not None:
             //         return ubl_cii_xml_builder._import_invoice_ubl_cii
             // 
-            // return super()._get_edi_decoder(file_data, new=new)
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _get_edi_decoder(self, file_data, new=False):
-            // def is_facturae(tree):
-            //     return tree.tag in [
-            //         '{http://www.facturae.es/Facturae/2014/v3.2.1/Facturae}Facturae',
-            //         '{http://www.facturae.gob.es/formato/Versiones/Facturaev3_2_2.xml}Facturae',
-            //     ]
-            // 
-            // if file_data['type'] == 'xml' and is_facturae(file_data['xml_tree']):
-            //     return self._import_invoice_facturae
-            // 
-            // return super()._get_edi_decoder(file_data, new=new)
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _get_edi_decoder(self, file_data, new=False):
-            // # EXTENDS 'account'
-            // if file_data['type'] == 'l10n_it_edi':
-            //     return self._l10n_it_edi_import_invoice
             // return super()._get_edi_decoder(file_data, new=new)
             */
             return default;
@@ -8969,25 +7279,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetEtaInvoicePdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def action_get_eta_invoice_pdf(self):
-            // """ This is a pdf with the structure from the government.  While we can use our own format,
-            // some clients appreciate this to verify that all the data is there in case of confusion."""
-            // self.ensure_one()
-            // eta_invoice_pdf = self.env['account.edi.format']._l10n_eg_get_eta_invoice_pdf(self)
-            // if eta_invoice_pdf.get('error', False):
-            //     _logger.warning('PDF Content Error:  %s.', eta_invoice_pdf.get('error'))
-            //     return
-            // self.with_context(no_new_invoice=True).message_post(body=_('ETA invoice has been received'),
-            //                                                     attachments=[('ETA invoice of %s.pdf' % self.name,
-            //                                                                   eta_invoice_pdf.get('data'))])
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetExtraPrintItemsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -9010,17 +7301,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'key': 'download_ubl',
             //         'description': _('XML UBL'),
             //         **self.action_invoice_download_ubl(),
-            //     })
-            // return print_items
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def get_extra_print_items(self):
-            // # EXTENDS 'account' - add possibility to download all FatturaPA XML files
-            // print_items = super().get_extra_print_items()
-            // if self.l10n_it_edi_attachment_id:
-            //     print_items.append({
-            //         'key': 'download_xml_fatturapa',
-            //         'description': _('XML FatturaPA'),
-            //         **self.action_invoice_download_fatturapa(),
             //     })
             // return print_items
             */
@@ -9068,63 +7348,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // fields_list = super()._get_fields_to_detach()
             // fields_list.append("ubl_cii_xml_file")
             // return fields_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _get_fields_to_detach(self):
-            // # EXTENDS account
-            // fields_list = super()._get_fields_to_detach()
-            // fields_list.append("l10n_es_edi_facturae_xml_file")
-            // return fields_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _get_fields_to_detach(self):
-            // # EXTENDS account
-            // fields_list = super()._get_fields_to_detach()
-            // fields_list.append('l10n_it_edi_attachment_file')
-            // return fields_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _get_fields_to_detach(self):
-            // # EXTENDS account
-            // fields_list = super()._get_fields_to_detach()
-            // fields_list.append('l10n_jo_edi_xml_attachment_file')
-            // return fields_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _get_fields_to_detach(self):
-            // # EXTENDS account
-            // fields_list = super()._get_fields_to_detach()
-            // fields_list.append('l10n_my_edi_file')
-            // return fields_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _get_fields_to_detach(self):
-            // # EXTENDS account
-            // fields_list = super()._get_fields_to_detach()
-            // fields_list.extend(['l10n_vn_edi_sinvoice_file', 'l10n_vn_edi_sinvoice_xml_file','l10n_vn_edi_sinvoice_pdf_file'])
-            // return fields_list
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFinnishCheckDigitAsync<TEntity>(IEnumerable<TEntity> entities, object base_number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def get_finnish_check_digit(self, base_number):
-            // # Multiply digits from end to beginning with 7, 3 and 1 and
-            // # calculate the sum of the products
-            // total = sum((7, 3, 1)[idx % 3] * int(val) for idx, val in
-            //             enumerate(base_number[::-1]))
-            // 
-            // # Subtract the sum from the next decade. 10 = 0
-            // return str((10 - (total % 10)) % 10)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetFormattedSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_formatted_sequence(self, number=0):
-            // return "%s %05d-%08d" % (self.l10n_latam_document_type_id.doc_code_prefix,
-            //                          self.journal_id.l10n_ar_afip_pos_number, number)
             */
             return default;
         }
@@ -9524,18 +7747,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _get_invoice_currency_rate_date(self):
             // self.ensure_one()
             // return self.invoice_date or fields.Date.context_today(self)
-            --- ODOO METHOD SOURCE (MODULE: l10n_cz, FILE: account_move.py) ---
-            // def _get_invoice_currency_rate_date(self):
-            // self.ensure_one()
-            // if self.country_code == 'CZ' and self.taxable_supply_date:
-            //     return self.taxable_supply_date
-            // return super()._get_invoice_currency_rate_date()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _get_invoice_currency_rate_date(self):
-            // self.ensure_one()
-            // if self.country_code == 'HU' and self.delivery_date:
-            //     return self.delivery_date
-            // return super()._get_invoice_currency_rate_date()
             */
             return default;
         }
@@ -9626,17 +7837,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'filename': ubl_attachment.name,
             //             'filetype': 'xml',
             //             'content': ubl_attachment.raw,
-            //         }
-            // return super()._get_invoice_legal_documents(filetype, allow_fallback=allow_fallback)
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _get_invoice_legal_documents(self, filetype, allow_fallback=False):
-            // # EXTENDS 'account'
-            // if filetype == 'fatturapa':
-            //     if fatturapa_attachment := self.l10n_it_edi_attachment_id:
-            //         return {
-            //             'filename': fatturapa_attachment.name,
-            //             'filetype': 'xml',
-            //             'content': fatturapa_attachment.raw,
             //         }
             // return super()._get_invoice_legal_documents(filetype, allow_fallback=allow_fallback)
             */
@@ -9752,20 +7952,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoicePaymentMethodCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _get_invoice_payment_method_code(self):
-            // "Invoices in this module are always receivable invoices"
-            // return '2'
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _get_invoice_payment_method_code(self):
-            // return '1' if self.preferred_payment_method_line_id.journal_id.type == 'cash' else '2'
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetInvoicePdfProformaInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -9815,80 +8001,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoiceReferenceBeInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be, FILE: account_move.py) ---
-            // def _get_invoice_reference_be_invoice(self):
-            // """ This computes the reference based on the belgian national standard
-            //     “OGM-VCS”.
-            //     The data of the reference is the database id number of the invoice.
-            //     For instance, if an invoice is issued with id 654, the check number
-            //     is 72 so the reference will be '+++000/0000/65472+++'.
-            // """
-            // self.ensure_one()
-            // base = self.id
-            // bbacomm = str(base).rjust(10, '0')
-            // base = int(bbacomm)
-            // mod = base % 97 or 97
-            // reference = '+++%s/%s/%s%02d+++' % (bbacomm[:3], bbacomm[3:7], bbacomm[7:], mod)
-            // return reference
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceBePartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be, FILE: account_move.py) ---
-            // def _get_invoice_reference_be_partner(self):
-            // """ This computes the reference based on the belgian national standard
-            //     “OGM-VCS”.
-            //     For instance, if an invoice is issued for the partner with internal
-            //     reference 'food buyer 654', the digits will be extracted and used as
-            //     the data. This will lead to a check number equal to 72 and the
-            //     reference will be '+++000/0000/65472+++'.
-            //     If no reference is set for the partner, its id in the database will
-            //     be used.
-            // """
-            // self.ensure_one()
-            // bbacomm = (re.sub(r'\D', '', self.partner_id.ref or '') or str(self.partner_id.id))[-10:].rjust(10, '0')
-            // base = int(bbacomm)
-            // mod = base % 97 or 97
-            // reference = '+++%s/%s/%s%02d+++' % (bbacomm[:3], bbacomm[3:7], bbacomm[7:], mod)
-            // return reference
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceChInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def _get_invoice_reference_ch_invoice(self):
-            // """ This sets QRR reference number which is generated based on customer's `Bank Account` and set it as
-            // `Payment Reference` of the invoice when invoice's journal is using Switzerland's communication standard
-            // """
-            // self.ensure_one()
-            // return self.get_l10n_ch_qrr_number()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceChPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def _get_invoice_reference_ch_partner(self):
-            // """ This sets QRR reference number which is generated based on customer's `Bank Account` and set it as
-            // `Payment Reference` of the invoice when invoice's journal is using Switzerland's communication standard
-            // """
-            // self.ensure_one()
-            // return self.get_l10n_ch_qrr_number()
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetInvoiceReferenceEuroInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -9929,50 +8041,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoiceReferenceFiInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def _get_invoice_reference_fi_invoice(self):
-            // self.ensure_one()
-            // return self.compute_payment_reference_finnish(self.name)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceFiPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def _get_invoice_reference_fi_partner(self):
-            // self.ensure_one()
-            // return self.compute_payment_reference_finnish(str(self.partner_id.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceFiRfInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def _get_invoice_reference_fi_rf_invoice(self):
-            // self.ensure_one()
-            // return self.compute_payment_reference_finnish_rf(self.name)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceFiRfPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def _get_invoice_reference_fi_rf_partner(self):
-            // self.ensure_one()
-            // return self.compute_payment_reference_finnish_rf(str(self.partner_id.id))
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetInvoiceReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -9983,34 +8051,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.ref:
             //     return [ref for ref in self.ref.split(', ') if ref and ref not in vendor_refs] + vendor_refs
             // return vendor_refs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceNoInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_no, FILE: account_move.py) ---
-            // def _get_invoice_reference_no_invoice(self):
-            // """ This computes the reference based on the Odoo format.
-            //     We calculat reference using invoice number and
-            //     partner id and added control digit at last.
-            // """
-            // return self._get_kid_number()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceNoPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_no, FILE: account_move.py) ---
-            // def _get_invoice_reference_no_partner(self):
-            // """ This computes the reference based on the Odoo format.
-            //     We calculat reference using invoice number and
-            //     partner id and added control digit at last.
-            // """
-            // return self._get_kid_number()
             */
             return default;
         }
@@ -10047,159 +8087,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoiceReferenceSeOcr2InternalAsync<TEntity>(IEnumerable<TEntity> entities, object reference) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr2(self, reference):
-            // self.ensure_one()
-            // return reference + luhn.calc_check_digit(reference)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr2InvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr2_invoice(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr2(str(self.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr2PartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr2_partner(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr2(self.partner_id.ref if str(self.partner_id.ref).isdecimal() else str(self.partner_id.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr3InternalAsync<TEntity>(IEnumerable<TEntity> entities, object reference) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr3(self, reference):
-            // self.ensure_one()
-            // reference = reference + str(len(reference) + 2)[:1]
-            // return reference + luhn.calc_check_digit(reference)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr3InvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr3_invoice(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr3(str(self.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr3PartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr3_partner(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr3(self.partner_id.ref if str(self.partner_id.ref).isdecimal() else str(self.partner_id.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr4InternalAsync<TEntity>(IEnumerable<TEntity> entities, object reference) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr4(self, reference):
-            // self.ensure_one()
-            // 
-            // ocr_length = self.journal_id.l10n_se_invoice_ocr_length
-            // 
-            // if len(reference) + 1 > ocr_length:
-            //     raise UserError(_("OCR Reference Number length is greater than allowed. Allowed length in invoice journal setting is %s.", ocr_length))
-            // 
-            // reference = reference.rjust(ocr_length - 1, '0')
-            // return reference + luhn.calc_check_digit(reference)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr4InvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr4_invoice(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr4(str(self.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSeOcr4PartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _get_invoice_reference_se_ocr4_partner(self):
-            // self.ensure_one()
-            // return self._get_invoice_reference_se_ocr4(self.partner_id.ref if str(self.partner_id.ref).isdecimal() else str(self.partner_id.id))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSiInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_si, FILE: account_move.py) ---
-            // def _get_invoice_reference_si_invoice(self):
-            // """
-            // Generate the Slovenian structured payment reference using the invoice sequence number.
-            // 
-            // Format: SI01 (P1-P2-P3)K
-            // - P1: Last two digits of the invoice year
-            // - P2: Trailing digits of the invoice name (sequence number)
-            // - P3: Journal ID
-            // - K: Check digit
-            // 
-            // :return: the formatted structured reference string (SI01...)
-            // """
-            // self.ensure_one()
-            // match = re.search(r'(\d+)$', self.name or '')
-            // p3 = str(int(match.group(1))) if match else '0'
-            // return self._build_invoice_reference(p3)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceReferenceSiPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_si, FILE: account_move.py) ---
-            // def _get_invoice_reference_si_partner(self):
-            // """
-            // Generate the Slovenian structured payment reference using the partner's ID.
-            // Format: SI01 (P1-P2-P3)K
-            // - P1: Last two digits of the invoice year
-            // - P2: Partner ID
-            // - P3: Journal ID
-            // - K: Check digit
-            // 
-            // :return: the formatted structured reference string (SI01...)
-            // """
-            // self.ensure_one()
-            // p3 = str(self.partner_id.id)
-            // return self._build_invoice_reference(p3)
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetInvoiceReportFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object extension) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -10208,43 +8095,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """ Get the filename of the generated invoice report with extension file. """
             // self.ensure_one()
             // return f"{self.name.replace('/', '_')}.{extension}"
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _get_invoice_report_filename(self, extension='pdf'):
-            // if self._is_l10n_sa_eligibile_invoice():
-            //     return self.with_context(l10n_sa_file_format=extension).env['account.edi.xml.ubl_21.zatca']._export_invoice_filename(self)
-            // return super()._get_invoice_report_filename(extension)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceScopeCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _get_invoice_scope_code(self):
-            // "Invoices in this module are always local invoices"
-            // return '0'
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _get_invoice_scope_code(self):
-            // return {
-            //     'local': '0',
-            //     'export': '1',
-            //     'development': '2',
-            // }.get(self.l10n_jo_edi_invoice_type, '0')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetInvoiceTaxPayerTypeCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _get_invoice_tax_payer_type_code(self):
-            // return {
-            //     'income': '1',
-            //     'sales': '2',
-            //     'special': '3',
-            // }.get(self.company_id.l10n_jo_edi_taxpayer_type, '1')
             */
             return default;
         }
@@ -10429,279 +8279,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetKidNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_no, FILE: account_move.py) ---
-            // def _get_kid_number(self):
-            // self.ensure_one()
-            // invoice_name = ''.join([i for i in self.name if i.isdigit()]).zfill(7)
-            // ref = (str(self.partner_id.id).zfill(7)[-7:] + invoice_name[-7:])
-            // return ref + luhn.calc_check_digit(ref)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10ItEdiGetTaxableAmountFromSummaryDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object element) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _get_l10_it_edi_get_taxable_amount_from_summary_data(self, element):
-            // taxable_amount = 0.0
-            // for summary_data_element in element.xpath('.//DatiRiepilogo'):
-            //     taxable_amount += get_float(summary_data_element, './/ImponibileImporto')
-            // return taxable_amount
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nArCodesUsedForInvAndRefInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_l10n_ar_codes_used_for_inv_and_ref(self):
-            // """ List of document types that can be used as an invoice and refund. This list can be increased once needed
-            // and demonstrated. As far as we've checked document types of wsfev1 don't allow negative amounts so, for example
-            // document 61 could not be used as refunds. """
-            // return ['99', '186', '188', '189', '60']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nChQrrNumberAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def get_l10n_ch_qrr_number(self):
-            // """Generates the QRR reference.
-            // QRR references are 27 characters long.
-            // 
-            // The invoice sequence number is used, removing each of its non-digit characters,
-            // and pad the unused spaces on the left of this number with zeros.
-            // The last digit is a checksum (mod10r).
-            // """
-            // self.ensure_one()
-            // if self.partner_bank_id.l10n_ch_qr_iban and self.l10n_ch_is_qr_valid and self.name:
-            //     invoice_ref = re.sub(r'[^\d]', '', self.name)
-            //     return self._compute_qrr_number(invoice_ref)
-            // else:
-            //     return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nEcDocumentsAllowedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object identification_code) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _get_l10n_ec_documents_allowed(self, identification_code):
-            // documents_allowed = self.env['l10n_latam.document.type']
-            // for document_ref in _DOCUMENTS_MAPPING.get(identification_code.value, []):
-            //     document_allowed = self.env.ref('l10n_ec.%s' % document_ref, False)
-            //     if document_allowed:
-            //         documents_allowed |= document_allowed
-            // return documents_allowed
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nInEdiEwaybillResponseJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def _get_l10n_in_edi_ewaybill_response_json(self):
-            // self.ensure_one()
-            // l10n_in_edi = self.edi_document_ids.filtered(lambda i: i.edi_format_id.code == "in_ewaybill_1_03"
-            //     and i.state in ("sent", "to_cancel"))
-            // if l10n_in_edi and l10n_in_edi.sudo().attachment_id:
-            //     return json.loads(l10n_in_edi.sudo().attachment_id.raw.decode("utf-8"))
-            // else:
-            //     return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nInEdiResponseJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi, FILE: account_move.py) ---
-            // def _get_l10n_in_edi_response_json(self):
-            // self.ensure_one()
-            // l10n_in_edi = self.edi_document_ids.filtered(lambda i: i.edi_format_id.code == "in_einvoice_1_03"
-            //     and i.state in ("sent", "to_cancel"))
-            // if l10n_in_edi:
-            //     return json.loads(l10n_in_edi.sudo().attachment_id.raw.decode("utf-8"))
-            // else:
-            //     return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nInInvalidTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _get_l10n_in_invalid_tax_lines(self):
-            // self.ensure_one()
-            // if self.country_code == 'IN' and not self.commercial_partner_id.l10n_in_pan:
-            //     lines = self.env['account.move.line']
-            //     for line in self.invoice_line_ids:
-            //         for tax in line.tax_ids:
-            //             if (
-            //                 tax.l10n_in_section_id.tax_source_type == 'tcs'
-            //                 and tax.amount != max(tax.l10n_in_section_id.l10n_in_section_tax_ids, key=lambda t: abs(t.amount)).amount
-            //             ):
-            //                 lines |= line._origin
-            //     return lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nLatamDocumentsDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // self.ensure_one()
-            // domain = super()._get_l10n_latam_documents_domain()
-            // if self.journal_id.company_id.account_fiscal_country_id.code == "AR":
-            //     letters = self.journal_id._get_journal_letter(counterpart_partner=self.partner_id.commercial_partner_id)
-            //     domain += ['|', ('l10n_ar_letter', '=', False), ('l10n_ar_letter', 'in', letters)]
-            //     domain = expression.AND([
-            //         domain or [],
-            //         self.journal_id._get_journal_codes_domain(),
-            //     ])
-            //     if self.move_type in ['out_refund', 'in_refund']:
-            //         domain = ['|', ('code', 'in', self._get_l10n_ar_codes_used_for_inv_and_ref())] + domain
-            // return domain
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // self.ensure_one()
-            // if self.journal_id.company_id.account_fiscal_country_id != self.env.ref('base.cl') or not \
-            //         self.journal_id.l10n_latam_use_documents:
-            //     return super()._get_l10n_latam_documents_domain()
-            // if self.journal_id.type == 'sale':
-            //     domain = [('country_id.code', '=', 'CL')]
-            //     if self.move_type in ['in_invoice', 'out_invoice']:
-            //         domain += [('internal_type', 'in', ['invoice', 'debit_note', 'invoice_in'])]
-            //     elif self.move_type in ['in_refund', 'out_refund']:
-            //         domain += [('internal_type', '=', 'credit_note')]
-            //     if self.company_id.partner_id.l10n_cl_sii_taxpayer_type == '1':
-            //         domain += [('code', '!=', '71')]  # Companies with VAT Affected doesn't have "Boleta de honorarios Electrónica"
-            //     return domain
-            // if self.move_type == 'in_refund':
-            //     internal_types_domain = ('internal_type', '=', 'credit_note')
-            // else:
-            //     internal_types_domain = ('internal_type', 'in', ['invoice', 'debit_note', 'invoice_in'])
-            // domain = [
-            //     ('country_id.code', '=', 'CL'),
-            //     internal_types_domain,
-            // ]
-            // if self.partner_id.l10n_cl_sii_taxpayer_type == '1' and self.partner_id_vat != '60805000-0':
-            //     domain += [('code', 'not in', ['39', '70', '71', '914', '911'])]
-            // elif self.partner_id.l10n_cl_sii_taxpayer_type == '1' and self.partner_id_vat == '60805000-0':
-            //     domain += [('code', 'not in', ['39', '70', '71'])]
-            // elif self.partner_id.l10n_cl_sii_taxpayer_type == '2':
-            //     domain += [('code', '=', '71')]
-            // elif self.partner_id.l10n_cl_sii_taxpayer_type == '3':
-            //     domain += [('code', 'in', ['35', '38', '39', '41', '56', '61'])]
-            // elif self.partner_id.country_id.code != 'CL' or self.partner_id.l10n_cl_sii_taxpayer_type == '4':
-            //     domain += [('code', '=', '46')]
-            // else:
-            //     domain += [('code', 'in', [])]
-            // return domain
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // self.ensure_one()
-            // domain = super()._get_l10n_latam_documents_domain()
-            // if self.country_code == 'EC' and self.journal_id.l10n_latam_use_documents:
-            //     if self.debit_origin_id:  # show/hide the debit note document type
-            //         domain.extend([('internal_type', '=', 'debit_note')])
-            //     elif self.move_type in ('out_invoice', 'in_invoice'):
-            //         domain.extend([('internal_type', '=', 'invoice')])
-            //     allowed_documents = self._get_l10n_ec_documents_allowed(PartnerIdTypeEc.get_ats_code_for_partner(self.partner_id, self.move_type))
-            //     domain.extend([('id', 'in', allowed_documents.ids)])
-            // return domain
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // self.ensure_one()
-            // internal_types = []
-            // invoice_type = self.move_type
-            // if invoice_type in ['out_refund', 'in_refund']:
-            //     internal_types = ['credit_note']
-            // elif invoice_type in ['out_invoice', 'in_invoice']:
-            //     internal_types = ['invoice', 'debit_note']
-            // if self.debit_origin_id:
-            //     internal_types = ['debit_note']
-            // internal_types += ['all']
-            // return [('internal_type', 'in', internal_types), ('country_id', '=', self.company_id.account_fiscal_country_id.id)]
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // self.ensure_one()
-            // result = super()._get_l10n_latam_documents_domain()
-            // if self.company_id.country_id.code != "PE" or not self.journal_id.l10n_latam_use_documents or self.journal_id.type != "sale":
-            //     return result
-            // result.append(("code", "in", ("01", "03", "07", "08", "20", "40")))
-            // if self.partner_id.l10n_latam_identification_type_id.l10n_pe_vat_code != '6' and self.move_type == 'out_invoice':
-            //     result.append(('id', 'in', (
-            //         self.env.ref('l10n_pe.document_type08b')
-            //         | self.env.ref('l10n_pe.document_type02')
-            //         | self.env.ref('l10n_pe.document_type07b')
-            //     ).ids))
-            // return result
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: account_move.py) ---
-            // def _get_l10n_latam_documents_domain(self):
-            // """ If this is a reversal or debit, suggest only related subtypes """
-            // self.ensure_one()
-            // domain = super()._get_l10n_latam_documents_domain()
-            // if self.country_code == "UY" and (original_move := self.reversed_entry_id or self.debit_origin_id):
-            //     matching_subtype_codes = [
-            //         subtype for subtype in UY_DOC_SUBTYPES
-            //         if original_move.l10n_latam_document_type_id.code in subtype
-            //     ]
-            //     if matching_subtype_codes:
-            //         # restrict to the codes from the subtype matching the one of the original_move (e.g. 'e-ticket')
-            //         codes = self.env["l10n_latam.document.type"].search(domain).mapped('code')
-            //         allowed_codes = set(codes).intersection(set(matching_subtype_codes[0]))
-            //         domain += [("code", "in", tuple(allowed_codes))]
-            // return domain
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nSaConfirmationDatetimeSaTzAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: account_move.py) ---
-            // def get_l10n_sa_confirmation_datetime_sa_tz(self):
-            // self.ensure_one()
-            // return format_datetime(self.env, self.l10n_sa_confirmation_datetime, tz='Asia/Riyadh', dt_format='Y-MM-dd\nHH:mm:ss')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetL10nSaTotalsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: account_move.py) ---
-            // def _get_l10n_sa_totals(self):
-            // self.ensure_one()
-            // return {
-            //     'total_amount': self.amount_total_signed,
-            //     'total_tax': self.amount_tax_signed,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _get_l10n_sa_totals(self):
-            // self.ensure_one()
-            // invoice_vals = self.env['account.edi.xml.ubl_21.zatca']._export_invoice_vals(self)
-            // return {
-            //     'total_amount': invoice_vals['vals']['monetary_total_vals']['tax_inclusive_amount'],
-            //     'total_tax': invoice_vals['vals']['tax_total_vals'][-1]['tax_amount'],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetLangInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -10786,56 +8363,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self.journal_id.debit_sequence:
             //     where_string += " AND debit_origin_id IS " + ("NOT NULL" if self.debit_origin_id else "NULL")
             // return where_string, param
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_last_sequence_domain(self, relaxed=False):
-            // where_string, param = super(AccountMove, self)._get_last_sequence_domain(relaxed)
-            // if self.company_id.account_fiscal_country_id.code == "AR" and self.l10n_latam_use_documents:
-            //     where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s"
-            //     param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
-            // return where_string, param
-            --- ODOO METHOD SOURCE (MODULE: l10n_br, FILE: account_move.py) ---
-            // def _get_last_sequence_domain(self, relaxed=False):
-            // """ Override to give sequence names in the same journal their own, independent numbering. """
-            // where_string, param = super()._get_last_sequence_domain(relaxed)
-            // if self.country_code == "BR" and self.l10n_latam_use_documents:
-            //     where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s "
-            //     param["l10n_latam_document_type_id"] = self.l10n_latam_document_type_id.id or 0
-            // return where_string, param
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _get_last_sequence_domain(self, relaxed=False):
-            // where_string, param = super(AccountMove, self)._get_last_sequence_domain(relaxed)
-            // if self.company_id.account_fiscal_country_id.code == "CL" and self.l10n_latam_use_documents:
-            //     where_string = where_string.replace('journal_id = %(journal_id)s AND', '')
-            //     where_string += ' AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s AND ' \
-            //                     'company_id = %(company_id)s AND move_type IN %(move_type)s'
-            // 
-            //     param['company_id'] = self.company_id.id or False
-            //     param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
-            //     param['move_type'] = (('in_invoice', 'in_refund') if
-            //           self.l10n_latam_document_type_id._is_doc_type_vendor() else ('out_invoice', 'out_refund'))
-            // return where_string, param
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _get_last_sequence_domain(self, relaxed=False):
-            // where_string, param = super(AccountMove, self)._get_last_sequence_domain(relaxed)
-            // if self.country_code == "EC" and self.l10n_latam_use_documents:
-            //     internal_type = self.l10n_latam_document_type_id.internal_type
-            //     document_types = self.env['l10n_latam.document.type'].search([
-            //         ('internal_type', '=', internal_type),
-            //         ('country_id.code', '=', 'EC'),
-            //     ])
-            //     if document_types:
-            //         where_string += """
-            //         AND l10n_latam_document_type_id in %(l10n_latam_document_type_id)s
-            //         """
-            //         param["l10n_latam_document_type_id"] = tuple(document_types.ids)
-            // return where_string, param
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: account_move.py) ---
-            // def _get_last_sequence_domain(self, relaxed=False):
-            // where_string, param = super(AccountMove, self)._get_last_sequence_domain(relaxed)
-            // if self.company_id.account_fiscal_country_id.code == "UY" and self.l10n_latam_use_documents:
-            //     where_string += " AND l10n_latam_document_type_id = %(l10n_latam_document_type_id)s"
-            //     param['l10n_latam_document_type_id'] = self.l10n_latam_document_type_id.id or 0
-            // return where_string, param
             */
             return default;
         }
@@ -10912,23 +8439,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetLinkedDdtsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def get_linked_ddts(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'list,form',
-            //     'name': _("Linked deliveries"),
-            //     'res_model': 'stock.picking',
-            //     'domain': [('id', 'in', self.l10n_it_ddt_ids.ids)],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetLockDateMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_date, object has_tax) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -10979,11 +8489,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res = super()._get_mail_thread_data_attachments()
             // # else, attachments with 'res_field' get excluded
             // return res | self.env['account.move.send']._get_invoice_extra_attachments(self)
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _get_mail_thread_data_attachments(self):
-            // res = super()._get_mail_thread_data_attachments()
-            // # attachments with 'res_field' are excluded, and we want this in the chatter for audit/... purposes.
-            // return res | self.l10n_vn_edi_sinvoice_file_id
             */
             return default;
         }
@@ -11060,86 +8565,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // the default one. For example please review the l10n_ar module """
             // self.ensure_one()
             // return 'account.report_invoice_document'
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // if self.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == 'AR':
-            //     return 'l10n_ar.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_au, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // if self.company_id.account_fiscal_country_id.code == 'AU':
-            //     return 'l10n_au.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // if self.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == 'CL':
-            //     return 'l10n_cl.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // if self.company_id.country_id in self.env.ref('base.gulf_cooperation_council').country_ids:
-            //     return 'l10n_gcc_invoice.arabic_english_invoice'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // # EXTENDS account
-            // self.ensure_one()
-            // if self.l10n_gr_edi_state == 'invoice_sent':
-            //     return 'l10n_gr_edi.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // return 'l10n_hu_edi.report_invoice_document' if self.country_code == 'HU' else super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // if self.country_code == 'IN':
-            //     return 'l10n_in.l10n_in_report_invoice_document_inherit'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // # EXTENDS account
-            // self.ensure_one()
-            // if self.l10n_jo_edi_state in self._l10n_jo_edi_state_sent_options() and self.l10n_jo_edi_xml_attachment_id:
-            //     return 'l10n_jo_edi.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_mu_account, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // # EXTENDS account
-            // self.ensure_one()
-            // if self.company_id.account_fiscal_country_id.code == 'MU':
-            //     return 'l10n_mu_account.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // # EXTENDS 'account'
-            // if self.l10n_my_edi_external_uuid:  # Meaning we are a myinvois invoice, meaning we need to embed the qr code.
-            //     # As we add the view in stable, we need to check that it exists.
-            //     if self.env.ref('l10n_my_edi_extended.report_invoice_document', raise_if_not_found=False):
-            //         return 'l10n_my_edi_extended.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_nz, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // # Safety mechanism to avoid issues if the module has not yet been updated.
-            // template = self.env.ref('l10n_nz.report_invoice_document', raise_if_not_found=False)
-            // if template and self.company_id.account_fiscal_country_id.code == 'NZ':
-            //     return 'l10n_nz.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_th, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // self.ensure_one()
-            // if self.company_id.account_fiscal_country_id.code == 'TH':
-            //     return 'l10n_th.report_invoice_document'
-            // return super()._get_name_invoice_report()
-            --- ODOO METHOD SOURCE (MODULE: l10n_zm_account, FILE: account_move.py) ---
-            // def _get_name_invoice_report(self):
-            // if self.company_id.account_fiscal_country_id.code == 'ZM':
-            //     return 'l10n_zm_account.report_invoice_document'
-            // return super()._get_name_invoice_report()
             */
             return default;
         }
@@ -11423,45 +8848,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     partner_phone_formatted = self.partner_id._phone_format(fname='phone') or self.partner_id.phone or False
             //     return lead_phone_formatted != partner_phone_formatted
             // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetPensionFundTaxForLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object element, object extra_info) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _get_pension_fund_tax_for_line(self, element, extra_info):
-            // """ Apply the pension fund on all lines that have the related AliquotaIVA
-            //     If there are AssoSoftware specific AltriDatiGestionale 'AswCassPre'
-            //     tags that specify which lines have pension funds, only apply to them.
-            // """
-            // pension_fund_map = extra_info.get('pension_fund_taxes', {})
-            // tax_rate_tag = self.get_tag(element, './/AliquotaIVA')
-            // if tax_rate_tag is None:
-            //     return None
-            // 
-            // tax_rate = float(tax_rate_tag.text)
-            // pension_fund_tax = pension_fund_map.get(tax_rate)
-            // if not pension_fund_tax:
-            //     return None
-            // 
-            // if not extra_info.get('pension_fund_assosoftware_tags'):
-            //     return pension_fund_tax
-            // 
-            // selector = ".//AltriDatiGestionali[TipoDato[contains(text(),'AswCassPre')]]/RiferimentoTesto"
-            // reference_tag = self.get_tag(element, selector)
-            // if reference_tag is None:
-            //     return None
-            // 
-            // if match := re.match(r"(?P<kind>TC\d{2}) \((?P<tax_rate>\d+)%\)", reference_tag.text):
-            //     rate = float(match.group("tax_rate"))
-            //     match_kind = (match.group("kind") == pension_fund_tax.l10n_it_pension_fund_type)
-            //     match_rate = (float_compare(rate, pension_fund_tax.amount, precision_digits=2) == 0)
-            //     if match_kind and match_rate:
-            //         return pension_fund_tax
-            // 
-            // return None
             */
             return default;
         }
@@ -11866,24 +9252,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetRfCheckDigitsAsync<TEntity>(IEnumerable<TEntity> entities, object base_number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def get_rf_check_digits(self, base_number):
-            // check_base = base_number + 'RF00'
-            // # 1. Convert all non-digits to digits
-            // # 2. Calculate the modulo 97
-            // # 3. Subtract the remainder from 98
-            // # 4. Add leading zeros if necessary
-            // return ''.join(
-            //     ['00', str(98 - (int(''.join(
-            //         [x if x.isdigit() else str(ord(x) - 55) for x in
-            //          check_base])) % 97))])[-2:]
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetRoundedBaseAndTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object round_from_tax_lines) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -11960,49 +9328,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def get_sale_types(self, include_receipts=False):
             // return ['out_invoice', 'out_refund'] + (include_receipts and ['out_receipt'] or [])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetSectionsAggregateSumByPanInternalAsync<TEntity>(IEnumerable<TEntity> entities, object section_alert, Guid commercial_partner_id) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _get_sections_aggregate_sum_by_pan(self, section_alert, commercial_partner_id):
-            // self.ensure_one()
-            // month_start_date, month_end_date = get_month(self.date)
-            // company_fiscalyear_dates = self.company_id.compute_fiscalyear_dates(self.date)
-            // fiscalyear_start_date, fiscalyear_end_date = company_fiscalyear_dates['date_from'], company_fiscalyear_dates['date_to']
-            // default_domain = [
-            //     ('account_id.l10n_in_tds_tcs_section_id', '=', section_alert.id),
-            //     ('move_id.move_type', '!=', 'entry'),
-            //     ('company_id', 'child_of', self.company_id.root_id.id),
-            //     ('parent_state', '=', 'posted')
-            // ]
-            // if commercial_partner_id.l10n_in_pan:
-            //     default_domain += [('move_id.commercial_partner_id.l10n_in_pan', '=', commercial_partner_id.l10n_in_pan)]
-            // else:
-            //     default_domain += [('move_id.commercial_partner_id', '=', commercial_partner_id.id)]
-            // frequency_domains = {
-            //     'monthly': [('date', '>=', month_start_date), ('date', '<=', month_end_date)],
-            //     'fiscal_yearly': [('date', '>=', fiscalyear_start_date), ('date', '<=', fiscalyear_end_date)],
-            // }
-            // aggregate_result = {}
-            // for frequency, frequency_domain in frequency_domains.items():
-            //     query = self.env['account.move.line']._where_calc(default_domain + frequency_domain)
-            //     result = self.env.execute_query_dict(SQL(
-            //         """
-            //         SELECT COALESCE(sum(account_move_line.balance), 0) as balance,
-            //                COALESCE(sum(account_move_line.price_total * am.invoice_currency_rate), 0) as price_total
-            //           FROM %s
-            //           JOIN account_move AS am ON am.id = account_move_line.move_id
-            //          WHERE %s
-            //         """,
-            //         query.from_clause,
-            //         query.where_clause)
-            //     )
-            //     aggregate_result[frequency] = result[0]
-            // return aggregate_result
             */
             return default;
         }
@@ -12102,64 +9427,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // ):
             //     starting_sequence = "D" + starting_sequence
             // return starting_sequence
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_starting_sequence(self):
-            // """ If use documents then will create a new starting sequence using the document type code prefix and the
-            // journal document number with a 8 padding number """
-            // if self.journal_id.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == "AR":
-            //     if self.l10n_latam_document_type_id:
-            //         return self._get_formatted_sequence()
-            // return super()._get_starting_sequence()
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _get_starting_sequence(self):
-            // """ If use documents then will create a new starting sequence using the document type code prefix and the
-            // journal document number with a 6 padding number """
-            // if self.journal_id.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == "CL":
-            //     if self.l10n_latam_document_type_id:
-            //         return self._l10n_cl_get_formatted_sequence()
-            // return super()._get_starting_sequence()
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _get_starting_sequence(self):
-            // """If use documents then will create a new starting sequence using the document type code prefix and the
-            // journal document number with a 8 padding number"""
-            // if (
-            //     self.journal_id.l10n_latam_use_documents
-            //     and self.company_id.country_id.code == "EC"
-            // ):
-            //     if self.l10n_latam_document_type_id:
-            //         return self._get_ec_formatted_sequence()
-            // return super()._get_starting_sequence()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _get_starting_sequence(self):
-            // if self.journal_id.l10n_latam_use_documents:
-            //     if self.l10n_latam_document_type_id:
-            //         return "%s 00000000" % (self.l10n_latam_document_type_id.doc_code_prefix)
-            //     # There was no pattern found, propose one
-            //     return ""
-            // 
-            // return super(AccountMove, self)._get_starting_sequence()
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: account_move.py) ---
-            // def _get_starting_sequence(self):
-            // """ If use documents then will create a new starting sequence using the document type code prefix and the
-            // journal document number with a 8 padding number """
-            // if self.journal_id.l10n_latam_use_documents and self.company_id.account_fiscal_country_id.code == "UY" and self.l10n_latam_document_type_id:
-            //     return self._l10n_uy_get_formatted_sequence()
-            // return super()._get_starting_sequence()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTagAsync<TEntity>(IEnumerable<TEntity> entities, object element, object selector) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def get_tag(self, element, selector):
-            // if element is None:
-            //     return None
-            // sub = element.xpath(selector)
-            // if sub is None or len(sub) == 0:
-            //     return None
-            // return sub[0]
             */
             return default;
         }
@@ -12202,18 +9469,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return self.env['account.edi.xml.ubl_sg']
             //     if 'urn:cen.eu:en16931:2017' in customization_id.text:
             //         return self.env['account.edi.xml.ubl_bis3']
-            --- ODOO METHOD SOURCE (MODULE: l10n_dk_oioubl, FILE: account_move.py) ---
-            // def _get_ubl_cii_builder_from_xml_tree(self, tree):
-            // customization_id = tree.find('{*}CustomizationID')
-            // if customization_id is not None and 'OIOUBL-2' in customization_id.text:
-            //     return self.env['account.edi.xml.oioubl_201']
-            // return super()._get_ubl_cii_builder_from_xml_tree(tree)
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _get_ubl_cii_builder_from_xml_tree(self, tree):
-            // customization_id = tree.find('{*}CustomizationID')
-            // if customization_id is not None and 'TR1.2' in customization_id.text:
-            //     return self.env['account.edi.xml.ubl.tr']
-            // return super()._get_ubl_cii_builder_from_xml_tree(tree)
             */
             return default;
         }
@@ -12391,39 +9646,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetVatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _get_vat(self):
-            // """ Applies on wsfe web service and in the VAT digital books """
-            // # if we are on a document that works invoice and refund and it's a refund, we need to export it as negative
-            // sign = -1 if self.move_type in ('out_refund', 'in_refund') and\
-            //     self.l10n_latam_document_type_id.code in self._get_l10n_ar_codes_used_for_inv_and_ref() else 1
-            // 
-            // res = []
-            // vat_taxable = self.env['account.move.line']
-            // # get all invoice lines that are vat taxable
-            // for line in self.line_ids:
-            //     if any(tax.tax_group_id.l10n_ar_vat_afip_code and tax.tax_group_id.l10n_ar_vat_afip_code not in ['0', '1', '2'] for tax in line.tax_line_id) and line['amount_currency']:
-            //         vat_taxable |= line
-            // for tax_group in vat_taxable.mapped('tax_group_id'):
-            //     base_imp = sum(self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda y: y.tax_group_id.l10n_ar_vat_afip_code == tax_group.l10n_ar_vat_afip_code)).mapped('price_subtotal'))
-            //     imp = abs(sum(vat_taxable.filtered(lambda x: x.tax_group_id.l10n_ar_vat_afip_code == tax_group.l10n_ar_vat_afip_code).mapped('amount_currency')))
-            //     res += [{'Id': tax_group.l10n_ar_vat_afip_code,
-            //              'BaseImp': sign * base_imp,
-            //              'Importe': sign * imp}]
-            // 
-            // # Report vat 0%
-            // vat_base_0 = sum(self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda y: y.tax_group_id.l10n_ar_vat_afip_code == '3')).mapped('price_subtotal'))
-            // if vat_base_0:
-            //     res += [{'Id': '3', 'BaseImp': sign * vat_base_0, 'Importe': 0.0}]
-            // 
-            // return res if res else []
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetViewAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -12448,14 +9670,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         name_node[0].set('invisible', "not (name or name_placeholder or quick_edit_mode)")
             //     if draft_node := arch.xpath("""//span[@invisible="name == '/' and not posted_before and not quick_edit_mode"]"""):
             //         draft_node[0].set('invisible', "name or name_placeholder or quick_edit_mode")
-            // return arch, view
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_account, FILE: account_move.py) ---
-            // def _get_view(self, view_id=None, view_type='form', **options):
-            // arch, view = super()._get_view(view_id, view_type, **options)
-            // company = self.env.company
-            // if view_type == 'form' and company.country_code in company._get_france_country_codes():
-            //     shipping_field = arch.xpath("//field[@name='partner_shipping_id']")[0]
-            //     shipping_field.attrib.pop("groups", None)
             // return arch, view
             */
             return default;
@@ -12651,262 +9865,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ImportCreateOrRetrievePartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner_vals) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_create_or_retrieve_partner(self, partner_vals):
-            // name = partner_vals['name']
-            // vat = partner_vals['vat']
-            // phone = partner_vals['phone']
-            // email = partner_vals['email']
-            // country_code = partner_vals['country_code']
-            // 
-            // partner = self.env['res.partner']._retrieve_partner(name=name, vat=vat, phone=phone, email=email)
-            // 
-            // if not partner and name:
-            //     partner_vals = {'name': name, 'email': email, 'phone': phone}
-            //     country_code = REVERSED_COUNTRY_CODE.get(country_code)
-            //     country = self.env['res.country'].search([('code', '=', country_code)]) if country_code else False
-            //     if country:
-            //         partner_vals['country_id'] = country.id
-            //     partner = self.env['res.partner'].create(partner_vals)
-            //     if vat and self.env['res.partner']._run_vat_test(vat, country):
-            //         partner.vat = vat
-            // 
-            // return partner
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportExtractPartnerValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object party_node) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_extract_partner_values(self, party_node):
-            // name = find_xml_value('.//CorporateName|.//Name', party_node)
-            // first_surname = find_xml_value('.//FirstSurname', party_node)
-            // second_surname = find_xml_value('.//SecondSurname', party_node)
-            // phone = find_xml_value('.//Telephone', party_node)
-            // mail = find_xml_value('.//ElectronicMail', party_node)
-            // country_code = find_xml_value('.//CountryCode', party_node)
-            // vat = find_xml_value('.//TaxIdentificationNumber', party_node)
-            // 
-            // full_name = ' '.join(part for part in [name, first_surname, second_surname] if part)
-            // 
-            // return {'name': full_name, 'vat': vat, 'phone': phone, 'email': mail, 'country_code': country_code}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportFillInvoiceLineTaxesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object line_vals, List<Guid> tax_ids, object tax_nodes, object is_withheld, object is_purchase) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_fill_invoice_line_taxes(self, invoice, line_vals, tax_ids, tax_nodes, is_withheld, is_purchase):
-            // logs = []
-            // for tax_node in tax_nodes:
-            //     tax_rate = find_xml_value('.//TaxRate', tax_node)
-            //     if tax_rate:
-            //         # Since the 'TaxRate' node isn't guaranteed to be a percentage, we can find out by
-            //         # applying the tax rate on the taxable base, and if it's equal to the tax amount
-            //         # then we can say this is a percentage, otherwise a fixed amount.
-            //         taxable_base = find_xml_value('.//TaxableBase/TotalAmount', tax_node)
-            //         tax_amount = find_xml_value('.//TaxAmount/TotalAmount', tax_node)
-            //         is_fixed = False
-            // 
-            //         if taxable_base and tax_amount and invoice.currency_id.compare_amounts(float(taxable_base) * (float(tax_rate) / 100), float(tax_amount)) != 0:
-            //             is_fixed = True
-            // 
-            //         tax_excl = self._search_tax_for_import(invoice.company_id, float(tax_rate), is_fixed, is_withheld, is_purchase, price_included=False)
-            // 
-            //         if tax_excl:
-            //             tax_ids.append(tax_excl.id)
-            //         elif tax_incl := self._search_tax_for_import(invoice.company_id, float(tax_rate), is_fixed, is_withheld, is_purchase, price_included=True):
-            //             tax_ids.append(tax_incl)
-            //             line_vals['price_unit'] *= (1.0 + float(tax_rate) / 100.0)
-            //         else:
-            //             logs.append(_("Could not retrieve the tax: %(tax_rate)s %% for line '%(line)s'.", tax_rate=tax_rate, line=line_vals.get('name', "")))
-            // 
-            // return logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportGetPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tree, object is_bill) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_get_partner(self, tree, is_bill):
-            // # If we're dealing with a vendor bill, then the partner is the seller party, if an invoice then it's the buyer.
-            // party = tree.xpath('//SellerParty') if is_bill else tree.xpath('//BuyerParty')
-            // if party:
-            //     partner_vals = self._import_extract_partner_values(party[0])
-            //     return self._import_create_or_retrieve_partner(partner_vals)
-            // return None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportInvoiceFacturaeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object file_data, object @new) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_invoice_facturae(self, invoice, file_data, new=False):
-            // tree = file_data['xml_tree']
-            // is_bill = invoice.move_type.startswith('in_')
-            // partner = self._import_get_partner(tree, is_bill)
-            // self._import_invoice_facturae_invoices(invoice, partner, tree)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportInvoiceFacturaeInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object partner, object tree) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_invoice_facturae_invoice(self, invoice, partner, tree):
-            // logs = []
-            // 
-            // # ==== move_type ====
-            // invoice_total = find_xml_value('.//InvoiceTotal', tree)
-            // is_refund = float(invoice_total) < 0 if invoice_total else False
-            // if is_refund:
-            //     invoice.move_type = "in_refund" if invoice.move_type.startswith("in_") else "out_refund"
-            // ref_multiplier = -1.0 if is_refund else 1.0
-            // 
-            // # ==== partner_id ====
-            // if partner:
-            //     invoice.partner_id = partner
-            // else:
-            //     logs.append(_("Customer/Vendor could not be found and could not be created due to missing data in the XML."))
-            // 
-            // # ==== currency_id ====
-            // invoice_currency_code = find_xml_value('.//InvoiceCurrencyCode', tree)
-            // if invoice_currency_code:
-            //     currency = self.env['res.currency'].search([('name', '=', invoice_currency_code)], limit=1)
-            //     if currency:
-            //         invoice.currency_id = currency
-            //     else:
-            //         logs.append(_("Could not retrieve currency: %s. Did you enable the multicurrency option "
-            //                       "and activate the currency?", invoice_currency_code))
-            // 
-            // # ==== invoice date ====
-            // if issue_date := find_xml_value('.//IssueDate', tree):
-            //     invoice.invoice_date = issue_date
-            // 
-            // # ==== invoice_date_due ====
-            // if end_date := find_xml_value('.//InstallmentDueDate', tree):
-            //     invoice.invoice_date_due = end_date
-            // 
-            // # ==== ref ====
-            // if invoice_number := find_xml_value('.//InvoiceNumber', tree):
-            //     invoice.ref = invoice_number
-            // 
-            // # ==== narration ====
-            // invoice.narration = "\n".join(
-            //     ref.text
-            //     for ref in tree.xpath('.//LegalReference')
-            //     if ref.text
-            // )
-            // 
-            // # === invoice_line_ids ===
-            // logs += self._import_invoice_fill_lines(invoice, tree, ref_multiplier)
-            // 
-            // body = Markup("<strong>%s</strong>") % _("Invoice imported from Factura-E XML file.")
-            // 
-            // if logs:
-            //     body += Markup("<ul>%s</ul>") \
-            //             % Markup().join(Markup("<li>%s</li>") % log for log in logs)
-            // 
-            // invoice.message_post(body=body)
-            // 
-            // return logs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportInvoiceFacturaeInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object partner, object tree) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_invoice_facturae_invoices(self, invoice, partner, tree):
-            // invoices = tree.xpath('//Invoice')
-            // if not invoices:
-            //     return
-            // 
-            // self._import_invoice_facturae_invoice(invoice, partner, invoices[0])
-            // 
-            // # There might be other invoices inside the facturae.
-            // for node in invoices[1:]:
-            //     other_invoice = invoice.create({
-            //         'journal_id': invoice.journal_id.id,
-            //         'move_type': invoice.move_type
-            //     })
-            //     with other_invoice._get_edi_creation():
-            //         self._import_invoice_facturae_invoice(other_invoice, partner, node)
-            //         other_invoice.message_post(body=_("Created from attachment in %s", invoice._get_html_link()))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ImportInvoiceFillLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object tree, object ref_multiplier) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _import_invoice_fill_lines(self, invoice, tree, ref_multiplier):
-            // lines = tree.xpath('.//InvoiceLine')
-            // logs = []
-            // vals_list = []
-            // for line in lines:
-            //     line_vals = {'move_id': invoice.id}
-            // 
-            //     # ==== name ====
-            //     if item_description := find_xml_value('.//ItemDescription', line):
-            //         product = self._search_product_for_import(item_description)
-            //         if product:
-            //             line_vals['product_id'] = product.id
-            //         else:
-            //             logs.append(_("The product '%s' could not be found.", item_description))
-            //         line_vals['name'] = item_description
-            // 
-            //     # ==== quantity ====
-            //     line_vals['quantity'] = find_xml_value('.//Quantity', line) or 1
-            // 
-            //     # ==== price_unit ====
-            //     price_unit = find_xml_value('.//UnitPriceWithoutTax', line)
-            //     line_vals['price_unit'] = ref_multiplier * float(price_unit) if price_unit else 1.0
-            // 
-            //     # ==== discount ====
-            //     discounts = line.xpath('.//DiscountRate')
-            //     discount_rate = 0.0
-            //     for discount in discounts:
-            //         discount_rate += float(discount.text)
-            // 
-            //     charges = line.xpath('.//ChargeRate')
-            //     charge_rate = 0.0
-            //     for charge in charges:
-            //         charge_rate += float(charge.text)
-            // 
-            //     discount_rate -= charge_rate
-            //     line_vals['discount'] = discount_rate
-            // 
-            //     # ==== tax_ids ====
-            //     taxes_withheld_nodes = line.xpath('.//TaxesWithheld/Tax')
-            //     taxes_outputs_nodes = line.xpath('.//TaxesOutputs/Tax')
-            //     is_purchase = invoice.move_type.startswith('in')
-            //     tax_ids = []
-            //     logs += self._import_fill_invoice_line_taxes(invoice, line_vals, tax_ids, taxes_outputs_nodes, False, is_purchase)
-            //     logs += self._import_fill_invoice_line_taxes(invoice, line_vals, tax_ids, taxes_withheld_nodes, True, is_purchase)
-            //     line_vals['tax_ids'] = [Command.set(tax_ids)]
-            //     vals_list.append(line_vals)
-            // 
-            // invoice.invoice_line_ids = self.env['account.move.line'].create(vals_list)
-            // return logs
-            */
-            return default;
-        }
-
         public async Task<TEntity> InitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -13038,64 +9996,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> InverseL10nLatamDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _inverse_l10n_latam_document_number(self):
-            // super()._inverse_l10n_latam_document_number()
-            // 
-            // to_review = self.filtered(lambda x: (
-            //     x.journal_id.l10n_ar_is_pos
-            //     and x.l10n_latam_document_type_id
-            //     and x.l10n_latam_document_number
-            //     and (x.l10n_latam_manual_document_number or not x.highest_name)
-            //     and x.l10n_latam_document_type_id.country_id.code == 'AR'
-            // ))
-            // for rec in to_review:
-            //     number = rec.l10n_latam_document_type_id._format_document_number(rec.l10n_latam_document_number)
-            //     current_pos = int(number.split("-")[0])
-            //     if current_pos != rec.journal_id.l10n_ar_afip_pos_number:
-            //         invoices = self.search([('journal_id', '=', rec.journal_id.id), ('posted_before', '=', True)], limit=1)
-            //         # If there is no posted before invoices the user can change the POS number (x.l10n_latam_document_number)
-            //         if (not invoices):
-            //             rec.journal_id.l10n_ar_afip_pos_number = current_pos
-            //             rec.journal_id._onchange_set_short_name()
-            //         # If not, avoid that the user change the POS number
-            //         else:
-            //             raise UserError(_('The document number can not be changed for this journal, you can only modify'
-            //                               ' the POS number if there is not posted (or posted before) invoices'))
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _inverse_l10n_latam_document_number(self):
-            // for rec in self.filtered(lambda x: x.l10n_latam_document_type_id):
-            //     if not rec.l10n_latam_document_number:
-            //         rec.name = False
-            //     else:
-            //         l10n_latam_document_number = rec.l10n_latam_document_number
-            //         if not rec._skip_format_document_number():
-            //             l10n_latam_document_number = rec.l10n_latam_document_type_id._format_document_number(rec.l10n_latam_document_number)
-            //         if rec.l10n_latam_document_number != l10n_latam_document_number:
-            //             rec.l10n_latam_document_number = l10n_latam_document_number
-            //         rec.name = "%s %s" % (rec.l10n_latam_document_type_id.doc_code_prefix, l10n_latam_document_number)
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe, FILE: account_move.py) ---
-            // def _inverse_l10n_latam_document_number(self):
-            // """Inherit to complete the l10n_latam_document_number with the expected 8 characters after that a '-'
-            // Example: Change FFF-32 by FFF-00000032, to avoid incorrect values on the reports"""
-            // super()._inverse_l10n_latam_document_number()
-            // to_review = self.filtered(
-            //     lambda x: x.journal_id.type == "purchase"
-            //     and x.l10n_latam_document_type_id.code in ("01", "03", "07", "08")
-            //     and x.l10n_latam_document_number
-            //     and "-" in x.l10n_latam_document_number
-            //     and x.l10n_latam_document_type_id.country_id.code == "PE"
-            // )
-            // for rec in to_review:
-            //     number = rec.l10n_latam_document_number.split("-")
-            //     rec.l10n_latam_document_number = "%s-%s" % (number[0], number[1].zfill(8))
-            */
-            return default;
-        }
-
         public async Task<TEntity> InverseNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -13186,52 +10086,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> InvoiceDownloadFatturapaAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def action_invoice_download_fatturapa(self):
-            // if invoices_with_fatturapa := self.filtered('l10n_it_edi_attachment_id'):
-            //     return {
-            //         'type': 'ir.actions.act_url',
-            //         'url': f'/account/download_invoice_documents/{",".join(map(str, invoices_with_fatturapa.ids))}/fatturapa',
-            //         'target': 'download',
-            //     }
-            // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InvoiceDownloadPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_download_pdf(self):
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/account/download_invoice_documents/{",".join(map(str, self.ids))}/pdf',
-            //     'target': 'download',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InvoiceDownloadUblAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_move.py) ---
-            // def action_invoice_download_ubl(self):
-            // if invoices_with_ubl := self.filtered('ubl_cii_xml_id'):
-            //     return {
-            //         'type': 'ir.actions.act_url',
-            //         'url': f'/account/download_invoice_documents/{",".join(map(str, invoices_with_ubl.ids))}/ubl',
-            //         'target': 'download',
-            //     }
-            // return False
-            */
-            return default;
-        }
-
         public async Task<TEntity> InvoicePaidHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -13247,37 +10101,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for (order, name) in todo:
             //     order.message_post(body=_("Invoice %s paid", name))
             // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> InvoiceSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_invoice_sent(self):
-            // """ Open a window to compose an email, with the edi invoice template
-            //     message loaded by default
-            // """
-            // self.ensure_one()
-            // 
-            // report_action = self.action_send_and_print()
-            // if self.env.is_admin() and not self.env.company.external_report_layout_id and not self.env.context.get('discard_logo_check'):
-            //     report_action = self.env['ir.actions.report']._action_configure_external_report_layout(report_action, "account.action_base_document_layout_configurator")
-            //     report_action['context']['default_from_invoice'] = self.move_type == 'out_invoice'
-            // 
-            // return report_action
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def action_invoice_sent(self):
-            // """ The wizard should not be available for invoices sent to MyInvois but not yet validated.
-            // This is because before validation the ID used for the QR code is not available and the user should NOT send the invoice yet.
-            // """
-            // self.ensure_one()
-            // 
-            // if self.l10n_my_edi_state == 'in_progress':
-            //     raise UserError(_('You cannot send invoices that are currently being validated.\nPlease wait for the validation to complete.'))
-            // 
-            // return super().action_invoice_sent()
             */
             return default;
         }
@@ -13391,49 +10214,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsL10nSaEligibileInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _is_l10n_sa_eligibile_invoice(self):
-            // self.ensure_one()
-            // return self.is_invoice() and self.l10n_sa_confirmation_datetime and self.country_code == 'SA'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsManualDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _is_manual_document_number(self):
-            // """ Document number should be manual input by user when the journal use documents and
-            // 
-            // * if sales journal and not a AFIP pos (liquido producto case)
-            // * if purchase journal and not a AFIP pos (regular case of vendor bills)
-            // 
-            // All the other cases the number should be automatic set, wiht only one exception, for pre-printed/online AFIP
-            // POS type, the first numeber will be always set manually by the user and then will be computed automatically
-            // from there """
-            // if self.country_code != 'AR':
-            //     return super()._is_manual_document_number()
-            // 
-            // # NOTE: There is a corner case where 2 sales documents can have the same number for the same DOC from a
-            // # different vendor, in that case, the user can create a new Sales Liquido Producto Journal
-            // return self.l10n_latam_use_documents and self.journal_id.type in ['purchase', 'sale'] and \
-            //     not self.journal_id.l10n_ar_is_pos
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _is_manual_document_number(self):
-            // if self.journal_id.company_id.country_id.code == 'CL':
-            //     return self.journal_id.type == 'purchase' and not self.l10n_latam_document_type_id._is_doc_type_vendor()
-            // return super()._is_manual_document_number()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _is_manual_document_number(self):
-            // return self.journal_id.type == 'purchase'
-            */
-            return default;
-        }
-
         public async Task<TEntity> IsMoveRestrictedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object move, object force_hash) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -13474,16 +10254,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // self.ensure_one()
             // return self.currency_id.compare_amounts(self.amount_paid, self.amount_total) >= 0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> IsPredictionEnabledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _is_prediction_enabled(self):
-            // return self.env['ir.module.module'].search([('name', '=', 'account_accountant'), ('state', '=', 'installed')])
             */
             return default;
         }
@@ -13563,17 +10333,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> IsSalesRefundInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _is_sales_refund(self):
-            // self.ensure_one()
-            // return self.company_id.l10n_jo_edi_taxpayer_type == 'sales' and self.move_type == 'out_refund'
-            */
-            return default;
-        }
-
         public async Task<TEntity> JsAssignOutstandingLineAsync<TEntity>(IEnumerable<TEntity> entities, Guid line_id) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -13604,8322 +10363,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // self.ensure_one()
             // partial = self.env['account.partial.reconcile'].browse(partial_id)
             // return partial.unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArGetAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company_currency) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_get_amounts(self, company_currency=False):
-            // """ Method used to prepare data to present amounts and taxes related amounts when creating an
-            // electronic invoice for argentinean and the txt files for digital VAT books. Only take into account the argentinean taxes """
-            // self.ensure_one()
-            // amount_field = company_currency and 'balance' or 'amount_currency'
-            // # if we use balance we need to correct sign (on price_subtotal is positive for refunds and invoices)
-            // sign = -1 if self.is_inbound() else 1
-            // 
-            // # if we are on a document that works invoice and refund and it's a refund, we need to export it as negative
-            // sign = -sign if self.move_type in ('out_refund', 'in_refund') and\
-            //     self.l10n_latam_document_type_id.code in self._get_l10n_ar_codes_used_for_inv_and_ref() else sign
-            // 
-            // tax_lines = self.line_ids.filtered('tax_line_id')
-            // vat_taxes = tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_vat_afip_code)
-            // 
-            // vat_taxable = self.env['account.move.line']
-            // for line in self.invoice_line_ids:
-            //     if any(tax.tax_group_id.l10n_ar_vat_afip_code and tax.tax_group_id.l10n_ar_vat_afip_code not in ['0', '1', '2'] for tax in line.tax_ids):
-            //         vat_taxable |= line
-            // 
-            // profits_tax_group = self.env['account.chart.template'].with_company(self.company_id).ref(
-            //     'tax_group_percepcion_ganancias',
-            //     raise_if_not_found=False,
-            // )
-            // if not profits_tax_group:
-            //     raise RedirectWarning(
-            //         message=_(
-            //             "A required tax group could not be found (XML ID: %s).\n"
-            //             "Please reload your chart template in order to reinstall the required tax group.\n\n"
-            //             "Note: You might have to relink your existing taxes to this new tax group.",
-            //             'tax_group_percepcion_ganancias',
-            //         ),
-            //         action=self.env.ref('account.action_account_config').id,
-            //         button_text=_("Accounting Settings"),
-            //     )
-            // 
-            // return {'vat_amount': sign * sum(vat_taxes.mapped(amount_field)),
-            //         # For invoices of letter C should not pass VAT
-            //         'vat_taxable_amount': sign * sum(vat_taxable.mapped(amount_field)) if self.l10n_latam_document_type_id.l10n_ar_letter != 'C' else self.amount_untaxed,
-            //         'vat_exempt_base_amount': sign * sum(self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda y: y.tax_group_id.l10n_ar_vat_afip_code == '2')).mapped(amount_field)),
-            //         'vat_untaxed_base_amount': sign * sum(self.invoice_line_ids.filtered(lambda x: x.tax_ids.filtered(lambda y: y.tax_group_id.l10n_ar_vat_afip_code == '1')).mapped(amount_field)),
-            //         # used on FE
-            //         'not_vat_taxes_amount': sign * sum((tax_lines - vat_taxes).mapped(amount_field)),
-            //         # used on BFE + TXT
-            //         'iibb_perc_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '07').mapped(amount_field)),
-            //         'mun_perc_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '08').mapped(amount_field)),
-            //         'intern_tax_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '04').mapped(amount_field)),
-            //         'other_taxes_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '99').mapped(amount_field)),
-            //         'profits_perc_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id == profits_tax_group).mapped(amount_field)),
-            //         'vat_perc_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '06').mapped(amount_field)),
-            //         'other_perc_amount': sign * sum(tax_lines.filtered(lambda r: r.tax_line_id.tax_group_id.l10n_ar_tribute_afip_code == '09' and r.tax_line_id.tax_group_id != profits_tax_group).mapped(amount_field)),
-            //         }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArGetDocumentNumberPartsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_number, object document_type_code) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_get_document_number_parts(self, document_number, document_type_code):
-            // # import shipments
-            // if document_type_code in ['66', '67']:
-            //     pos = invoice_number = '0'
-            // else:
-            //     pos, invoice_number = document_number.split('-')
-            // return {'invoice_number': int(invoice_number), 'point_of_sale': int(pos)}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArGetInvoiceCustomTaxSummaryForReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_get_invoice_custom_tax_summary_for_report(self):
-            // """ Get a new tax details for RG 5614/2024 to show ARCA VAT and Other National Internal Taxes. """
-            // if self.l10n_latam_document_type_id.code not in ('6', '7', '8'):
-            //     return []
-            // 
-            // base_lines, _tax_lines = self._get_rounded_base_and_tax_lines()
-            // 
-            // def grouping_function(base_line, tax_data):
-            //     if not tax_data:
-            //         return None
-            //     tax_group = tax_data['tax'].tax_group_id
-            //     skip = False
-            //     name = None
-            //     if self._l10n_ar_is_tax_group_other_national_ind_tax(tax_group):
-            //         name = _("Other National Ind. Taxes %s", base_line['currency_id'].symbol)
-            //     elif self._l10n_ar_is_tax_group_vat(tax_group):
-            //         name = _("VAT Content %s", base_line['currency_id'].symbol)
-            //     else:
-            //         skip = True
-            //     return {
-            //         'name': name,
-            //         'skip': skip,
-            //     }
-            // 
-            // AccountTax = self.env['account.tax']
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, grouping_function)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // results = []
-            // for grouping_key, values in values_per_grouping_key.items():
-            //     if (
-            //         grouping_key
-            //         and not grouping_key['skip']
-            //     ):
-            //         results.append({
-            //             'name': grouping_key['name'],
-            //             'tax_amount_currency': values['tax_amount_currency'],
-            //             'formatted_tax_amount_currency': formatLang(self.env, values['tax_amount_currency']),
-            //         })
-            // return results
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArGetInvoiceTotalsForReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_get_invoice_totals_for_report(self):
-            // """If the invoice document type indicates that vat should not be detailed in the printed report (result of _l10n_ar_include_vat()) then we overwrite tax_totals field so that includes taxes in the total amount, otherwise it would be showing amount_untaxed in the amount_total"""
-            // self.ensure_one()
-            // tax_totals = self.tax_totals
-            // include_vat = self._l10n_ar_include_vat()
-            // if not include_vat:
-            //     return tax_totals
-            // 
-            // tax_group_ids = {
-            //     tax_group['id']
-            //     for subtotal in tax_totals['subtotals']
-            //     for tax_group in subtotal['tax_groups']
-            // }
-            // tax_group_ids_to_exclude = self.env['account.tax.group']\
-            //     .browse(tax_group_ids)\
-            //     .filtered(lambda tax_group: (
-            //         self._l10n_ar_is_tax_group_other_national_ind_tax(tax_group)
-            //         or self._l10n_ar_is_tax_group_vat(tax_group)
-            //     )).ids
-            // if tax_group_ids_to_exclude:
-            //     tax_totals = self.env['account.tax']._exclude_tax_groups_from_tax_totals_summary(tax_totals, tax_group_ids_to_exclude)
-            // return tax_totals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArIncludeVatInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_include_vat(self):
-            // self.ensure_one()
-            // return self.l10n_latam_document_type_id.l10n_ar_letter in ['B', 'C', 'X', 'R']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArIsTaxGroupOtherNationalIndTaxInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_group) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_is_tax_group_other_national_ind_tax(self, tax_group):
-            // return tax_group.l10n_ar_tribute_afip_code in ('01', '04')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nArIsTaxGroupVatInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_group) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _l10n_ar_is_tax_group_vat(self, tax_group):
-            // return bool(tax_group.l10n_ar_vat_afip_code)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nBgDocumentTypeSelectionValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_bg_ledger, FILE: account_move.py) ---
-            // def _l10n_bg_document_type_selection_values(self):
-            // return [
-            //     ('01', '01 - Invoice'),
-            //     ('02', '02 - Debit notice'),
-            //     ('03', '03 - Credit notice'),
-            //     ('07', '07 - Customs declaration'),
-            //     ('09', '09 - Protocol or another document'),
-            //     ('11', '11 - Invoice - cash account'),
-            //     ('12', '12 - Debit notification - cash account'),
-            //     ('13', '13 - Credit notification - cash account'),
-            //     ('81', '81 - Report for the sales carried out'),
-            //     ('82', '82 - Report for the sales carried out by a special levying procedure'),
-            //     ('91', '91 - Protocol of due tax under Art. 151c, Para 3 of the Act'),
-            //     ('93', '93 - Protocol of due tax under Art. 151c, Para 7 of the Act with a recipient being a person not applying the special regime'),
-            //     ('94', '94 - Protocol of due tax under Art. 151c, Para 7 of the Act with a recipient being a person applying the special regime'),
-            // ]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nChDispatchInvoicesToPrintInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def _l10n_ch_dispatch_invoices_to_print(self):
-            // qr_invs = self.filtered('l10n_ch_is_qr_valid')
-            // return {
-            //     'qr': qr_invs,
-            //     'classic': self - qr_invs,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nChPrintQrAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def l10n_ch_action_print_qr(self):
-            // '''
-            // Checks that all invoices can be printed in the QR format.
-            // If so, launches the printing action.
-            // Else, triggers the l10n_ch wizard that will display the informations.
-            // '''
-            // if any(x.move_type != 'out_invoice' for x in self):
-            //     raise UserError(_("Only customers invoices can be QR-printed."))
-            // if False in self.mapped('l10n_ch_is_qr_valid'):
-            //     return {
-            //         'name': (_("Some invoices could not be printed in the QR format")),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'l10n_ch.qr_invoice.wizard',
-            //         'view_mode': 'form',
-            //         'target': 'new',
-            //         'context': {'active_ids': self.ids},
-            //     }
-            // return self.env.ref('account.account_invoices').report_action(self)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClGetAmountsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_get_amounts(self):
-            // """
-            // This method is used to calculate the amount and taxes required in the Chilean localization electronic documents.
-            // """
-            // self.ensure_one()
-            // global_discounts = self.invoice_line_ids.filtered(lambda x: x.price_subtotal < 0)
-            // export = self.l10n_latam_document_type_id._is_doc_type_export()
-            // main_currency = self.company_id.currency_id if not export else self.currency_id
-            // key_main_currency = 'amount_currency' if export else 'balance'
-            // sign_main_currency = -1 if self.move_type == 'out_invoice' else 1
-            // currency_round_main_currency = self.currency_id if export else self.company_id.currency_id
-            // currency_round_other_currency = self.company_id.currency_id if export else self.currency_id
-            // total_amount_main_currency = currency_round_main_currency.round(self.amount_total) if export \
-            //     else (currency_round_main_currency.round(abs(self.amount_total_signed)))
-            // other_currency = self.currency_id != self.company_id.currency_id
-            // values = {
-            //     'main_currency': main_currency,
-            //     'vat_amount': 0,
-            //     'subtotal_amount_taxable': 0,
-            //     'subtotal_amount_exempt': 0, 'total_amount': total_amount_main_currency,
-            //     'main_currency_round': currency_round_main_currency.decimal_places,
-            //     'main_currency_name': self._l10n_cl_normalize_currency_name(
-            //         currency_round_main_currency.name) if export else False
-            // }
-            // vat_percent = 0
-            // 
-            // if other_currency:
-            //     key_other_currency = 'balance' if export else 'amount_currency'
-            //     values['second_currency'] = {
-            //         'subtotal_amount_taxable': 0,
-            //         'subtotal_amount_exempt': 0,
-            //         'vat_amount': 0,
-            //         'total_amount': currency_round_other_currency.round(abs(self.amount_total_signed))
-            //             if export else currency_round_other_currency.round(self.amount_total),
-            //         'round_currency': currency_round_other_currency.decimal_places,
-            //         'name': self._l10n_cl_normalize_currency_name(currency_round_other_currency.name),
-            //         'rate': round(abs(self.amount_total_signed) / self.amount_total, 4),
-            //     }
-            // for line in self.line_ids:
-            //     if line.tax_line_id and line.tax_line_id.l10n_cl_sii_code == 14:
-            //         values['vat_amount'] += line[key_main_currency] * sign_main_currency
-            //         if other_currency:
-            //             values['second_currency']['vat_amount'] += line[key_other_currency] * sign_main_currency
-            //         vat_percent = max(vat_percent, line.tax_line_id.amount)
-            //     if line.display_type == 'product':
-            //         if line.tax_ids.filtered(lambda x: x.l10n_cl_sii_code == 14):
-            //             values['subtotal_amount_taxable'] += line[key_main_currency] * sign_main_currency
-            //             if other_currency:
-            //                 values['second_currency']['subtotal_amount_taxable'] += line[key_other_currency] * sign_main_currency
-            //         elif not line.tax_ids:
-            //             values['subtotal_amount_exempt'] += line[key_main_currency] * sign_main_currency
-            //             if other_currency:
-            //                 values['second_currency']['subtotal_amount_exempt'] += line[key_other_currency] * sign_main_currency
-            // values['global_discounts'] = []
-            // for gd in global_discounts:
-            //     main_value = currency_round_main_currency.round(abs(gd.price_subtotal)) if \
-            //         (not other_currency and not export) or (other_currency and export) else \
-            //         currency_round_main_currency.round(abs(gd.balance))
-            //     second_value = currency_round_other_currency.round(abs(gd.balance)) if other_currency and export else \
-            //         currency_round_other_currency.round(abs(gd.price_subtotal))
-            //     values['global_discounts'].append(
-            //         {
-            //             'name': gd.name,
-            //             'global_discount_main_value': main_value,
-            //             'global_discount_second_value': second_value if second_value != main_value else False,
-            //             'tax_ids': gd.tax_ids,
-            //         }
-            //     )
-            // values['vat_percent'] = '%.2f' % vat_percent if vat_percent > 0 else False
-            // return values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClGetFormattedSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_get_formatted_sequence(self, number=0):
-            // return '%s %06d' % (self.l10n_latam_document_type_id.doc_code_prefix, number)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClGetInvoiceTotalsForReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_get_invoice_totals_for_report(self):
-            // self.ensure_one()
-            // include_sii = self._l10n_cl_include_sii()
-            // tax_totals = self.tax_totals
-            // if not include_sii:
-            //     return tax_totals
-            // 
-            // tax_group_ids = {
-            //     tax_group['id']
-            //     for subtotal in tax_totals['subtotals']
-            //     for tax_group in subtotal['tax_groups']
-            // }
-            // tax_group_ids_to_exclude = self.env['account.tax.group'].browse(tax_group_ids).filtered(lambda x: x.l10n_cl_sii_code == 14).ids
-            // if tax_group_ids_to_exclude:
-            //     return self.env['account.tax']._exclude_tax_groups_from_tax_totals_summary(tax_totals, tax_group_ids_to_exclude)
-            // return tax_totals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClGetWithholdingsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_get_withholdings(self):
-            // """
-            // This method calculates the section of withholding taxes, or 'other' taxes for the Chilean electronic invoices.
-            // These taxes are not VAT taxes in general; they are special taxes (for example, alcohol or sugar-added beverages,
-            // withholdings for meat processing, fuel, etc.
-            // The taxes codes used are included here:
-            // [15, 17, 18, 19, 24, 25, 26, 27, 271]
-            // http://www.sii.cl/declaraciones_juradas/ddjj_3327_3328/cod_otros_imp_retenc.pdf
-            // The need of the tax is not just the amount, but the code of the tax, the percentage amount and the amount
-            // :return:
-            // """
-            // self.ensure_one()
-            // tax = [{'tax_code': line.tax_line_id.l10n_cl_sii_code,
-            //         'tax_name': line.tax_line_id.name,
-            //         'tax_base': abs(sum(self.invoice_line_ids.filtered(
-            //             lambda x: line.tax_line_id.l10n_cl_sii_code in x.tax_ids.mapped('l10n_cl_sii_code')).mapped(
-            //             'balance'))),
-            //         'tax_percent': abs(line.tax_line_id.amount),
-            //         'tax_amount_currency': self.currency_id.round(abs(line.amount_currency)),
-            //         'tax_amount': self.currency_id.round(abs(line.balance))} for line in self.line_ids.filtered(
-            //     lambda x: x.tax_group_id.id in [self.env['account.chart.template'].with_company(self.company_id).ref('tax_group_ila').id,
-            //                                     self.env['account.chart.template'].with_company(self.company_id).ref('tax_group_retenciones').id])]
-            // return tax
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClIncludeSiiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_include_sii(self):
-            // self.ensure_one()
-            // return self.l10n_latam_document_type_id.code in ['39', '41', '110', '111', '112', '34']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nClOnchangeJournalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move.py) ---
-            // def _l10n_cl_onchange_journal(self):
-            // if self.company_id.country_id.code == 'CL':
-            //     self.l10n_latam_document_type_id = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEgEdiExchangeCurrencyRateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def _l10n_eg_edi_exchange_currency_rate(self):
-            // """ Calculate the rate based on the balance and amount_currency, so we recuperate the one used at the time"""
-            // self.ensure_one()
-            // from_currency = self.currency_id
-            // to_currency = self.company_id.currency_id
-            // if from_currency != to_currency and self.invoice_line_ids:
-            //     amount_currency = self.invoice_line_ids[0].amount_currency
-            //     if not float_is_zero(amount_currency, precision_rounding=from_currency.rounding):
-            //         return abs(self.invoice_line_ids[0].balance / amount_currency)
-            // return 1.0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeConvertPaymentTermsToInstallmentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_convert_payment_terms_to_installments(self):
-            // """
-            // Convert the payments terms to a list of <Installment> elements to be used in the
-            // <PaymentDetails> node of the Facturae XML generation.
-            // """
-            // self.ensure_one()
-            // installments = []
-            // if self.is_inbound() and self.partner_bank_id:
-            //     for payment_term in self.line_ids.filtered(lambda l: l.display_type == 'payment_term').sorted('date_maturity'):
-            //         installments.append({
-            //             'InstallmentDueDate': payment_term.date_maturity,
-            //             'InstallmentAmount': payment_term.amount_residual_currency,
-            //             'PaymentMeans': self.l10n_es_payment_means,
-            //             'AccountToBeCredited': {
-            //                 'IBAN': self.partner_bank_id.sanitized_acc_number,
-            //                 'BIC': self.partner_bank_id.bank_bic,
-            //             },
-            //         })
-            // return installments
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeExportFacturaeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_export_facturae(self):
-            // """
-            // Produce the Facturae XML data for the invoice.
-            // 
-            // :return: (data needed to render the full template, data needed to render the signature template)
-            // """
-            // def extract_party_name(party):
-            //     name = {'firstname': 'UNKNOWN', 'surname': 'UNKNOWN', 'surname2': ''}
-            //     if not party.is_company:
-            //         name_split = [part for part in party.name.replace(', ', ' ').split(' ') if part]
-            //         if len(name_split) > 2:
-            //             name['firstname'] = ' '.join(name_split[:-2])
-            //             name['surname'], name['surname2'] = name_split[-2:]
-            //         elif len(name_split) == 2:
-            //             name['firstname'] = ' '.join(name_split[:-1])
-            //             name['surname'] = name_split[-1]
-            //     return name
-            // 
-            // self.ensure_one()
-            // company = self.company_id
-            // partner = self.commercial_partner_id
-            // 
-            // if not company.vat:
-            //     raise UserError(_('The company needs a set tax identification number or VAT number'))
-            // if not partner.vat:
-            //     raise UserError(_('The partner needs a set tax identification number or VAT number'))
-            // if not partner.country_id:
-            //     raise UserError(_("The partner needs a set country"))
-            // if self.move_type == "entry":
-            //     return False
-            // 
-            // operation_date = None
-            // if self.delivery_date and self.delivery_date != self.invoice_date:
-            //     operation_date = self.delivery_date.isoformat()
-            // 
-            // # Multi-currencies.
-            // eur_curr = self.env['res.currency'].search([('name', '=', 'EUR')])
-            // inv_curr = self.currency_id
-            // conversion_needed = inv_curr != eur_curr
-            // 
-            // # Invoice xml values.
-            // invoice_ref = self.ref and self.ref[:20]
-            // legal_literals = self.narration and self.narration.striptags()
-            // legal_literals = legal_literals.split(";") if legal_literals else False
-            // invoice_values = {
-            //     'invoice_record': self,
-            //     'invoice_currency': inv_curr,
-            //     'InvoiceDocumentType': 'FA' if self.l10n_es_is_simplified else 'FC',
-            //     'InvoiceClass': 'OR' if self.move_type in ['out_refund', 'in_refund'] else 'OO',
-            //     'Corrective': self._l10n_es_edi_facturae_get_corrective_data(),
-            //     'InvoiceIssueData': {
-            //         'OperationDate': operation_date,
-            //         'ExchangeRateDetails': conversion_needed,
-            //         'ExchangeRate': f"{round(self.invoice_currency_rate, 4):.4f}",
-            //         'LanguageName': self._context.get('lang', 'en_US').split('_')[0],
-            //         'InvoicingPeriod': None,
-            //         'ReceiverTransactionReference': invoice_ref,
-            //         'FileReference': invoice_ref,
-            //         'ReceiverContractReference': invoice_ref,
-            //     },
-            //     'TaxOutputs': [],
-            //     'TaxesWithheld': [],
-            //     'TotalGrossAmount': 0.0,
-            //     'TotalGeneralDiscounts': 0.0,
-            //     'TotalGeneralSurcharges': 0.0,
-            //     'TotalGrossAmountBeforeTaxes': 0.0,
-            //     'TotalTaxOutputs': 0.0,
-            //     'TotalTaxesWithheld': 0.0,
-            //     'PaymentsOnAccount': [],
-            //     'TotalOutstandingAmount': abs(self.amount_total_in_currency_signed),
-            //     'InvoiceTotal': abs(self.amount_total_in_currency_signed),
-            //     'TotalPaymentsOnAccount': 0.0,
-            //     'AmountsWithheld': None,
-            //     'TotalExecutableAmount': abs(self.amount_total_in_currency_signed),
-            //     'Items': [],
-            //     'PaymentDetails': self._l10n_es_edi_facturae_convert_payment_terms_to_installments(),
-            //     'LegalLiterals': legal_literals,
-            // }
-            // 
-            // # Taxes.
-            // AccountTax = self.env['account.tax']
-            // base_amls = self.invoice_line_ids.filtered(lambda line: line.display_type == 'product')
-            // base_lines = [self._prepare_product_base_line_for_taxes_computation(line) for line in base_amls]
-            // AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
-            // tax_amls = self.line_ids.filtered('tax_repartition_line_id')
-            // tax_lines = [self._prepare_tax_line_for_taxes_computation(tax_line) for tax_line in tax_amls]
-            // AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines)
-            // 
-            // def grouping_function(base_line, tax_data):
-            //     return tax_data['tax'] if tax_data else None
-            // 
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, grouping_function)
-            // for base_line, aggregated_values in base_lines_aggregated_values:
-            //     invoice_line_values = self._l10n_es_edi_facturae_prepare_inv_line(base_line, aggregated_values)
-            //     invoice_values['TotalGrossAmount'] += invoice_line_values['GrossAmount']
-            //     invoice_values['Items'].append(invoice_line_values)
-            // 
-            //     for values in aggregated_values.values():
-            //         tax = values['grouping_key']
-            //         if not tax:
-            //             continue
-            // 
-            //         tax_data = self._l10n_es_edi_facturae_get_tax_node_from_tax_data(values)
-            //         if tax.amount < 0.0:
-            //             invoice_values['TaxesWithheld'].append(tax_data)
-            //             invoice_values['TotalTaxesWithheld'] += tax_data['TaxAmount']['TotalAmount']
-            //         else:
-            //             invoice_values['TaxOutputs'].append(tax_data)
-            //             invoice_values['TotalTaxOutputs'] += tax_data['TaxAmount']['TotalAmount']
-            // 
-            // invoice_values['TotalGrossAmountBeforeTaxes'] = (
-            //     invoice_values['TotalGrossAmount']
-            //     - invoice_values['TotalGeneralDiscounts']
-            //     + invoice_values['TotalGeneralSurcharges']
-            // )
-            // 
-            // template_values = {
-            //     'self_party': company.partner_id,
-            //     'self_party_country_code': COUNTRY_CODE_MAP[company.country_id.code],
-            //     'self_party_name': extract_party_name(company.partner_id),
-            //     'self_party_administrative_centers': self._l10n_es_edi_facturae_get_administrative_centers(company.partner_id),
-            //     'other_party': partner,
-            //     'other_party_country_code': COUNTRY_CODE_MAP[partner.country_id.code],
-            //     'other_party_phone': partner.phone.translate(PHONE_CLEAN_TABLE) if partner.phone else False,
-            //     'other_party_name': extract_party_name(partner),
-            //     'other_party_administrative_centers': self._l10n_es_edi_facturae_get_administrative_centers(partner),
-            //     'is_outstanding': self.move_type.startswith('out_'),
-            //     'float_repr': float_repr,
-            //     'file_currency': inv_curr,
-            //     'eur': eur_curr,
-            //     'conversion_needed': conversion_needed,
-            //     'refund_multiplier': -1 if self.move_type in ('out_refund', 'in_refund') else 1,
-            // 
-            //     'Modality': 'I',
-            //     'BatchIdentifier': self.name,
-            //     'InvoicesCount': 1,
-            //     'TotalInvoicesAmount': {
-            //         'TotalAmount': abs(self.amount_total_in_currency_signed),
-            //         'EquivalentInEuros': abs(self.amount_total_signed),
-            //     },
-            //     'TotalOutstandingAmount': {
-            //         'TotalAmount': abs(self.amount_total_in_currency_signed),
-            //         'EquivalentInEuros': abs(self.amount_total_signed),
-            //     },
-            //     'TotalExecutableAmount': {
-            //         'TotalAmount': abs(self.amount_total_in_currency_signed),
-            //         'EquivalentInEuros': abs(self.amount_total_signed),
-            //     },
-            //     'InvoiceCurrencyCode': inv_curr.name,
-            //     'Invoices': [invoice_values],
-            // }
-            // if self.l10n_es_invoicing_period_start_date and self.l10n_es_invoicing_period_end_date:
-            //     template_values['Invoices'][0]['InvoiceIssueData']['InvoicingPeriod'] = {
-            //         'StartDate': self.l10n_es_invoicing_period_start_date,
-            //         'EndDate': self.l10n_es_invoicing_period_end_date,
-            //     }
-            // 
-            // invoice_issuer_signature_type = 'supplier' if self.move_type == 'out_invoice' else 'customer'
-            // signature_values = {'SigningTime': '', 'SignerRole': invoice_issuer_signature_type}
-            // return template_values, signature_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetAdministrativeCentersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_administrative_centers(self, partner):
-            // self.ensure_one()
-            // administrative_centers = []
-            // for ac in partner.child_ids.filtered(lambda p: p.type == 'facturae_ac'):
-            //     ac_template = {
-            //         'center_code': ac.l10n_es_edi_facturae_ac_center_code,
-            //         'name': ac.name,
-            //         'partner': ac,
-            //         'partner_country_code': COUNTRY_CODE_MAP[ac.country_code],
-            //         'partner_phone': ac.phone.translate(PHONE_CLEAN_TABLE) if ac.phone else False,
-            //         'physical_gln': ac.l10n_es_edi_facturae_ac_physical_gln,
-            //         'logical_operational_point': ac.l10n_es_edi_facturae_ac_logical_operational_point,
-            //     }
-            //     # An administrative center can have multiple roles, each of which should be reported separately.
-            //     for role in ac.l10n_es_edi_facturae_ac_role_type_ids or [self.env['l10n_es_edi_facturae.ac_role_type']]:
-            //         administrative_centers.append({
-            //             **ac_template,
-            //             'role_type_code': role.code,
-            //         })
-            // return administrative_centers
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetCorrectiveDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_corrective_data(self):
-            // self.ensure_one()
-            // if self.move_type.endswith('refund'):
-            //     if not self.reversed_entry_id:
-            //         raise UserError(_("The credit note/refund appears to have been issued manually. For the purpose of "
-            //                           "generating a Facturae document, it's necessary that the credit note/refund is created "
-            //                           "directly from the associated invoice/bill."))
-            // 
-            //     refunded_invoice = self.env['account.move'].browse(self._l10n_es_edi_facturae_get_refunded_invoices()[self.id])
-            //     tax_period = refunded_invoice._l10n_es_edi_facturae_get_tax_period()
-            // 
-            //     reason_code = self.l10n_es_edi_facturae_reason_code or '10'
-            //     reason_description = [label for code, label in self._fields['l10n_es_edi_facturae_reason_code'].selection
-            //                           if code == reason_code][0]
-            //     return {
-            //         'refunded_invoice_record': refunded_invoice,
-            //         'ReasonCode': reason_code,
-            //         'Reason': reason_description,
-            //         'TaxPeriod': {
-            //             'StartDate': tax_period.get('start'),
-            //             'EndDate': tax_period.get('end'),
-            //         }
-            //     }
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetDefaultEnableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_default_enable(self):
-            // self.ensure_one()
-            // return not self.invoice_pdf_report_id \
-            //     and not self.l10n_es_edi_facturae_xml_id \
-            //     and not self.l10n_es_is_simplified \
-            //     and self.is_invoice(include_receipts=True) \
-            //     and (self.partner_id.is_company or self.partner_id.vat) \
-            //     and self.company_id.country_code == 'ES' \
-            //     and self.company_id.currency_id.name == 'EUR' \
-            //     and self.company_id.sudo().l10n_es_edi_facturae_certificate_ids
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_filename(self):
-            // self.ensure_one()
-            // return f'{self.name.replace("/", "_")}_facturae_signed.xml'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetRefundedInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_refunded_invoices(self):
-            // self.env['account.partial.reconcile'].flush_model()
-            // invoices_refunded_mapping = {invoice.id: invoice.reversed_entry_id.id for invoice in self}
-            // 
-            // stored_ids = tuple(self.ids)
-            // queries = []
-            // for source_field, counterpart_field in (
-            //     ('debit_move_id', 'credit_move_id'),
-            //     ('credit_move_id', 'debit_move_id'),
-            // ):
-            //     queries.append(SQL('''
-            //         SELECT
-            //             source_line.move_id AS source_move_id,
-            //             counterpart_line.move_id AS counterpart_move_id
-            //         FROM account_partial_reconcile part
-            //         JOIN account_move_line source_line ON source_line.id = part.%s
-            //         JOIN account_move_line counterpart_line ON counterpart_line.id = part.%s
-            //         WHERE source_line.move_id IN %s AND counterpart_line.move_id != source_line.move_id
-            //         GROUP BY source_move_id, counterpart_move_id
-            //     ''', SQL.identifier(source_field), SQL.identifier(counterpart_field), stored_ids))
-            // payment_data = defaultdict(list)
-            // for row in self.env.execute_query_dict(SQL(" UNION ALL ").join(queries)):
-            //     payment_data[row['source_move_id']].append(row)
-            // 
-            // for invoice in self:
-            //     if not invoice.move_type.endswith('refund'):
-            //         # We only want to map refunds
-            //         continue
-            // 
-            //     for move_id in (record_dict['counterpart_move_id'] for record_dict in payment_data.get(invoice.id, [])):
-            //         invoices_refunded_mapping[invoice.id] = move_id
-            // return invoices_refunded_mapping
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetTaxNodeFromTaxDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_tax_node_from_tax_data(self, values):
-            // self.ensure_one()
-            // tax = values['grouping_key']
-            // return {
-            //     'tax_record': tax,
-            //     'TaxRate': f'{abs(tax.amount):.3f}',
-            //     'TaxableBase': {
-            //         'TotalAmount': self.currency_id.round(values['raw_base_amount_currency']),
-            //         'EquivalentInEuros': self.company_currency_id.round(values['raw_base_amount']),
-            //     },
-            //     'TaxAmount': {
-            //         'TotalAmount': self.currency_id.round(abs(values['raw_tax_amount_currency'])),
-            //         'EquivalentInEuros': self.company_currency_id.round(abs(values['raw_tax_amount'])),
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeGetTaxPeriodInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_get_tax_period(self):
-            // self.ensure_one()
-            // if self.env['res.company'].fields_get(['account_tax_periodicity']):
-            //     period_start, period_end = self.company_id._get_tax_closing_period_boundaries(self.date, self.env.ref('l10n_es.mod_303'))
-            // else:
-            //     period_start = date_utils.start_of(self.date, 'month')
-            //     period_end = date_utils.end_of(self.date, 'month')
-            // 
-            // return {'start':period_start, 'end':period_end}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaePrepareInvLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object aggregated_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_prepare_inv_line(self, base_line, aggregated_values):
-            // """
-            // Convert the invoice lines to a list of items required for the Facturae xml generation
-            // 
-            // :return: A tuple containing the Face items, the taxes and the invoice totals data.
-            // """
-            // self.ensure_one()
-            // extended_dp = 6 if self.company_id.tax_calculation_rounding_method == 'round_globally' else 2
-            // invoice_ref = self.ref and self.ref[:20]
-            // line = base_line['record']
-            // tax_details = base_line['tax_details']
-            // 
-            // receiver_transaction_reference = (
-            //     line.sale_line_ids.order_id.client_order_ref[:20]
-            //     if 'sale_line_ids' in line._fields and line.sale_line_ids.order_id.client_order_ref
-            //     else invoice_ref
-            // )
-            // 
-            // xml_values = {
-            //     'ReceiverTransactionReference': receiver_transaction_reference,
-            //     'FileReference': invoice_ref,
-            //     'ReceiverContractReference': invoice_ref,
-            //     'FileDate': fields.Date.context_today(self),
-            //     'ItemDescription': line.name,
-            //     'Quantity': line.quantity,
-            //     'UnitOfMeasure': line.product_uom_id.l10n_es_edi_facturae_uom_code,
-            //     'DiscountsAndRebates': [],
-            //     'Charges': [],
-            //     'GrossAmount': line.price_subtotal,
-            // }
-            // 
-            // if line.discount == 100.0:
-            //     raw_total_cost = line.price_unit * line.quantity
-            // else:
-            //     raw_total_cost = tax_details['total_excluded_currency'] / (1 - (line.discount / 100.0))
-            // xml_values['TotalCost'] = line.currency_id.round(raw_total_cost)
-            // 
-            // if line.quantity:
-            //     xml_values['UnitPriceWithoutTax'] = float_round(raw_total_cost / line.quantity, precision_digits=extended_dp)
-            // else:
-            //     xml_values['UnitPriceWithoutTax'] = 0.0
-            // 
-            // raw_discount_amount = xml_values['TotalCost'] - line.price_subtotal
-            // discount_amount = max(raw_discount_amount, 0.0)
-            // if discount_amount:
-            //     xml_values['DiscountsAndRebates'].append({
-            //         'DiscountReason': '/',
-            //         'DiscountRate': f'{line.discount:.2f}',
-            //         'DiscountAmount': discount_amount,
-            //     })
-            // 
-            // surcharge_amount = -min(0.0, raw_discount_amount)
-            // if surcharge_amount:
-            //     xml_values['Charges'].append({
-            //         'ChargeReason': '/',
-            //         'ChargeRate': f'{-line.discount:.2f}',
-            //         'ChargeAmount': surcharge_amount,
-            //     })
-            // 
-            // xml_values['TaxesOutputs'] = [
-            //     self._l10n_es_edi_facturae_get_tax_node_from_tax_data(values)
-            //     for values in aggregated_values.values()
-            //     if values['grouping_key'] and values['grouping_key'].amount >= 0.0
-            // ]
-            // xml_values['TaxesWithheld'] = [
-            //     self._l10n_es_edi_facturae_get_tax_node_from_tax_data(values)
-            //     for values in aggregated_values.values()
-            //     if values['grouping_key'] and values['grouping_key'].amount < 0.0
-            // ]
-            // 
-            // return xml_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsEdiFacturaeRenderFacturaeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_edi_facturae_render_facturae(self):
-            // """
-            // Produce the Facturae XML file for the invoice.
-            // 
-            // :return: rendered xml file string.
-            // :rtype:  str
-            // """
-            // self.ensure_one()
-            // company = self.company_id
-            // template_values, signature_values = self._l10n_es_edi_facturae_export_facturae()
-            // xml_content = cleanup_xml_node(self.env['ir.qweb']._render('l10n_es_edi_facturae.account_invoice_facturae_export', template_values))
-            // 
-            // errors = []
-            // try:
-            //     xml_content = self._l10n_es_facturae_sign_xml(xml_content, signature_values)
-            // except ValueError:
-            //     errors.append(_('No valid certificate found for this company, Facturae EDI file will not be signed.\n'))
-            // return xml_content, errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsFacturaeSignXmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_data, object signature_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _l10n_es_facturae_sign_xml(self, edi_data, signature_data):
-            // """
-            // Signs the given XML data with the certificate and private key.
-            // 
-            // :param etree._Element edi_data: The XML data to sign.
-            // :param dict signature_data: The signature data to use.
-            // :return: The signed XML data string.
-            // :rtype: str
-            // """
-            // self.ensure_one()
-            // certificates_sudo = self.company_id.sudo().l10n_es_edi_facturae_certificate_ids.filtered("is_valid")
-            // if not certificates_sudo:
-            //     raise UserError(_('No valid certificate found'))
-            // 
-            // certificate_sudo = certificates_sudo[0]
-            // 
-            // root = deepcopy(edi_data)
-            // e, n = certificate_sudo._get_public_key_numbers_bytes()
-            // issuer = certificate_sudo._l10n_es_edi_facturae_get_issuer()
-            // 
-            // # Identifiers
-            // document_id = f"Document-{sha1(etree.tostring(edi_data)).hexdigest()}"
-            // signature_id = f"Signature-{document_id}"
-            // keyinfo_id = f"KeyInfo-{document_id}"
-            // sigproperties_id = f"SignatureProperties-{document_id}"
-            // 
-            // signature_data.update({
-            //     'document_id': document_id,
-            //     'x509_certificate': base64.encodebytes(base64.b64decode(certificate_sudo._get_der_certificate_bytes())).decode(),
-            //     'public_modulus': n.decode(),
-            //     'public_exponent': e.decode(),
-            //     'iso_now': fields.datetime.now().isoformat(),
-            //     'keyinfo_id': keyinfo_id,
-            //     'signature_id': signature_id,
-            //     'sigproperties_id': sigproperties_id,
-            //     'reference_uri': f"Reference-{document_id}",
-            //     'sigpolicy_url': "http://www.facturae.es/politica_de_firma_formato_facturae/politica_de_firma_formato_facturae_v3_1.pdf",
-            //     'sigpolicy_description': "Política de firma electrónica para facturación electrónica con formato Facturae",
-            //     'sigcertif_digest': certificate_sudo._get_fingerprint_bytes(formatting='base64').decode(),
-            //     'x509_issuer_description': issuer,
-            //     'x509_serial_number': int(certificate_sudo.serial_number),
-            // })
-            // signature = self.env['ir.qweb']._render('l10n_es_edi_facturae.template_xades_signature', signature_data)
-            // signature = cleanup_xml_node(signature, remove_blank_nodes=False)
-            // root.append(signature)
-            // _reference_digests(signature.find("ds:SignedInfo", namespaces=NS_MAP))
-            // 
-            // signed_info_xml = signature.find("ds:SignedInfo", namespaces=NS_MAP)
-            // signature.find("ds:SignatureValue", namespaces=NS_MAP).text = certificate_sudo._sign(_canonicalize_node(signed_info_xml)).decode()
-            // 
-            // return etree.tostring(root, xml_declaration=True, encoding='UTF-8', standalone=True)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsIsDuaInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es, FILE: account_move.py) ---
-            // def _l10n_es_is_dua(self):
-            // self.ensure_one()
-            // return any(t.l10n_es_type == 'dua' for t in self.invoice_line_ids.tax_ids.flatten_taxes_hierarchy())
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_sii, FILE: account_move.py) ---
-            // def _l10n_es_is_dua(self):
-            // self.ensure_one()
-            // return any(t.l10n_es_type == 'dua' for t in self.invoice_line_ids.tax_ids.flatten_taxes_hierarchy())
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def l10n_es_tbai_cancel(self):
-            // for invoice in self:
-            //     invoice._l10n_es_tbai_lock_move()
-            // 
-            //     if invoice.l10n_es_tbai_cancel_document_id and invoice.l10n_es_tbai_cancel_document_id.state == 'rejected':
-            //         invoice.l10n_es_tbai_cancel_document_id.sudo().unlink()
-            // 
-            //     if not invoice.l10n_es_tbai_cancel_document_id:
-            //         invoice.l10n_es_tbai_cancel_document_id = invoice._l10n_es_tbai_create_edi_document(cancel=True)
-            // 
-            //     edi_document = invoice.l10n_es_tbai_cancel_document_id
-            // 
-            //     error = edi_document._post_to_web_service(invoice._l10n_es_tbai_get_values(cancel=True))
-            //     if error:
-            //         raise UserError(error)
-            // 
-            //     if edi_document.state == 'accepted':
-            //         invoice.button_cancel()
-            //         invoice._l10n_es_tbai_post_document_in_chatter(edi_document.response_message, cancel=True)
-            // 
-            //     if self.env['account.move.send']._can_commit():
-            //         self._cr.commit()
-            // 
-            //     if edi_document.state != 'accepted':
-            //         raise UserError(edi_document.response_message)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiCheckCanSendInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_check_can_send(self):
-            // # Ensure the move is posted
-            // if self.state != 'posted':
-            //     return _("Cannot send an entry that is not posted to TicketBAI.")
-            // if self.l10n_es_tbai_state in ('sent', 'cancelled'):
-            //     return _("This entry has already been posted.")
-            // if self.company_id.l10n_es_tbai_tax_agency == 'bizkaia' and self.is_purchase_document() and not self.ref:
-            //     return _("You need to fill in the Reference field as the invoice number from your vendor.")
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiCreateEdiDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_create_edi_document(self, cancel=False):
-            // name = self.name
-            // if self.is_purchase_document():
-            //     name = self.ref
-            // return self.env['l10n_es_edi_tbai.document'].sudo().create({
-            //     'name': name,
-            //     'date': self.date,
-            //     'company_id': self.company_id.id,
-            //     'is_cancel': cancel,
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetAttachmentNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_attachment_name(self, cancel=False):
-            // return self.name + ('_post.xml' if not cancel else '_cancel.xml')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetAttachmentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_attachment_values(self, cancel=False):
-            // return {
-            //     'attachment_name': self._l10n_es_tbai_get_attachment_name(cancel=cancel),
-            //     'res_model': 'account.move',
-            //     'res_id': self.id,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetCreditNoteValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_credit_note_values(self):
-            // return {
-            //     'is_refund': self.move_type == 'out_refund',
-            //     'refund_reason': self.l10n_es_tbai_refund_reason,
-            //     'refunded_doc': self.reversed_entry_id.l10n_es_tbai_post_document_id,
-            //     'refunded_doc_invoice_date': self.reversed_entry_id.invoice_date if self.reversed_entry_id else False,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetInvoiceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_invoice_values(self, cancel=False):
-            // self.ensure_one()
-            // base_amls = self.line_ids.filtered(lambda x: x.display_type == 'product')
-            // base_lines = [self._prepare_product_base_line_for_taxes_computation(x) for x in base_amls]
-            // for base_line in base_lines:
-            //     base_line['name'] = base_line['record'].name
-            // tax_amls = self.line_ids.filtered('tax_repartition_line_id')
-            // tax_lines = [self._prepare_tax_line_for_taxes_computation(x) for x in tax_amls]
-            // self.env['l10n_es_edi_tbai.document']._add_base_lines_tax_amounts(base_lines, self.company_id, tax_lines=tax_lines)
-            // for base_line in base_lines:
-            //     sign = base_line['is_refund'] and -1 or 1
-            //     base_line['gross_price_unit'] = sign * base_line['gross_price_unit']
-            //     base_line['discount_amount'] = sign * base_line['discount_amount']
-            //     base_line['price_total'] = sign * base_line['price_total']
-            // taxes = self.invoice_line_ids.tax_ids.flatten_taxes_hierarchy()
-            // is_oss = any(tax._l10n_es_get_regime_code() == '17' for tax in taxes)
-            // 
-            // return {
-            //     **self._l10n_es_tbai_get_credit_note_values(),
-            //     'origin': self.invoice_origin and self.invoice_origin[:250] or 'manual',
-            //     'taxes': taxes,
-            //     'rate':  abs(self.amount_total / self.amount_total_signed) if self.amount_total else 1,
-            //     'base_lines': base_lines,
-            //     'nosujeto_causa': 'IE' if is_oss else 'RL',
-            //     **({'post_doc': self.l10n_es_tbai_post_document_id} if cancel else {}),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_values(self, cancel=False):
-            // values = {
-            //     'is_sale': self.is_sale_document(),
-            //     'partner': self.commercial_partner_id,
-            //     'is_simplified': self.l10n_es_is_simplified,
-            //     'delivery_date': self.delivery_date if self.delivery_date and self.delivery_date != self.invoice_date else None,
-            //     **self._l10n_es_tbai_get_attachment_values(cancel),
-            // }
-            // if values['is_sale']:
-            //     values.update(self._l10n_es_tbai_get_invoice_values(cancel=cancel))
-            // 
-            // elif self.company_id.l10n_es_tbai_tax_agency == 'bizkaia':
-            //     values.update(self._l10n_es_tbai_get_vendor_bill_values_batuz())
-            // 
-            // return values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetVendorBillTaxValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_vendor_bill_tax_values(self):
-            // self.ensure_one()
-            // results = defaultdict(lambda: {'base_amount': 0.0, 'tax_amount': 0.0})
-            // amount_total = 0.0
-            // for line in self.line_ids.filtered(lambda l: l.display_type in ('product', 'tax')):
-            //     if any(t.l10n_es_type == 'ignore' for t in line.tax_ids) or line.tax_line_id.l10n_es_type == 'ignore':
-            //         continue
-            //     if line.tax_line_id.l10n_es_type != 'retencion':
-            //         amount_total += line.balance
-            //     for tax in line.tax_ids.filtered(lambda t: t.l10n_es_type not in ('recargo', 'retencion')):
-            //         results[tax]['base_amount'] += line.balance
-            // 
-            //     if ((tax := line.tax_line_id) and tax.l10n_es_type not in ('recargo', 'retencion') and
-            //         line.tax_repartition_line_id.factor_percent != -100.0):
-            //         results[tax]['tax_amount'] += line.balance
-            // iva_values = []
-            // for tax in results:
-            //     code = "C"  # Bienes Corrientes
-            //     if tax.l10n_es_bien_inversion:
-            //         code = "I"  # Investment Goods
-            //     if tax.tax_scope == 'service':
-            //         code = 'G'  # Gastos
-            //     iva_values.append({'base': results[tax]['base_amount'],
-            //                        'code': code,
-            //                        'tax': results[tax]['tax_amount'],
-            //                        'rec': tax})
-            // return {'iva_values': iva_values,
-            //         'amount_total': amount_total}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiGetVendorBillValuesBatuzInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_get_vendor_bill_values_batuz(self):
-            // """ For the vendor bills for Bizkaia, the structure is different than the regular Ticketbai XML (LROE)"""
-            // values = {
-            //     'ref': self.ref,
-            //     'is_refund': self.move_type == 'in_refund',
-            //     'invoice_date': self.invoice_date,
-            //      **self._l10n_es_tbai_get_vendor_bill_tax_values(),
-            // }
-            // # Check if intracom
-            // mod_303_10 = self.env.ref('l10n_es.mod_303_casilla_10_balance')._get_matching_tags()
-            // mod_303_11 = self.env.ref('l10n_es.mod_303_casilla_11_balance')._get_matching_tags()
-            // tax_tags = self.invoice_line_ids.tax_ids.flatten_taxes_hierarchy().repartition_line_ids.tag_ids
-            // intracom = bool(tax_tags & (mod_303_10 + mod_303_11))
-            // reagyp = self.invoice_line_ids.tax_ids.filtered(lambda t: t.l10n_es_type == 'sujeto_agricultura')
-            // if intracom:
-            //     values['regime_key'] = ['09']
-            // elif reagyp:
-            //     values['regime_key'] = ['19']
-            // else:
-            //     values['regime_key'] = ['01']
-            // # Credit notes (factura rectificativa)
-            // if values['is_refund']:
-            //     values['refund_reason'] = self.l10n_es_tbai_refund_reason
-            //     values['credit_note_invoices'] = self.reversed_entry_id | self.l10n_es_tbai_reversed_ids
-            // if reagyp:
-            //     values['tipofactura'] = 'F6'
-            // elif self._l10n_es_is_dua():
-            //     values['tipofactura'] = 'F5'
-            // else:
-            //     values['tipofactura'] = 'F1'
-            // return values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiLockMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_lock_move(self):
-            // """ Acquire a write lock on the invoices in self. """
-            // self.ensure_one()
-            // 
-            // try:
-            //     with self.env.cr.savepoint(flush=False):
-            //         self.env.cr.execute('SELECT * FROM account_move WHERE id = %s FOR UPDATE NOWAIT', [self.id])
-            // except LockNotAvailable:
-            //     raise UserError(_('Cannot send this entry as it is already being processed.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiPostDocumentInChatterInternalAsync<TEntity>(IEnumerable<TEntity> entities, object message, object cancel) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_post_document_in_chatter(self, message, cancel=False):
-            // test_suffix = '(test mode)' if self.company_id.l10n_es_tbai_test_env else ''
-            // self.with_context(no_new_invoice=True).message_post(
-            //     body=Markup("<pre>TicketBAI: posted {document_type} XML {test_suffix}\n{message}</pre>").format(
-            //         document_type='emission' if not cancel else 'cancellation',
-            //         test_suffix=test_suffix,
-            //         message=message,
-            //     ),
-            //     attachment_ids=[self.l10n_es_tbai_post_document_id.xml_attachment_id.id] if not cancel else [self.l10n_es_tbai_cancel_document_id.xml_attachment_id.id],
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiPostInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_post(self):
-            // self.ensure_one()
-            // 
-            // # Avoid the move to be sent if it is being modified by a parallel transaction (for example reset to draft)
-            // # It will also avoid the move to be sent by different parallel transactions
-            // self._l10n_es_tbai_lock_move()
-            // 
-            // error = self._l10n_es_tbai_check_can_send()
-            // if error:
-            //     return error
-            // 
-            // if self.l10n_es_tbai_post_document_id and self.l10n_es_tbai_post_document_id.state == 'rejected':
-            //     self.l10n_es_tbai_post_document_id.sudo().unlink()
-            // 
-            // if not self.l10n_es_tbai_post_document_id:
-            //     self.l10n_es_tbai_post_document_id = self._l10n_es_tbai_create_edi_document()
-            // 
-            // edi_document = self.l10n_es_tbai_post_document_id
-            // 
-            // error = edi_document._post_to_web_service(self._l10n_es_tbai_get_values())
-            // if error:
-            //     return error
-            // 
-            // if edi_document.state == 'accepted':
-            //     self._l10n_es_tbai_post_document_in_chatter(edi_document.response_message)
-            //     return
-            // 
-            // # Return the error message if the xml document was not accepted
-            // return edi_document.response_message
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiSendBillAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def l10n_es_tbai_send_bill(self):
-            // for bill in self:
-            //     error = bill._l10n_es_tbai_post()
-            //     if self.env['account.move.send']._can_commit():
-            //         self._cr.commit()
-            //     if error:
-            //         raise UserError(error)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nEsTbaiUnlinkExceptInChainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _l10n_es_tbai_unlink_except_in_chain(self):
-            // # Prevent deleting moves that are part of the TicketBAI chain
-            // if not self._context.get('force_delete') and any(m.l10n_es_tbai_chain_index for m in self):
-            //     raise UserError(_('You cannot delete a move that has a TicketBAI chain id.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiAddAddressValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_add_address_vals(self, values):
-            // """
-            // Adds all the address values needed for the ``invoice_vals`` dictionary.
-            // The only guaranteed keys in to add in the dictionary is the issuer's VAT, country code, and branch number.
-            // Everything else is only displayed on some specific case/configuration.
-            // The appended dictionary will have the following additional keys:
-            // {
-            //     'issuer_vat_number': <str>,
-            //     'issuer_country': <str>,
-            //     'issuer_branch': <int>,
-            //     'issuer_name': <str | None>,
-            //     'issuer_postal_code': <str | None>,
-            //     'issuer_city': <str | None>,
-            //     'counterpart_vat': <str | None>,
-            //     'counterpart_country': <str | None>,
-            //     'counterpart_branch': <int | None>,
-            //     'counterpart_name': <str | None>,
-            //     'counterpart_postal_code': <str | None>,
-            //     'counterpart_city': <str | None>,
-            //     'counterpart_postal_code': <str | None>,
-            //     'counterpart_city': <str | None>,
-            // }
-            // :param dict values: dictionary where the address values will be added
-            // :rtype: dict[str, str|int]
-            // """
-            // self.ensure_one()
-            // issuer_not_from_greece = self.company_id.country_code != 'GR'
-            // inv_type_allows_counterpart = self.l10n_gr_edi_inv_type not in TYPES_WITH_FORBIDDEN_COUNTERPART
-            // partner_not_from_greece = self.partner_id.country_code != 'GR'
-            // inv_type_require_counterpart = self.l10n_gr_edi_inv_type in TYPES_WITH_MANDATORY_COUNTERPART
-            // 
-            // conditional_address_keys = ('issuer_name', 'issuer_postal_code', 'issuer_city', 'counterpart_vat', 'counterpart_country',
-            //                             'counterpart_branch', 'counterpart_name', 'counterpart_postal_code', 'counterpart_city')
-            // values.update({
-            //     'issuer_vat_number': self.company_id.vat.replace('EL', '').replace('GR', ''),
-            //     'issuer_country': self.company_id.country_code,
-            //     'issuer_branch': self.company_id.l10n_gr_edi_branch_number or 0,
-            //     **dict.fromkeys(conditional_address_keys),
-            // })
-            // 
-            // if issuer_not_from_greece:
-            //     values.update({
-            //         'issuer_name': self.company_id.name.encode('ISO-8859-7'),
-            //         'issuer_postal_code': self.company_id.zip,
-            //         'issuer_city': (self.company_id.city or "").encode('ISO-8859-7') or None,
-            //     })
-            // 
-            // if inv_type_allows_counterpart:
-            //     values.update({
-            //         'counterpart_vat': self.commercial_partner_id.vat.replace('EL', '').replace('GR', ''),
-            //         'counterpart_country': self.commercial_partner_id.country_code,
-            //         'counterpart_branch': (self.commercial_partner_id.l10n_gr_edi_branch_number or 0),
-            //     })
-            //     if partner_not_from_greece:
-            //         values['counterpart_name'] = self.commercial_partner_id.name.encode('ISO-8859-7')
-            // 
-            // if inv_type_require_counterpart or (inv_type_allows_counterpart and partner_not_from_greece):
-            //     values.update({
-            //         'counterpart_postal_code': self.commercial_partner_id.zip,
-            //         'counterpart_city': (self.commercial_partner_id.city or "").encode('ISO-8859-7') or None,
-            //     })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiAddPaymentMethodValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_add_payment_method_vals(self, values):
-            // """
-            // Adds payment values needed for the ``invoice_vals`` dictionary.
-            // The appended dictionary will have the following additional key:
-            // { 'payment_details': [ { 'type': <str>, 'amount': <float> }, ... ] }
-            // :param dict values:
-            // :rtype: dict[str, list[dict]]
-            // """
-            // self.ensure_one()
-            // values.update({'payment_details': []})
-            // payment_terms = self.line_ids.filtered(lambda line: line.display_type == 'payment_term')
-            // 
-            // for match_field, amount_field in (('debit', 'credit'), ('credit', 'debit')):
-            //     for apr in payment_terms[f'matched_{match_field}_ids']:
-            //         values['payment_details'].append({
-            //             'type': self.l10n_gr_edi_payment_method or '1',
-            //             'amount': apr[f'{amount_field}_amount_currency'],
-            //         })
-            // 
-            // if not values['payment_details'] and self.l10n_gr_edi_inv_type in TYPES_WITH_MANDATORY_PAYMENT:
-            //     # paymentMethods element is required, even if its amount is zero (no payment have been made yet)
-            //     values['payment_details'].append({
-            //         'type': self.l10n_gr_edi_payment_method or '1',
-            //         'amount': 0,
-            //     })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiAddSumClassificationValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_add_sum_classification_vals(self, values):
-            // """
-            // Aggregates all amounts from the common categories and types of the list vals from the ``details`` key,
-            // and then add them to the `values` dictionary parameter.
-            // [!WARNING!] The `values` parameter **must** have the `details` key.
-            // let ``XCLSList`` be a list with format of:
-            // [
-            //     {'category': <str>, 'type': <str>, 'amount': <float>},
-            //     ...,
-            // ]
-            // All in all, a subset of the `values` parameter should follow the following type formats:
-            // {
-            //     'details': {
-            //         'icls': XCLSList,
-            //         'ecls': XCLSList,
-            //     }
-            // }
-            // The `values` dictionary will then be appended with the following keys:
-            // {
-            //     'summary_icls': XCLSList,
-            //     'summary_ecls': XCLSList,
-            // }
-            // :param dict values: the dictionary where the sum classification values will be added.
-            // :rtype: dict[str, list[dict]]
-            // """
-            // cls_vals_type = dict[tuple[str, str], float]
-            // icls_vals: cls_vals_type = {}
-            // ecls_vals: cls_vals_type = {}
-            // 
-            // for detail in values['details']:
-            //     icls_list, ecls_list = detail['icls'], detail['ecls']
-            //     for icls in icls_list:
-            //         category_type = (icls['category'], icls['type'])
-            //         icls_vals.setdefault(category_type, 0)
-            //         icls_vals[category_type] += icls['amount']
-            //     for ecls in ecls_list:
-            //         category_type = (ecls['category'], ecls['type'])
-            //         ecls_vals.setdefault(category_type, 0)
-            //         ecls_vals[category_type] += ecls['amount']
-            // 
-            // for summary_key, cls_vals in (
-            //     ('summary_icls', icls_vals),
-            //     ('summary_ecls', ecls_vals),
-            // ):
-            //     values[summary_key] = [
-            //         {
-            //             'category': category,
-            //             'type': cls_type,
-            //             'amount': total_amount,
-            //         }
-            //         for (category, cls_type), total_amount in cls_vals.items()
-            //     ]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiCommonBaseLineDetailsValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_common_base_line_details_values(self, base_line):
-            // """
-            // Returns additional income/expense classification items ("icls"/"ecls") if needed for the detail values.
-            // The returned format is: {'ecls': [ {'category': <str>, 'type': <str>, 'amount': <float>}, ... ], 'icls': <same_as_ecls> }
-            // :param dict base_line: dictionary obtained from the tax computation helper methods; such as `_get_rounded_base_and_tax_lines`.
-            // :rtype: dict[str, list[dict]]
-            // """
-            // line = base_line['record']
-            // net_amount = base_line['tax_details']['raw_total_excluded']
-            // cls_vals = {'ecls': [], 'icls': []}
-            // 
-            // if line.l10n_gr_edi_cls_category:
-            //     cls_vals_list = cls_vals['ecls'] if line.l10n_gr_edi_cls_category in CLASSIFICATION_CATEGORY_EXPENSE else cls_vals['icls']
-            //     cls_type = line.l10n_gr_edi_cls_type or ''
-            //     if len(cls_type) > 0 and cls_type[0] == 'X':  # handle duplicate E3 type on inv type 17.5
-            //         cls_type = cls_type[1:]
-            // 
-            //     cls_vals_list.append({
-            //         'category': line.l10n_gr_edi_cls_category,
-            //         'type': cls_type,
-            //         'amount': net_amount,
-            //     })
-            //     if line.l10n_gr_edi_cls_vat:
-            //         cls_vals_list.append({
-            //             'category': '',
-            //             'type': line.l10n_gr_edi_cls_vat,
-            //             'amount': net_amount,
-            //         })
-            // 
-            // return cls_vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiCreateErrorDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_create_error_document(self, values: dict):
-            // """
-            // Creates ``l10n_gr_edi.document`` of state ``invoice_error`` or ``bill_error``.
-            // :param values: dictionary in the format of: {'error': <str>, 'xml_content': <optional/str>}
-            // """
-            // self.ensure_one()
-            // document = self.env['l10n_gr_edi.document'].create({
-            //     'move_id': self.id,
-            //     'state': 'invoice_error' if self.is_sale_document(include_receipts=True) else 'bill_error',
-            //     'message': values['error'],
-            // })
-            // if xml_content := values.get('xml_content'):
-            //     document.attachment_id = self.env['ir.attachment'].sudo().create({
-            //         'name': f"mydata_{self.name.replace('/', '_')}.xml",
-            //         'res_model': document._name,
-            //         'res_id': document.id,
-            //         'raw': xml_content,
-            //         'type': 'binary',
-            //         'mimetype': 'application/xml',
-            //     })
-            // return document
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiCreateSentDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_create_sent_document(self, values: dict):
-            // """
-            // Creates ``l10n_gr_edi.document`` of state ``invoice_sent`` or ``bill_sent``.
-            // :param values: dictionary in the format of:
-            // {
-            //     'mydata_mark': <str>,
-            //     'mydata_cls_mark': <optional/str>,
-            //     'mydata_url': <str>,
-            //     'xml_content': <str>,
-            // }
-            // """
-            // self.ensure_one()
-            // document = self.env['l10n_gr_edi.document'].create({
-            //     'move_id': self.id,
-            //     'state': 'invoice_sent' if self.is_sale_document(include_receipts=True) else 'bill_sent',
-            //     'mydata_mark': values['mydata_mark'],
-            //     'mydata_cls_mark': values.get('mydata_cls_mark'),
-            //     'mydata_url': values['mydata_url'],
-            // })
-            // document.attachment_id = self.env['ir.attachment'].sudo().create({
-            //     'name': f"mydata_{self.name.replace('/', '_')}.xml",
-            //     'res_model': self._name,
-            //     'res_id': self.id,
-            //     'raw': values['xml_content'],
-            //     'type': 'binary',
-            //     'mimetype': 'application/xml',
-            // })
-            // return document
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiEligibleForMydataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_eligible_for_mydata(self):
-            // """Shorthand for getting the eligibility of the current move to send to myDATA."""
-            // self.ensure_one()
-            // return all((
-            //     self.country_code == 'GR',
-            //     self.state == 'posted',
-            // ))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGenerateXmlContentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_template, object xml_vals) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_generate_xml_content(self, xml_template, xml_vals):
-            // xml_content = self.env['ir.qweb']._render(xml_template, xml_vals)
-            // return etree.tostring(element_or_tree=cleanup_xml_node(xml_content), encoding='ISO-8859-7', standalone='yes')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGetExpenseClassificationXmlValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_get_expense_classification_xml_vals(self):
-            // """
-            // Generates a dictionary containing the values needed for rendering ``l10n_gr_edi.mydata_expense_classification`` XML.
-            // :return: dict
-            // """
-            // xml_vals = {'invoice_values_list': []}
-            // 
-            // for move in self:
-            //     details = []
-            //     base_lines, _tax_lines = move._get_rounded_base_and_tax_lines()
-            // 
-            //     for line_no, base_line in enumerate(base_lines, start=1):
-            //         details.append({
-            //             'line_number': line_no,
-            //             **self._l10n_gr_edi_common_base_line_details_values(base_line),
-            //         })
-            // 
-            //     xml_vals['invoice_values_list'].append({
-            //         '__move__': move,
-            //         'mark': move.l10n_gr_edi_mark,
-            //         'transaction_mode': '',  # Later, add a way to 'reject' received invoices
-            //         'details': details,
-            //     })
-            // 
-            // return xml_vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGetExtraInvoiceReportValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_get_extra_invoice_report_values(self):
-            // """Get the values used to render the invoice PDF."""
-            // self.ensure_one()
-            // document = self.l10n_gr_edi_document_ids.sorted()[:1]
-            // 
-            // if document.state in ('invoice_sent', 'bill_sent'):
-            //     barcode_params = urlencode({
-            //         'barcode_type': 'QR',
-            //         'value': document.mydata_url,
-            //         'width': 180,
-            //         'height': 180,
-            //     })
-            //     return {
-            //         'barcode_src': f'/report/barcode/?{barcode_params}',
-            //         'mydata_mark': document.mydata_mark,
-            //         'mydata_cls_mark': document.mydata_cls_mark,
-            //     }
-            // else:
-            //     return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGetInvoicesXmlValsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_get_invoices_xml_vals(self):
-            // """
-            // Generates a dictionary containing the values needed for rendering ``l10n_gr_edi.mydata_invoice`` XML.
-            // :return: dict
-            // """
-            // xml_vals = {'invoice_values_list': []}
-            // 
-            // for move in self.sorted(key='id'):
-            //     details = []
-            //     base_lines, _tax_lines = move._get_rounded_base_and_tax_lines()
-            // 
-            //     for line_no, base_line in enumerate(base_lines, start=1):
-            //         line = base_line['record']
-            //         vat_category = 8
-            //         vat_exemption_category = ''
-            //         if line.tax_ids and move.l10n_gr_edi_inv_type not in TYPES_WITH_VAT_EXEMPT:
-            //             tax = base_line['tax_details']['taxes_data'][0]['tax']  # here, `tax` is guaranteed to be a single `account.tax` record
-            //             vat_category = VALID_TAX_CATEGORY_MAP[int(tax.amount)]
-            //         if vat_category == 7 and move.l10n_gr_edi_inv_type in TYPES_WITH_VAT_CATEGORY_8:
-            //             vat_category = 8
-            //         if vat_category == 7:  # Need vat exemption category
-            //             vat_exemption_category = line.l10n_gr_edi_tax_exemption_category
-            // 
-            //         details.append({
-            //             'line_number': line_no,
-            //             'quantity': line.quantity if move.l10n_gr_edi_inv_type not in TYPES_WITH_FORBIDDEN_QUANTITY else '',
-            //             'detail_type': line.l10n_gr_edi_detail_type or '',
-            //             'net_value': base_line['tax_details']['raw_total_excluded'],
-            //             'vat_amount': sum(tax_data['tax_amount'] for tax_data in base_line['tax_details']['taxes_data']),
-            //             'vat_category': vat_category,
-            //             'vat_exemption_category': vat_exemption_category,
-            //             **self._l10n_gr_edi_common_base_line_details_values(base_line),
-            //         })
-            // 
-            //     invoice_values = {
-            //         '__move__': move,  # will not be rendered; for creating {move_id -> move_xml} mapping
-            //         'header_series': '_'.join(move.name.split('/')[:-1]),
-            //         'header_aa': move.name.split('/')[-1],
-            //         'header_issue_date': move.date.isoformat(),
-            //         'header_invoice_type': move.l10n_gr_edi_inv_type,
-            //         'header_currency': move.currency_id.name,
-            //         'header_correlate': move.l10n_gr_edi_correlation_id.l10n_gr_edi_mark or '',
-            //         'details': details,
-            //         'summary_total_net_value': move.amount_untaxed,
-            //         'summary_total_vat_amount': move.amount_tax,
-            //         'summary_total_withheld_amount': 0,
-            //         'summary_total_fees_amount': 0,
-            //         'summary_total_stamp_duty_amount': 0,
-            //         'summary_total_other_taxes_amount': 0,
-            //         'summary_total_deductions_amount': 0,
-            //         'summary_total_gross_value': move.amount_total,
-            //     }
-            //     move._l10n_gr_edi_add_address_vals(invoice_values)
-            //     move._l10n_gr_edi_add_payment_method_vals(invoice_values)
-            //     self._l10n_gr_edi_add_sum_classification_vals(invoice_values)
-            //     xml_vals['invoice_values_list'].append(invoice_values)
-            // 
-            // return xml_vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGetPreErrorDictInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_get_pre_error_dict(self):
-            // """
-            // Try to catch all possible errors before sending to myDATA.
-            // Returns an error dictionary in the format of Actionable Error JSON.
-            // """
-            // self.ensure_one()
-            // errors = {}
-            // error_action_company = {'action_text': _("View Company"), 'action': self.company_id._get_records_action(name=_("Company"))}
-            // error_action_partner = {'action_text': _("View Partner"), 'action': self.commercial_partner_id._get_records_action(name=_("Partner"))}
-            // error_action_gr_settings = {
-            //     'action_text': _("View Settings"),
-            //     'action': {
-            //         'name': _("Settings"),
-            //         'type': 'ir.actions.act_url',
-            //         'target': 'self',
-            //         'url': '/odoo/settings#l10n_gr_edi_aade_settings',
-            //     },
-            // }
-            // 
-            // if self.state != 'posted':
-            //     errors['l10n_gr_edi_move_not_posted'] = {
-            //         'message': _("You can only send to myDATA from a posted invoice."),
-            //     }
-            // if not self.company_id.l10n_gr_edi_aade_id or not self.company_id.l10n_gr_edi_aade_key:
-            //     errors['l10n_gr_edi_company_no_cred'] = {
-            //         'message': _("You need to set AADE ID and Key in the company settings."),
-            //         **error_action_gr_settings,
-            //     }
-            // if self.company_id.country_code != 'GR' and (not self.company_id.city or not self.company_id.zip):
-            //     errors['l10n_gr_edi_company_no_zip_street'] = {
-            //         'message': _("Missing city and/or ZIP code on company %s.", self.company_id.name),
-            //         **error_action_company,
-            //     }
-            // if not self.company_id.vat:
-            //     errors['l10n_gr_edi_company_no_vat'] = {
-            //         'message': _("Missing VAT on company %s.", self.company_id.name),
-            //         **error_action_company,
-            //     }
-            // if not self.l10n_gr_edi_inv_type:
-            //     errors['l10n_gr_edi_no_inv_type'] = {
-            //         'message': _("Missing myDATA Invoice Type."),
-            //     }
-            // if not self.commercial_partner_id:
-            //     errors['l10n_gr_edi_no_partner'] = {
-            //         'message': _("Partner must be filled to be able to send to myDATA."),
-            //     }
-            // if self.commercial_partner_id:
-            //     if not self.commercial_partner_id.vat:
-            //         errors['l10n_gr_edi_partner_no_vat'] = {
-            //             'message': _("Missing VAT on partner %s.", self.commercial_partner_id.name),
-            //             **error_action_partner,
-            //         }
-            //     if ((self.commercial_partner_id.country_code != 'GR' or self.l10n_gr_edi_inv_type in TYPES_WITH_MANDATORY_COUNTERPART) and
-            //             (not self.commercial_partner_id.zip or not self.commercial_partner_id.city)):
-            //         errors['l10n_gr_edi_partner_no_zip_street'] = {
-            //             'message': _("Missing city and/or ZIP code on partner %s.", self.commercial_partner_id.name),
-            //             **error_action_partner,
-            //         }
-            // 
-            // move_disallow_classification = self.is_purchase_document(include_receipts=True) and self.l10n_gr_edi_inv_type in TYPES_WITH_FORBIDDEN_CLASSIFICATION
-            // 
-            // for line_no, line in enumerate(self.invoice_line_ids, start=1):
-            //     if line.display_type in ('line_section', 'line_note'):
-            //         continue
-            //     if move_disallow_classification and line.l10n_gr_edi_cls_category:
-            //         errors[f'l10n_gr_edi_{line_no}_forbidden_classification'] = {
-            //             'message': _('myDATA classification is not allowed on line %s.', line_no),
-            //         }
-            //     if not line.l10n_gr_edi_cls_category and line.l10n_gr_edi_available_cls_category and not move_disallow_classification:
-            //         errors[f'l10n_gr_edi_line_{line_no}_missing_cls_category'] = {
-            //             'message': _('Missing myDATA classification category on line %s.', line_no),
-            //         }
-            //     if not line.l10n_gr_edi_cls_type \
-            //             and line.l10n_gr_edi_available_cls_type \
-            //             and (line.move_id.l10n_gr_edi_inv_type, line.l10n_gr_edi_cls_category) \
-            //             not in COMBINATIONS_WITH_POSSIBLE_EMPTY_TYPE:
-            //         errors[f'l10n_gr_edi_line_{line_no}_missing_cls_type'] = {
-            //             'message': _('Missing myDATA classification type on line %s.', line_no),
-            //         }
-            //     taxes = line.tax_ids.flatten_taxes_hierarchy()
-            //     if len(taxes) > 1:
-            //         errors[f'l10n_gr_edi_line_{line_no}_multi_tax'] = {
-            //             'message': _('myDATA does not support multiple taxes on line %s.', line_no),
-            //         }
-            //     if not taxes and self.l10n_gr_edi_inv_type not in TYPES_WITH_VAT_CATEGORY_8:
-            //         errors[f'l10n_gr_edi_line_{line_no}_missing_tax'] = {
-            //             'message': _('Missing tax on line %s.', line_no),
-            //         }
-            //     if len(taxes) == 1 and taxes.amount == 0 and not line.l10n_gr_edi_tax_exemption_category:
-            //         errors[f'l10n_gr_edi_line_{line_no}_missing_tax_exempt'] = {
-            //             'message': _('Missing myDATA Tax Exemption Category for line %s.', line_no),
-            //         }
-            //     if len(taxes) == 1 and taxes.amount not in VALID_TAX_AMOUNTS:
-            //         errors[f'l10n_gr_edi_line_{line_no}_invalid_tax_amount'] = {
-            //             'message': _('Invalid tax amount for line %(line_no)s. The valid values are %(valid_values)s.',
-            //                          line_no=line_no,
-            //                          valid_values=', '.join(str(tax) for tax in VALID_TAX_AMOUNTS)),
-            //         }
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiGetPreErrorStringInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_get_pre_error_string(self):
-            // self.ensure_one()
-            // pre_error = self._l10n_gr_edi_get_pre_error_dict()
-            // error_messages = (error_val['message'] for error_val in pre_error.values())
-            // return '\n'.join(error_messages)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiHandleSendResultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object result, object xml_vals) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_handle_send_result(self, result, xml_vals):
-            // """
-            // Handle the result object received from sending xml to myDATA.
-            // Create the related error/sent document with the necessary values.
-            // """
-            // move_xml_map = {}  # Dictionary mapping of ``move_id`` -> ``xml_content``.
-            // for invoice_vals in xml_vals['invoice_values_list']:
-            //     single_xml_vals = {'invoice_values_list': [invoice_vals]}
-            //     move = invoice_vals['__move__']
-            //     xml_template = 'l10n_gr_edi.mydata_invoice' if move.is_sale_document(include_receipts=True) else 'l10n_gr_edi.mydata_expense_classification'
-            //     xml_content = self._l10n_gr_edi_generate_xml_content(xml_template, single_xml_vals)
-            //     move_xml_map[move] = xml_content
-            // 
-            // move_ids = list(move_xml_map.keys())
-            // 
-            // if 'error' in result:
-            //     # If the request failed at this stage, it is probably caused by connection/credentials issues.
-            //     # In such case, we don't need to attach the xml here as it won't be helpful for the user.
-            //     for move in move_ids:
-            //         move._l10n_gr_edi_create_error_document(result)
-            // else:
-            //     for result_id, result_dict in result.items():
-            //         move = move_ids[result_id]
-            //         xml_content = move_xml_map[move]
-            //         document_values = {**result_dict, 'xml_content': xml_content}
-            //         # Delete previous error documents
-            //         move.l10n_gr_edi_document_ids.filtered(lambda d: d.state in ('invoice_error', 'bill_error')).unlink()
-            //         if 'error' in result_dict:
-            //             # In this stage, the sending process has succeeded, and any error we receive is generated from the myDATA API.
-            //             # Previous error(s) without attachments (generated from pre-compute) are now useless and can be unlinked.
-            //             move._l10n_gr_edi_create_error_document(document_values)
-            //         else:
-            //             move._l10n_gr_edi_create_sent_document(document_values)
-            // 
-            // if self._can_commit():
-            //     self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiSendExpenseClassificationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_send_expense_classification(self):
-            // """ Send batches of bill SendExpensesClassification XML to myDATA. """
-            // for company, bills in self.grouped('company_id').items():
-            //     xml_vals = bills._l10n_gr_edi_get_expense_classification_xml_vals()
-            //     xml_content = bills._l10n_gr_edi_generate_xml_content('l10n_gr_edi.mydata_expense_classification', xml_vals)
-            //     result = _make_mydata_request(company=company, endpoint='SendExpensesClassification', xml_content=xml_content)
-            //     self._l10n_gr_edi_handle_send_result(result, xml_vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiSendInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_send_invoices(self):
-            // """ Send batches of invoice SendInvoice XML to myDATA. """
-            // for company, invoices in self.grouped('company_id').items():
-            //     xml_vals = invoices._l10n_gr_edi_get_invoices_xml_vals()
-            //     xml_content = invoices._l10n_gr_edi_generate_xml_content('l10n_gr_edi.mydata_invoice', xml_vals)
-            //     result = _make_mydata_request(company=company, endpoint='SendInvoices', xml_content=xml_content)
-            //     self._l10n_gr_edi_handle_send_result(result, xml_vals)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiTrySendBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def _l10n_gr_edi_try_send_batch(self):
-            // """ Only available for Vendor Bills. In case of invoices, user should use Send & Print instead. """
-            // if any(move.is_sale_document(include_receipts=True) for move in self):
-            //     raise UserError(_("You should use Send & Print wizard for sending customer invoices to myDATA."))
-            // if any(not move.l10n_gr_edi_enable_send_expense_classification for move in self):
-            //     raise UserError(_("Some of the selected moves does not meet the requirements to be sent to myDATA."))
-            // 
-            // self.l10n_gr_edi_try_send_expense_classification()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiTrySendExpenseClassificationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def l10n_gr_edi_try_send_expense_classification(self):
-            // moves_to_send = self.env['account.move']
-            // for move in self:
-            //     if error_message := move._l10n_gr_edi_get_pre_error_string():
-            //         move._l10n_gr_edi_create_error_document({'error': error_message})
-            // 
-            //         # Simulate the error handling behavior on invoice's send and print wizard.
-            //         # If we're only sending one bill, raise the warning error immediately.
-            //         if len(self) == 1 and self._can_commit():
-            //             self._cr.commit()
-            //             raise UserError(error_message)
-            //     else:
-            //         moves_to_send |= move
-            // 
-            // if moves_to_send:
-            //     moves_to_send._l10n_gr_edi_send_expense_classification()
-            //     if len(self) == 1 and (error_message := self.l10n_gr_edi_document_ids.sorted()[0].message):
-            //         raise UserError(error_message)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nGrEdiTrySendInvoicesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move.py) ---
-            // def l10n_gr_edi_try_send_invoices(self):
-            // moves_to_send = self.env['account.move']
-            // for move in self:
-            //     if error := move._l10n_gr_edi_get_pre_error_string():
-            //         move._l10n_gr_edi_create_error_document({'error': error})
-            //     else:
-            //         moves_to_send |= move
-            // 
-            // if moves_to_send:
-            //     self.env['res.company']._with_locked_records(moves_to_send)
-            //     moves_to_send._l10n_gr_edi_send_invoices()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiAcquireLockInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_acquire_lock(self):
-            // """ Acquire a write lock on the invoices in self. """
-            // if not self:
-            //     return
-            // try:
-            //     with self.env.cr.savepoint(flush=False):
-            //         self.env.cr.execute('SELECT * FROM account_move WHERE id = ANY(%s) FOR UPDATE NOWAIT', [self.ids])
-            // except LockNotAvailable:
-            //     raise UserError(_('Could not acquire lock on invoices - is another user performing operations on them?')) from None
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiButtonHideBannerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def l10n_hu_edi_button_hide_banner(self):
-            // messages = self.l10n_hu_edi_messages
-            // if messages:
-            //     messages['hide_banner'] = True
-            //     self.l10n_hu_edi_messages = messages
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiButtonUpdateStatusAsync<TEntity>(IEnumerable<TEntity> entities, object from_cron) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def l10n_hu_edi_button_update_status(self, from_cron=False):
-            // """ Attempt to update the status of the invoices in `self` """
-            // invoices_to_query = self.filtered(lambda m: 'query_status' in m._l10n_hu_edi_get_valid_actions())
-            // 
-            // with L10nHuEdiConnection(self.env) as connection:
-            //     # Call `query_status` on the invoices.
-            //     invoices_to_query._l10n_hu_edi_query_status(connection)
-            // 
-            //     # Attempt to recover missing transactions, if any invoice is missing a transaction code
-            //     # or has a duplicate error.
-            //     recover_transactions_error = False
-            //     if any(
-            //         not m.l10n_hu_edi_transaction_code
-            //         or any(
-            //             'INVOICE_NUMBER_NOT_UNIQUE' in error or 'ANNULMENT_IN_PROGRESS' in error
-            //             for error in m.l10n_hu_edi_messages['errors']
-            //         )
-            //         for m in self
-            //     ):
-            //         recover_transactions_error = self.company_id._l10n_hu_edi_recover_transactions(connection)
-            // 
-            // # Error handling.
-            // for invoice in invoices_to_query:
-            //     # Log invoice status in chatter.
-            //     formatted_message = self.env['account.move.send']._format_error_html(invoice.l10n_hu_edi_messages)
-            //     invoice.with_context(no_new_invoice=True).message_post(body=formatted_message)
-            // 
-            // if self.env['account.move.send']._can_commit():
-            //     self.env.cr.commit()
-            // 
-            // # If blocking errors, raise UserError, or log if we are in a cron.
-            // for invoice in invoices_to_query:
-            //     if invoice.l10n_hu_edi_messages.get('blocking_level') == 'error' or recover_transactions_error:
-            //         if invoice.l10n_hu_edi_messages.get('blocking_level') == 'error':
-            //             error_text = self.env['account.move.send']._format_error_text(invoice.l10n_hu_edi_messages)
-            //         else:
-            //             error_text = self.env['account.move.send']._format_error_text(recover_transactions_error)
-            //         if not from_cron:
-            //             raise UserError(error_text)
-            //         else:
-            //             _logger.error(error_text)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiCheckInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_check_invoices(self):
-            // hu_vat_regex = re.compile(r'\d{8}-[1-5]-\d{2}')
-            // hu_bank_account_regex = re.compile(r'\d{8}-\d{8}-\d{8}|\d{8}-\d{8}|[A-Z]{2}\d{2}[0-9A-Za-z]{11,30}')
-            // 
-            // # This contains all the advance invoices that correspond to final invoices in `self`.
-            // advance_invoices = self.filtered(lambda m: not m._is_downpayment()).invoice_line_ids._get_downpayment_lines().mapped('move_id')
-            // 
-            // checks = {
-            //     'company_vat_missing': {
-            //         'records': self.company_id.filtered(lambda c: not c.vat),
-            //         'message': _('Please set company VAT number!'),
-            //         'action_text': _('View Company/ies'),
-            //     },
-            //     'company_vat_invalid': {
-            //         'records': self.company_id.filtered(
-            //             lambda c: (
-            //                 (c.vat and not hu_vat_regex.fullmatch(c.vat))
-            //                 or (c.l10n_hu_group_vat and not hu_vat_regex.fullmatch(c.l10n_hu_group_vat))
-            //             )
-            //         ),
-            //         'message': _('Please enter the Hungarian VAT (and/or Group VAT) number in 12345678-1-12 format!'),
-            //         'action_text': _('View Company/ies'),
-            //     },
-            //     'company_address_missing': {
-            //         'records': self.company_id.filtered(lambda c: not c.country_id or not c.zip or not c.city or not c.street),
-            //         'message': _('Please set company Country, Zip, City and Street!'),
-            //         'action_text': _('View Company/ies'),
-            //     },
-            //     'company_not_huf': {
-            //         'records': self.company_id.filtered(lambda c: c.currency_id.name not in ['HUF', 'EUR']),
-            //         'message': _('Please use HUF or EUR as your company currency.'),
-            //         'action_text': _('View Company/ies'),
-            //     },
-            //     'partner_bank_account_invalid': {
-            //         'records': self.partner_bank_id.filtered(lambda p: not hu_bank_account_regex.fullmatch(p.acc_number)),
-            //         'message': _('Please set a valid recipient bank account number!'),
-            //         'action_text': _('View partner(s)'),
-            //     },
-            //     'partner_vat_missing': {
-            //         'records': self.partner_id.commercial_partner_id.filtered(
-            //             lambda p: p.is_company and not p.vat
-            //         ),
-            //         'message': _('Please set partner Tax ID on company partners!'),
-            //         'action_text': _('View partner(s)'),
-            //     },
-            //     'partner_vat_invalid': {
-            //         'records': self.partner_id.commercial_partner_id.filtered(
-            //             lambda p: (
-            //                 p.is_company and p.country_code == 'HU'
-            //                 and (
-            //                     (p.vat and not hu_vat_regex.fullmatch(p.vat))
-            //                     or (p.l10n_hu_group_vat and not hu_vat_regex.fullmatch(p.l10n_hu_group_vat))
-            //                 )
-            //             )
-            //         ),
-            //         'message': _('Please enter the Hungarian VAT (and/or Group VAT) number in 12345678-1-12 format!'),
-            //         'action_text': _('View partner(s)'),
-            //     },
-            //     'partner_address_missing': {
-            //         'records': self.partner_id.commercial_partner_id.filtered(
-            //             lambda p: p.is_company and (not p.country_id or not p.zip or not p.city or not p.street),
-            //         ),
-            //         'message': _('Please set partner Country, Zip, City and Street!'),
-            //         'action_text': _('View partner(s)'),
-            //     },
-            //     'invoice_date_not_today': {
-            //         'records': self.filtered(lambda m: m.invoice_date != fields.Date.context_today(m)),
-            //         'message': _('Please set invoice date to today!'),
-            //         'action_text': _('View invoice(s)'),
-            //     },
-            //     'invoice_chain_not_confirmed': {
-            //         'records': self.env['account.move'].union(*[
-            //             move._l10n_hu_get_chain_base()._l10n_hu_get_chain_invoices().filtered(
-            //                 lambda m: (
-            //                     m.id < move.id
-            //                     and m.l10n_hu_edi_state in [False, 'rejected', 'cancelled']
-            //                     and m not in self
-            //                 )
-            //             )
-            //             for move in self
-            //         ]),
-            //         'message': _('The following invoices appear to be earlier in the chain, but have not yet been sent. Please send them first.'),
-            //         'action_text': _('View invoice(s)'),
-            //     },
-            //     'invoice_advance_not_paid': {
-            //         'records': advance_invoices.filtered(
-            //             lambda m: (
-            //                 m.payment_state not in ['in_payment', 'paid', 'partial']
-            //                 or m.l10n_hu_edi_state in [False, 'rejected', 'cancelled']
-            //                     and m not in self  # It's okay to send an advance and a final invoice together, as we sort by id before sending.
-            //             )
-            //         ),
-            //         'message': _('All advance invoices must be paid and sent to NAV before the final invoice is issued.'),
-            //         'action_text': _('View advance invoice(s)'),
-            //     },
-            //     'invoice_line_not_one_vat_tax': {
-            //         'records': self.filtered(
-            //             lambda m: any(
-            //                 len(l.tax_ids.filtered(lambda t: t.l10n_hu_tax_type)) != 1
-            //                 for l in m.invoice_line_ids.filtered(lambda l: l.display_type == 'product')
-            //             )
-            //         ),
-            //         'message': _('Please set exactly one VAT tax on each invoice line!'),
-            //         'action_text': _('View invoice(s)'),
-            //     },
-            //     'invoice_line_non_vat_taxes_misconfigured': {
-            //         'records': self.invoice_line_ids.tax_ids.filtered(
-            //             lambda t: not t.l10n_hu_tax_type and (not t.price_include or not t.include_base_amount)
-            //         ),
-            //         'message': _("Please set any non-VAT (excise) taxes to be 'Included in Price' and 'Affects subsequent taxes'!"),
-            //         'action_text': _('View tax(es)'),
-            //     },
-            //     'invoice_line_vat_taxes_misconfigured': {
-            //         'records': self.invoice_line_ids.tax_ids.filtered(
-            //             lambda t: t.l10n_hu_tax_type and not t.is_base_affected
-            //         ),
-            //         'message': _("Please set any VAT taxes to be 'Affected by previous taxes'!"),
-            //         'action_text': _('View tax(es)'),
-            //     },
-            // }
-            // 
-            // errors = {
-            //     f"l10n_hu_edi_{check}": {
-            //         'message': values['message'],
-            //         'action_text': values['action_text'],
-            //         'action': values['records']._get_records_action(name=values['action_text']),
-            //     }
-            //     for check, values in checks.items()
-            //     if values['records']
-            // }
-            // 
-            // if companies_missing_credentials := self.company_id.filtered(lambda c: not c.l10n_hu_edi_server_mode):
-            //     errors['l10n_hu_edi_company_credentials_missing'] = {
-            //         'message': _('Please set NAV credentials in the Accounting Settings!'),
-            //         'action_text': _('Open Accounting Settings'),
-            //         'action': self.env.ref('account.action_account_config').with_company(companies_missing_credentials[0])._get_action_dict(),
-            //     }
-            // 
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiGenerateXmlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_generate_xml(self):
-            // invoice_data = self.env['ir.qweb']._render(
-            //     self._l10n_hu_edi_get_electronic_invoice_template(),
-            //     self._l10n_hu_edi_get_invoice_values(),
-            // )
-            // return etree.tostring(cleanup_xml_node(invoice_data, remove_blank_nodes=False), xml_declaration=True, encoding='UTF-8')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiGetElectronicInvoiceTemplateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_get_electronic_invoice_template(self):
-            // """ For feature extensibility. """
-            // return 'l10n_hu_edi.nav_online_invoice_xml_3_0'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiGetInvoiceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_get_invoice_values(self):
-            // eu_country_codes = set(self.env.ref('base.europe').country_ids.mapped('code'))
-            // 
-            // def get_vat_data(partner, force_vat=None):
-            //     if partner.country_code == 'HU' or force_vat:
-            //         return {
-            //             'tax_number': partner.l10n_hu_group_vat or (force_vat or partner.vat),
-            //             'group_member_tax_number': partner.l10n_hu_group_vat and (force_vat or partner.vat),
-            //         }
-            //     elif partner.country_code in eu_country_codes:
-            //         return {'community_vat_number': partner.vat}
-            //     else:
-            //         return {'third_state_tax_id': partner.vat}
-            // 
-            // def format_bank_account_number(bank_account):
-            //     # Normalize IBANs (no spaces!)
-            //     if bank_account.acc_type == 'iban':
-            //         return normalize_iban(bank_account.acc_number)
-            //     else:
-            //         return bank_account.acc_number
-            // 
-            // supplier = self.company_id.partner_id
-            // customer = self.partner_id.commercial_partner_id
-            // 
-            // supplier_bank = self.partner_bank_id if self.partner_bank_id and self.move_type == "out_invoice" else supplier.bank_ids[:1]
-            // customer_bank = self.partner_bank_id if self.partner_bank_id and self.move_type == "out_refund" else customer.bank_ids[:1]
-            // 
-            // currency_huf = self.env.ref('base.HUF')
-            // currency_rate = self._l10n_hu_get_currency_rate()
-            // 
-            // base_invoice = self._l10n_hu_get_chain_base()
-            // 
-            // invoice_values = {
-            //     'invoice': self,
-            //     'invoiceIssueDate': self.invoice_date,
-            //     'completenessIndicator': False,
-            //     'modifyWithoutMaster': False,
-            //     'base_invoice': base_invoice if base_invoice != self else None,
-            //     'supplier': supplier,
-            //     'supplier_vat_data': get_vat_data(supplier, self.fiscal_position_id.foreign_vat),
-            //     'supplierBankAccountNumber': format_bank_account_number(supplier_bank),
-            //     'individualExemption': self.company_id.l10n_hu_tax_regime == 'ie',
-            //     'customer': customer,
-            //     'customerVatStatus': (not customer.is_company and 'PRIVATE_PERSON') or (customer.country_code == 'HU' and 'DOMESTIC') or 'OTHER',
-            //     'customer_vat_data': get_vat_data(customer) if customer.is_company else None,
-            //     'customerBankAccountNumber': format_bank_account_number(customer_bank),
-            //     'smallBusinessIndicator': self.company_id.l10n_hu_tax_regime == 'sb',
-            //     'exchangeRate': currency_rate,
-            //     'cashAccountingIndicator': self.company_id.l10n_hu_tax_regime == 'ca',
-            //     'shipping_partner': self.partner_shipping_id,
-            //     'sales_partner': self.user_id,
-            //     'mergedItemIndicator': False,
-            //     'format_bool': format_bool,
-            //     'float_repr': float_repr,
-            //     'lines_values': [],
-            // }
-            // 
-            // sign = 1.0 if self.is_inbound() else -1.0
-            // 
-            // prev_chain_invoices = base_invoice._l10n_hu_get_chain_invoices().filtered(
-            //     lambda m: m.l10n_hu_invoice_chain_index and m.l10n_hu_invoice_chain_index < self.l10n_hu_invoice_chain_index
-            // )
-            // first_line_number = sum(
-            //     len(move.line_ids.filtered(lambda l: l.display_type in ['product', 'rounding']))
-            //     for move in prev_chain_invoices
-            // ) + 1
-            // 
-            // for (line_number, line) in enumerate(
-            //     self.line_ids.filtered(lambda l: l.display_type in ['product', 'rounding']).sorted(lambda l: l.display_type),
-            //     start=first_line_number,
-            // ):
-            //     line_values = {
-            //         'line': line,
-            //         'lineNumber': line_number - first_line_number + 1,
-            //         'lineNumberReference': base_invoice != self and line_number,
-            //         'lineExpressionIndicator': line.product_id and line.product_uom_id,
-            //         'lineNatureIndicator': {False: 'OTHER', 'service': 'SERVICE'}.get(line.product_id.type, 'PRODUCT'),
-            //         'lineDescription': line.name.replace('\n', ' '),
-            //     }
-            // 
-            //     if 'is_downpayment' in line and line.is_downpayment:
-            //         # Advance and final invoices.
-            //         line_values['advanceIndicator'] = True
-            // 
-            //         if not self._is_downpayment():
-            //             # This is a final invoice that deducts one or more advance invoices.
-            //             # In this case, we add a reference to the *last-paid* advance invoice (NAV only allows us to report one) if one exists,
-            //             # otherwise we don't add anything.
-            // 
-            //             advance_invoices = line._get_downpayment_lines().mapped('move_id').filtered(lambda m: m.state == 'posted')
-            //             reconciled_moves = advance_invoices._get_reconciled_amls().move_id
-            //             last_reconciled_payment = reconciled_moves.filtered(lambda m: m.origin_payment_id or m.statement_line_id).sorted('date', reverse=True)[:1]
-            // 
-            //             if last_reconciled_payment:
-            //                 line_values.update({
-            //                     'advanceOriginalInvoice': advance_invoices.filtered(lambda m: last_reconciled_payment in m._get_reconciled_amls().move_id)[0].name,
-            //                     'advancePaymentDate': last_reconciled_payment.date,
-            //                     'advanceExchangeRate': last_reconciled_payment._l10n_hu_get_currency_rate(),
-            //                 })
-            // 
-            //     if line.display_type == 'product':
-            //         vat_tax = line.tax_ids.filtered(lambda t: t.l10n_hu_tax_type)
-            // 
-            //         if line.quantity == 0.0 or line.discount == 100.0:
-            //             price_unit_signed = 0.0
-            //         else:
-            //             price_unit_signed = sign * line.price_subtotal / (1 - line.discount / 100) / line.quantity
-            // 
-            //         price_net_signed = self.currency_id.round(price_unit_signed * line.quantity * (1 - line.discount / 100.0))
-            //         discount_value_signed = self.currency_id.round(price_unit_signed * line.quantity - price_net_signed)
-            //         price_total_signed = sign * line.price_total
-            //         vat_amount_signed = self.currency_id.round(price_total_signed - price_net_signed)
-            // 
-            //         line_values.update({
-            //             'vat_tax': vat_tax,
-            //             'vatPercentage': float_round(vat_tax.amount / 100.0, 4),
-            //             'quantity': line.quantity,
-            //             'unitPrice': price_unit_signed,
-            //             'unitPriceHUF': currency_huf.round(price_unit_signed * currency_rate),
-            //             'discountValue': discount_value_signed,
-            //             'discountRate': line.discount / 100.0,
-            //             'lineNetAmount': price_net_signed,
-            //             'lineNetAmountHUF': currency_huf.round(price_net_signed * currency_rate),
-            //             'lineVatData': not self.currency_id.is_zero(vat_amount_signed),
-            //             'lineVatAmount': vat_amount_signed,
-            //             'lineVatAmountHUF': currency_huf.round(vat_amount_signed * currency_rate),
-            //             'lineGrossAmountNormal': price_total_signed,
-            //             'lineGrossAmountNormalHUF': currency_huf.round(price_total_signed * currency_rate),
-            //         })
-            // 
-            //     elif line.display_type == 'rounding':
-            //         atk_tax = self.env['account.tax'].search(
-            //             [
-            //                 ('type_tax_use', '=', 'sale'),
-            //                 ('l10n_hu_tax_type', '=', 'ATK'),
-            //                 ('company_id', '=', self.company_id.id),
-            //             ],
-            //             limit=1,
-            //         )
-            //         if not atk_tax:
-            //             raise UserError(_('Please create a sales tax with type ATK (outside the scope of the VAT Act).'))
-            // 
-            //         amount_huf = line.balance if self.company_id.currency_id == currency_huf else currency_huf.round(line.amount_currency * currency_rate)
-            //         line_values.update({
-            //             'vat_tax': atk_tax,
-            //             'vatPercentage': float_round(atk_tax.amount / 100.0, 4),
-            //             'quantity': 1.0,
-            //             'unitPrice': -line.amount_currency,
-            //             'unitPriceHUF': -amount_huf,
-            //             'lineNetAmount': -line.amount_currency,
-            //             'lineNetAmountHUF': -amount_huf,
-            //             'lineVatData': False,
-            //             'lineGrossAmountNormal': -line.amount_currency,
-            //             'lineGrossAmountNormalHUF': -amount_huf,
-            //         })
-            //     line_values['lineDescription'] = line_values['lineDescription'] or line.product_id.display_name
-            //     invoice_values['lines_values'].append(line_values)
-            // 
-            // is_company_huf = self.company_id.currency_id == currency_huf
-            // tax_amounts_by_tax = {
-            //     line.tax_line_id: {
-            //         'vatRateVatAmount': -line.amount_currency,
-            //         'vatRateVatAmountHUF': -line.balance if is_company_huf else currency_huf.round(-line.amount_currency * currency_rate),
-            //     }
-            //     for line in self.line_ids.filtered(lambda l: l.tax_line_id.l10n_hu_tax_type)
-            // }
-            // 
-            // invoice_values['tax_summary'] = [
-            //     {
-            //         'vat_tax': vat_tax,
-            //         'vatPercentage': float_round(vat_tax.amount / 100.0, 4),
-            //         'vatRateNetAmount': self.currency_id.round(sum(l['lineNetAmount'] for l in lines_values_by_tax)),
-            //         'vatRateNetAmountHUF': currency_huf.round(sum(l['lineNetAmountHUF'] for l in lines_values_by_tax)),
-            //         'vatRateVatAmount': tax_amounts_by_tax.get(vat_tax, {}).get('vatRateVatAmount', 0.0),
-            //         'vatRateVatAmountHUF': tax_amounts_by_tax.get(vat_tax, {}).get('vatRateVatAmountHUF', 0.0),
-            //     }
-            //     for vat_tax, lines_values_by_tax in groupby(invoice_values['lines_values'], lambda l: l['vat_tax'])
-            // ]
-            // 
-            // total_vat = self.currency_id.round(sum(tax_vals['vatRateVatAmount'] for tax_vals in invoice_values['tax_summary']))
-            // total_vat_huf = currency_huf.round(sum(tax_vals['vatRateVatAmountHUF'] for tax_vals in invoice_values['tax_summary']))
-            // 
-            // total_gross = self.amount_total_in_currency_signed
-            // total_gross_huf = self.amount_total_signed if is_company_huf else currency_huf.round(self.amount_total_in_currency_signed * currency_rate)
-            // 
-            // total_net = self.currency_id.round(total_gross - total_vat)
-            // total_net_huf = currency_huf.round(total_gross_huf - total_vat_huf)
-            // 
-            // invoice_values.update({
-            //     'invoiceNetAmount': total_net,
-            //     'invoiceNetAmountHUF': total_net_huf,
-            //     'invoiceVatAmount': total_vat,
-            //     'invoiceVatAmountHUF': total_vat_huf,
-            //     'invoiceGrossAmount': total_gross,
-            //     'invoiceGrossAmountHUF': total_gross_huf,
-            // })
-            // 
-            // return invoice_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiGetValidActionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_get_valid_actions(self):
-            // """ If any NAV 3.0 flows are applicable to the given invoice, return them, else None. """
-            // self.ensure_one()
-            // valid_actions = []
-            // if (
-            //     self.country_code == 'HU'
-            //     and self.is_sale_document()
-            //     and self.state == 'posted'
-            // ):
-            //     if self.l10n_hu_edi_state in [False, 'rejected', 'cancelled']:
-            //         valid_actions.append('upload')
-            //     if self.l10n_hu_edi_transaction_code:
-            //         valid_actions.append('query_status')
-            //     if self.l10n_hu_edi_state in ['confirmed', 'confirmed_warning']:
-            //         valid_actions.append('request_cancel')
-            //     if not valid_actions:
-            //         # Placeholder to denote that the invoice was already processed with a NAV flow
-            //         valid_actions.append(True)
-            // return valid_actions
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiProcessQueryTransactionResultInternalAsync<TEntity>(IEnumerable<TEntity> entities, object processing_result, object annulment_status) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_process_query_transaction_result(self, processing_result, annulment_status):
-            // def get_errors_from_processing_result(processing_result):
-            //     return [
-            //         f'({message["validation_result_code"]}) {message["validation_error_code"]}: {message["message"]}'
-            //         for message in processing_result.get('business_validation_messages', []) + processing_result.get('technical_validation_messages', [])
-            //     ]
-            // 
-            // self.ensure_one()
-            // 
-            // if processing_result['invoice_status'] in ['RECEIVED', 'PROCESSING', 'SAVED']:
-            //     # The invoice/annulment has not been processed yet.
-            //     if self.l10n_hu_edi_state in ['sent', 'send_timeout']:
-            //         self.write({
-            //             'l10n_hu_edi_state': 'sent',
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The invoice was received by the NAV, but has not been confirmed yet.'),
-            //                 'errors': get_errors_from_processing_result(processing_result),
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            //     elif self.l10n_hu_edi_state in ['cancel_sent', 'cancel_timeout']:
-            //         self.write({
-            //             'l10n_hu_edi_state': 'cancel_sent',
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The annulment request was received by the NAV, but has not been confirmed yet.'),
-            //                 'errors': get_errors_from_processing_result(processing_result),
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            // 
-            // elif processing_result['invoice_status'] == 'DONE':
-            //     if self.l10n_hu_edi_state in ['sent', 'send_timeout']:
-            //         if not processing_result['business_validation_messages'] and not processing_result['technical_validation_messages']:
-            //             self.write({
-            //                 'l10n_hu_edi_state': 'confirmed',
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _('The invoice was successfully accepted by the NAV.'),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                 },
-            //             })
-            //         else:
-            //             self.write({
-            //                 'l10n_hu_edi_state': 'confirmed_warning',
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _(
-            //                         'The invoice was accepted by the NAV, but warnings were reported. '
-            //                         'To reverse, create a credit note / debit note.'
-            //                     ),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                     'blocking_level': 'warning',
-            //                 },
-            //             })
-            //     elif self.l10n_hu_edi_state in ['cancel_sent', 'cancel_timeout', 'cancel_pending']:
-            //         if annulment_status == 'NOT_VERIFIABLE':
-            //             self.write({
-            //                 'l10n_hu_edi_state': 'confirmed_warning',
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _('The annulment request was rejected by NAV.'),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                     'blocking_level': 'error',
-            //                 },
-            //             })
-            //         elif annulment_status == 'VERIFICATION_PENDING':
-            //             self.write({
-            //                 'l10n_hu_edi_state': 'cancel_pending',
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _('The annulment request is pending, please confirm it on the OnlineSzámla portal.'),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                     'blocking_level': 'warning',
-            //                 }
-            //             })
-            //         elif annulment_status == 'VERIFICATION_DONE':
-            //             # Annulling a base invoice will also annul all its modification invoices on NAV.
-            //             to_cancel = self if self.reversed_entry_id or self.debit_origin_id else self._l10n_hu_get_chain_invoices().filtered(lambda m: m.l10n_hu_edi_state)
-            //             to_cancel.write({
-            //                 'l10n_hu_edi_state': 'cancelled',
-            //                 'l10n_hu_invoice_chain_index': 0,
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _('The annulment request has been approved by the user on the OnlineSzámla portal.'),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                 }
-            //             })
-            //             to_cancel.button_cancel()
-            //         elif annulment_status == 'VERIFICATION_REJECTED':
-            //             self.write({
-            //                 'l10n_hu_edi_state': 'confirmed_warning',
-            //                 'l10n_hu_edi_messages': {
-            //                     'error_title': _('The annulment request was rejected by the user on the OnlineSzámla portal.'),
-            //                     'errors': get_errors_from_processing_result(processing_result),
-            //                     'blocking_level': 'error',
-            //                 }
-            //             })
-            // 
-            // elif processing_result['invoice_status'] == 'ABORTED':
-            //     if self.l10n_hu_edi_state in ['sent', 'send_timeout']:
-            //         self.write({
-            //             'l10n_hu_edi_state': 'rejected',
-            //             'l10n_hu_invoice_chain_index': 0,
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The invoice was rejected by the NAV.'),
-            //                 'errors': get_errors_from_processing_result(processing_result),
-            //                 'blocking_level': 'error',
-            //             },
-            //         })
-            //     elif self.l10n_hu_edi_state in ['cancel_sent', 'cancel_timeout', 'cancel_pending']:
-            //         self.write({
-            //             'l10n_hu_edi_state': 'confirmed_warning',
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The cancellation request could not be performed.'),
-            //                 'errors': get_errors_from_processing_result(processing_result),
-            //                 'blocking_level': 'error',
-            //             },
-            //         })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiQueryStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_query_status(self, connection):
-            // """ Check the NAV invoice status. """
-            // # We should update all invoices with the same company and transaction code at once.
-            // invoices = self | self.search([
-            //     ('company_id', 'in', self.company_id.ids),
-            //     ('l10n_hu_edi_transaction_code', 'in', self.mapped('l10n_hu_edi_transaction_code')),
-            //     ('l10n_hu_edi_state', 'in', ['sent', 'cancel_sent']),
-            // ])
-            // 
-            // # Querying status should be grouped by company and transaction code
-            // for __, invoices_grouped in groupby(invoices, lambda m: (m.company_id, m.l10n_hu_edi_transaction_code)):
-            //     self.env['account.move'].union(*invoices_grouped)._l10n_hu_edi_query_status_single_batch(connection)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiQueryStatusSingleBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_query_status_single_batch(self, connection):
-            // """ Check the NAV status for invoices that share the same transaction code (uploaded in a single batch). """
-            // try:
-            //     results = connection.do_query_transaction_status(
-            //         self.company_id.sudo()._l10n_hu_edi_get_credentials_dict(),
-            //         self[0].l10n_hu_edi_transaction_code,
-            //     )
-            // except L10nHuEdiConnectionError as e:
-            //     if self.l10n_hu_edi_state == 'sent':
-            //         return self.write({
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The invoice was sent to the NAV, but there was an error querying its status.'),
-            //                 'errors': e.errors,
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            //     else:
-            //         return self.write({
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('The annulment was sent to the NAV, but there was an error querying its status.'),
-            //                 'errors': e.errors,
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            // 
-            // for processing_result in results['processing_results']:
-            //     invoice = self.filtered(lambda m: str(m.l10n_hu_edi_batch_upload_index) == processing_result['index'])
-            //     if not invoice:
-            //         _logger.error(_('Could not match NAV transaction_code %(code)s, index %(index)s to an invoice in Odoo',
-            //                         code=self[0].l10n_hu_edi_transaction_code,
-            //                         index=processing_result['index']))
-            //         continue
-            // 
-            //     invoice._l10n_hu_edi_process_query_transaction_result(processing_result, results['annulment_status'])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiRequestCancelInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection, object code, object reason) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_request_cancel(self, connection, code, reason):
-            // """ Send a cancellation request for all invoices in `self`. """
-            // # Batch by company, with max 100 annulment requests per batch.
-            // for __, batch_company in groupby(self, lambda m: m.company_id):
-            //     for batch in split_every(100, batch_company):
-            //         self.env['account.move'].union(*batch)._l10n_hu_edi_request_cancel_single_batch(connection, code, reason)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiRequestCancelSingleBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection, object code, object reason) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_request_cancel_single_batch(self, connection, code, reason):
-            // for i, invoice in enumerate(self, start=1):
-            //     invoice.l10n_hu_edi_batch_upload_index = i
-            // 
-            // annulment_operations = [
-            //     {
-            //         'index': invoice.l10n_hu_edi_batch_upload_index,
-            //         'annulmentReference': invoice.name,
-            //         'annulmentCode': code,
-            //         'annulmentReason': reason,
-            //     }
-            //     for invoice in self
-            // ]
-            // 
-            // try:
-            //     token_result = connection.do_token_exchange(self.company_id.sudo()._l10n_hu_edi_get_credentials_dict())
-            // except L10nHuEdiConnectionError as e:
-            //     return self.write({
-            //         'l10n_hu_edi_messages': {
-            //             'error_title': _('Could not authenticate with NAV. Check your credentials and try again.'),
-            //             'errors': e.errors,
-            //             'blocking_level': 'error',
-            //         },
-            //     })
-            // 
-            // self.write({'l10n_hu_edi_send_time': fields.Datetime.now()})
-            // 
-            // try:
-            //     transaction_code = connection.do_manage_annulment(
-            //         self.company_id.sudo()._l10n_hu_edi_get_credentials_dict(),
-            //         token_result['token'],
-            //         annulment_operations,
-            //     )
-            // except L10nHuEdiConnectionError as e:
-            //     if e.code == 'timeout':
-            //         return self.write({
-            //             'l10n_hu_edi_state': 'cancel_timeout',
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('Cancellation request timed out. Please wait at least 6 minutes, then update the status.'),
-            //                 'errors': e.errors,
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            //     return self.write({
-            //         'l10n_hu_edi_messages': {
-            //             'error_title': _('Cancellation request failed.'),
-            //             'errors': e.errors,
-            //             'blocking_level': 'error',
-            //         },
-            //     })
-            // 
-            // self.write({
-            //     'l10n_hu_edi_state': 'cancel_sent',
-            //     'l10n_hu_edi_transaction_code': transaction_code,
-            //     'l10n_hu_edi_messages': {
-            //         'error_title': _('Cancellation request submitted, waiting for response.'),
-            //         'errors': [],
-            //     }
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiSetChainIndexInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_set_chain_index(self):
-            // """ Set the l10n_hu_invoice_chain_index field. """
-            // self.ensure_one()
-            // base_invoice = self._l10n_hu_get_chain_base()
-            // if base_invoice == self:
-            //     self.l10n_hu_invoice_chain_index = -1  # -1 indicates a base invoice (0 indicates the chain index was not set).
-            // else:
-            //     # Lock base invoice to prevent concurrent updates, ensuring sequence integrity.
-            //     base_invoice._l10n_hu_edi_acquire_lock()
-            // 
-            //     chain_indexes_already_sent = base_invoice._l10n_hu_get_chain_invoices().filtered(
-            //         lambda m: m.l10n_hu_edi_state not in ['rejected', 'cancelled']
-            //     ).mapped('l10n_hu_invoice_chain_index')
-            //     for i in range(1, len(chain_indexes_already_sent) + 1):
-            //         if i not in chain_indexes_already_sent:
-            //             self.l10n_hu_invoice_chain_index = i
-            //             break
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiUploadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_upload(self, connection):
-            // """ Generate invoice XMLs and send to NAV. """
-            // invoices_sorted = self.sorted(lambda m: m.id)
-            // for invoice in invoices_sorted:
-            //     # If we come from the 'cancelled' state, this means the previous XML had been confirmed
-            //     # before it was cancelled.
-            //     # In that case, we want to keep it as a regular invoice attachment, for future reference.
-            //     if invoice.l10n_hu_edi_state == 'cancelled':
-            //         self.env['ir.attachment'].search([
-            //             ('res_model', '=', self._name),
-            //             ('res_id', '=', invoice.id),
-            //             ('res_field', '=', 'l10n_hu_edi_attachment'),
-            //         ]).write({
-            //             'res_field': False,
-            //             'name': f'{invoice.name.replace("/", "_")}_cancelled_{invoice.l10n_hu_edi_transaction_code}.xml',
-            //         })
-            // 
-            //     # Set chain index
-            //     invoice._l10n_hu_edi_set_chain_index()
-            // 
-            //     # Generate XML
-            //     invoice.l10n_hu_edi_attachment = base64.b64encode(invoice._l10n_hu_edi_generate_xml())
-            // 
-            //     # Set name & mimetype on newly-created attachment.
-            //     attachment = self.env['ir.attachment'].search([
-            //         ('res_model', '=', self._name),
-            //         ('res_id', '=', invoice.id),
-            //         ('res_field', '=', 'l10n_hu_edi_attachment'),
-            //     ])
-            //     attachment.write({
-            //         'name': invoice.l10n_hu_edi_attachment_filename,
-            //         'mimetype': 'application/xml',
-            //     })
-            // 
-            // # Batch by company, with max 100 invoices per batch.
-            // for __, batch_company in groupby(invoices_sorted, lambda m: m.company_id):
-            //     for batch in split_every(100, batch_company):
-            //         self.env['account.move'].union(*batch)._l10n_hu_edi_upload_single_batch(connection)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuEdiUploadSingleBatchInternalAsync<TEntity>(IEnumerable<TEntity> entities, object connection) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_edi_upload_single_batch(self, connection):
-            // try:
-            //     token_result = connection.do_token_exchange(self.company_id.sudo()._l10n_hu_edi_get_credentials_dict())
-            // except L10nHuEdiConnectionError as e:
-            //     return self.write({
-            //         'l10n_hu_edi_state': 'rejected',
-            //         'l10n_hu_edi_transaction_code': False,
-            //         'l10n_hu_edi_messages': {
-            //             'error_title': _('Could not authenticate with NAV. Check your credentials and try again.'),
-            //             'errors': e.errors,
-            //             'blocking_level': 'error',
-            //         },
-            //     })
-            // 
-            // for i, invoice in enumerate(self, start=1):
-            //     invoice.l10n_hu_edi_batch_upload_index = i
-            // 
-            // def get_operation_type(invoice):
-            //     operation_type = 'MODIFY'
-            //     base_invoice = invoice._l10n_hu_get_chain_base()
-            //     if invoice == base_invoice:
-            //         operation_type = 'CREATE'
-            //     elif base_invoice.amount_residual == 0:
-            //         operation_type = 'STORNO'
-            //     return operation_type
-            // 
-            // invoice_operations = [
-            //     {
-            //         'index': invoice.l10n_hu_edi_batch_upload_index,
-            //         'operation': get_operation_type(invoice),
-            //         'invoice_data': base64.b64decode(invoice.l10n_hu_edi_attachment),
-            //     }
-            //     for invoice in self
-            // ]
-            // 
-            // self.write({'l10n_hu_edi_send_time': fields.Datetime.now()})
-            // 
-            // try:
-            //     transaction_code = connection.do_manage_invoice(
-            //         self.company_id.sudo()._l10n_hu_edi_get_credentials_dict(),
-            //         token_result['token'],
-            //         invoice_operations,
-            //     )
-            // except L10nHuEdiConnectionError as e:
-            //     if e.code == 'timeout':
-            //         return self.write({
-            //             'l10n_hu_edi_state': 'send_timeout',
-            //             'l10n_hu_edi_transaction_code': False,
-            //             'l10n_hu_edi_messages': {
-            //                 'error_title': _('Invoice submission timed out. Please wait at least 6 minutes, then update the status.'),
-            //                 'errors': e.errors,
-            //                 'blocking_level': 'warning',
-            //             },
-            //         })
-            //     return self.write({
-            //         'l10n_hu_edi_state': 'rejected',
-            //         'l10n_hu_edi_transaction_code': False,
-            //         'l10n_hu_invoice_chain_index': 0,
-            //         'l10n_hu_edi_messages': {
-            //             'error_title': _('Invoice submission failed.'),
-            //             'errors': e.errors,
-            //             'blocking_level': 'error',
-            //         },
-            //     })
-            // 
-            // self.write({
-            //     'l10n_hu_edi_state': 'sent',
-            //     'l10n_hu_edi_transaction_code': transaction_code,
-            //     'l10n_hu_edi_messages': {
-            //         'error_title': _('Invoice submitted, waiting for response.'),
-            //         'errors': [],
-            //     }
-            // })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuGetChainBaseInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_get_chain_base(self):
-            // """ Get the base invoice of the invoice chain. """
-            // modification_invoices = self
-            // base_invoices = self.env['account.move']
-            // while modification_invoices:
-            //     base_invoices |= modification_invoices.filtered(lambda m: not m.reversed_entry_id and not m.debit_origin_id)
-            //     modification_invoices = modification_invoices.reversed_entry_id | modification_invoices.debit_origin_id
-            // return base_invoices
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuGetChainInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_get_chain_invoices(self):
-            // """ Given base invoices, get all invoices in the chain. """
-            // chain_invoices = self
-            // next_invoices = self
-            // while (next_invoices := next_invoices.reversal_move_ids | next_invoices.debit_note_ids):
-            //     chain_invoices |= next_invoices
-            // return chain_invoices
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuGetCurrencyRateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_get_currency_rate(self):
-            // """ Get the invoice currency / HUF rate.
-            // 
-            //     We don't use `invoice_currency_rate` to avoid rounding error as 1/0.002470 ≃ 404.87,
-            //     and we want exactly 404.87, i.e. the rate given by the MNB of Hungary, to avoid NAV error
-            //     upon XML submission.
-            // """
-            // self.ensure_one()
-            // return self.env['res.currency']._get_conversion_rate(
-            //     from_currency=self.currency_id,
-            //     to_currency=self.env.ref('base.HUF'),
-            //     company=self.company_id,
-            //     date=self.invoice_date,
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nHuGetInvoiceTotalsForReportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _l10n_hu_get_invoice_totals_for_report(self):
-            // """ In Hungary, tax amounts should appear negative on credit notes.
-            //     We therefore apply a post-processing to the tax totals to make them negative. """
-            // 
-            // def invert_dict(dictionary, keys_to_invert):
-            //     """ Replace the values of keys_to_invert by their negative. """
-            //     dictionary.update({
-            //         key: -value
-            //         for key, value in dictionary.items()
-            //         if key in keys_to_invert
-            //     })
-            // 
-            // self.ensure_one()
-            // tax_totals = self.tax_totals
-            // if not tax_totals:
-            //     return tax_totals
-            // 
-            // fields_to_reverse = (
-            //     'base_amount_currency', 'base_amount',
-            //     'display_base_amount_currency', 'display_base_amount',
-            //     'tax_amount_currency', 'tax_amount',
-            //     'total_amount_currency', 'total_amount',
-            //     'cash_rounding_base_amount_currency', 'cash_rounding_base_amount',
-            // )
-            // 
-            // if self.move_type in ('out_refund', 'in_refund'):
-            //     invert_dict(tax_totals, fields_to_reverse)
-            //     for subtotal in tax_totals['subtotals']:
-            //         invert_dict(subtotal, fields_to_reverse)
-            //         for tax_group in subtotal['tax_groups']:
-            //             invert_dict(tax_group, fields_to_reverse)
-            // 
-            // currency_huf = self.env.ref('base.HUF')
-            // tax_totals['total_vat_amount_in_huf'] = sum(
-            //     line.balance for line in self.line_ids.filtered(lambda l: l.tax_line_id.l10n_hu_tax_type)
-            // ) * (1 if self.is_purchase_document() else -1)
-            // tax_totals['formatted_total_vat_amount_in_huf'] = formatLang(
-            //     self.env, tax_totals['total_vat_amount_in_huf'], currency_obj=currency_huf
-            // )
-            // 
-            // return tax_totals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdCoretaxBuildInvoiceValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def _l10n_id_coretax_build_invoice_vals(self, vals):
-            // """ Fill in vals with invoice-related information """
-            // self.ensure_one()
-            // 
-            // partner = self.commercial_partner_id
-            // trx_code = self.l10n_id_kode_transaksi
-            // 
-            // vals.update({
-            //     "TIN": self.company_id.vat,
-            //     "TaxInvoiceDate": self.invoice_date.strftime("%Y-%m-%d"),
-            //     "TaxInvoiceOpt": "Normal",
-            //     "TrxCode": trx_code,
-            //     "AddInfo": "",
-            //     "CustomDoc": self.l10n_id_coretax_custom_doc or "",
-            //     "CustomDocMonthYear": "",
-            //     "FacilityStamp": "",
-            //     "RefDesc": self.name,
-            //     "SellerIDTKU": self.company_id.vat + self.company_id.partner_id.l10n_id_tku,
-            //     "BuyerDocument": partner.l10n_id_buyer_document_type,
-            //     "BuyerTin": partner.vat if partner.l10n_id_buyer_document_type == "TIN" else "0000000000000000",
-            //     "BuyerCountry": COUNTRY_CODE_MAP.get(partner.country_id.code),
-            //     "BuyerDocumentNumber": partner.l10n_id_buyer_document_number if partner.l10n_id_buyer_document_type != "TIN" else "",
-            //     "BuyerName": self.partner_id.name,
-            //     "BuyerAdress": self.partner_id.contact_address.replace('\n', ' ').strip(),
-            //     "BuyerEmail": partner.email or "",
-            //     "BuyerIDTKU": partner.vat + partner.l10n_id_tku,
-            // })
-            // 
-            // if trx_code == '07':
-            //     vals['AddInfo'] = self.l10n_id_coretax_add_info_07
-            //     vals['FacilityStamp'] = self.l10n_id_coretax_facility_info_07
-            // elif trx_code == '08':
-            //     vals['AddInfo'] = self.l10n_id_coretax_add_info_08
-            //     vals['FacilityStamp'] = self.l10n_id_coretax_facility_info_08
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdCronUpdatePaymentStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def _l10n_id_cron_update_payment_status(self):
-            // """
-            // This cron will:
-            //     - Get all invoices that are not paid, and have details about QRIS qr codes.
-            //     - For each invoices, get information about the payment state of the QR using the API.
-            //     - If the QR is not paid and it has been more than 30m, we discard that qr id (no longer valid)
-            //     - If it is paid, we will register the payment on the invoices.
-            // """
-            // invoices = self.search([
-            //     ('payment_state', '=', 'not_paid'),
-            //     ('l10n_id_qris_transaction_ids', '!=', False)
-            // ])
-            // return invoices._l10n_id_update_payment_status()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdGetQrisQrStatusesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def _l10n_id_get_qris_qr_statuses(self):
-            // """
-            // Query the API in order to get updated information on the status of each QR codes linked to the invoices in self.
-            // If the QR has been paid, only the paid information is returned.
-            // 
-            // :return: a list with the format:
-            //     {
-            //         invoice: {
-            //             'paid': True,
-            //             'qr_statuses': [],
-            //         },
-            //         invoice: {
-            //             'paid': False,
-            //             'qr_statuses': [],
-            //         }
-            //     }
-            // """
-            // result = {}
-            // for invoice in self:
-            //     result[invoice.id] = invoice.l10n_id_qris_transaction_ids._l10n_id_get_qris_qr_statuses()
-            // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdProcessInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoices_statuses) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def _l10n_id_process_invoices(self, invoices_statuses):
-            // """
-            // Receives the list of invoices and their statuses, and update them using it.
-            // For paid invoices we will register the payment and log a note, while for unpaid ones we will discard expired
-            // QR data and keep the non-expired ones for the next run.
-            // """
-            // paid_invoices = self.env['account.move']
-            // paid_messages = {}
-            // for invoice in self:
-            //     statuses = invoices_statuses.get(invoice.id)
-            //     # Paid invoice: we simply prepare a message to notify of the payment with details if possible.
-            //     if statuses['paid']:
-            //         paid_status = statuses['qr_statuses'][0]
-            //         if 'qris_payment_customername' in paid_status and 'qris_payment_methodby' in paid_status:
-            //             message = _(
-            //                 "This invoice was paid by %(customer)s using QRIS with the payment method %(method)s.",
-            //                 customer=paid_status['qris_payment_customername'],
-            //                 method=paid_status['qris_payment_methodby'],
-            //             )
-            //         else:
-            //             message = _("This invoice was paid using QRIS.")
-            //         paid_invoices |= invoice
-            //         paid_messages[invoice.id] = message
-            // 
-            // # Update paid invoices
-            // if paid_invoices:
-            //     paid_invoices._message_log_batch(bodies=paid_messages)
-            //     # Finally, register the payment:
-            //     return self.env['account.payment.register'].with_context(
-            //         active_model='account.move', active_ids=paid_invoices.ids
-            //     ).create({'group_payment': False}).action_create_payments()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdUpdatePaymentStatusAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def action_l10n_id_update_payment_status(self):
-            // """
-            // This action will:
-            //     - Get all invoices that are not paid, and have details about QRIS qr codes.
-            //     - For each invoices, get information about the payment state of the QR using the API.
-            //     - If the QR is not paid and it has been more than 30m, we discard that qr id (no longer valid)
-            //     - If it is paid, we will register the payment on the invoices.
-            // """
-            // invoices = self.filtered_domain([
-            //     ('payment_state', '=', 'not_paid'),
-            //     ('l10n_id_qris_transaction_ids', '!=', False)
-            // ])
-            // return invoices._l10n_id_update_payment_status()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nIdUpdatePaymentStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id, FILE: account_move.py) ---
-            // def _l10n_id_update_payment_status(self):
-            // """ Starts by fetching the QR statuses for the invoices in self, then update said invoices based on the statuses """
-            // qr_statuses = self._l10n_id_get_qris_qr_statuses()
-            // return self._l10n_id_process_invoices(qr_statuses)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInApplyHigherTaxAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def action_l10n_in_apply_higher_tax(self):
-            // self.ensure_one()
-            // invalid_lines = self._get_l10n_in_invalid_tax_lines()
-            // for line in invalid_lines:
-            //     updated_tax_ids = []
-            //     for tax in line.tax_ids:
-            //         if tax.l10n_in_section_id.tax_source_type == 'tcs':
-            //             max_tax = max(
-            //                 tax.l10n_in_section_id.l10n_in_section_tax_ids,
-            //                 key=lambda t: t.amount
-            //             )
-            //             updated_tax_ids.append(max_tax.id)
-            //         else:
-            //             updated_tax_ids.append(tax.id)
-            //     if set(line.tax_ids.ids) != set(updated_tax_ids):
-            //         line.write({'tax_ids': [Command.clear()] + [Command.set(updated_tax_ids)]})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInEdiEwaybillSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_edi_ewaybill, FILE: account_move.py) ---
-            // def l10n_in_edi_ewaybill_send(self):
-            // edi_format = self.env.ref('l10n_in_edi_ewaybill.edi_in_ewaybill_json_1_03')
-            // edi_document_vals_list = []
-            // for move in self:
-            //     if move.state != 'posted':
-            //         raise UserError(_("You can only create E-waybill from posted invoice"))
-            //     errors = edi_format._check_move_configuration(move)
-            //     if errors:
-            //         raise UserError(_("Invalid invoice configuration:\n\n%s", '\n'.join(errors)))
-            //     existing_edi_document = move.edi_document_ids.filtered(lambda x: x.edi_format_id == edi_format)
-            //     if existing_edi_document:
-            //         if existing_edi_document.state in ('sent', 'to_cancel'):
-            //             raise UserError(_("E-waybill is already created"))
-            //         existing_edi_document.sudo().write({
-            //             'state': 'to_send',
-            //             'attachment_id': False,
-            //         })
-            //     else:
-            //         edi_document_vals_list.append({
-            //             'edi_format_id': edi_format.id,
-            //             'move_id': move.id,
-            //             'state': 'to_send',
-            //         })
-            // self.env['account.edi.document'].create(edi_document_vals_list)
-            // self.env.ref('account_edi.ir_cron_edi_network')._trigger()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInGetHsnSummaryTableInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _l10n_in_get_hsn_summary_table(self):
-            // self.ensure_one()
-            // base_lines, _tax_lines = self._get_rounded_base_and_tax_lines()
-            // display_uom = self.env.user.has_group('uom.group_uom')
-            // return self.env['account.tax']._l10n_in_get_hsn_summary_table(base_lines, display_uom)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInGetWarehouseAddressInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _l10n_in_get_warehouse_address(self):
-            // """Return address where goods are delivered/received for Invoice/Bill"""
-            // # TO OVERRIDE
-            // self.ensure_one()
-            // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_purchase_stock, FILE: account_move.py) ---
-            // def _l10n_in_get_warehouse_address(self):
-            // res = super()._l10n_in_get_warehouse_address()
-            // if self.invoice_line_ids.purchase_line_id:
-            //     company_shipping_id = self.mapped(
-            //         "invoice_line_ids.purchase_line_id.move_ids.warehouse_id.partner_id"
-            //     )
-            //     if len(company_shipping_id) == 1:
-            //         return company_shipping_id
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale_stock, FILE: account_move.py) ---
-            // def _l10n_in_get_warehouse_address(self):
-            // res = super()._l10n_in_get_warehouse_address()
-            // if self.invoice_line_ids.sale_line_ids:
-            //     company_shipping_id = self.mapped("invoice_line_ids.sale_line_ids.order_id.warehouse_id.partner_id")
-            //     if len(company_shipping_id) == 1:
-            //         return company_shipping_id
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInIsWarningApplicableInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid section_id) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def _l10n_in_is_warning_applicable(self, section_id):
-            // self.ensure_one()
-            // match section_id.tax_source_type:
-            //     case 'tcs':
-            //         return self.journal_id.type == 'sale'
-            //     case 'tds':
-            //         return (
-            //             self.journal_id.type == 'purchase'
-            //             and section_id not in self.l10n_in_withhold_move_ids.filtered(lambda m:
-            //                 m.state == 'posted'
-            //             ).mapped('line_ids.tax_ids.l10n_in_section_id')
-            //         )
-            //     case _:
-            //         return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInVerifyPartnerGstinStatusAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_gstin_status, FILE: account_move.py) ---
-            // def l10n_in_verify_partner_gstin_status(self):
-            // self.ensure_one()
-            // return self.with_company(self.company_id).partner_id.action_l10n_in_verify_gstin_status()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nInWithholdingEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move.py) ---
-            // def action_l10n_in_withholding_entries(self):
-            // self.ensure_one()
-            // return {
-            //     'name': "TDS Entries",
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'account.move',
-            //     'view_mode': 'list,form',
-            //     'domain': [('id', 'in', self.l10n_in_withhold_move_ids.ids)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItBuyerSellerInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_buyer_seller_info(self):
-            // return {
-            //     'buyer': {
-            //         'role': 'buyer',
-            //         'section_xpath': '//CessionarioCommittente',
-            //         'vat_xpath': '//CessionarioCommittente//IdCodice',
-            //         'codice_fiscale_xpath': '//CessionarioCommittente//CodiceFiscale',
-            //         'type_tax_use_domain': [('type_tax_use', '=', 'purchase')],
-            //     },
-            //     'seller': {
-            //         'role': 'seller',
-            //         'section_xpath': '//CedentePrestatore',
-            //         'vat_xpath': '//CedentePrestatore//IdCodice',
-            //         'codice_fiscale_xpath': '//CedentePrestatore//CodiceFiscale',
-            //         'type_tax_use_domain': [('type_tax_use', '=', 'sale')],
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiAddBaseLinesXmlValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values, object is_downpayment) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_add_base_lines_xml_values(self, base_lines_aggregated_values, is_downpayment):
-            // self.ensure_one()
-            // quantita_pd = min(self.env['account.move.line']._fields['quantity'].get_digits(self.env)[1], 8)
-            // for index, (base_line, aggregated_values) in enumerate(base_lines_aggregated_values, start=1):
-            //     line = base_line['record']
-            //     tax_details = base_line['tax_details']
-            //     discount = base_line['discount']
-            //     quantity = base_line['quantity']
-            //     price_subtotal = base_line['price_subtotal'] = tax_details['raw_total_excluded_currency']
-            //     it_values = base_line['it_values'] = {}
-            // 
-            //     # Description.
-            //     # Down payment lines:
-            //     # If there was a down paid amount that has been deducted from this move,
-            //     # we need to put a reference to the down payment invoice in the DatiFattureCollegate tag
-            //     description = line.name
-            //     if not is_downpayment and price_subtotal < 0:
-            //         downpayment_moves = line._get_downpayment_lines().move_id
-            //         if downpayment_moves:
-            //             downpayment_moves_description = ', '.join(downpayment_moves.mapped('name'))
-            //             sep = ', ' if description else ''
-            //             description = f"{description}{sep}{downpayment_moves_description}"
-            //     description = description or "NO NAME"
-            // 
-            //     # Price unit.
-            //     if quantity:
-            //         it_values['prezzo_unitario'] = base_line['gross_price_subtotal'] / quantity
-            //     else:
-            //         it_values['prezzo_unitario'] = 0.0
-            //     if base_line['currency_id'] != self.company_currency_id:
-            //         it_values['prezzo_unitario'] = it_values['prezzo_unitario'] / base_line['rate']
-            // 
-            //     # Discount.
-            //     it_values['sconto_maggiorazione_list'] = []
-            //     if discount:
-            //         it_values['sconto_maggiorazione_list'] = [{
-            //             'tipo': 'SC' if discount > 0 else 'MG',
-            //             'percentuale': abs(discount),
-            //             'importo': None,
-            //         }]
-            // 
-            //     # Tax rates.
-            //     rates = it_values['aliquota_iva_list'] = []
-            //     for values in aggregated_values.values():
-            //         grouping_key = values['grouping_key']
-            //         if not grouping_key or grouping_key['skip']:
-            //             continue
-            // 
-            //         rates.append(grouping_key['tax_amount_field'] if grouping_key['tax_amount_type_field'] == 'percent' else 0.0)
-            // 
-            //     # Tax exempt reason.
-            //     vat_tax = base_line['tax_ids'].flatten_taxes_hierarchy().filtered(lambda t: t._l10n_it_filter_kind('vat') and t.amount >= 0)[:1]
-            //     it_values['natura'] = vat_tax.l10n_it_exempt_reason or None
-            // 
-            //     # Other data.
-            //     other_data_list = it_values['altri_dati_gestionali_list'] = []
-            //     if base_line['currency_id'] != self.company_currency_id:
-            //         other_data_list.extend([
-            //             {
-            //                 'tipo_dato': 'DIVISA',
-            //                 'riferimento_testo': base_line['currency_id'].name,
-            //                 'riferimento_numero': tax_details['raw_total_excluded_currency'],
-            //                 'riferimento_data': None,
-            //             },
-            //             {
-            //                 'tipo_dato': 'CAMBIO',
-            //                 'riferimento_testo': None,
-            //                 'riferimento_numero': base_line['rate'],
-            //                 'riferimento_data': self.invoice_date,
-            //             },
-            //         ])
-            // 
-            //     it_values.update({
-            //         'numero_linea': index,
-            //         'descrizione': description,
-            //         'prezzo_totale': tax_details['raw_total_excluded'],
-            //         'quantita': quantity,
-            //         'quantita_pd': quantita_pd,
-            //         'ritenuta': None,
-            //     })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiBaseExportCheckInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_base_export_check(self):
-            // def build_error(message, records):
-            //     return {
-            //         'message': message,
-            //         **({
-            //             'action_text': _("View invoice(s)"),
-            //             'action': records._get_records_action(name=_("Invoice(s) to check")),
-            //         } if len(self) > 1 else {})
-            //     }
-            // 
-            // errors = {}
-            // if moves := self.filtered(lambda move: move.l10n_it_edi_is_self_invoice and move._l10n_it_edi_services_or_goods() == 'both'):
-            //     errors['l10n_it_edi_move_rc_mixed_product_types'] = build_error(
-            //         message=_("Cannot apply Reverse Charge to bills which contains both services and goods."),
-            //         records=moves)
-            // 
-            // if pa_moves := self.filtered(lambda move: move.commercial_partner_id._l10n_it_edi_is_public_administration()):
-            //     if moves := pa_moves.filtered(lambda move: not move.l10n_it_origin_document_type):
-            //         message = _("Partner(s) belongs to the Public Administration, please fill out Origin Document Type field in the Electronic Invoicing tab.")
-            //         errors['move_missing_origin_document'] = build_error(message=message, records=moves)
-            //     if moves := pa_moves.filtered(lambda move: move.l10n_it_origin_document_date and move.l10n_it_origin_document_date > fields.Date.today()):
-            //         message = _("The Origin Document Date cannot be in the future.")
-            //         errors['l10n_it_edi_move_future_origin_document_date'] = build_error(message=message, records=moves)
-            // if pa_moves := self.filtered(lambda move: len(move.commercial_partner_id.l10n_it_pa_index or '') == 7):
-            //     if moves := pa_moves.filtered(lambda move: not move.l10n_it_origin_document_type and (move.l10n_it_cig or move.l10n_it_cup)):
-            //         message = _("CIG/CUP fields of partner(s) are present, please fill out Origin Document Type field in the Electronic Invoicing tab.")
-            //         errors['move_missing_origin_document_field'] = build_error(message=message, records=moves)
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiCreateMoveWithAttachmentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object filename, object content, object key, object proxy_user) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_create_move_with_attachment(self, filename, content, key, proxy_user):
-            // """ Creates a move and save an incoming file from the SdI as its attachment.
-            // 
-            //     :param filename:       name of the file to be saved.
-            //     :param content:        encrypted content of the file to be saved.
-            //     :param key:            key to decrypt the file.
-            //     :param proxy_user:     the AccountEdiProxyClientUser to use for decrypting the file
-            // """
-            // 
-            // # Name should be unique per company, the invoice already exists
-            // Attachment = self.env['ir.attachment'].sudo().with_company(proxy_user.company_id)
-            // if Attachment.search_count([
-            //     ('name', '=', filename),
-            //     ('res_model', '=', 'account.move'),
-            //     ('res_field', '=', 'l10n_it_edi_attachment_file'),
-            //     ('company_id', '=', proxy_user.company_id.id),
-            // ], limit=1):
-            //     _logger.warning('E-invoice already exists: %s', filename)
-            //     return False
-            // 
-            // # Decrypt with the server key
-            // try:
-            //     decrypted_content = proxy_user._decrypt_data(content, key)
-            // except Exception as e: # noqa: BLE001
-            //     _logger.warning("Cannot decrypt e-invoice: %s, %s", filename, e)
-            //     return False
-            // 
-            // # Create the attachment, an empty move, then attach the two and commit
-            // move = self.with_company(proxy_user.company_id).create({})
-            // attachment = Attachment.create({
-            //     'name': filename,
-            //     'raw': decrypted_content,
-            //     'type': 'binary',
-            //     'res_model': 'account.move',
-            //     'res_id': move.id,
-            //     'res_field': 'l10n_it_edi_attachment_file'
-            // })
-            // move.with_context(
-            //     account_predictive_bills_disable_prediction=True,
-            //     no_new_invoice=True,
-            // ).message_post(attachment_ids=attachment.ids)
-            // 
-            // return move
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiDocumentTypeMappingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_document_type_mapping(self):
-            // """ Returns a dictionary with the required features for every TDxx FatturaPA document type """
-            // return {
-            //     'TD01': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': False,
-            //              'downpayment': False,
-            //              'professional_fees': False},
-            //     'TD02': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': False,
-            //              'downpayment': True,
-            //              'professional_fees': False},
-            //     'TD03': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': False,
-            //              'downpayment': True,
-            //              'professional_fees': True},
-            //     'TD04': {'move_types': ['out_refund'],
-            //              'import_type': 'in_refund',
-            //              'self_invoice': False,
-            //              'simplified': False},
-            //     'TD05': {'move_types': ['in_invoice', 'out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': False},
-            //     'TD06': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': False,
-            //              'downpayment': False,
-            //              'professional_fees': True},
-            //     'TD07': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': True},
-            //     'TD08': {'move_types': ['out_refund'],
-            //              'import_type': 'in_refund',
-            //              'self_invoice': False,
-            //              'simplified': True},
-            //     'TD09': {'move_types': ['out_invoice'],
-            //              'import_type': 'in_invoice',
-            //              'self_invoice': False,
-            //              'simplified': True},
-            //     'TD28': {'move_types': ['in_invoice', 'in_refund'],
-            //              'import_type': 'in_invoice',
-            //              'simplified': False,
-            //              'self_invoice': True,
-            //              'partner_country_code': "SM"},
-            //     'TD16': {'move_types': ['in_invoice', 'in_refund'],
-            //              'import_type': 'in_invoice',
-            //              'simplified': False,
-            //              'self_invoice': True,
-            //              'tax_tags': {'VJ6', 'VJ7', 'VJ8', 'VJ12', 'VJ13', 'VJ14', 'VJ15', 'VJ16', 'VJ17'}},
-            //     'TD17': {'move_types': ['in_invoice', 'in_refund'],
-            //              'import_type': 'in_invoice',
-            //              'simplified': False,
-            //              'self_invoice': True,
-            //              'services_or_goods': "service",
-            //              'tax_tags': {'VJ3'}},
-            //     'TD18': {'move_types': ['in_invoice', 'in_refund'],
-            //              'import_type': 'in_invoice',
-            //              'simplified': False,
-            //              'self_invoice': True,
-            //              'services_or_goods': "consu",
-            //              'goods_in_italy': False,
-            //              'partner_in_eu': True,
-            //              'tax_tags': {'VJ9'}},
-            //     'TD19': {'move_types': ['in_invoice', 'in_refund'],
-            //              'import_type': 'in_invoice',
-            //              'simplified': False,
-            //              'self_invoice': True,
-            //              'services_or_goods': "consu",
-            //              'goods_in_italy': True,
-            //              'tax_tags': {'VJ3'}},
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd_account_dn, FILE: account_move.py) ---
-            // def _l10n_it_edi_document_type_mapping(self):
-            // # EXTENDS 'l10n_it_edi'
-            // document_type_mapping = super()._l10n_it_edi_document_type_mapping()
-            // document_type_mapping['TD01']['debit_note'] = False
-            // document_type_mapping['TD05']['debit_note'] = True
-            // return document_type_mapping
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _l10n_it_edi_document_type_mapping(self):
-            // """ Deferred invoices (not direct) require TD24 FatturaPA Document Type. """
-            // res = super()._l10n_it_edi_document_type_mapping()
-            // for document_type, infos in res.items():
-            //     if document_type == 'TD07':
-            //         continue
-            //     infos['direct_invoice'] = True
-            // res['TD24'] = {'move_types': ['out_invoice'], 'import_type': 'in_invoice', 'direct_invoice': False}
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiDownloadInvoicesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object proxy_user) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_download_invoices(self, proxy_user):
-            // """ Check the proxy for incoming invoices for a specified proxy user.
-            //     :return: True if there remain some invoices on the server to be downloaded, False otherwise.
-            // """
-            // server_url = proxy_user._get_server_url()
-            // 
-            // # Download invoices
-            // invoices_data = {}
-            // try:
-            //     invoices_data = proxy_user._make_request(f'{server_url}/api/l10n_it_edi/1/in/RicezioneInvoice',
-            //         params={'recipient_codice_fiscale': proxy_user.company_id.l10n_it_codice_fiscale})
-            // except AccountEdiProxyError as e:
-            //     _logger.error('Error while receiving invoices from the SdI: %s', e)
-            //     return False
-            // 
-            // # Process the downloaded invoices
-            // processed = self._l10n_it_edi_process_downloads(invoices_data, proxy_user)
-            // if processed['proxy_acks']:
-            //     try:
-            //         proxy_user._make_request(
-            //             f'{server_url}/api/l10n_it_edi/1/ack',
-            //             params={'transaction_ids': processed['proxy_acks']})
-            //     except AccountEdiProxyError as e:
-            //         _logger.error('Error while receiving file from the SdI: %s', e)
-            // 
-            // return processed['retrigger']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiExemptReasonTagMappingInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_exempt_reason_tag_mapping(self):
-            // return {
-            //     "N3.2": "VJ3",
-            //     "N3.3": "VJ1",
-            //     "N6.1": "VJ6",
-            //     "N6.2": "VJ7",
-            //     "N6.3": "VJ12",
-            //     "N6.4": "VJ13",
-            //     "N6.5": "VJ14",
-            //     "N6.6": "VJ15",
-            //     "N6.7": "VJ16",
-            //     "N6.8": "VJ17",
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiExportDataCheckInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_export_data_check(self):
-            // """ This function checks the Settings, Company, Partners, Moves involved in the
-            //     sending activity and returns an errors dictionary ready for the
-            //     actionable_errors widget to display. """
-            // 
-            // companies = self.mapped("company_id")
-            // companies_partners = companies.mapped("partner_id")
-            // moves_full = self.filtered(lambda m: not m._l10n_it_edi_is_simplified())
-            // moves_simplified = self.filtered(lambda m: m._l10n_it_edi_is_simplified())
-            // 
-            // full = moves_full.mapped("commercial_partner_id").filtered(lambda p: p not in companies_partners)
-            // simplified = moves_simplified.mapped("commercial_partner_id").filtered(lambda p: p not in companies_partners | full)
-            // representatives = companies.mapped("l10n_it_tax_representative_partner_id").filtered(lambda p: p not in companies_partners | simplified | full)
-            // 
-            // return {
-            //     **companies._l10n_it_edi_export_check(),
-            //     **full._l10n_it_edi_export_check(['partner_address_missing']),
-            //     **simplified._l10n_it_edi_export_check(['partner_country_missing']),
-            //     **(simplified | full)._l10n_it_edi_export_check(['partner_vat_codice_fiscale_missing']),
-            //     **representatives._l10n_it_edi_export_check(['partner_vat_missing']),
-            //     **self._l10n_it_edi_base_export_check(),
-            //     **self._l10n_it_edi_export_taxes_check(),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiExportTaxesCheckInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_export_taxes_check(self):
-            // if move_lines := self.mapped("invoice_line_ids").filtered(lambda line:
-            //     line.display_type == 'product'
-            //     and len(line.tax_ids.flatten_taxes_hierarchy()._l10n_it_filter_kind('vat')) != 1
-            // ):
-            //     return {
-            //         'l10n_it_edi_move_only_one_vat_tax_per_line': {
-            //             'message': _("Invoices must have exactly one VAT tax set per line."),
-            //             **({
-            //                 'action_text': _("View invoice(s)"),
-            //                 'action': move_lines.mapped("move_id")._get_records_action(name=_("Check taxes on invoice lines")),
-            //             } if len(self) > 1 else {})
-            //         }}
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiExportTaxesDataCheckInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_export_taxes_data_check(self):
-            // """
-            //     Override to also allow pension_fund, withholding taxes.
-            //     Needs not to call super, because super checks for one tax only per line.
-            // """
-            // errors = []
-            // for invoice_line in self.invoice_line_ids.filtered(lambda x: x.display_type == 'product'):
-            //     all_taxes = invoice_line.tax_ids.flatten_taxes_hierarchy()
-            //     vat_taxes, withholding_taxes, pension_fund_taxes = (all_taxes._l10n_it_filter_kind(kind) for kind in
-            //                                                         ('vat', 'withholding', 'pension_fund'))
-            //     if len(vat_taxes.filtered(lambda x: x.amount >= 0)) != 1:
-            //         errors.append(_("Bad tax configuration for line %s, there must be one and only one VAT tax per line", invoice_line.name))
-            //     if len(pension_fund_taxes) > 1 or len(withholding_taxes) > 1:
-            //         errors.append(_("Bad tax configuration for line %s, there must be one Withholding tax and one Pension Fund tax at max.", invoice_line.name))
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiFeaturesForDocumentTypeSelectionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_features_for_document_type_selection(self):
-            // """ Returns a dictionary of features to be compared with the TDxx FatturaPA
-            //     document type requirements. """
-            // partner_values = self.commercial_partner_id._l10n_it_edi_get_values()
-            // services_or_goods = self._l10n_it_edi_services_or_goods()
-            // return {
-            //     'move_types': self.move_type,
-            //     'partner_in_eu': partner_values.get('in_eu', False),
-            //     'partner_country_code': partner_values.get('country_code', False),
-            //     'simplified': self._l10n_it_edi_is_simplified(),
-            //     'self_invoice': self.l10n_it_edi_is_self_invoice,
-            //     'tax_tags': {tag for tag in self.line_ids.tax_tag_ids.mapped(lambda x: (x.name or '').upper().replace("+", "").replace("-", "")) if tag},
-            //     'downpayment': self._is_downpayment(),
-            //     'services_or_goods': services_or_goods,
-            //     'goods_in_italy': services_or_goods == 'consu' and self._l10n_it_edi_goods_in_italy(),
-            //     'professional_fees': self._l10n_it_edi_is_professional_fees(),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd_account_dn, FILE: account_move.py) ---
-            // def _l10n_it_edi_features_for_document_type_selection(self):
-            // # EXTENDS 'l10n_it_edi'
-            // document_type_features = super()._l10n_it_edi_features_for_document_type_selection()
-            // if self.debit_origin_id:
-            //     document_type_features['debit_note'] = True
-            // return document_type_features
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _l10n_it_edi_features_for_document_type_selection(self):
-            // res = super()._l10n_it_edi_features_for_document_type_selection()
-            // res['direct_invoice'] = self._l10n_it_edi_invoice_is_direct()
-            // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiFormatErrorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object header, object errors) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_format_errors(self, header, errors):
-            // return Markup('{}<ul class="mb-0">{}</ul>').format(
-            //     nl2br_enclose(header, 'span') if header else '',
-            //     Markup().join(nl2br_enclose(' '.join(error.split()), 'li') for error in errors)
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGenerateFilenameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_generate_filename(self):
-            // '''Returns a name conform to the Fattura pa Specifications:
-            //    See ES documentation 2.2
-            // '''
-            // a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-            // company = self.company_id._l10n_it_get_edi_company()
-            // n = self.env['ir.sequence'].with_company(company).next_by_code('l10n_it_edi.fattura_filename')
-            // if not n:
-            //     # The offset is used to avoid conflicts with existing filenames
-            //     offset = 62 ** 4
-            //     sequence = self.env['ir.sequence'].sudo().create({
-            //         'name': 'FatturaPA Filename Sequence',
-            //         'code': 'l10n_it_edi.fattura_filename',
-            //         'company_id': company.id,
-            //         'number_next': offset,
-            //     })
-            //     n = sequence._next()
-            // # The n is returned as a string, but we require an int
-            // n = int(''.join(filter(lambda c: c.isdecimal(), n)))
-            // 
-            // progressive_number = ""
-            // while n:
-            //     (n, m) = divmod(n, len(a))
-            //     progressive_number = a[m] + progressive_number
-            // 
-            // return '%(country_code)s%(codice)s_%(progressive_number)s.xml' % {
-            //     'country_code': company.country_id.code,
-            //     'codice': company.partner_id._l10n_it_edi_normalized_codice_fiscale(),
-            //     'progressive_number': progressive_number.zfill(5),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetAttachmentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object pdf_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_attachment_values(self, pdf_values=None):
-            // self.ensure_one()
-            // return {
-            //     'name': self._l10n_it_edi_generate_filename(),
-            //     'type': 'binary',
-            //     'mimetype': 'application/xml',
-            //     'description': _('IT EDI e-move: %s', self.move_type),
-            //     'company_id': self.company_id.id,
-            //     'res_id': self.id,
-            //     'res_model': self._name,
-            //     'res_field': 'l10n_it_edi_attachment_file',
-            //     'raw': self._l10n_it_edi_render_xml(pdf_values=pdf_values),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_document_type(self):
-            // """ Compare the features of the invoice to the requirements of each Document Type (TDxx)
-            // FatturaPA until you find a valid one. """
-            // 
-            // def compare(actual_values, expected_values):
-            //     """ Compare a single entry from the invoice features with the one of the document_type """
-            //     if isinstance(expected_values, set | list | tuple):
-            //         # i.e. When we compare actual tax_tags from the invoice with expected tags, we see if there is at least one in common
-            //         if isinstance(actual_values, set):
-            //             return actual_values & set(expected_values)
-            //         # i.e. When we compare the move_type with the available ones, these can be more than one
-            //         return actual_values in expected_values
-            //     # We compare other features directly, one on one
-            //     return actual_values == expected_values
-            // 
-            // invoice_features = self._l10n_it_edi_features_for_document_type_selection()
-            // for document_type_code, document_type_features in self._l10n_it_edi_document_type_mapping().items():
-            //     # By using a generator instead of a list, we can avoid some comparisons
-            //     if all(compare(invoice_values, document_type_features[k]) for k, invoice_values in invoice_features.items() if k in document_type_features):
-            //         return document_type_code
-            // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetExtraInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object document_type, object body_tree, object incoming) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_extra_info(self, company, document_type, body_tree, incoming=True):
-            // """ This function is meant to collect other information that has to be inserted on the invoice lines by submodules.
-            //     :return extra_info, messages_to_log"""
-            // return {
-            //     'simplified': self.env['account.move']._l10n_it_edi_is_simplified_document_type(document_type),
-            //     'type_tax_use_domain': [('type_tax_use', '=', 'purchase' if incoming else 'sale')],
-            // }, []
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_extra_info(self, company, document_type, body_tree, incoming=True):
-            // extra_info, message_to_log = super()._l10n_it_edi_get_extra_info(company, document_type, body_tree, incoming=incoming)
-            // 
-            // type_tax_use_domain = extra_info['type_tax_use_domain']
-            // 
-            // withholding_elements = body_tree.xpath('.//DatiGeneraliDocumento/DatiRitenuta')
-            // withholding_taxes = []
-            // for withholding in (withholding_elements or []):
-            //     tipo_ritenuta = withholding.find("TipoRitenuta")
-            //     reason = withholding.find("CausalePagamento")
-            //     percentage = withholding.find('AliquotaRitenuta')
-            //     withholding_type = tipo_ritenuta.text if tipo_ritenuta is not None else "RT02"
-            //     withholding_reason = reason.text if reason is not None else "A"
-            //     withholding_percentage = -float(percentage.text if percentage is not None else "0.0")
-            //     withholding_tax = self._l10n_it_edi_search_tax_for_import(
-            //         company,
-            //         withholding_percentage,
-            //         ([('l10n_it_withholding_type', '=', withholding_type),
-            //           ('l10n_it_withholding_reason', '=', withholding_reason)]
-            //          + type_tax_use_domain),
-            //         vat_only=False)
-            //     if withholding_tax:
-            //         withholding_taxes.append(withholding_tax)
-            //     else:
-            //         message_to_log.append(Markup("%s<br/>%s") % (
-            //             _("Withholding tax not found"),
-            //             self.env['account.move']._compose_info_message(body_tree, '.'),
-            //         ))
-            // extra_info["withholding_taxes"] = withholding_taxes
-            // 
-            // pension_fund_elements = body_tree.xpath('.//DatiGeneraliDocumento/DatiCassaPrevidenziale')
-            // pension_fund_taxes = {}
-            // for pension_fund in (pension_fund_elements or []):
-            //     pension_fund_type = pension_fund.find("TipoCassa")
-            //     tax_factor_percent = pension_fund.find("AlCassa")
-            //     vat_tax_factor_percent = pension_fund.find("AliquotaIVA")
-            //     pension_fund_type = pension_fund_type.text if pension_fund_type is not None else ""
-            //     tax_factor_percent = float(tax_factor_percent.text or "0.0")
-            //     vat_tax_factor_percent = float(vat_tax_factor_percent.text or "0.0")
-            //     pension_fund_tax = self._l10n_it_edi_search_tax_for_import(
-            //         company,
-            //         tax_factor_percent,
-            //         ([('l10n_it_pension_fund_type', '=', pension_fund_type)]
-            //          + type_tax_use_domain),
-            //         vat_only=False)
-            //     if pension_fund_tax:
-            //         pension_fund_taxes[vat_tax_factor_percent] = pension_fund_tax
-            //     else:
-            //         message_to_log.append(Markup("%s<br/>%s") % (
-            //             _("Pension Fund tax not found"),
-            //             self.env['account.move']._compose_info_message(body_tree, '.'),
-            //         ))
-            // extra_info["pension_fund_taxes"] = pension_fund_taxes
-            // 
-            // # If the AssoSoftware specs are used on the invoice, then only apply
-            // # the Pension Fund tax to the lines that show an AswCassPre
-            // # additional tag (AltriDatiGestionali)
-            // selector = ".//AltriDatiGestionali/TipoDato[contains(text(), 'AswCassPre')]"
-            // if self.get_tag(body_tree, selector) is not None:
-            //     extra_info["pension_fund_assosoftware_tags"] = True
-            // 
-            // return extra_info, message_to_log
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetFormattersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_formatters(self):
-            // def format_alphanumeric(text, maxlen=None):
-            //     if not text:
-            //         return False
-            //     text = text.encode('latin-1', 'replace').decode('latin-1')
-            //     if maxlen and maxlen > 0:
-            //         text = text[:maxlen]
-            //     elif maxlen and maxlen < 0:
-            //         text = text[maxlen:]
-            //     return text
-            // 
-            // def format_date(dt):
-            //     # Format the date in the italian standard.
-            //     dt = dt or datetime.now()
-            //     return dt.strftime('%Y-%m-%d')
-            // 
-            // def format_monetary(number, currency):
-            //     # Format the monetary values to avoid trailing decimals (e.g. 90.85000000000001).
-            //     return float_repr(number, min(2, currency.decimal_places))
-            // 
-            // def format_float(amount, precision):
-            //     if amount is None or amount is False:
-            //         return None
-            //     # Avoid things like -0.0, see: https://stackoverflow.com/a/11010869
-            //     return '%.*f' % (precision, amount if not float_is_zero(amount, precision_digits=precision) else 0.0)
-            // 
-            // def format_numbers(number):
-            //     #format number to str with between 2 and 8 decimals (event if it's .00)
-            //     number_splited = str(number).split('.')
-            //     if len(number_splited) == 1:
-            //         return "%.02f" % number
-            // 
-            //     cents = number_splited[1]
-            //     if len(cents) > 8:
-            //         return "%.08f" % number
-            //     return float_repr(number, max(2, len(cents)))
-            // 
-            // def format_numbers_two(number):
-            //     #format number to str with 2 (event if it's .00)
-            //     return "%.02f" % number
-            // 
-            // def format_phone(number):
-            //     if not number:
-            //         return False
-            //     number = number.replace(' ', '').replace('/', '').replace('.', '')
-            //     if len(number) > 4 and len(number) < 13:
-            //         return format_alphanumeric(number)
-            //     return False
-            // 
-            // def format_address(street, street2, maxlen=60):
-            //     street, street2 = street or '', street2 or ''
-            //     if street and len(street) >= maxlen:
-            //         street2 = ''
-            //     sep = ' ' if street and street2 else ''
-            //     return format_alphanumeric(f"{street}{sep}{street2}", maxlen)
-            // 
-            // return {
-            //     'format_date': format_date,
-            //     'format_float': format_float,
-            //     'format_monetary': format_monetary,
-            //     'format_numbers': format_numbers,
-            //     'format_numbers_two': format_numbers_two,
-            //     'format_phone': format_phone,
-            //     'format_alphanumeric': format_alphanumeric,
-            //     'format_address': format_address,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object transformed_notification) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_message(self, transformed_notification):
-            // """ The status change will be notified in the chatter of the move.
-            //     Compute the message from the notification information coming from the EDI Proxy Server
-            // """
-            // self.ensure_one()
-            // partner = self.commercial_partner_id
-            // partner_name = partner.display_name
-            // filename = transformed_notification['filename']
-            // new_state = transformed_notification['l10n_it_edi_state']
-            // if new_state == 'rejected':
-            //     DUPLICATE_MOVE = '00404'
-            //     DUPLICATE_FILENAME = '00002'
-            //     error_descriptions = []
-            //     for error_code, error_description in transformed_notification['errors']:
-            //         error_description_copy = error_description
-            //         if error_code == DUPLICATE_MOVE:
-            //             error_description_copy = _(
-            //                 "The e-invoice file %(file)s is duplicated.\n"
-            //                 "Original message from the SdI: %(message)s",
-            //                 file=filename, message=error_description_copy)
-            //         elif error_code == DUPLICATE_FILENAME:
-            //             error_description_copy = _(
-            //                 "The e-invoice filename %(file)s is duplicated. Please check the FatturaPA Filename sequence.\n"
-            //                 "Original message from the SdI: %(message)s",
-            //                 file=filename, message=error_description_copy)
-            //         error_descriptions.append(error_description_copy)
-            // 
-            //     return self._l10n_it_edi_format_errors(_('The e-invoice has been refused by the SdI.'), error_descriptions)
-            // 
-            // elif partner._l10n_it_edi_is_public_administration():
-            //     pa_specific_map = {
-            //         'forwarded': nl2br(_(
-            //             "The e-invoice file %(file)s was succesfully sent to the SdI.\n"
-            //             "%(partner)s has 15 days to accept or reject it.",
-            //             file=filename, partner=partner_name)),
-            //         'forward_attempt': nl2br(_(
-            //             "The e-invoice file %(file)s can't be forward to %(partner)s (Public Administration) by the SdI at the moment.\n"
-            //             "It will try again for 10 days, after which it will be considered accepted, but "
-            //             "you will still have to send it by post or e-mail.",
-            //             file=filename, partner=partner_name)),
-            //         'accepted_by_pa_partner_after_expiry': nl2br(_(
-            //             "The e-invoice file %(file)s is succesfully sent to the SdI. The invoice is now considered fiscally relevant.\n"
-            //             "The %(partner)s (Public Administration) had 15 days to either accept or refused this document,"
-            //             "but since they did not reply, it's now considered accepted.",
-            //             file=filename, partner=partner_name)),
-            //         'rejected_by_pa_partner': nl2br(_(
-            //             "The e-invoice file %(file)s has been refused by %(partner)s (Public Administration).\n"
-            //             "You have 5 days from now to issue a full refund for this invoice, "
-            //             "then contact the PA partner to create a new one according to their "
-            //             "requests and submit it.",
-            //             file=filename, partner=partner_name)),
-            //         'accepted_by_pa_partner': _(
-            //             "The e-invoice file %(file)s has been accepted by %(partner)s (Public Administration), a payment will be issued soon",
-            //             file=filename, partner=partner_name),
-            //     }
-            //     if pa_specific_message := pa_specific_map.get(new_state):
-            //         return pa_specific_message
-            // 
-            // new_state_messages_map = {
-            //     False: _(
-            //         "The e-invoice file %s has not been found on the EDI Proxy server.", filename),
-            //     'processing': nl2br(_(
-            //         "The e-invoice file %s was sent to the SdI for validation.\n"
-            //         "It is not yet considered accepted, please wait further notifications.",
-            //         filename)),
-            //     'forwarded': _(
-            //         "The e-invoice file %(file)s was accepted and succesfully forwarded it to %(partner)s by the SdI.",
-            //         file=filename, partner=partner_name),
-            //     'forward_attempt': nl2br(_(
-            //         "The e-invoice file %(file)s has been accepted by the SdI.\n"
-            //         "The SdI is trying to forward it to %(partner)s.\n"
-            //         "It will try for up to 2 days, after which you'll eventually "
-            //         "need to send it the invoice to the partner by post or e-mail.",
-            //         file=filename, partner=partner_name)),
-            //     'forward_failed': nl2br(_(
-            //         "The e-invoice file %(file)s couldn't be forwarded to %(partner)s.\n"
-            //         "Please remember to send it via post or e-mail.",
-            //         file=filename, partner=partner_name))
-            // }
-            // return new_state_messages_map.get(new_state)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetTaxLinesXmlValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_lines_aggregated_values, object values_per_grouping_key) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_tax_lines_xml_values(self, base_lines_aggregated_values, values_per_grouping_key):
-            // self.ensure_one()
-            // tax_lines = []
-            // for values in values_per_grouping_key.values():
-            //     grouping_key = values['grouping_key']
-            //     if not grouping_key or grouping_key['skip']:
-            //         continue
-            // 
-            //     rounding = values['base_amount']
-            //     for _base_line, aggregated_values in base_lines_aggregated_values:
-            //         if grouping_key in aggregated_values:
-            //             rounding -= aggregated_values[grouping_key]['raw_base_amount']
-            //     if float_is_zero(rounding, precision_digits=8):
-            //         rounding = None
-            // 
-            //     tax_lines.append({
-            //         'aliquota_iva': grouping_key['tax_amount_field'],
-            //         'natura': grouping_key['l10n_it_exempt_reason'],
-            //         'arrotondamento': rounding,
-            //         'imponibile_importo': values['base_amount'],
-            //         'imposta': values['tax_amount'],
-            //         'esigibilita_iva': grouping_key['tax_exigibility_code'],
-            //         'riferimento_normativo': grouping_key['l10n_it_law_reference'],
-            //     })
-            // return tax_lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGetValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object pdf_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_values(self, pdf_values=None):
-            // self.ensure_one()
-            // 
-            // # Flags
-            // is_self_invoice = self.l10n_it_edi_is_self_invoice
-            // document_type = self._l10n_it_edi_get_document_type()
-            // 
-            // # Represent if the document is a reverse charge refund in a single variable
-            // reverse_charge = document_type in ['TD16', 'TD17', 'TD18', 'TD19']
-            // is_downpayment = document_type in ['TD02']
-            // reverse_charge_refund = self.move_type == 'in_refund' and reverse_charge
-            // convert_to_euros = self.currency_id.name != 'EUR'
-            // 
-            // # Base lines.
-            // base_amls = self.line_ids.filtered(lambda x: x.display_type == 'product' or x.display_type == 'rounding')
-            // base_lines = [self._prepare_product_base_line_for_taxes_computation(x) for x in base_amls]
-            // tax_amls = self.line_ids.filtered('tax_repartition_line_id')
-            // tax_lines = [self._prepare_tax_line_for_taxes_computation(x) for x in tax_amls]
-            // 
-            // if reverse_charge_refund:
-            //     for base_line in base_lines:
-            //         base_line['price_unit'] *= -1
-            // 
-            // AccountTax = self.env['account.tax']
-            // AccountTax._add_tax_details_in_base_lines(base_lines, self.company_id)
-            // 
-            // downpayment_lines = []
-            // # Prepare for '_dispatch_negative_lines'
-            // for base_line in base_lines:
-            //     tax_details = base_line['tax_details']
-            //     discount = base_line['discount']
-            //     price_unit = base_line['price_unit']
-            //     quantity = base_line['quantity']
-            //     price_subtotal = base_line['price_subtotal'] = tax_details['raw_total_excluded_currency']
-            // 
-            //     if discount == 100.0:
-            //         gross_price_subtotal_before_discount = price_unit * quantity
-            //     else:
-            //         gross_price_subtotal_before_discount = price_subtotal / (1 - discount / 100.0)
-            // 
-            //     base_line['gross_price_subtotal'] = gross_price_subtotal_before_discount
-            //     base_line['discount_amount_before_dispatching'] = gross_price_subtotal_before_discount - price_subtotal
-            // 
-            //     # The tax "23% Ritenuta Agenti e Rappresentanti" is not supported because it's supposed to be a tax of 23% based on
-            //     # 50% of the base amount. It's currently implemented as a -11.5% tax. So on 1000, it gives an amount of -115.
-            //     # We need to fix the base amount from 1000 to 500.0.
-            //     for tax_data in tax_details['taxes_data']:
-            //         tax = tax_data['tax']
-            //         tax_data['_tax_amount'] = tax.amount
-            //         if tax.amount == -11.5:
-            //             tax_data['_tax_amount'] = -23.0
-            //             tax_data['raw_base_amount'] *= 0.5
-            //             tax_data['raw_base_amount_currency'] *= 0.5
-            // 
-            //     if not is_downpayment:
-            //         # Negative lines linked to down payment should stay negative
-            //         line = base_line['record']
-            //         if line.price_subtotal < 0 and line._get_downpayment_lines():
-            //             downpayment_lines.append(base_line)
-            // 
-            //     if float_compare(quantity, 0, 2) < 0:
-            //         # Negative quantity is refused by SDI, so we invert quantity and price_unit to keep the price_subtotal
-            //         base_line.update({
-            //             'quantity': -quantity,
-            //             'price_unit': -price_unit,
-            //         })
-            // 
-            // AccountTax._round_base_lines_tax_details(base_lines, self.company_id, tax_lines=tax_lines)
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, self._l10n_it_edi_grouping_function_base_lines)
-            // self._l10n_it_edi_add_base_lines_xml_values(base_lines_aggregated_values, is_downpayment)
-            // base_lines = sorted(base_lines, key=lambda base_line: base_line['it_values']['numero_linea'])
-            // 
-            // # Tax lines.
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, self._l10n_it_edi_grouping_function_tax_lines)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // tax_lines = self._l10n_it_edi_get_tax_lines_xml_values(base_lines_aggregated_values, values_per_grouping_key)
-            // 
-            // # Total of the document.
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, self._l10n_it_edi_grouping_function_total)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // importo_totale_documento = 0.0
-            // for values in values_per_grouping_key.values():
-            //     grouping_key = values['grouping_key']
-            //     if grouping_key is False:
-            //         continue
-            //     importo_totale_documento += values['base_amount_currency']
-            //     importo_totale_documento += values['tax_amount_currency']
-            // 
-            // company = self.company_id._l10n_it_get_edi_company()
-            // partner = self.commercial_partner_id
-            // sender = company
-            // buyer = partner if not is_self_invoice else company
-            // seller = company if not is_self_invoice else partner
-            // sender_info_values = company.partner_id._l10n_it_edi_get_values()
-            // buyer_info_values = (partner if not is_self_invoice else company.partner_id)._l10n_it_edi_get_values()
-            // seller_info_values = (company.partner_id if not is_self_invoice else partner)._l10n_it_edi_get_values()
-            // representative_info_values = company.l10n_it_tax_representative_partner_id._l10n_it_edi_get_values()
-            // 
-            // if self._l10n_it_edi_is_simplified_document_type(document_type):
-            //     formato_trasmissione = "FSM10"
-            // elif partner._l10n_it_edi_is_public_administration():
-            //     formato_trasmissione = "FPA12"
-            // else:
-            //     formato_trasmissione = "FPR12"
-            // 
-            // # Reference line for finding the conversion rate used in the document
-            // conversion_rate = float_repr(
-            //     abs(self.amount_total / self.amount_total_signed), precision_digits=5,
-            // ) if convert_to_euros and self.invoice_line_ids else None
-            // 
-            // # Reduce downpayment views to a single recordset
-            // downpayment_moves = self.invoice_line_ids._get_downpayment_lines().move_id
-            // 
-            // return {
-            //     'record': self,
-            //     'base_lines': base_lines,
-            //     'tax_lines': tax_lines,
-            //     'importo_totale_documento': importo_totale_documento,
-            //     'company': company,
-            //     'partner': partner,
-            //     'sender': sender,
-            //     'buyer': buyer,
-            //     'seller': seller,
-            //     'representative': company.l10n_it_tax_representative_partner_id,
-            //     'sender_info': sender_info_values,
-            //     'buyer_info': buyer_info_values,
-            //     'seller_info': seller_info_values,
-            //     'representative_info': representative_info_values,
-            //     'origin_document_type': self.l10n_it_origin_document_type,
-            //     'origin_document_name': self.l10n_it_origin_document_name,
-            //     'origin_document_date': self.l10n_it_origin_document_date,
-            //     'cig': self.l10n_it_cig,
-            //     'cup': self.l10n_it_cup,
-            //     'currency': self.currency_id or self.company_currency_id if not convert_to_euros else self.env.ref('base.EUR'),
-            //     'regime_fiscale': company.l10n_it_tax_system if not is_self_invoice else 'RF18',
-            //     'is_self_invoice': is_self_invoice,
-            //     'partner_bank': self.partner_bank_id,
-            //     'formato_trasmissione': formato_trasmissione,
-            //     'document_type': document_type,
-            //     'payment_method': 'MP05',
-            //     'downpayment_moves': downpayment_moves,
-            //     'reconciled_moves': self._get_reconciled_invoices().filtered(lambda move: move.date <= self.date),
-            //     'rc_refund': reverse_charge_refund,
-            //     'conversion_rate': conversion_rate,
-            //     'balance_multiplicator': -1 if self.is_inbound() else 1,
-            //     'abs': abs,
-            //     'pdf_name': pdf_values['name'] if pdf_values else False,
-            //     'pdf': b64encode(pdf_values['raw']).decode() if pdf_values else False,
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_values(self, pdf_values=None):
-            // # EXTENDS 'l10n_it_edi'
-            // res = super()._l10n_it_edi_get_values(pdf_values)
-            // res['document_type'] = self.l10n_it_document_type.code
-            // res['payment_method'] = self.l10n_it_payment_method
-            // 
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_get_values(self, pdf_values=None):
-            // # EXTENDS 'l10n_it_edi'
-            // template_values = super()._l10n_it_edi_get_values(pdf_values)
-            // base_lines = template_values['base_lines']
-            // 
-            // # Withholding tax amounts.
-            // 
-            // def grouping_function_withholding(base_line, tax_data):
-            //     if not tax_data:
-            //         return None
-            //     tax = tax_data['tax']
-            //     return {
-            //         'tax_amount_field': -23.0 if tax.amount == -11.5 else tax.amount,
-            //         'l10n_it_withholding_type': tax.l10n_it_withholding_type,
-            //         'l10n_it_withholding_reason': tax.l10n_it_withholding_reason,
-            //         'skip': not tax._l10n_it_filter_kind('withholding'),
-            //     }
-            // 
-            // AccountTax = self.env['account.tax']
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, grouping_function_withholding)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // withholding_values = []
-            // for values in values_per_grouping_key.values():
-            //     grouping_key = values['grouping_key']
-            //     if not grouping_key or grouping_key['skip']:
-            //         continue
-            // 
-            //     withholding_values.append({
-            //         'tipo_ritenuta': grouping_key['l10n_it_withholding_type'],
-            //         'importo_ritenuta': -values['tax_amount'],
-            //         'aliquota_ritenuta': -grouping_key['tax_amount_field'],
-            //         'causale_pagamento': grouping_key['l10n_it_withholding_reason'],
-            //     })
-            // 
-            // # Pension fund.
-            // 
-            // def grouping_function_pension_funds(base_line, tax_data):
-            //     if not tax_data:
-            //         return None
-            //     tax = tax_data['tax']
-            //     flatten_taxes = base_line['tax_ids'].flatten_taxes_hierarchy()
-            //     vat_tax = flatten_taxes.filtered(lambda t: t._l10n_it_filter_kind('vat') and t.amount >= 0)[:1]
-            //     withholding_tax = flatten_taxes.filtered(lambda t: t._l10n_it_filter_kind('withholding') and t.sequence > tax.sequence)[:1]
-            //     return {
-            //         'tax_amount_field': -23.0 if tax.amount == -11.5 else tax.amount,
-            //         'vat_tax_amount_field': -23.0 if vat_tax.amount == -11.5 else vat_tax.amount,
-            //         'has_withholding': bool(withholding_tax),
-            //         'l10n_it_pension_fund_type': tax.l10n_it_pension_fund_type,
-            //         'l10n_it_exempt_reason': vat_tax.l10n_it_exempt_reason,
-            //         'description': vat_tax.description,
-            //         'skip': not tax._l10n_it_filter_kind('pension_fund') or tax.l10n_it_pension_fund_type == 'TC07',
-            //     }
-            // 
-            // base_lines_aggregated_values = AccountTax._aggregate_base_lines_tax_details(base_lines, grouping_function_pension_funds)
-            // values_per_grouping_key = AccountTax._aggregate_base_lines_aggregated_values(base_lines_aggregated_values)
-            // pension_fund_values = []
-            // for values in values_per_grouping_key.values():
-            //     grouping_key = values['grouping_key']
-            //     if not grouping_key or grouping_key['skip']:
-            //         continue
-            // 
-            //     pension_fund_values.append({
-            //         'tipo_cassa': grouping_key['l10n_it_pension_fund_type'],
-            //         'al_cassa': grouping_key['tax_amount_field'],
-            //         'importo_contributo_cassa': values['tax_amount'],
-            //         'imponibile_cassa': values['base_amount'],
-            //         'aliquota_iva': grouping_key['vat_tax_amount_field'],
-            //         'ritenuta': 'SI' if grouping_key['has_withholding'] else None,
-            //         'natura': grouping_key['l10n_it_exempt_reason'],
-            //         'riferimento_amministrazione': grouping_key['description'],
-            //     })
-            // 
-            // # Enasarco values.
-            // for base_line in base_lines:
-            //     taxes_data = base_line['tax_details']['taxes_data']
-            //     it_values = base_line['it_values']
-            //     other_data_list = it_values['altri_dati_gestionali_list']
-            // 
-            //     # Withholding
-            //     if any(x for x in taxes_data if x['tax']._l10n_it_filter_kind('withholding')):
-            //         it_values['ritenuta'] = 'SI'
-            // 
-            //     # Enasarco
-            //     enasarco_taxes_data = [x for x in taxes_data if x['tax'].l10n_it_pension_fund_type == 'TC07']
-            //     for enasarco_tax_data in enasarco_taxes_data:
-            //         percentage_str = round(abs(enasarco_tax_data['tax'].amount), 1)
-            //         other_data_list.append({
-            //             'tipo_dato': 'CASSA-PREV',
-            //             'riferimento_testo': f'TC07 - ENASARCO ({percentage_str}%)',
-            //             'riferimento_numero': -enasarco_tax_data['tax_amount'],
-            //             'riferimento_data': None,
-            //         })
-            // 
-            //     # Pension Fund
-            //     if not enasarco_taxes_data:
-            //         pension_fund_taxes_data = [x for x in taxes_data if x['tax']._l10n_it_filter_kind('pension_fund')]
-            //         for pension_fund_tax_data in pension_fund_taxes_data:
-            //             pension_type = pension_fund_tax_data['tax'].l10n_it_pension_fund_type
-            //             percentage_str = round(abs(pension_fund_tax_data['tax'].amount))
-            //             other_data_list.append({
-            //                 'tipo_dato': 'AswCassPre',
-            //                 'riferimento_testo': f'{pension_type} ({percentage_str}%)',
-            //                 'riferimento_numero': None,
-            //                 'riferimento_data': None,
-            //             })
-            // 
-            // # Update the template_values that will be read while rendering
-            // template_values.update({
-            //     'withholding_values': withholding_values,
-            //     'pension_fund_values': pension_fund_values,
-            // })
-            // return template_values
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _l10n_it_edi_get_values(self, pdf_values=None):
-            // template_values = super()._l10n_it_edi_get_values(pdf_values)
-            // template_values['ddt_dict'] = self._get_ddt_values()
-            // return template_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGoodsInItalyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_goods_in_italy(self):
-            // """
-            //     There is a specific TipoDocumento (Document Type TD19) and tax grid (VJ3) for goods
-            //     that are phisically in Italy but are in a VAT deposit, meaning that the goods
-            //     have not passed customs.
-            // """
-            // self.ensure_one()
-            // invoice_lines_tags = self.line_ids.tax_tag_ids
-            // it_tax_report_vj3_lines = self.env['account.report.line'].search([
-            //     ('report_id.country_id.code', '=', 'IT'),
-            //     ('code', '=', 'VJ3'),
-            // ])
-            // vj3_lines_tags = it_tax_report_vj3_lines.expression_ids._get_matching_tags()
-            // return bool(invoice_lines_tags & vj3_lines_tags)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGroupingFunctionBaseLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_base_lines(self, base_line, tax_data):
-            // if not tax_data:
-            //     return None
-            // tax = tax_data['tax']
-            // return {
-            //     'tax_amount_field': -23.0 if tax.amount == -11.5 else tax.amount,
-            //     'tax_amount_type_field': tax.amount_type,
-            //     'skip': tax_data['is_reverse_charge'] or self._l10n_it_edi_is_neg_split_payment(tax_data),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_base_lines(self, base_line, tax_data):
-            // # EXTENDS 'l10n_it_edi'
-            // grouping_key = super()._l10n_it_edi_grouping_function_base_lines(base_line, tax_data)
-            // tax = tax_data['tax']
-            // is_withholding = tax._l10n_it_filter_kind('withholding')
-            // is_pension_fund = tax._l10n_it_filter_kind('pension_fund')
-            // grouping_key['skip'] = grouping_key['skip'] or is_withholding or is_pension_fund
-            // return grouping_key
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGroupingFunctionTaxLinesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_tax_lines(self, base_line, tax_data):
-            // if not tax_data:
-            //     return None
-            // tax = tax_data['tax']
-            // 
-            // if tax._l10n_it_is_split_payment():
-            //     tax_exigibility_code = 'S'
-            // elif tax.tax_exigibility == 'on_payment':
-            //     tax_exigibility_code = 'D'
-            // elif tax.tax_exigibility == 'on_invoice':
-            //     tax_exigibility_code = 'I'
-            // else:
-            //     tax_exigibility_code = None
-            // 
-            // return {
-            //     'tax_amount_field': -23.0 if tax.amount == -11.5 else tax.amount,
-            //     'l10n_it_exempt_reason': tax.l10n_it_exempt_reason,
-            //     'l10n_it_law_reference': tax.l10n_it_law_reference,
-            //     'tax_exigibility_code': tax_exigibility_code,
-            //     'tax_amount_type_field': tax.amount_type,
-            //     'skip': tax_data['is_reverse_charge'] or self._l10n_it_edi_is_neg_split_payment(tax_data),
-            // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_tax_lines(self, base_line, tax_data):
-            // # EXTENDS 'l10n_it_edi'
-            // grouping_key = super()._l10n_it_edi_grouping_function_tax_lines(base_line, tax_data)
-            // tax = tax_data['tax']
-            // is_withholding = tax._l10n_it_filter_kind('withholding')
-            // is_pension_fund = tax._l10n_it_filter_kind('pension_fund')
-            // grouping_key['skip'] = grouping_key['skip'] or is_withholding or is_pension_fund
-            // return grouping_key
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiGroupingFunctionTotalInternalAsync<TEntity>(IEnumerable<TEntity> entities, object base_line, object tax_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_total(self, base_line, tax_data):
-            // if not tax_data:
-            //     return None
-            // skip = tax_data['is_reverse_charge'] or self._l10n_it_edi_is_neg_split_payment(tax_data)
-            // return not skip
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_grouping_function_total(self, base_line, tax_data):
-            // # EXTENDS 'l10n_it_edi'
-            // skip = not super()._l10n_it_edi_grouping_function_total(base_line, tax_data)
-            // tax = tax_data['tax']
-            // is_withholding = tax._l10n_it_filter_kind('withholding')
-            // is_pension_fund = tax._l10n_it_filter_kind('pension_fund')
-            // return not (skip or is_withholding or is_pension_fund)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiImportInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object data, object is_new) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_import_invoice(self, invoice, data, is_new):
-            // """ Decodes a l10n_it_edi move into an Odoo move.
-            // 
-            // :param data:   the dictionary with the content to be imported
-            //                keys: 'filename', 'content', 'xml_tree', 'type', 'sort_weight'
-            // :param is_new: whether the move is newly created or to be updated
-            // :returns:      the imported move
-            // """
-            // with self._get_edi_creation() as self:
-            //     buyer_seller_info = self._l10n_it_buyer_seller_info()
-            // 
-            //     tree = data['xml_tree']
-            //     company = self.company_id
-            // 
-            //     # There are 2 cases:
-            //     # - cron:
-            //     #     * Move direction (incoming / outgoing) flexible (no 'default_move_type')
-            //     #     * I.e. used for import from tax agency
-            //     # - "Upload" button (invoices / bills view)
-            //     #     * Fixed move direction; the button sets the 'default_move_type'
-            //     default_move_type = self.env.context.get('default_move_type')
-            //     if default_move_type is None:
-            //         incoming_possibilities = [True, False]
-            //     elif default_move_type in invoice.get_purchase_types(include_receipts=True):
-            //         incoming_possibilities = [True]
-            //     elif default_move_type in invoice.get_sale_types(include_receipts=True):
-            //         incoming_possibilities = [False]
-            //     else:
-            //         _logger.warning("Cannot handle default_move_type '%s'.", default_move_type)
-            //         return
-            // 
-            //     for incoming in incoming_possibilities:
-            //         company_role, partner_role = ('buyer', 'seller') if incoming else ('seller', 'buyer')
-            //         company_info = buyer_seller_info[company_role]
-            //         vat = get_text(tree, company_info['vat_xpath'])
-            //         if vat and vat .casefold() in (company.vat or '').casefold():
-            //             break
-            //         codice_fiscale = get_text(tree, company_info['codice_fiscale_xpath'])
-            //         if codice_fiscale and codice_fiscale.casefold() in (company.l10n_it_codice_fiscale or '').casefold():
-            //             break
-            //     else:
-            //         invoice.message_post(body=_("Your company's VAT number and Fiscal Code haven't been found in the buyer and/or seller sections inside the document."))
-            //         return
-            // 
-            //     # For unsupported document types, just assume in_invoice, and log that the type is unsupported
-            //     document_type = get_text(tree, '//DatiGeneraliDocumento/TipoDocumento')
-            //     move_type = self._l10n_it_edi_document_type_mapping().get(document_type, {}).get('import_type')
-            //     if not move_type:
-            //         move_type = "in_invoice"
-            //         _logger.info('Document type not managed: %s. Invoice type is set by default.', document_type)
-            //     if not incoming and move_type.startswith('in_'):
-            //         move_type = 'out' + move_type[2:]
-            // 
-            //     self.move_type = move_type
-            // 
-            //     if self.name and self.name != '/':
-            //         # the journal might've changed, so we need to recompute the name in case it was set (first entry in journal)
-            //         self.name = False
-            //         self._compute_name()
-            // 
-            //     # Collect extra info from the XML that may be used by submodules to further put information on the invoice lines
-            //     extra_info, message_to_log = self._l10n_it_edi_get_extra_info(company, document_type, tree, incoming=incoming)
-            // 
-            //     # Partner
-            //     partner_info = buyer_seller_info[partner_role]
-            //     vat = get_text(tree, partner_info['vat_xpath'])
-            //     codice_fiscale = get_text(tree, partner_info['codice_fiscale_xpath'])
-            //     email = get_text(tree, '//DatiTrasmissione//Email') if partner_info['role'] == 'seller' else ''
-            //     if partner := self._l10n_it_edi_search_partner(company, vat, codice_fiscale, email):
-            //         self.partner_id = partner
-            //     else:
-            //         message = Markup("<br/>").join((
-            //             _("Partner not found, useful informations from XML file:"),
-            //             self._compose_info_message(tree, partner_info['section_xpath'])
-            //         ))
-            //         message_to_log.append(message)
-            // 
-            //     # Numbering attributed by the transmitter
-            //     if progressive_id := get_text(tree, '//ProgressivoInvio'):
-            //         self.payment_reference = progressive_id
-            // 
-            //     # Document Number
-            //     if number := get_text(tree, './/DatiGeneraliDocumento//Numero'):
-            //         self.ref = number
-            // 
-            //     # Currency
-            //     if currency_str := get_text(tree, './/DatiGeneraliDocumento/Divisa'):
-            //         currency = self.env.ref('base.%s' % currency_str.upper(), raise_if_not_found=False)
-            //         if currency != self.env.company.currency_id and currency.active:
-            //             self.currency_id = currency
-            // 
-            //     # Date
-            //     if document_date := get_date(tree, './/DatiGeneraliDocumento/Data'):
-            //         self.invoice_date = document_date
-            //     else:
-            //         message_to_log.append(_("Document date invalid in XML file: %s", document_date))
-            // 
-            //     # Stamp Duty
-            //     if stamp_duty := get_text(tree, './/DatiGeneraliDocumento/DatiBollo/ImportoBollo'):
-            //         self.l10n_it_stamp_duty = float(stamp_duty)
-            // 
-            //     # Comment
-            //     for narration in get_text(tree, './/DatiGeneraliDocumento//Causale', many=True):
-            //         self.narration = '%s%s<br/>' % (self.narration or '', narration)
-            // 
-            //     # Informations relative to the purchase order, the contract, the agreement,
-            //     # the reception phase or invoices previously transmitted
-            //     # <2.1.2> - <2.1.6>
-            //     for document_type in ['DatiOrdineAcquisto', 'DatiContratto', 'DatiConvenzione', 'DatiRicezione', 'DatiFattureCollegate']:
-            //         for element in tree.xpath('.//DatiGenerali/' + document_type):
-            //             message = Markup("{} {}<br/>{}").format(document_type, _("from XML file:"), self._compose_info_message(element, '.'))
-            //             message_to_log.append(message)
-            // 
-            //     #  Dati DDT. <2.1.8>
-            //     if elements := tree.xpath('.//DatiGenerali/DatiDDT'):
-            //         message = Markup("<br/>").join((
-            //             _("Transport informations from XML file:"),
-            //             self._compose_info_message(tree, './/DatiGenerali/DatiDDT')
-            //         ))
-            //         message_to_log.append(message)
-            // 
-            //     # Due date. <2.4.2.5>
-            //     if due_date := get_date(tree, './/DatiPagamento/DettaglioPagamento/DataScadenzaPagamento'):
-            //         self.invoice_date_due = fields.Date.to_string(due_date)
-            //     else:
-            //         message_to_log.append(_("Payment due date invalid in XML file: %s", str(due_date)))
-            // 
-            //     # Information related to the purchase order <2.1.2>
-            //     if (po_refs := get_text(tree, '//DatiGenerali/DatiOrdineAcquisto/IdDocumento', many=True)):
-            //         self.invoice_origin = ", ".join(po_refs)
-            // 
-            //     # Total amount. <2.4.2.6>
-            //     if amount_total := sum(float(x) for x in get_text(tree, './/ImportoPagamento', many=True) if x):
-            //         message_to_log.append(_("Total amount from the XML File: %s", amount_total))
-            // 
-            //     # Bank account. <2.4.2.13>
-            //     if self.move_type not in ('out_invoice', 'in_refund'):
-            //         if acc_number := get_text(tree, './/DatiPagamento/DettaglioPagamento/IBAN'):
-            //             if self.partner_id and self.partner_id.commercial_partner_id:
-            //                 bank = self.env['res.partner.bank'].search([
-            //                     ('acc_number', '=', acc_number),
-            //                     ('partner_id', '=', self.partner_id.commercial_partner_id.id),
-            //                     ('company_id', 'in', [self.company_id.id, False])
-            //                 ], order='company_id', limit=1)
-            //             else:
-            //                 bank = self.env['res.partner.bank'].search([
-            //                     ('acc_number', '=', acc_number),
-            //                     ('company_id', 'in', [self.company_id.id, False])
-            //                 ], order='company_id', limit=1)
-            //             if bank:
-            //                 self.partner_bank_id = bank
-            //             else:
-            //                 message = Markup("<br/>").join((
-            //                     _("Bank account not found, useful informations from XML file:"),
-            //                     self._compose_info_message(tree, [
-            //                         './/DatiPagamento//Beneficiario',
-            //                         './/DatiPagamento//IstitutoFinanziario',
-            //                         './/DatiPagamento//IBAN',
-            //                         './/DatiPagamento//ABI',
-            //                         './/DatiPagamento//CAB',
-            //                         './/DatiPagamento//BIC',
-            //                         './/DatiPagamento//ModalitaPagamento'
-            //                     ])
-            //                 ))
-            //                 message_to_log.append(message)
-            //     elif elements := tree.xpath('.//DatiPagamento/DettaglioPagamento'):
-            //         message = Markup("<br/>").join((
-            //             _("Bank account not found, useful informations from XML file:"),
-            //             self._compose_info_message(tree, './/DatiPagamento')
-            //         ))
-            //         message_to_log.append(message)
-            // 
-            //     # Invoice lines. <2.2.1>
-            //     tag_name = './/DettaglioLinee' if not extra_info['simplified'] else './/DatiBeniServizi'
-            //     for element in tree.xpath(tag_name):
-            //         move_line = self.invoice_line_ids.create({
-            //             'move_id': self.id,
-            //             'tax_ids': [fields.Command.clear()]})
-            //         if move_line:
-            //             message_to_log += self._l10n_it_edi_import_line(element, move_line, extra_info)
-            // 
-            //     # Global discount summarized in 1 amount
-            //     if discount_elements := tree.xpath('.//DatiGeneraliDocumento/ScontoMaggiorazione'):
-            //         taxable_amount = float(self.tax_totals['base_amount_currency'])
-            //         discounted_amount = taxable_amount
-            //         for discount_element in discount_elements:
-            //             discount_sign = 1
-            //             if (discount_type := discount_element.xpath('.//Tipo')) and discount_type[0].text == 'MG':
-            //                 discount_sign = -1
-            //             if discount_amount := get_text(discount_element, './/Importo'):
-            //                 discounted_amount -= discount_sign * float(discount_amount)
-            //                 continue
-            //             if discount_percentage := get_text(discount_element, './/Percentuale'):
-            //                 discounted_amount *= 1 - discount_sign * float(discount_percentage) / 100
-            // 
-            //         general_discount = discounted_amount - taxable_amount
-            //         sequence = len(elements) + 1
-            // 
-            //         self.invoice_line_ids = [Command.create({
-            //             'sequence': sequence,
-            //             'name': 'SCONTO' if general_discount < 0 else 'MAGGIORAZIONE',
-            //             'price_unit': general_discount,
-            //         })]
-            // 
-            //     for element in tree.xpath('.//Allegati'):
-            //         attachment_64 = self.env['ir.attachment'].create({
-            //             'name': get_text(element, './/NomeAttachment'),
-            //             'datas': str.encode(get_text(element, './/Attachment')),
-            //             'type': 'binary',
-            //             'res_model': 'account.move',
-            //             'res_id': self.id,
-            //         })
-            // 
-            //         # no_new_invoice to prevent from looping on the.message_post that would create a new invoice without it
-            //         self.with_context(no_new_invoice=True).sudo().message_post(
-            //             body=(_("Attachment from XML")),
-            //             attachment_ids=[attachment_64.id],
-            //         )
-            // 
-            //     for message in message_to_log:
-            //         self.sudo().message_post(body=message)
-            //     return self
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd, FILE: account_move.py) ---
-            // def _l10n_it_edi_import_invoice(self, invoice, data, is_new):
-            // res = super()._l10n_it_edi_import_invoice(invoice=invoice, data=data, is_new=is_new)
-            // if not res:
-            //     return
-            // self = res
-            // 
-            // #l10n_it_payment_method
-            // if payment_method := get_text(data['xml_tree'], '//DatiPagamento/DettaglioPagamento/ModalitaPagamento'):
-            //     if payment_method in self.env['account.payment.method.line']._get_l10n_it_payment_method_selection_code():
-            //         self.l10n_it_payment_method = payment_method
-            // 
-            // return self
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_import_invoice(self, invoice, data, is_new):
-            // """ Handle the case where ENASARCO pension fund contribution should be applied on the invoice globally.
-            // In this case, there should only be one element with ENASARCO and these conditions should be fulfilled:
-            //  - AliquotaIVA is defined
-            //  - PrezzoUnitario == 0.0
-            //  - a corresponding DatiRiepilogo with the same AliquotaIVA and a ImponibileImporto
-            // """
-            // res = super()._l10n_it_edi_import_invoice(invoice=invoice, data=data, is_new=is_new)
-            // if not res:
-            //     return
-            // self = res
-            // tree = data['xml_tree']
-            // global_enasarco_lines = []
-            // for additional_data_element in tree.xpath('//AltriDatiGestionali'):
-            //     data_kind = additional_data_element.xpath('./TipoDato')[0].text.lower()
-            //     if data_kind == 'cassa-prev':
-            //         data_text = additional_data_element.xpath('./RiferimentoTesto')[0].text.lower()
-            //         if 'enasarco' in data_text or 'tc07' in data_text:
-            //             parent_element = additional_data_element.xpath('..')[0]
-            //             price_unit = get_float(parent_element, './PrezzoUnitario')
-            //             if price_unit == 0.0:
-            //                 global_enasarco_lines.append(parent_element)
-            // 
-            // if len(global_enasarco_lines) == 1:
-            //     parent_element = global_enasarco_lines[0]
-            //     enasarco_amount = get_float(parent_element, './AltriDatiGestionali/RiferimentoNumero')
-            //     price_unit = get_float(parent_element, './PrezzoUnitario')
-            //     base_amount = self._get_l10_it_edi_get_taxable_amount_from_summary_data(parent_element.xpath('..')[0])
-            //     enasarco_percentage = -self.currency_id.round(enasarco_amount / base_amount * 100) if base_amount else 0.0
-            //     type_tax_use_domain = [('type_tax_use', '=', 'purchase' if self.is_outbound(include_receipts=True) else 'sale')]
-            //     domain = [('l10n_it_pension_fund_type', '=', 'TC07')] + type_tax_use_domain
-            //     if enasarco_tax := self._l10n_it_edi_search_tax_for_import(self.company_id, enasarco_percentage, domain, vat_only=False):
-            //         to_remove_index = int(get_float(parent_element, './NumeroLinea')) - 1
-            //         self.invoice_line_ids[to_remove_index].unlink()
-            //         self.invoice_line_ids.tax_ids |= enasarco_tax
-            // 
-            // return self
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiImportLineInternalAsync<TEntity>(IEnumerable<TEntity> entities, object element, object move_line_form, object extra_info) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_import_line(self, element, move_line, extra_info=None):
-            // extra_info = extra_info or {}
-            // company = move_line.company_id
-            // partner = move_line.partner_id
-            // message_to_log = []
-            // predict_enabled = self._is_prediction_enabled()
-            // 
-            // # Sequence.
-            // line_elements = element.xpath('.//NumeroLinea')
-            // if line_elements:
-            //     move_line.sequence = int(line_elements[0].text)
-            // 
-            // # Name.
-            // move_line.name = " ".join(get_text(element, './/Descrizione').split())
-            // 
-            // # Product.
-            // if elements_code := element.xpath('.//CodiceArticolo'):
-            //     for element_code in elements_code:
-            //         type_code = element_code.xpath('.//CodiceTipo')[0]
-            //         code = element_code.xpath('.//CodiceValore')[0]
-            //         product = self.env['product.product'].search([('barcode', '=', code.text)])
-            //         if (product and type_code.text == 'EAN'):
-            //             move_line.product_id = product
-            //             break
-            //         if partner:
-            //             product_supplier = self.env['product.supplierinfo'].search([('partner_id', '=', partner.id), ('product_code', '=', code.text)], limit=2)
-            //             if product_supplier and len(product_supplier) == 1 and product_supplier.product_id:
-            //                 move_line.product_id = product_supplier.product_id
-            //                 break
-            //     if not move_line.product_id:
-            //         for element_code in elements_code:
-            //             code = element_code.xpath('.//CodiceValore')[0]
-            //             product = self.env['product.product'].search([('default_code', '=', code.text)], limit=2)
-            //             if product and len(product) == 1:
-            //                 move_line.product_id = product
-            //                 break
-            // 
-            // # If no product is found, try to find a product that may be fitting
-            // if predict_enabled and not move_line.product_id:
-            //     fitting_product = move_line._predict_product()
-            //     if fitting_product:
-            //         name = move_line.name
-            //         move_line.product_id = fitting_product
-            //         move_line.name = name
-            // 
-            // if predict_enabled:
-            //     # Fitting account for the line
-            //     fitting_account = move_line._predict_account()
-            //     if fitting_account:
-            //         move_line.account_id = fitting_account
-            // 
-            // # Quantity.
-            // move_line.quantity = float(get_text(element, './/Quantita') or '1')
-            // 
-            // # Taxes
-            // percentage = None
-            // if not extra_info['simplified']:
-            //     percentage = get_float(element, './/AliquotaIVA')
-            //     if price_unit := get_float(element, './/PrezzoUnitario'):
-            //         move_line.price_unit = price_unit
-            // elif amount := get_float(element, './/Importo'):
-            //     percentage = get_float(element, './/Aliquota')
-            //     if not percentage and (tax_amount := get_float(element, './/Imposta')):
-            //         percentage = round(tax_amount / (amount - tax_amount) * 100)
-            //     move_line.price_unit = amount / (1 + percentage / 100)
-            // 
-            // move_line.tax_ids = []
-            // if percentage is not None:
-            //     l10n_it_exempt_reason = get_text(element, './/Natura').upper() or False
-            //     extra_domain = extra_info.get('type_tax_use_domain', [('type_tax_use', '=', 'purchase')])
-            //     if tax := self._l10n_it_edi_search_tax_for_import(company, percentage, extra_domain, l10n_it_exempt_reason=l10n_it_exempt_reason):
-            //         move_line.tax_ids += tax
-            //     else:
-            //         message = Markup("<br/>").join((
-            //             _("Tax not found for line with description '%s'", move_line.name),
-            //             self._compose_info_message(element, '.')
-            //         ))
-            //         message_to_log.append(message)
-            // 
-            // # If no taxes were found, try to find taxes that may be fitting
-            // if predict_enabled and not move_line.tax_ids:
-            //     fitting_taxes = move_line._predict_taxes()
-            //     if fitting_taxes:
-            //         move_line.tax_ids = [Command.set(fitting_taxes)]
-            // 
-            // # Discounts
-            // if (discounts := element.xpath('.//ScontoMaggiorazione')) and not float_is_zero(move_line.price_unit, precision_rounding=move_line.currency_id.rounding):
-            //     current_unit_price = move_line.price_unit
-            //     # We apply the discounts in the order they are found in the XML.
-            //     # The first discount is applied to the unit price, the second to the result of the first, etc.
-            //     # If the discount is a percentage, it is applied to the unit price.
-            //     # If the discount is an amount, it is subtracted from the unit price.
-            //     # If the computed amount is different than the expected one, we log a message.
-            //     for discount in discounts:
-            //         discount_type = get_text(discount, './/Tipo')
-            //         discount_sign = -1 if discount_type == 'MG' else 1
-            //         if (discount_percentage := get_float(discount, './/Percentuale')) and not float_is_zero(discount_percentage, precision_rounding=move_line.currency_id.rounding):
-            //             current_unit_price *= discount_sign * (100 - discount_percentage) / 100
-            //         elif discount_amount := get_float(discount, './/Importo'):
-            //             current_unit_price -= discount_sign * discount_amount
-            //     expected_total = get_float(element, './/PrezzoTotale')
-            //     current_total = current_unit_price * move_line.quantity
-            //     if float_compare(expected_total, current_total, precision_rounding=move_line.currency_id.rounding) != 0:
-            //         message = Markup("<br/>").join((
-            //             _("The amount_total %(current_total)s is different than PrezzoTotale %(expected_total)s for '%(move_name)s'", current_total=current_total, expected_total=expected_total, move_name=move_line.name),
-            //             self._compose_info_message(element, '.')
-            //         ))
-            //         message_to_log.append(message)
-            //     discount = 100 - (100 * current_unit_price) / move_line.price_unit
-            //     move_line.discount = discount
-            // 
-            // return message_to_log
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_import_line(self, element, move_line_form, extra_info=None):
-            // extra_info = extra_info or {}
-            // messages_to_log = super()._l10n_it_edi_import_line(element, move_line_form, extra_info)
-            // 
-            // type_tax_use_domain = extra_info['type_tax_use_domain']
-            // 
-            // # Eventually apply withholding
-            // for withholding_tax in extra_info.get('withholding_taxes', []):
-            //     withholding_tags = element.xpath("Ritenuta")
-            //     if withholding_tags and withholding_tags[0].text == 'SI':
-            //         move_line_form.tax_ids |= withholding_tax
-            // 
-            // if extra_info['simplified']:
-            //     return messages_to_log
-            // 
-            // price_subtotal = move_line_form.price_unit
-            // company = move_line_form.company_id
-            // 
-            // # Eventually apply pension_fund
-            // if pension_fund_tax := self._get_pension_fund_tax_for_line(element, extra_info):
-            //     move_line_form.tax_ids |= pension_fund_tax
-            // 
-            // # Eventually apply ENASARCO
-            // for other_data_element in element.xpath('.//AltriDatiGestionali'):
-            //     data_kind_element = other_data_element.xpath("./TipoDato")
-            //     text_element = other_data_element.xpath("./RiferimentoTesto")
-            //     if not data_kind_element or not text_element:
-            //         continue
-            //     data_kind, data_text = data_kind_element[0].text.lower(), text_element[0].text.lower()
-            //     if data_kind == 'cassa-prev' and ('enasarco' in data_text or 'tc07' in data_text):
-            //         number_element = other_data_element.xpath("./RiferimentoNumero")
-            //         if not number_element or not price_subtotal:
-            //             continue
-            //         enasarco_amount = float(number_element[0].text)
-            //         enasarco_percentage = -self.env.company.currency_id.round(enasarco_amount / price_subtotal * 100)
-            //         enasarco_tax = self._l10n_it_edi_search_tax_for_import(
-            //             company,
-            //             enasarco_percentage,
-            //             [('l10n_it_pension_fund_type', '=', 'TC07')] + type_tax_use_domain,
-            //             vat_only=False)
-            //         if enasarco_tax:
-            //             move_line_form.tax_ids |= enasarco_tax
-            //         else:
-            //             messages_to_log.append(Markup("%s<br/>%s") % (
-            //                 _("Enasarco tax not found for line with description '%s'", move_line_form.name),
-            //                 self.env['account.move']._compose_info_message(other_data_element, '.'),
-            //             ))
-            // 
-            // return messages_to_log
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiInvoiceIsDirectInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: account_invoice.py) ---
-            // def _l10n_it_edi_invoice_is_direct(self):
-            // """ An invoice is only direct if the Transport Documents are all done the same day as the invoice. """
-            // for ddt in self.l10n_it_ddt_ids:
-            //     if not ddt.date_done or ddt.date_done.date() != self.invoice_date:
-            //         return False
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiIsNegSplitPaymentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tax_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_is_neg_split_payment(self, tax_data):
-            // tax = tax_data['tax']
-            // return (
-            //     tax.amount < 0.0
-            //     and tax_data['group']
-            //     and any(child_tax._l10n_it_is_split_payment() for child_tax in tax_data['group'].children_tax_ids)
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiIsProfessionalFeesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_is_professional_fees(self):
-            // """
-            //     This function returns a boolean value based on the comparison of the lines values with a product.
-            //     If one line has the tag for professional fee then we return True
-            // """
-            // self.ensure_one()
-            // professional_fee_tag = self.env.ref('l10n_it_edi.l10n_it_edi_professional_fees_tag', raise_if_not_found=False)
-            // if not professional_fee_tag:
-            //     return False
-            // 
-            // return any(
-            //     professional_fee_tag.id in line.account_id.tag_ids.ids
-            //     for line in self.invoice_line_ids
-            //     if line.display_type not in ('line_note', 'line_section')
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiIsSimplifiedDocumentTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object document_type) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_is_simplified_document_type(self, document_type):
-            // mapping = self._l10n_it_edi_document_type_mapping()
-            // return mapping.get(document_type, {}).get('simplified', False)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiIsSimplifiedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_is_simplified(self):
-            // """
-            //     Simplified Invoices are a way for the invoice issuer to create an invoice with limited data.
-            //     Example: a consultant goes to the restaurant and wants the invoice instead of the receipt,
-            //     to be able to deduct the expense from his Taxes. The Italian State allows the restaurant
-            //     to issue a Simplified Invoice with the VAT number only, to speed up times, instead of
-            //     requiring the address and other informations about the buyer.
-            //     Only invoices under the threshold of 400 Euroes are allowed, to avoid this tool
-            //     be abused for bigger transactions, that would enable less transparency to tax institutions.
-            // """
-            // self.ensure_one()
-            // template_reference = self.env.ref('l10n_it_edi.account_invoice_it_simplified_FatturaPA_export', raise_if_not_found=False)
-            // buyer = self.commercial_partner_id
-            // checks = ['partner_address_missing', 'partner_vat_codice_fiscale_missing']
-            // return bool(
-            //     template_reference
-            //     and not self.l10n_it_edi_is_self_invoice
-            //     and list(buyer._l10n_it_edi_export_check(checks).keys()) == ['l10n_it_edi_partner_address_missing']
-            //     and (not buyer.country_id or buyer.country_id.code == 'IT')
-            //     and (buyer.l10n_it_codice_fiscale or (buyer.vat and (buyer.vat[:2].upper() == 'IT' or buyer.vat[:2].isdecimal())))
-            //     and self.amount_total <= 400
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiParseNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object notification) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_parse_notification(self, notification):
-            // sdi_state = notification.get('state', '')
-            // if not (xml_content := notification.get('xml_content')):
-            //     return {'sdi_state': sdi_state}
-            // 
-            // decrypted_update_content = etree.fromstring(xml_content)
-            // outcome = get_text(decrypted_update_content, './/Esito')
-            // date_arrival = get_datetime(decrypted_update_content, './/DataOraRicezione') or fields.Date.today()
-            // errors = [(
-            //     get_text(error_element, '//Codice'),
-            //     get_text(error_element, '//Descrizione'),
-            // ) for error_element in decrypted_update_content.xpath('//Errore')]
-            // filename = get_text(decrypted_update_content, './/NomeFile')
-            // 
-            // return {
-            //     'sdi_state': sdi_state,
-            //     'errors': errors,
-            //     'outcome': outcome,
-            //     'date': date_arrival,
-            //     'filename': filename,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiProcessDownloadsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoices_data, object proxy_user) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_process_downloads(self, invoices_data, proxy_user):
-            // """ Every attachment will be committed if stored succesfully.
-            //     Also moves will be committed one by one, even if imported incorrectly.
-            // """
-            // proxy_acks = []
-            // retrigger = False
-            // moves = self.env['account.move']
-            // 
-            // for id_transaction, invoice_data in invoices_data.items():
-            // 
-            //     # The IAP server has a maximum number of documents it can send.
-            //     # If that maximum is reached, then we search for more
-            //     # by re-triggering the download cron, avoiding the timeout.
-            //     current_num = invoice_data.get('current_num', 0)
-            //     max_num = invoice_data.get('max_num', 0)
-            //     retrigger = retrigger or current_num == max_num > 0
-            // 
-            //     # `_l10n_it_edi_create_move_from_attachment` will create an empty move
-            //     # then try and fill it with the content imported from the attachment.
-            //     # Should the import fail, thanks to try..except and savepoint,
-            //     # we will anyway end up with an empty `in_invoice` with the attachment posted on it.
-            //     if move := self.with_company(proxy_user.company_id)._l10n_it_edi_create_move_with_attachment(
-            //         invoice_data['filename'],
-            //         invoice_data['file'],
-            //         invoice_data['key'],
-            //         proxy_user,
-            //     ):
-            // 
-            //         if not modules.module.current_test:
-            //             self.env.cr.commit()
-            //         moves |= move
-            //     proxy_acks.append(id_transaction)
-            // 
-            // # Extend created moves with the related attachments and commit
-            // for move in moves:
-            //     move._extend_with_attachments(move.l10n_it_edi_attachment_id, new=True)
-            //     if not modules.module.current_test:
-            //         self.env.cr.commit()
-            // 
-            // return {"retrigger": retrigger, "proxy_acks": proxy_acks}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiReadyForXmlExportInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_ready_for_xml_export(self):
-            // self.ensure_one()
-            // return (
-            //     self.state == 'posted'
-            //     and self.company_id.account_fiscal_country_id.code == 'IT'
-            //     and self.journal_id.type == 'sale'
-            //     and self.l10n_it_edi_state in (False, 'rejected')
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiRenderXmlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object pdf_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_render_xml(self, pdf_values=None):
-            // ''' Create the xml file content.
-            //     :return:    The XML content as bytestring.
-            // '''
-            // qweb_template_name = (
-            //     'l10n_it_edi.account_invoice_it_FatturaPA_export' if not self._l10n_it_edi_is_simplified()
-            //     else 'l10n_it_edi.account_invoice_it_simplified_FatturaPA_export')
-            // xml_content = self.env['ir.qweb']._render(qweb_template_name, {
-            //     **self._l10n_it_edi_get_values(pdf_values),
-            //     **self._l10n_it_edi_get_formatters()})
-            // xml_node = cleanup_xml_node(xml_content, remove_blank_nodes=False)
-            // return etree.tostring(xml_node, xml_declaration=True, encoding='UTF-8')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiSearchPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object vat, object codice_fiscale, object email) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_search_partner(self, company, vat, codice_fiscale, email):
-            // for domain in [vat and [('vat', 'ilike', vat)],
-            //                codice_fiscale and [('l10n_it_codice_fiscale', 'in', ('IT' + codice_fiscale, codice_fiscale))],
-            //                email and ['|', ('email', '=', email), ('l10n_it_pec_email', '=', email)]]:
-            //     if domain and (partner := self.env['res.partner'].search(
-            //             domain + self.env['res.partner']._check_company_domain(company), limit=1)):
-            //         return partner
-            // return self.env['res.partner']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiSearchTaxForImportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object percentage, object extra_domain, object vat_only, object l10n_it_exempt_reason) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_search_tax_for_import(self, company, percentage, extra_domain=None, l10n_it_exempt_reason=None):
-            // """ Returns the VAT, Withholding or Pension Fund tax that suits the conditions given
-            //     and matches the percentage found in the XML for the company. """
-            // 
-            // # The tax "23% Ritenuta Agenti e Rappresentanti" is not supported because it's supposed to be a tax of 23% based on
-            // # 50% of the base amount. It's currently implemented as a -11.5% tax. So on 1000, it gives an amount of -115.
-            // # We need to fix the base amount from 1000 to 500.0.
-            // if percentage == -23.0:
-            //     percentage = -11.5
-            // 
-            // domain = [
-            //     *self.env['account.tax']._check_company_domain(company),
-            //     ('amount_type', '=', 'percent'),
-            // ] + (extra_domain or [])
-            // 
-            // # We suppose we're importing a file that comes in as a customer invoice where the sale tax will be 0%.
-            // # To retrieve the correct purchase tax, we examine the sale tax's l10n_it_exempt_reason.
-            // # We determine whether the l10n_it_exempt_reason is specific to reverse charge.
-            // reversed_tax_tag = self._l10n_it_edi_exempt_reason_tag_mapping().get(l10n_it_exempt_reason, '')
-            // if not reversed_tax_tag:
-            //     # Normal VAT taxes have a known percentage and generally have all positive repartition lines
-            //     domain += [('amount', '=', percentage), ('l10n_it_exempt_reason', '=', l10n_it_exempt_reason)]
-            //     taxes = self.env['account.tax'].search(domain).filtered(
-            //         lambda tax: all(rep_line.factor_percent >= 0 for rep_line in tax.invoice_repartition_line_ids))
-            // else:
-            //     # In case of reverse charge, the purchase tax has a negative repartition line.
-            //     domain += [('invoice_repartition_line_ids.tag_ids.name', '=', f'+{reversed_tax_tag.lower()}')]
-            //     taxes = self.env['account.tax'].search(domain, order="amount desc").filtered(
-            //         lambda tax: any(rep_line.factor_percent < 0 for rep_line in tax.invoice_repartition_line_ids))
-            // 
-            // return taxes[0] if taxes else taxes
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_withholding, FILE: account_move.py) ---
-            // def _l10n_it_edi_search_tax_for_import(self, company, percentage, extra_domain=None, vat_only=True, l10n_it_exempt_reason=False):
-            // """ In case no withholding_type or pension_fund is specified, exclude taxes that have it.
-            //     It means that we're searching for VAT taxes, especially in the base l10n_it_edi module
-            // """
-            // if vat_only:
-            //     extra_domain = (extra_domain or []) + [('l10n_it_withholding_type', '=', False), ('l10n_it_pension_fund_type', '=', False)]
-            // return super()._l10n_it_edi_search_tax_for_import(company, percentage, extra_domain=extra_domain, l10n_it_exempt_reason=l10n_it_exempt_reason)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def action_l10n_it_edi_send(self):
-            // """ Checks that the invoice data is coherent.
-            //     Attaches the XML file to the invoice.
-            //     Sends the invoice to the SdI.
-            // """
-            // self.ensure_one()
-            // 
-            // if errors := self._l10n_it_edi_export_data_check():
-            //     messages = []
-            //     for error_key, error_data in errors.items():
-            //         message = error_data['message']
-            //         split = error_key.split("_")
-            //         if len(split) > 3 and (model_id := {
-            //             'partner': 'res.partner',
-            //             'move': 'account.move',
-            //             'company': 'res.company'
-            //         }.get(split[3], None)):
-            //             if action := error_data.get('action'):
-            //                 if 'res_id' in action:
-            //                     record_ids = [action['res_id']]
-            //                 else:
-            //                     record_ids = action['domain'][0][2]
-            //                 records = self.env[model_id].browse(record_ids)
-            //                 message = f"{message} - {', '.join(records.mapped('display_name'))}"
-            //         messages.append(nl2br(message))
-            // 
-            //     # Update the vendor bill's header with the warning messages,
-            //     # and force reload the view to make sure the header is loaded
-            //     self.l10n_it_edi_header = Markup('<br/>').join(messages)
-            //     return {
-            //         'type': 'ir.actions.client',
-            //         'tag': 'reload',
-            //     }
-            // 
-            // attachment_vals = self._l10n_it_edi_get_attachment_values(pdf_values=None)
-            // self.env['ir.attachment'].create(attachment_vals)
-            // self.invalidate_recordset(fnames=['l10n_it_edi_attachment_id', 'l10n_it_edi_attachment_file'])
-            // self.message_post(attachment_ids=self.l10n_it_edi_attachment_id.ids)
-            // self._l10n_it_edi_send({self: attachment_vals})
-            // self.is_move_sent = True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiSendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachments_vals) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_send(self, attachments_vals):
-            // self.env['res.company']._with_locked_records(self)
-            // files_to_upload = defaultdict(lambda: (self.env['account.move'], []))
-            // filename_move = {}
-            // 
-            // # Setup moves for sending
-            // for move in self:
-            //     move.l10n_it_edi_header = False
-            //     if move.commercial_partner_id._l10n_it_edi_is_public_administration():
-            //         move.l10n_it_edi_state = 'requires_user_signature'
-            //         move.l10n_it_edi_transaction = False
-            //         move.sudo().message_post(body=nl2br(_(
-            //             "Sending invoices to Public Administration partners is not supported.\n"
-            //             "The IT EDI XML file is generated, please sign the document and upload it "
-            //             "through the 'Fatture e Corrispettivi' portal of the Tax Agency."
-            //         )))
-            //     else:
-            //         attachment_vals = attachments_vals[move]
-            //         filename = attachment_vals['name']
-            //         content = b64encode(attachment_vals['raw']).decode()
-            //         move.l10n_it_edi_state = 'being_sent'
-            //         proxy_user = move.company_id.l10n_it_edi_proxy_user_id
-            //         moves, files = files_to_upload[proxy_user]
-            //         files_to_upload[proxy_user] = (moves | move, files + [{'filename': filename, 'xml': content}])
-            //         filename_move[filename] = move
-            // 
-            // # Upload files
-            // results = {}
-            // try:
-            //     for proxy_user, (moves, files) in files_to_upload.items():
-            //         results.update(moves._l10n_it_edi_upload(files))
-            // except AccountEdiProxyError as e:
-            //     messages_to_log = []
-            //     for filename in filename_move:
-            //         unsent_move = filename_move[filename]
-            //         unsent_move.l10n_it_edi_state = False
-            //         text_message = _("Error uploading the e-invoice file %(file)s.\n%(error)s", file=filename, error=e.message)
-            //         html_message = nl2br(text_message)
-            //         unsent_move.l10n_it_edi_header = text_message
-            //         unsent_move.sudo().message_post(body=html_message)
-            //         messages_to_log.append(text_message)
-            //     raise UserError("\n".join(messages_to_log)) from e
-            // 
-            // # Handle results
-            // for filename, vals in results.items():
-            //     sent_move = filename_move[filename]
-            //     if 'error' in vals:
-            //         sent_move.l10n_it_edi_state = False
-            //         sent_move.l10n_it_edi_transaction = False
-            //         message = nl2br(_("Error uploading the e-invoice file %(file)s.\n%(error)s", file=filename, error=vals['error']))
-            //     else:
-            //         is_demo = vals['id_transaction'] == 'demo'
-            //         sent_move.l10n_it_edi_state = 'processing'
-            //         sent_move.l10n_it_edi_transaction = vals['id_transaction']
-            //         message = (
-            //             _("We are simulating the sending of the e-invoice file %s, as we are in demo mode.", filename)
-            //             if is_demo else _("The e-invoice file %s was sent to the SdI for processing.", filename))
-            //     sent_move.l10n_it_edi_header = message
-            //     sent_move.sudo().message_post(body=message)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiServicesOrGoodsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_services_or_goods(self):
-            // """
-            //     Services and goods have different tax grids when VAT is Reverse Charged, and they can't
-            //     be mixed in the same invoice, because the TipoDocumento depends on which which kind
-            //     of product is bought and it's unambiguous.
-            // """
-            // self.ensure_one()
-            // scopes = []
-            // for line in self.invoice_line_ids.filtered(lambda l: l.display_type not in ('line_note', 'line_section')):
-            //     tax_ids_with_tax_scope = line.tax_ids.filtered(lambda x: x.tax_scope)
-            //     if tax_ids_with_tax_scope:
-            //         scopes += tax_ids_with_tax_scope.mapped('tax_scope')
-            //     else:
-            //         scopes.append(line.product_id and line.product_id.type == 'service' and 'service' or 'consu')
-            // 
-            // if set(scopes) == {'consu', 'service'}:
-            //     return "both"
-            // return scopes and scopes.pop()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiTransformNotificationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object parsed_notification) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_transform_notification(self, parsed_notification):
-            // """ Reads the notification XML coming from the EDI Proxy Server
-            //     Recovers information about the new state.
-            //     Computes whether the EDI Proxy Server is to be acked,
-            //     and whether the id_transaction has to be reset.
-            // """
-            // self.ensure_one()
-            // state_map = {
-            //     'not_found': False,
-            //     'awaiting_outcome': 'processing',
-            //     'notificaScarto': 'rejected',
-            //     'ricevutaConsegna': 'forwarded',
-            //     'forward_attempt': 'forward_attempt',
-            //     'notificaMancataConsegna': 'forward_failed',
-            //     ('notificaEsito', 'EC01'): 'accepted_by_pa_partner',
-            //     ('notificaEsito', 'EC02'): 'rejected_by_pa_partner',
-            //     'notificaDecorrenzaTermini': 'accepted_by_pa_partner_after_expiry',
-            // }
-            // sdi_state = parsed_notification['sdi_state']
-            // filename = parsed_notification.get('filename')
-            // errors = parsed_notification.get('errors', [])
-            // date = parsed_notification.get('date', fields.Date.today())
-            // if not filename and self.l10n_it_edi_attachment_id:
-            //     filename = self.l10n_it_edi_attachment_id.name
-            // outcome = parsed_notification.get('outcome', False)
-            // if not outcome:
-            //     new_state = state_map.get(sdi_state, False)
-            // else:
-            //     new_state = state_map.get((sdi_state, outcome), False)
-            // 
-            // parsed_notification.update({
-            //     'l10n_it_edi_state': new_state,
-            //     'l10n_it_edi_transaction': False if new_state in (False, 'rejected') else self.l10n_it_edi_transaction,
-            //     'send_ack_to_edi_proxy': bool(new_state),
-            //     'date': date,
-            //     'errors': errors,
-            //     'filename': filename,
-            // })
-            // return parsed_notification
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiUpdateSendStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_update_send_state(self):
-            // ''' Check if the current invoices have been processed by the SdI. '''
-            // proxy_user = self.company_id.l10n_it_edi_proxy_user_id
-            // if proxy_user.edi_mode == 'demo':
-            //     for move in self:
-            //         filename = move.l10n_it_edi_attachment_id and move.l10n_it_edi_attachment_id.name or '???'
-            //         self._l10n_it_edi_write_send_state(
-            //             transformed_notification={
-            //                 'l10n_it_edi_state': 'forwarded',
-            //                 'l10n_it_edi_transaction': f'demo_{uuid.uuid4()}',
-            //                 'send_ack_to_edi_proxy': False,
-            //                 'date': fields.Date.today(),
-            //                 'filename': filename},
-            //             message=_("The e-invoice file %s has been sent in Demo EDI mode.", filename))
-            //     return
-            // 
-            // server_url = proxy_user._get_server_url()
-            // try:
-            //     notifications = proxy_user._make_request(
-            //         f'{server_url}/api/l10n_it_edi/1/in/TrasmissioneFatture',
-            //         params={'ids_transaction': self.mapped("l10n_it_edi_transaction")})
-            // except AccountEdiProxyError as pe:
-            //     raise UserError(_("An error occurred while downloading updates from the Proxy Server: (%(code)s) %(message)s", code=pe.code, message=pe.message)) from pe
-            // 
-            // for _id_transaction, notification in notifications.items():
-            //     encrypted_update_content = notification.get('file')
-            //     encryption_key = notification.get('key')
-            //     if (encrypted_update_content and encryption_key):
-            //         notification['xml_content'] = proxy_user._decrypt_data(encrypted_update_content, encryption_key)
-            // 
-            // acks = {'transaction_ids': [], 'states': []}
-            // for move in self:
-            //     notification = notifications[move.l10n_it_edi_transaction]
-            //     parsed_notification = move._l10n_it_edi_parse_notification(notification)
-            //     transformed_notification = move._l10n_it_edi_transform_notification(parsed_notification)
-            //     message = move._l10n_it_edi_get_message(transformed_notification)
-            //     move._l10n_it_edi_write_send_state(transformed_notification, message)
-            //     if (
-            //         transformed_notification.get('send_ack_to_edi_proxy')
-            //         and (id_transaction_to_ack := transformed_notification.get('l10n_it_edi_transaction'))
-            //         and (ack_state := transformed_notification.get('l10n_it_edi_state'))
-            //     ):
-            //         acks['transaction_ids'].append(id_transaction_to_ack)
-            //         acks['states'].append(ack_state)
-            // 
-            // if acks:
-            //     transaction_ids = acks['transaction_ids']
-            //     states = acks['states']
-            //     try:
-            //         proxy_user._make_request(
-            //             f'{server_url}/api/l10n_it_edi/1/ack',
-            //             params={'transaction_ids': transaction_ids, 'states': states})
-            //     except AccountEdiProxyError as pe:
-            //         raise UserError(_("An error occurred while downloading updates from the Proxy Server: (%(code)s) %(message)s", code=pe.code, message=pe.message)) from pe
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiUploadInternalAsync<TEntity>(IEnumerable<TEntity> entities, object files) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_upload(self, files):
-            // '''Upload files to the SdI.
-            // 
-            // :param files:    A list of dictionary {filename, base64_xml}.
-            // :returns:        A dictionary.
-            // * message:       Message from fatturapa.
-            // * transactionId: The fatturapa ID of this request.
-            // * error:         An eventual error.
-            // '''
-            // if not files:
-            //     return {}
-            // proxy_user = self.company_id.l10n_it_edi_proxy_user_id
-            // proxy_user.ensure_one()
-            // if proxy_user.edi_mode == 'demo':
-            //     return {file_data['filename']: {'id_transaction': 'demo'} for file_data in files}
-            // 
-            // ERRORS = {'EI01': _('Attached file is empty'),
-            //           'EI02': _('Service momentarily unavailable'),
-            //           'EI03': _('Unauthorized user')}
-            // 
-            // server_url = proxy_user._get_server_url()
-            // results = proxy_user._make_request(
-            //     f'{server_url}/api/l10n_it_edi/1/out/SdiRiceviFile',
-            //     params={'files': files})
-            // 
-            // for filename, vals in results.items():
-            //     if 'error' in vals:
-            //         results[filename]['error'] = ERRORS.get(vals.get('error'), _("Unknown error"))
-            // 
-            // return results
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nItEdiWriteSendStateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object transformed_notification, object message) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _l10n_it_edi_write_send_state(self, transformed_notification, message):
-            // """ Update the record with the data coming from the IAP server.
-            //     Eventually post the message.
-            //     Commit the transaction.
-            // """
-            // self.ensure_one()
-            // old_state = self.l10n_it_edi_state
-            // new_state = transformed_notification['l10n_it_edi_state']
-            // self.write({
-            //     'l10n_it_edi_state': new_state,
-            //     'l10n_it_edi_transaction': transformed_notification['l10n_it_edi_transaction'],
-            //     'l10n_it_edi_header': message or False,
-            // })
-            // 
-            // if message and old_state != new_state:
-            //     self.with_context(no_new_invoice=True).sudo().message_post(body=message)
-            // 
-            // if new_state == 'rejected':
-            //     self.l10n_it_edi_attachment_file = False
-            // 
-            // self.env.cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoBuildJofotaraHeadersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_build_jofotara_headers(self):
-            // self.ensure_one()
-            // return {
-            //     'Client-Id': self.sudo().company_id.l10n_jo_edi_client_identifier,
-            //     'Secret-Key': self.sudo().company_id.l10n_jo_edi_secret_key,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoEdiGetXmlAttachmentNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_edi_get_xml_attachment_name(self):
-            // return f"{self.name.replace('/', '_')}_edi.xml"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoEdiSendInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_edi_send(self):
-            // self.ensure_one()
-            // if not self.env['res.company']._with_locked_records(records=self, allow_raising=False):
-            //     return
-            // if error_message := self._l10n_jo_validate_config() or self._l10n_jo_validate_fields() or self._submit_to_jofotara():
-            //     self.l10n_jo_edi_error = error_message
-            //     return error_message
-            // else:
-            //     self._mark_sent_jo_edi()
-            //     self.with_context(no_new_invoice=True).message_post(
-            //         body=_("E-invoice (JoFotara) submitted successfully."),
-            //         attachment_ids=self.l10n_jo_edi_xml_attachment_id.ids,
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoEdiStateSentOptionsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_edi_state_sent_options(self):
-            // return ['sent']
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _l10n_jo_edi_state_sent_options(self):
-            // return ['sent', 'demo']
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoQrCodeSrcInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_qr_code_src(self):
-            // self.ensure_one()
-            // encoded_params = url_encode({
-            //     'barcode_type': 'QR',
-            //     'value': self.l10n_jo_edi_qr,
-            //     'width': 200,
-            //     'height': 200,
-            // })
-            // return f'/report/barcode/?{encoded_params}'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoValidateConfigInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_validate_config(self):
-            // error_msgs = []
-            // if not self.sudo().company_id.l10n_jo_edi_client_identifier:
-            //     error_msgs.append(_("Client ID is missing."))
-            // if not self.sudo().company_id.l10n_jo_edi_secret_key:
-            //     error_msgs.append(_("Secret key is missing."))
-            // if not self.company_id.l10n_jo_edi_taxpayer_type:
-            //     error_msgs.append(_("Taxpayer type is missing."))
-            // if not self.company_id.l10n_jo_edi_sequence_income_source:
-            //     error_msgs.append(_("Activity number (Sequence of income source) is missing."))
-            // 
-            // if error_msgs:
-            //     return _("%s \nTo set: Configuration > Settings > Electronic Invoicing (Jordan)", "\n".join(error_msgs))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nJoValidateFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _l10n_jo_validate_fields(self):
-            // def has_non_digit_vat(partner, partner_type, error_msgs):
-            //     if partner.vat and not partner.vat.isdigit():
-            //         error_msgs.append(_("JoFotara portal cannot process %s VAT with non-digit characters in it", partner_type))
-            // 
-            // error_msgs = []
-            // 
-            // customer = self.partner_id
-            // has_non_digit_vat(customer, 'customer', error_msgs)
-            // 
-            // supplier = self.company_id.partner_id.commercial_partner_id
-            // has_non_digit_vat(supplier, 'supplier', error_msgs)
-            // 
-            // if self.move_type == 'out_refund':
-            //     if not self.reversed_entry_id:
-            //         error_msgs.append(_('Please use "Reversal of" to link this credit note with an Invoice'))
-            //     elif self.currency_id != self.reversed_entry_id.currency_id:
-            //         error_msgs.append(_("Please make sure the currency of the credit note is the same as the related invoice"))
-            // 
-            //     if not self.ref:
-            //         error_msgs.append(_('Please make sure the "Customer Reference" contains the reason for the return'))
-            // 
-            // if any(
-            //     line.display_type not in ('line_note', 'line_section')
-            //     and (line.quantity < 0 or line.price_unit < 0)
-            //     for line in self.invoice_line_ids
-            // ):
-            //     error_msgs.append(_("JoFotara portal cannot process negative quantity nor negative price on invoice lines"))
-            // 
-            // for line in self.invoice_line_ids.filtered(lambda line: line.display_type not in ('line_note', 'line_section')):
-            //     if self.company_id.l10n_jo_edi_taxpayer_type == 'income' and len(line.tax_ids) != 0:
-            //         error_msgs.append(_("No taxes are allowed on invoice lines for taxpayers unregistered in the sales tax"))
-            //     elif self.company_id.l10n_jo_edi_taxpayer_type == 'sales' and len(line.tax_ids) != 1:
-            //         error_msgs.append(_("One general tax per invoice line is expected for taxpayers registered in the sales tax"))
-            //     elif self.company_id.l10n_jo_edi_taxpayer_type == 'special' and len(line.tax_ids) != 2:
-            //         error_msgs.append(_("One special and one general tax per invoice line is expected for taxpayers registered in the special tax"))
-            // 
-            // return "\n".join(error_msgs)
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _l10n_jo_validate_fields(self):
-            // error_msgs = []
-            // if not self.preferred_payment_method_line_id:
-            //     error_msgs.append(_("Please select a payment method before submission."))
-            // if not self.l10n_jo_edi_invoice_type:
-            //     error_msgs.append(_("Please select an invoice type before submitting this invoice to JoFotara."))
-            // error_msgs.append(super()._l10n_jo_validate_fields())
-            // return "\n".join(error_msgs)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeCuLinesMessagesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_cu_lines_messages(self):
-            // """ Serialise the data of each line on the invoice
-            // 
-            // This function transforms the lines in order to handle the differences
-            // between the KRA expected data and the lines in odoo.
-            // 
-            // If a discount line (as a negative line) has been added to the invoice
-            // lines, find a suitable line/lines to distribute the discount accross
-            // 
-            // :returns: List of byte-strings representing each command <CMD> and the
-            //           <DATA> of the line, which will be sent to the fiscal device
-            //           in order to add a line to the opened invoice.
-            // """
-            // def is_discount_line(line):
-            //     return line.price_subtotal < 0.0
-            // 
-            // def is_candidate(discount_line, other_line):
-            //     """ If the of one line match those of the discount line, the discount can be distributed accross that line """
-            //     discount_taxes = discount_line.tax_ids.flatten_taxes_hierarchy()
-            //     other_line_taxes = other_line.tax_ids.flatten_taxes_hierarchy()
-            //     return set(discount_taxes.ids) == set(other_line_taxes.ids)
-            // 
-            // lines = self.invoice_line_ids.filtered(lambda l: l.display_type == 'product' and l.quantity and l.price_total)
-            // # The device expects all monetary values in Kenyan Shillings
-            // if self.currency_id == self.company_id.currency_id:
-            //     currency_rate = 1
-            // # In the case of a refund, use the currency rate of the original invoice
-            // elif self.move_type == 'out_refund' and self.reversed_entry_id:
-            //     currency_rate = abs(self.reversed_entry_id.amount_total_signed / self.reversed_entry_id.amount_total)
-            // else:
-            //     currency_rate = abs(self.amount_total_signed / self.amount_total)
-            // 
-            // discount_dict = {line.id: line.discount for line in lines if line.price_total > 0}
-            // for line in lines:
-            //     if not is_discount_line(line):
-            //         continue
-            //     # Search for non-discount lines
-            //     candidate_vals_list = [l for l in lines if not is_discount_line(l) and is_candidate(l, line)]
-            //     candidate_vals_list = sorted(candidate_vals_list, key=lambda x: x.price_unit * x.quantity, reverse=True)
-            //     line_to_discount = abs(line.price_unit * line.quantity)
-            //     for candidate in candidate_vals_list:
-            //         still_to_discount = abs(candidate.price_unit * candidate.quantity * (100.0 - discount_dict[candidate.id]) / 100.0)
-            //         if line_to_discount >= still_to_discount:
-            //             discount_dict[candidate.id] = 100.0
-            //             line_to_discount -= still_to_discount
-            //         else:
-            //             rest_to_discount = abs((line_to_discount / (candidate.price_unit * candidate.quantity)) * 100.0)
-            //             discount_dict[candidate.id] += rest_to_discount
-            //             break
-            // 
-            // msgs = []
-            // tax_details = self._prepare_invoice_aggregated_taxes()
-            // for line in self.invoice_line_ids.filtered(lambda l: l.display_type == 'product' and l.quantity and l.price_total > 0 and not discount_dict.get(l.id) >= 100):
-            //     # Here we use the original discount of the line, since it the distributed discount has not been applied in the price_total
-            //     price_total = 0
-            //     percentage = 0
-            //     item_code = line.tax_ids[0].l10n_ke_item_code_id
-            //     for tax in tax_details['tax_details_per_record'][line]['tax_details']:
-            //         if tax.amount in (16, 8, 0):  # This should only occur once
-            //             line_tax_details = tax_details['tax_details_per_record'][line]['tax_details'][tax]
-            //             price_total = abs(line_tax_details['base_amount_currency']) + abs(line_tax_details['tax_amount_currency'])
-            //             percentage = tax.amount
-            //     price = round(price_total / abs(line.quantity) * 100 / (100 - line.discount), line.currency_id.decimal_places) * currency_rate
-            //     price = ('%.5f' % price).rstrip('0').rstrip('.')
-            //     uom = line.product_uom_id and line.product_uom_id.name or ''
-            // 
-            //     line_data = b';'.join([
-            //         self._l10n_ke_fmt(line.name, 36),                       # 36 symbols for the article's name
-            //         self._l10n_ke_fmt(item_code.tax_rate or 'A', 1),        # 1 symbol for article's vat class ('A', 'B', 'C', 'D', or 'E')
-            //         price[:15].encode('cp1251'),                    # 1 to 15 symbols for article's price with up to 5 digits after decimal point
-            //         self._l10n_ke_fmt(uom, 3),                              # 3 symbols for unit of measure
-            //         (item_code.code or '').ljust(10).encode('cp1251'),      # 10 symbols for KRA item code in the format xxxx.xx.xx (can be empty)
-            //         self._l10n_ke_fmt(item_code.description or '', 20),     # 20 symbols for KRA item code description (can be empty)
-            //         str(percentage).encode('cp1251')[:5]                    # up to 5 symbols for vat rate
-            //     ])
-            //     # 1 to 10 symbols for quantity
-            //     line_data += b'*' + str(abs(line.quantity)).encode('cp1251')[:10]
-            //     if discount_dict.get(line.id):
-            //         # 1 to 7 symbols for percentage of discount/addition
-            //         discount_sign = b'-' if discount_dict[line.id] > 0 else b'+'
-            //         discount = discount_sign + str(abs(discount_dict[line.id])).encode('cp1251')[:6]
-            //         line_data += b',' + discount + b'%'
-            // 
-            //     # Command: Sale of article (0x31)
-            //     msgs += [b'\x31' + line_data]
-            // return msgs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeCuOpenInvoiceMessageInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_cu_open_invoice_message(self):
-            // """ Serialise the required fields for opening an invoice
-            // 
-            // :returns: a list containing one byte-string representing the <CMD> and
-            //           <DATA> of the message sent to the fiscal device.
-            // """
-            // headquarter_address = (self.commercial_partner_id.street or '') + (self.commercial_partner_id.street2 or '')
-            // customer_address = (self.partner_id.street or '') + (self.partner_id.street2 or '')
-            // postcode_and_city = (self.partner_id.zip or '') + '' +  (self.partner_id.city or '')
-            // vat = (self.commercial_partner_id.vat or '').strip() if self.commercial_partner_id.country_id.code == 'KE' else ''
-            // invoice_elements = [
-            //     b'1',                                                   # Reserved - 1 symbol with value '1'
-            //     b'     0',                                              # Reserved - 6 symbols with value ‘     0’
-            //     b'0',                                                   # Reserved - 1 symbol with value '0'
-            //     b'1' if self.move_type == 'out_invoice' else b'A',      # 1 symbol with value '1' (new invoice), 'A' (credit note), or '@' (debit note)
-            //     self._l10n_ke_fmt(self.commercial_partner_id.name, 30), # 30 symbols for Company name
-            //     self._l10n_ke_fmt(vat, 14),                             # 14 Symbols for the client PIN number
-            //     self._l10n_ke_fmt(headquarter_address, 30),             # 30 Symbols for customer headquarters
-            //     self._l10n_ke_fmt(customer_address, 30),                # 30 Symbols for the address
-            //     self._l10n_ke_fmt(postcode_and_city, 30),               # 30 symbols for the customer post code and city
-            //     self._l10n_ke_fmt('', 30),                              # 30 symbols for the exemption number
-            // ]
-            // if self.move_type == 'out_refund':
-            //     invoice_elements.append(self._l10n_ke_fmt(self.reversed_entry_id.l10n_ke_cu_invoice_number, 19)), # 19 symbols for related invoice number
-            // invoice_elements.append(re.sub('[^A-Za-z0-9 ]+', '', self.name)[-15:].ljust(15).encode('cp1251'))     # 15 symbols for trader system invoice number
-            // 
-            // # Command: Open fiscal record (0x30)
-            // return [b'\x30' + b';'.join(invoice_elements)]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeCuPostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def l10n_ke_action_cu_post(self):
-            // """ Returns the client action descriptor dictionary for sending the
-            //     invoice(s) to the control unit (the fiscal device).
-            // """
-            // # If l10n_ke_edi_oscu is configured for the company, disable sending via TREMOL.
-            // if self.company_id.l10n_ke_oscu_is_active:
-            //     raise UserError(
-            //         _('An OSCU has been initialized for this company. Please send the e-invoice via Send and Print -> Send to eTIMS instead.')
-            //     )
-            // # Check the configuration of the invoice
-            // errors = self._l10n_ke_validate_move()
-            // if errors:
-            //     error_msg = ""
-            //     for move, error_list in errors:
-            //         error_list = '\n'.join(error_list)
-            //         error_msg += _("Invalid invoice configuration on %(invoice)s:\n%(error_list)s\n\n", invoice=move, error_list=error_list)
-            //     raise UserError(error_msg)
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'l10n_ke_post_send',
-            //     'params': [
-            //         {
-            //             'move_id': move.id,
-            //             'messages': json.dumps([msg.decode('cp1251') for msg in move._l10n_ke_get_cu_messages()]),
-            //             'proxy_address': move.company_id.l10n_ke_cu_proxy_address,
-            //             'company_vat': move.company_id.vat,
-            //             'name': move.name,
-            //         } for move in self
-            //     ]
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeCuResponsesAsync<TEntity>(IEnumerable<TEntity> entities, object responses) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def l10n_ke_cu_responses(self, responses):
-            // """ Set the fields related to the fiscal device on the invoice.
-            // 
-            // This is intended to be utilized by an RPC call from the javascript
-            // client action. The fields are prefixed with l10n_ke_cu_*, which refers
-            // to the fact that they originate from the control unit.
-            // """
-            // for response in responses:
-            //     move = self.browse(int(response['move_id']))
-            //     replies = [msg for msg in response['replies']]
-            //     move.update({
-            //         'l10n_ke_cu_serial_number': response['serial_number'],
-            //         'l10n_ke_cu_invoice_number': replies[-2].split(';')[0],
-            //         'l10n_ke_cu_qrcode': replies[-2].split(';')[1].strip(),
-            //         'l10n_ke_cu_datetime': datetime.strptime(replies[-1], '%d-%m-%Y %H:%M'),
-            //     })
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeFiscalDeviceDetailsFilledInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_fiscal_device_details_filled(self):
-            // self.ensure_one()
-            // # If the company is configured for OSCU, don't block the Send & Print.
-            // if self.company_id.l10n_ke_oscu_is_active:
-            //     return True
-            // return all([
-            //     self.country_code == 'KE',
-            //     self.l10n_ke_cu_invoice_number,
-            //     self.l10n_ke_cu_serial_number,
-            //     self.l10n_ke_cu_qrcode,
-            //     self.l10n_ke_cu_datetime,
-            // ])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeFmtInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @string, object length, object ljust) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_fmt(self, string, length, ljust=True):
-            // """ Function for common formatting behaviour
-            // 
-            // :param string: string to be formatted/encoded
-            // :param length: integer length to justify (if enabled), and then truncate the string to
-            // :param ljust:  boolean representing whether the string should be justified
-            // :returns:      byte-string justified/truncated, with all non-alphanumeric characters removed
-            // """
-            // if not string:
-            //     string = ''
-            // return re.sub('[^A-Za-z0-9 ]+', '', str(string)).encode('cp1251').ljust(length if ljust else 0)[:length]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeGetCuMessagesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_get_cu_messages(self):
-            // """ Composes a list of all the command and data parts of the messages
-            //     required for the fiscal device to open an invoice, add lines and
-            //     subsequently close it.
-            // """
-            // self.ensure_one()
-            // msgs = self._l10n_ke_cu_open_invoice_message()
-            // msgs += self._l10n_ke_cu_lines_messages()
-            // # Command: Close fiscal reciept (0x38)
-            // msgs += [b'\x38']
-            // # Command: Read date and time (0x68)
-            // msgs += [b'\x68']
-            // return msgs
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nKeValidateMoveInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ke_edi_tremol, FILE: account_move.py) ---
-            // def _l10n_ke_validate_move(self):
-            // """ Returns list of errors related to misconfigurations per move
-            // 
-            // Find misconfigurations on the move, the lines of the move, and the
-            // taxes on those lines that would result in rejection by the KRA.
-            // """
-            // errors = []
-            // for move in self:
-            //     move_errors = []
-            //     if move.country_code != 'KE':
-            //         move_errors.append(_("This invoice is not a Kenyan invoice and therefore can not be sent to the device."))
-            // 
-            //     if move.company_id.currency_id != self.env.ref('base.KES'):
-            //         move_errors.append(_("This invoice's company currency is not in Kenyan Shillings, conversion to KES is not possible."))
-            // 
-            //     if move.state != 'posted':
-            //         move_errors.append(_("This invoice/credit note has not been posted. Please confirm it to continue."))
-            // 
-            //     if move.move_type not in ('out_refund', 'out_invoice'):
-            //         move_errors.append(_("The document being sent should be an invoice or credit note."))
-            // 
-            //     if any([move.l10n_ke_cu_invoice_number, move.l10n_ke_cu_serial_number, move.l10n_ke_cu_qrcode, move.l10n_ke_cu_datetime]):
-            //         move_errors.append(_("The document already has details related to the fiscal device. Please make sure that the invoice has not already been sent."))
-            // 
-            //     # The credit note should refer to the control unit number (receipt number) of the original
-            //     # invoice to which it relates.
-            //     if move.move_type == 'out_refund' and not move.reversed_entry_id.l10n_ke_cu_invoice_number:
-            //         move_errors.append(_("This credit note must reference the previous invoice, and this previous invoice must have already been submitted."))
-            // 
-            //     for line in self.invoice_line_ids.filtered(lambda l: l.display_type == 'product'):
-            //         vat_taxes = line.tax_ids.filtered(lambda tax: tax.amount in (16, 8, 0))
-            //         if not vat_taxes or len(vat_taxes) > 1:
-            //             move_errors.append(_("On line %s, you must select one and only one VAT tax.", line.name))
-            //         else:
-            //             if vat_taxes[0].amount == 0 and not line.tax_ids[0].l10n_ke_item_code_id:
-            //                 move_errors.append(_("On line %s, a tax with a KRA item code must be selected, since the tax is 0%% or exempt.", line.name))
-            // 
-            //     if move_errors:
-            //         errors.append((move.name, move_errors))
-            // 
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiCancelMovesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_cancel_moves(self):
-            // """ Try to cancel the moves in self if allowed by the lock date. """
-            // for move in self:
-            //     try:
-            //         move._check_fiscal_lock_dates()
-            //         move.line_ids._check_tax_lock_date()
-            //         move.button_cancel()
-            //     except UserError as e:
-            //         move.with_context(no_new_invoice=True).message_post(
-            //             body=_(
-            //                 'The invoice has been canceled on MyInvois, '
-            //                 'But the cancellation in Odoo failed with error: %(error)s\n'
-            //                 'Please resolve the problem manually, and then cancel the invoice.', error=e
-            //             )
-            //         )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiCheckCanUpdateStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_check_can_update_status(self):
-            // """ The document status can only be updated (for rejection, or cancellation) up to 72h after the validation time.
-            // After that, any update will be rejected by the platform, as you are expected to issue a debit/credit note.
-            // 
-            // This helper will raise if the status cannot be updated.
-            // """
-            // self.ensure_one()
-            // if not self.l10n_my_edi_validation_time:
-            //     return
-            // 
-            // time_difference = datetime.datetime.now() - self.l10n_my_edi_validation_time
-            // if time_difference >= datetime.timedelta(days=3):
-            //     raise UserError(_('It has been more than 72h since the invoice validation, you can no longer cancel it.\n'
-            //                       'Instead, you should issue a debit or credit note.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiEnsureProxyUserInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_ensure_proxy_user(self):
-            // # We need this fallback, as this method could be called by a cron.
-            // company = self.company_id or self.env.company
-            // 
-            // proxy_user = company.l10n_my_edi_proxy_user_id
-            // if not proxy_user:
-            //     raise UserError(_("Please register for the E-Invoicing service in the settings first."))
-            // 
-            // return proxy_user
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiFetchStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_fetch_status(self):
-            // """ Action to fetch the status of a single invoice. """
-            // self.ensure_one()
-            // proxy_user = self._l10n_my_edi_ensure_proxy_user()
-            // 
-            // # What to do with the given status is to be handled by the calling code.
-            // return proxy_user._l10n_my_edi_contact_proxy(
-            //     endpoint='api/l10n_my_edi/1/get_status',
-            //     params={
-            //         'document_uuid': self.l10n_my_edi_external_uuid,
-            //     },
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiFetchUpdatedStatusesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_fetch_updated_statuses(self, commit=True):
-            // """
-            // Contact our IAP service in order to get the status of the invoices in self.
-            // Statuses are fetched in batches using the l10n_my_edi_submission_uid field.
-            // One batch is at most 100 invoices.
-            // 
-            // Note that this is only expected to be used during the submission flow, and not later.
-            // """
-            // proxy_user = self._l10n_my_edi_ensure_proxy_user()
-            // 
-            // self.env['res.company']._with_locked_records(self)
-            // 
-            // errors = {}
-            // any_in_progress = False
-            // invalid_moves = self.env['account.move']
-            // for submission_uid, move_batch in self.grouped('l10n_my_edi_submission_uid').items():
-            //     if not submission_uid:
-            //         continue  # While it should never happen, it does not hurt to ensure that we won't try anything in such cases.
-            // 
-            //     error, statuses = self._l10n_my_get_submission_status(submission_uid, proxy_user)
-            // 
-            //     if error:
-            //         errors.update({move: [error] for move in move_batch})
-            //         continue
-            // 
-            //     for move in move_batch:
-            //         status_info = statuses.get(move.l10n_my_edi_external_uuid)
-            //         # l10n_my_edi_state would already be in progress as its set during submission
-            //         if ((status_info and status_info["status"] == "in_progress") or
-            //                 (not status_info and move.l10n_my_edi_state == "in_progress")):
-            //             any_in_progress = True
-            // 
-            //         # If the status did not change, we do not need to do anything.
-            //         if not status_info or move.l10n_my_edi_state == status_info['status']:
-            //             continue
-            // 
-            //         move.l10n_my_edi_state = status_info['status']
-            //         if move.l10n_my_edi_state == 'invalid':
-            //             invalid_moves |= move
-            //             # Most of the time no reason is provided, but this is not useful. So we will fetch the exact errors individually.
-            //             if status_info.get('reason'):
-            //                 errors[move] = [_('The MyInvois platform returned an "Invalid" status for this invoice for reason: %(reason)s', reason=status_info['reason'])]
-            //             else:
-            //                 result = move._l10n_my_edi_fetch_status()
-            //                 if 'error' in result:
-            //                     errors[move] = [self._l10n_my_edi_map_error(result['error'])]
-            //                 elif 'validation_errors' in result:
-            //                     errors[move] = [self.env['account.move.send']._format_error_html({
-            //                         'error_title': _('The validation failed with the following errors:'),
-            //                         'errors': result['validation_errors'],
-            //                     })]
-            //                 elif result['status_reason']:
-            //                     errors[move] = [result['status_reason']]
-            //         elif move.l10n_my_edi_state == 'valid':
-            //             move._update_validation_fields(status_info)
-            // 
-            //     if commit and self._can_commit():
-            //         self._cr.commit()
-            // 
-            // # We don't consider these errors per-say. From my understanding an invalid invoice is considered as cancelled,
-            // # so a new one must be issued.
-            // # For ease of use, we allow an invalid invoice to be reset to draft, but this will erase all links to the previously
-            // # cancelled invoice.
-            // if errors:
-            //     # According to their documentation, you cannot cancel an already invalid invoice (they are considered cancelled by default)
-            //     # It makes sense to consider these cancelled in Odoo too, for simplicity.
-            //     invalid_moves._l10n_my_edi_cancel_moves()
-            // 
-            // # Invalid or in progress invoices must return errors to stop the email sending/...
-            // return errors, any_in_progress
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiGenerateInvoiceXmlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_generate_invoice_xml(self):
-            // """ This edi's file is basically an ubl 2.1 file with some specificities. """
-            // self.ensure_one()
-            // return self.env['account.edi.xml.ubl_myinvois_my']._export_invoice(self)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiGetStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves, object commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _l10n_my_edi_get_status(self, moves, commit=True):
-            // AccountMoveSend = self.env['account.move.send']
-            // retry = 0
-            // errors, any_in_progress = moves._l10n_my_edi_fetch_updated_statuses(commit)
-            // while any_in_progress and retry < 3:
-            //     if self._can_commit():
-            //         time.sleep(1 + retry)  # We wait a while before retrying, only when not in test mode
-            //     errors, any_in_progress = moves._l10n_my_edi_fetch_updated_statuses(commit)
-            //     retry += 1
-            // # While technically an in_progress status is not an error, it won't hurt much to display it as such.
-            // # The "error" message in this case should be clear enough.
-            // for move in moves.filtered(lambda m: m in errors):
-            //     move.message_post(body=AccountMoveSend._format_error_html({
-            //         'error_title': _('Error when sending the invoices to the E-invoicing service.'),
-            //         'errors': errors[move],
-            //     }))
-            // # We commit again if possible, to ensure that the invoice status is set in the database in case of errors later.
-            // if commit and self._can_commit():
-            //     self._cr.commit()
-            // 
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiMapErrorInternalAsync<TEntity>(IEnumerable<TEntity> entities, object error) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_map_error(self, error):
-            // """ This helper will take in an error code coming from the proxy, and return a translatable error message. """
-            // error_map = {
-            //     # These errors should be returned when we send malformed request to the EDI, ... tldr; this should never happen unless we have bugs.
-            //     'internal_server_error': _('Server error; If the problem persists, please contact the Odoo support.'),
-            //     # The proxy user credentials are either incorrect, or Odoo does not have the permission to invoice on their behalf.
-            //     'invalid_tin': _('Please make sure that your company TIN is correct, and that you gave Odoo sufficient permissions on the MyInvois platform.'),
-            //     # The api rate limit has been reached. If this happens, we need to ask the user to wait. This is also handled proxy side to be safe
-            //     'rate_limit_exceeded': _('The api request limit has been reached. Please wait until %(limit_reset_datetime)s to try again.',
-            //                              limit_reset_datetime=error.get('data')),  # Note, should be UTC. The TZ name is present in the formatted date.
-            //     'hash_resubmitted': _('This document has already been submitted and was deemed invalid.\n'
-            //                           'Please correct the document based on the previous error, or wait before retrying.'),
-            //     # This happens when the MyInvois TIN validator cannot validate the TIN of the user using the provided identification type and number.
-            //     'document_tin_not_found': _('MyInvois could not match your TIN with the identification information you provided on the company.'),
-            //     # This happens when the TIN of the supplier doesn't match with the TIN registered on the Proxy. Data contains the TIN.
-            //     'document_tin_mismatch': _("The TIN number of the supplier in the invoices does not match with the one provided at the time of registering for the e-invoice service.\n"
-            //                                "If the TIN of the supplier's record changed after that, you will need to archive your EDI Proxy User and re-register.\n"
-            //                                "The TIN found in the document is %(tin_number)s",
-            //                                tin_number=error.get('data')),
-            //     # This happens when a batch of invoices contains multiple different identifier for the supplier. Data contains the invoice.
-            //     'multiple_documents_id': _('Multiple different supplier identification information were found in the invoices.\n'
-            //                                'If the company identification information changed, you may need to delete your invoice attachments and regenerate them.'),
-            //     # Same as the previous error, but with the supplier TIN
-            //     'multiple_documents_tin': _('Multiple different supplier TIN were found in the invoices.\n'
-            //                                 'If the company TIN changed, you may need to delete your invoice attachments and regenerate them.'),
-            //     # You cannot cancel an invoice that has been rejected or that is invalid
-            //     'update_incorrect_state': _('You can only update the status of invoices in the valid state.'),
-            //     'update_period_over': _('It has been more than 72h since the invoice validation, you can no longer update it.\n'
-            //                             'Instead, you should issue or request a debit or credit note.'),
-            //     'update_active_documents': _('You cannot update this invoice, has it has been referenced by a debit or credit note.\n'
-            //                                  'If you still want to update it, you must first update the debit/credit note.'),
-            //     'update_forbidden': _('You do not have the permission to update this invoice.'),
-            //     'document_not_found': _('The document provided in the request does not exist.'),  # Should never happen
-            //     'search_date_invalid': _('The search params are invalid.'),  # Should also never happen
-            //     'submission_too_large': _('The submission is too large, try to send fewer invoices at once.'),
-            //     'action_forbidden': _('Permission to do this action has not been granted. Please ensure that Odoo has sufficient permissions on the MyInvois platform.'),
-            // }
-            // 
-            // if error.get('target'):
-            //     # When validating a part of the invoice, they give random numerical codes with no explanation whatsoever.
-            //     # So instead of trying to guess what they mean, we just give a generic "this is not valid" error and hope for the best.
-            //     # For future bugfixer => To avoid issues as much as possible, please add additional checks in the UBL python file to avoid these.
-            //     return _('An error occurred while validating the invoice: "%(property_name)s" is invalid.', property_name=error['target'])
-            // 
-            // return error_map.get(error['reference'], _("An unexpected error has occurred."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiPrepareMovesToSendInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _l10n_my_edi_prepare_moves_to_send(self):
-            // AccountMoveSend = self.env['account.move.send']
-            // xml_contents = defaultdict(list)
-            // moves = self.env['account.move']
-            // for move in self:
-            //     if not move.l10n_my_invoice_need_edi or move.l10n_my_edi_state:
-            //         continue
-            // 
-            //     moves |= move
-            // 
-            //     if move.l10n_my_edi_file:
-            //         xml_content = base64.b64decode(move.l10n_my_edi_file).decode('utf-8')
-            //     else:
-            //         xml_content, errors = move._l10n_my_edi_generate_invoice_xml()
-            //         if errors:
-            //             raise UserError(AccountMoveSend._format_error_text({
-            //                 'error_title': _('Error when generating MyInvois file:'),
-            //                 'errors': errors,
-            //             }))
-            //         xml_content = xml_content.decode('utf-8')
-            //     xml_contents[move] = xml_content
-            // return moves, xml_contents
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiRejectBillAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def action_l10n_my_edi_reject_bill(self):
-            // self.ensure_one()
-            // 
-            // if self.l10n_my_edi_state == "valid":
-            //     self._l10n_my_edi_check_can_update_status()
-            // 
-            //     return {
-            //         "name": _("Reject Document"),
-            //         "type": "ir.actions.act_window",
-            //         "view_type": "form",
-            //         "view_mode": "form",
-            //         "res_model": "l10n_my_edi.document.status.update",
-            //         "target": "new",
-            //         "context": {
-            //             "default_invoice_id": self.id,
-            //             "default_new_status": 'rejected',
-            //         },
-            //     }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiSendInvoiceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def action_l10n_my_edi_send_invoice(self):
-            // """ Create the xml file (if needed) to be sent to the platform.
-            // This will replace what is done in send & print.
-            // """
-            // self._l10n_my_edi_send_invoice()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiSendInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _l10n_my_edi_send_invoice(self, commit=True):
-            // # Gather the moves that have to be sent and the xml for each of them.
-            // moves, xml_contents = self._l10n_my_edi_prepare_moves_to_send()
-            // # We then push the moves to myinvois.
-            // self._l10n_my_edi_send_to_myinvois(moves, xml_contents, commit)
-            // # We need to see if the validation status is already available; otherwise it will be fetched via a cron.
-            // errors = self._l10n_my_edi_get_status(moves, commit)
-            // # Finally, we update the move attachments
-            // for move, xml_content in xml_contents.items():
-            //     if xml_content:
-            //         self.env['ir.attachment'].with_user(SUPERUSER_ID).create({
-            //             'name': f'{move.name.replace("/", "_")}_myinvois.xml',
-            //             'raw': xml_content,
-            //             'mimetype': 'application/xml',
-            //             'res_model': move._name,
-            //             'res_id': move.id,
-            //             'res_field': 'l10n_my_edi_file',  # Binary field
-            //         })
-            //         move.invalidate_recordset(fnames=['l10n_my_edi_file_id', 'l10n_my_edi_file'])
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiSendToMyinvoisInternalAsync<TEntity>(IEnumerable<TEntity> entities, object moves, object xml_contents, object commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _l10n_my_edi_send_to_myinvois(self, moves, xml_contents, commit=True):
-            // AccountMoveSend = self.env['account.move.send']
-            // if moves and xml_contents:
-            //     errors = moves._l10n_my_edi_submit_documents(xml_contents, commit)
-            // 
-            //     for move in moves.filtered(lambda m: m in errors):
-            //         move.message_post(body=AccountMoveSend._format_error_html({
-            //             'error_title': _('Error when sending the invoices to the E-invoicing service.'),
-            //             'errors': errors[move],
-            //         }))
-            // 
-            //     # At this point we will need to commit as we reached the api, and we could have a mix of failed and valid invoice.
-            //     if commit and moves._can_commit():
-            //         self._cr.commit()
-            // 
-            //     # We already logged the details on the invoice(s) and saved the api results. If we send a single invoice, we can safely raise now.
-            //     if errors and len(moves) == 1:
-            //         raise UserError(AccountMoveSend._format_error_text({
-            //             'error_title': _('Error when sending the invoices to the E-invoicing service.'),
-            //             'errors': errors[moves],
-            //         }))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiSetStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities, object state, object message) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_set_status(self, state, message=None):
-            // """ Small helper that changes the status, and log a message if a reason is provided. """
-            // if message:
-            //     self._message_log_batch(bodies={move.id: message for move in self})
-            // 
-            // self.l10n_my_edi_state = state
-            // 
-            // # Once invalid, an invoice is not acceptable by the platform.
-            // # An invalid invoice will never be visible by a customer and should, from my understanding, be considered void.
-            // # In Odoo, the best way to represent that is by cancelling the invoice.
-            // if state in CANCELLED_STATES:
-            //     self._l10n_my_edi_cancel_moves()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiSubmitDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_contents, object commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_submit_documents(self, xml_contents, commit=True):
-            // """ Contact our IAP service in order to send the invoice xml to the MyInvois API. """
-            // proxy_user = self._l10n_my_edi_ensure_proxy_user()
-            // 
-            // # We really only care about moves that appears in the xml contents.
-            // moves_to_send = self.filtered(lambda move: move in xml_contents)
-            // if not moves_to_send:
-            //     return None
-            // 
-            // # Ensure to lock the records that will be sent, to avoid risking sending them twice.
-            // self.env['res.company']._with_locked_records(moves_to_send)
-            // 
-            // errors = {}
-            // success_messages = {}
-            // move_to_cancel = self.env['account.move']
-            // 
-            // # MyInvois only supports up to 100 invoice per submission. To avoid timing out on big batches, we split it client side.
-            // for move_batch in split_every(SUBMISSION_MAX_SIZE, moves_to_send.ids, self.env['account.move'].browse):
-            //     move_per_id = {move.id: move for move in move_batch}
-            //     batch_result = proxy_user._l10n_my_edi_contact_proxy(
-            //         endpoint='api/l10n_my_edi/1/submit_invoices',
-            //         params={
-            //             'documents': [{
-            //                 'move_id': move.id,
-            //                 'move_name': move.name,
-            //                 'error_document_hash': move.l10n_my_error_document_hash,
-            //                 'retry_at': move.l10n_my_edi_retry_at,
-            //                 'data': base64.b64encode(xml_contents[move].encode()).decode(),
-            //             } for move in move_batch]
-            //         }
-            //     )
-            // 
-            //     # If an error is present in the result itself (and not per invoice), it means that the whole submission failed.
-            //     # We don't add to the result but instead directly in the errors.
-            //     if 'error' in batch_result:
-            //         error_string = self._l10n_my_edi_map_error(batch_result['error'])
-            //         errors.update({move: [error_string] for move in move_batch})
-            //     else:
-            //         for document_result in batch_result['documents']:
-            //             move = move_per_id[document_result['move_id']]
-            //             success = document_result['success']
-            // 
-            //             updated_values = {
-            //                 'l10n_my_edi_external_uuid': document_result.get('uuid'),  # rejected documents do not have a uuid.
-            //                 'l10n_my_edi_submission_uid': batch_result['submission_uid'],
-            //                 'l10n_my_edi_state': 'in_progress' if success else 'invalid',
-            //             }
-            // 
-            //             if success:
-            //                 # Ids are logged for future references. An invalid invoice may be reset to resend it after correction, which would be a new submission/uuid.
-            //                 success_messages[move.id] = _('The invoice has been sent to MyInvois with uuid "%(uuid)s" and submission id "%(submission_id)s".\nValidation results will be available shortly.',
-            //                                               uuid=document_result['uuid'], submission_id=batch_result['submission_uid'])
-            //             else:
-            //                 # When we raise a "hash_resubmitted" error, we don't resend the same hash/retry at and don't want to rewrite.
-            //                 if 'error_document_hash' in document_result:
-            //                     updated_values.update({
-            //                         'l10n_my_error_document_hash': document_result['error_document_hash'],
-            //                         'l10n_my_edi_retry_at': document_result['retry_at'],
-            //                     })
-            //                 errors[move] = [self._l10n_my_edi_map_error(error) for error in document_result['errors']]
-            //                 move_to_cancel |= move
-            // 
-            //             move.write(updated_values)
-            // 
-            //     if commit and self._can_commit():
-            //         self._cr.commit()
-            // 
-            // # For successful moves, we log the sending here. Any errors will be handled by the send & print wizard.
-            // if success_messages:
-            //     self.env['account.move'].browse(list(success_messages.keys()))._message_log_batch(
-            //         bodies=success_messages,
-            //     )
-            // 
-            // if move_to_cancel:
-            //     # Invalid moves should be considered as cancelled; they need to be reset to draft, corrected and sent again.
-            //     move_to_cancel._l10n_my_edi_cancel_moves()
-            // 
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiUpdateDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object status, object reason) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_update_document(self, status, reason):
-            // """ Sent invoices can be cancelled, and received bills can be rejected up to 72h after validation.
-            // 
-            // This method will try to update the status of a document on the platform, and if needed also the status in Odoo.
-            // 
-            // There is no "Rejected" status on the platform. The document stays as 'valid' until action is taken by the vendor.
-            // At that point, the invoice will be cancelled if need be by the call to _l10n_my_edi_set_status.
-            // """
-            // self.ensure_one()
-            // self.env['res.company']._with_locked_records(self)
-            // proxy_user = self._l10n_my_edi_ensure_proxy_user()
-            // 
-            // # While we do this check before opening the wizard (to avoid filling the wizard for nothing), it is safer to
-            // # recheck here in case we exceeded the limit in the meantime or if this is called from elsewhere.
-            // self._l10n_my_edi_check_can_update_status()
-            // 
-            // successfully_updated_invoices = self.env['account.move']
-            // for document in self:
-            //     result = proxy_user._l10n_my_edi_contact_proxy(
-            //         endpoint='api/l10n_my_edi/1/update_status',
-            //         params={
-            //             'status_values': {
-            //                 'uuid': document.l10n_my_edi_external_uuid,
-            //                 'reason': reason,
-            //                 'status': status,
-            //             },
-            //         },
-            //     )
-            // 
-            //     # If it is not a success, it will have raised an error.
-            //     if 'error' in result:
-            //         self._message_log(body=self._l10n_my_edi_map_error(result['error']))
-            //     else:
-            //         successfully_updated_invoices |= document
-            // 
-            // if status in self._fields['l10n_my_edi_state'].get_values(self.env):
-            //     successfully_updated_invoices._l10n_my_edi_set_status(
-            //         state=status,
-            //         message=_('This invoice has been %(status)s for reason: %(reason)s', status=status, reason=reason),
-            //     )
-            // 
-            // if self._can_commit():
-            //     self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiUpdateStatusAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def action_l10n_my_edi_update_status(self):
-            // self.ensure_one()
-            // result = self._l10n_my_edi_fetch_status()
-            // 
-            // # This is called manually by the user. In case of errors, we will raise.
-            // # If the validation failed or the invoice has been rejected/cancelled, we will log the result in the chatter.
-            // if 'error' in result:
-            //     raise UserError(self._l10n_my_edi_map_error(result['error']))
-            // 
-            // # If there has been no status change, we do not want to do anything.
-            // if result['status'] == self.l10n_my_edi_state:
-            //     return
-            // 
-            // if 'validation_errors' in result:
-            //     validation_error = self.env['account.move.send']._format_error_html({
-            //         'error_title': _('The validation failed with the following errors:'),
-            //         'errors': result['validation_errors'],
-            //     })
-            //     self._l10n_my_edi_set_status(result['status'], validation_error)
-            // elif result.get('status_reason'):
-            //     self._l10n_my_edi_set_status(
-            //         result['status'],
-            //         message=_('This invoice has been %(status)s for reason: %(reason)s', status=result['status'], reason=result['status_reason']),
-            //     )
-            // else:
-            //     self._l10n_my_edi_set_status(result['status'])
-            // 
-            // # As done during submission flow, when the status becomes
-            // if self.l10n_my_edi_state == 'valid':
-            //     self._update_validation_fields(result)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyEdiUsesEdiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_edi_uses_edi(self):
-            // """ Helper that returns true if the invoices company is using the Malaysian EDI.
-            // It does not mean that this specific invoice will use it, though.
-            // """
-            // self.ensure_one()
-            // proxy_user = self.company_id.l10n_my_edi_proxy_user_id
-            // return proxy_user and proxy_user.proxy_type == 'l10n_my_edi'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nMyGetSubmissionStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities, object submission_uid, object proxy_user) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _l10n_my_get_submission_status(self, submission_uid, proxy_user):
-            // """ Returns the status of all invoices in the submission.
-            // If there are too many and the submission is paginated, this will fetch each page with a waiting time of 1s per call.
-            // As a page can hold 100 invoice, it should not happen often.
-            // 
-            // The proxy user is given as a param as this method can be called from the cron, in which case we can't rely on self.
-            // """
-            // # In case of errors, we return it alongside any results. We cannot raise as this is called from the send & print in some cases.
-            // error = ''
-            // # The api returns the result per document uuid, already correctly formated.
-            // # We do not need to format the data anymore for processing later but just to ensure we get complete data of the submission.
-            // result = proxy_user._l10n_my_edi_contact_proxy(
-            //     endpoint='api/l10n_my_edi/1/get_submission_statuses',
-            //     params={
-            //         'submission_uid': submission_uid,
-            //         'page': 1,
-            //     }
-            // )
-            // 
-            // if 'error' in result:
-            //     error = self._l10n_my_edi_map_error(result['error'])
-            // else:
-            //     if result['document_count'] <= 100:  # If so, we got all of it at once.
-            //         result = result['statuses']
-            //     else:
-            //         # Otherwise we'll need to get the remaining invoices per batch of 100.
-            //         for page in range(2, (result['document_count'] // 100) + 1):
-            //             time.sleep(1)  # To avoid any risks of throttling, we should wait a bit before continuing
-            //             page_result = proxy_user._l10n_my_edi_contact_proxy(
-            //                 endpoint='api/l10n_my_edi/1/get_submission_statuses',
-            //                 params={
-            //                     'submission_uid': submission_uid,
-            //                     'page': page,
-            //                 }
-            //             )
-            //             result['statuses'].update(page_result['statuses'])
-            //         result = result['statuses']
-            // return error, result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiCreateAttachmentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object raw, object res_model, Guid res_id) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_create_attachment_values(self, raw, res_model=None, res_id=None):
-            // """ Shorthand for creating the attachment_id values on the invoice's document """
-            // self.ensure_one()
-            // res_model = res_model or self._name
-            // res_id = res_id or self.id
-            // return {
-            //     'name': f"ciusro_signature_{self.name.replace('/', '_')}.xml",
-            //     'res_model': res_model,
-            //     'res_id': res_id,
-            //     'raw': raw,
-            //     'type': 'binary',
-            //     'mimetype': 'application/xml',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiCreateDocumentInvoiceSendingFailedInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_create_document_invoice_sending_failed(self, values: dict):
-            // """ Shorthand for creating a ``l10n_ro_edi.document`` of state ``invoice_sending_failed``.
-            // The ``attachment_raw`` and ``key_loading`` dictionary values is optional in case the error is from pre_send.
-            // 
-            // :param values: dictionary of {
-            //     'error': <str>,
-            //     'key_loading': <optional str>,
-            //     'attachment_raw': <optional str>,
-            // }
-            // :return: ``l10n_ro_edi.document`` object """
-            // self.ensure_one()
-            // document = self.env['l10n_ro_edi.document'].sudo().create({
-            //     'invoice_id': self.id,
-            //     'state': 'invoice_sending_failed',
-            //     'message': values['error'],
-            // })
-            // if values.get('key_loading'):
-            //     document.key_loading = values['key_loading']
-            // if values.get('attachment_raw'):
-            //     attachment_values = self._l10n_ro_edi_create_attachment_values(
-            //         raw=values['attachment_raw'],
-            //         res_model=document._name,
-            //         res_id=document.id,
-            //     )
-            //     document.attachment_id = self.env['ir.attachment'].sudo().create(attachment_values)
-            // return document
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiCreateDocumentInvoiceSentInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_create_document_invoice_sent(self, values: dict):
-            // """ Shorthand for creating a ``l10n_ro_edi.document`` of state ``invoice_sent``.
-            // 
-            // :param values: dictionary of {'key_loading': <str>, 'attachment_raw': <bytes>}
-            // :return: ``l10n_ro_edi.document`` object """
-            // self.ensure_one()
-            // document = self.env['l10n_ro_edi.document'].sudo().create({
-            //     'invoice_id': self.id,
-            //     'state': 'invoice_sent',
-            //     'key_loading': values['key_loading'],
-            // })
-            // attachment_values = self._l10n_ro_edi_create_attachment_values(
-            //     raw=values['attachment_raw'],
-            //     res_model=document._name,
-            //     res_id=document.id,
-            // )
-            // document.attachment_id = self.env['ir.attachment'].sudo().create(attachment_values)
-            // return document
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiCreateDocumentInvoiceValidatedInternalAsync<TEntity>(IEnumerable<TEntity> entities, Dictionary<string, object> values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_create_document_invoice_validated(self, values: dict):
-            // """ Shorthand for creating a ``l10n_ro_edi.document`` of state `invoice_validated`.
-            // The created attachment are saved on both the document and on the invoice.
-            // 
-            // :param values: dictionary containing 'key_loading', 'key_signature', 'key_certificate', and 'attachment_raw'
-            // :return: ``l10n_ro_edi.document`` object """
-            // self.ensure_one()
-            // document = self.env['l10n_ro_edi.document'].sudo().create({
-            //     'invoice_id': self.id,
-            //     'state': 'invoice_validated',
-            //     'key_loading': values['key_loading'],
-            //     'key_signature': values['key_signature'],
-            //     'key_certificate': values['key_certificate'],
-            // })
-            // attachment = self.env['ir.attachment'].sudo().create(self._l10n_ro_edi_create_attachment_values(values['attachment_raw']))
-            // document.attachment_id = self.l10n_ro_edi_attachment_id = attachment
-            // return document
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiFetchInvoiceSentDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_fetch_invoice_sent_documents(self):
-            // """
-            // This method loops over all invoice with sending document in `self`. For each of them,
-            // it pre-checks error and make a fetch request for the invoice. Based on the answer, it will then:
-            // 
-            //  - if no answer is received, it will do nothing on the selected invoice
-            //  - if error -> delete all errors, create a new error document
-            //  - else (receives `key_download`) -> immediately make a download request and process it:
-            // 
-            //     - if error -> delete all sending and error documents, create a new error document
-            //     - if success -> delete all sending and error documents, create success document
-            // """
-            // session = requests.Session()
-            // to_delete_documents = self.env['l10n_ro_edi.document']
-            // invoices_to_fetch = self.filtered(lambda inv: inv.l10n_ro_edi_state == 'invoice_sent')
-            // 
-            // for invoice in invoices_to_fetch:
-            //     if errors := invoice._l10n_ro_edi_get_pre_send_errors():
-            //         to_delete_documents |= invoice._l10n_ro_edi_get_failed_documents()
-            //         invoice._l10n_ro_edi_create_document_invoice_sending_failed({'error': '\n'.join(errors)})
-            //         continue
-            // 
-            //     active_sending_document = invoice.l10n_ro_edi_document_ids.filtered(lambda d: d.state == 'invoice_sent')[0]
-            //     previous_raw = active_sending_document.attachment_id.sudo().raw
-            //     self.env['res.company']._with_locked_records(invoices_to_fetch)
-            //     result = self.env['l10n_ro_edi.document']._request_ciusro_fetch_status(
-            //         company=invoice.company_id,
-            //         key_loading=invoice.l10n_ro_edi_index,
-            //         session=session,
-            //     )
-            // 
-            //     if result == {}:  # SPV is still processing the XML (no answer yet); do nothing
-            //         continue
-            //     elif 'error' in result:  # Fetch error / SPV finished validating the XML and sends back a disapproval answer
-            //         to_delete_documents |= invoice._l10n_ro_edi_get_sent_and_failed_documents()
-            //         result['key_loading'] = invoice.l10n_ro_edi_index
-            //         result['attachment_raw'] = previous_raw
-            //         invoice._l10n_ro_edi_create_document_invoice_sending_failed(result)
-            //         invoice.message_post(body=_("Error when trying to fetch the E-Factura from the SPV: %s",
-            //                                     result['error']))
-            //     else:  # result == {'key_download': <str>}; SPV finished validation and sends us an approval answer
-            //         # use the obtained key_download to immediately make a download request and process them
-            //         final_result = self.env['l10n_ro_edi.document']._request_ciusro_download_answer(
-            //             company=invoice.company_id,
-            //             key_download=result['key_download'],
-            //             session=session,
-            //             status=result['state_status'],
-            //         )
-            //         to_delete_documents |= invoice._l10n_ro_edi_get_sent_and_failed_documents()
-            //         final_result['key_loading'] = invoice.l10n_ro_edi_index
-            //         if final_result.get('error'):
-            //             final_error_message = final_result['error'].replace('\t', '')
-            //             final_result.update({
-            //                 'attachment_raw': previous_raw,
-            //                 'error': final_error_message,
-            //             })
-            //             invoice._l10n_ro_edi_create_document_invoice_sending_failed(final_result)
-            //             invoice.message_post(body=_("Error when trying to download the E-Factura answer from the SPV: %s",
-            //                                         final_error_message))
-            //         else:
-            //             invoice._l10n_ro_edi_create_document_invoice_validated(final_result)
-            // 
-            //     if not tools.config['test_enable'] and not modules.module.current_test:
-            //         self._cr.commit()
-            // 
-            // # Delete outdated documents in batches
-            // to_delete_documents.unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiGetAttachmentFileNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_get_attachment_file_name(self):
-            // """ Returns the signature file attachment's name from ``l10n_ro_edi.document``/``invoice_validated`` """
-            // self.ensure_one()
-            // return f"ciusro_{self.name.replace('/', '_')}.xml"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiGetFailedDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_get_failed_documents(self):
-            // """ Shorthand for getting all l10n_ro_edi.document in invoice_sending_failed state """
-            // self.ensure_one()
-            // return self.l10n_ro_edi_document_ids.filtered(lambda d: d.state == 'invoice_sending_failed')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiGetPreSendErrorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_data, object assert_xml) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_get_pre_send_errors(self, xml_data='', assert_xml=False):
-            // """ Compute all possible common errors before sending the XML to the SPV """
-            // self.ensure_one()
-            // errors = []
-            // if not self.company_id.l10n_ro_edi_access_token:
-            //     errors.append(_('Romanian access token not found. Please generate or fill it in the settings.'))
-            // if not xml_data and assert_xml:
-            //     errors.append(_('CIUS-RO XML attachment not found.'))
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiGetSentAndFailedDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_get_sent_and_failed_documents(self):
-            // """ Shorthand for getting all l10n_ro_edi.document in ``invoice_sent`` and ``invoice_sending_failed`` state """
-            // self.ensure_one()
-            // return self.l10n_ro_edi_document_ids.filtered(lambda d: d.state in ('invoice_sent', 'invoice_sending_failed'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRoEdiSendInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_move.py) ---
-            // def _l10n_ro_edi_send_invoice(self, xml_data):
-            // """
-            // This method send xml_data to the Romanian SPV using the single invoice's (self) data.
-            // The invoice's company and move_type will be used to calculate the required params in the send request.
-            // The state of the document deletion/creation are as follows:
-            // 
-            //  - Pre-check any errors from the invoice's pre_send check before sending
-            // 
-            //     - if error -> delete all error documents, create a new error document
-            //     - else -> continue to the next step
-            // 
-            //  - Send to E-Factura, and based on the result:
-            // 
-            //     - if error -> delete all error documents, create a new error document
-            //     - if success -> delete all error & sending documents, create a new sending document
-            // 
-            // :param xml_data: string of the xml data to be sent
-            // """
-            // self.ensure_one()
-            // if errors := self._l10n_ro_edi_get_pre_send_errors(xml_data, True):
-            //     self._l10n_ro_edi_get_failed_documents().unlink()
-            //     self._l10n_ro_edi_create_document_invoice_sending_failed({'error': '\n'.join(errors)})
-            //     return
-            // 
-            // self.env['res.company']._with_locked_records(self)
-            // result = self.env['l10n_ro_edi.document']\
-            //              .with_context(is_b2b=self.partner_id.commercial_partner_id.is_company)\
-            //              ._request_ciusro_send_invoice(
-            //     company=self.company_id,
-            //     xml_data=xml_data,
-            //     move_type=self.move_type,
-            // )
-            // result['attachment_raw'] = xml_data
-            // if 'error' in result:  # result == {'error': <str>, 'attachment_raw': <bytes>}
-            //     self._l10n_ro_edi_get_failed_documents().unlink()
-            //     self._l10n_ro_edi_create_document_invoice_sending_failed(result)
-            //     self.message_post(body=_("Error when trying to send the E-Factura to the SPV: %s",
-            //                              result['error']))
-            // else:  # result == {'key_loading': <str>, 'attachment_raw': <bytes>}; initial sending successful
-            //     self._l10n_ro_edi_get_sent_and_failed_documents().unlink()
-            //     self._l10n_ro_edi_create_document_invoice_sent(result)
-            //     self.l10n_ro_edi_index = result['key_loading']
-            //     self.message_post(body=_(
-            //         "E-Factura has been sent and is now being validated by the SPV with index key: %s",
-            //         result['key_loading'],
-            //     ))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRsEdiGetAttachmentValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _l10n_rs_edi_get_attachment_values(self, xml):
-            // self.ensure_one()
-            // return {
-            //     'name': self._l10n_rs_edi_get_xml_attachment_name(),
-            //     'mimetype': 'application/xml',
-            //     'description': _('RS E-Invoice: %s', self.move_type),
-            //     'company_id': self.company_id.id,
-            //     'res_id': self.id,
-            //     'res_model': self._name,
-            //     'res_field': 'l10n_rs_edi_attachment_file',
-            //     'raw': xml,
-            //     'type': 'binary',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRsEdiGetXmlAttachmentNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _l10n_rs_edi_get_xml_attachment_name(self):
-            // return f"{self.name.replace('/', '_')}_edi.xml"
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nRsEdiSendInternalAsync<TEntity>(IEnumerable<TEntity> entities, object send_to_cir) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_rs_edi, FILE: account_move.py) ---
-            // def _l10n_rs_edi_send(self, send_to_cir):
-            // self.ensure_one()
-            // self.env['res.company']._with_locked_records(self)
-            // xml, errors = self.env['account.edi.xml.ubl.rs']._export_invoice(self)
-            // if errors:
-            //     return xml, errors
-            // params = {
-            //     'requestId': self.l10n_rs_edi_uuid,
-            //     'sendToCir': 'Yes' if send_to_cir else 'No'
-            // }
-            // url = DEMO_EFAKTURA_URL if self.company_id.l10n_rs_edi_demo_env else EFAKTURA_URL
-            // headers = {
-            //     'Content-Type': 'application/xml',
-            //     'ApiKey': self.company_id.l10n_rs_edi_api_key,
-            // }
-            // error_message = False
-            // try:
-            //     response = requests.post(url=url, params=params, headers=headers, data=xml, timeout=30)
-            //     response.raise_for_status()
-            // except (Timeout, ConnectionError, HTTPError) as exception:
-            //     error_message = _("There was a problem with the connection with eFaktura: %s", exception)
-            //     self.message_post(body=error_message)
-            //     return xml, error_message
-            // dict_response = {}
-            // try:
-            //     dict_response = response.json()
-            // except requests.exceptions.JSONDecodeError as e:
-            //     error_message = _("Invalid response from eFaktura: %s", str(e))
-            // self.l10n_rs_edi_state = 'sending_failed' if error_message else 'sent'
-            // self.l10n_rs_edi_error = error_message
-            // self.l10n_rs_edi_invoice = dict_response.get('InvoiceId')
-            // self.l10n_rs_edi_purchase_invoice = dict_response.get('PurchaseInvoiceId')
-            // self.l10n_rs_edi_sales_invoice = dict_response.get('SalesInvoiceId')
-            // return xml, error_message
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaCheckRefundReasonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_check_refund_reason(self):
-            // """
-            //     Make sure credit/debit notes have a valid reason and reversal reference
-            // """
-            // self.ensure_one()
-            // return self.reversed_entry_id or self.ref
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi_pos, FILE: account_move.py) ---
-            // def _l10n_sa_check_refund_reason(self):
-            // return super()._l10n_sa_check_refund_reason() or (self.pos_order_ids and self.pos_order_ids[0].refunded_orders_count > 0 and self.ref)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaGenerateUnsignedDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_generate_unsigned_data(self):
-            // """
-            //     Generate UUID and digital signature to be used during both Signing and QR code generation.
-            //     It is necessary to save the signature as it changes everytime it is generated and both the signing and the
-            //     QR code expect to have the same, identical signature.
-            // """
-            // self.ensure_one()
-            // edi_format = self.env.ref('l10n_sa_edi.edi_sa_zatca')
-            // # Build the dict of values to be used for generating the Invoice XML content
-            // # Set Invoice field values required for generating the XML content, hash and signature
-            // self.l10n_sa_uuid = uuid.uuid4()
-            // # We generate the XML content
-            // xml_content = edi_format._l10n_sa_generate_zatca_template(self)
-            // # Once the required values are generated, we hash the invoice, then use it to generate a Signature
-            // invoice_hash_hex = self.env['account.edi.xml.ubl_21.zatca']._l10n_sa_generate_invoice_xml_hash(xml_content).decode()
-            // self.l10n_sa_invoice_signature = edi_format._l10n_sa_get_digital_signature(self.journal_id.company_id,
-            //                                                                            invoice_hash_hex).decode()
-            // return xml_content
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaGetQrCodeEncodingInternalAsync<TEntity>(IEnumerable<TEntity> entities, object tag, object field, object int_length) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_get_qr_code_encoding(self, tag, field, int_length=1):
-            // """
-            //     Helper function to encode strings for the QR code generation according to ZATCA specs
-            // """
-            // company_name_tag_encoding = tag.to_bytes(length=1, byteorder='big')
-            // company_name_length_encoding = len(field).to_bytes(length=int_length, byteorder='big')
-            // return company_name_tag_encoding + company_name_length_encoding + field
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaGetQrCodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid journal_id, object unsigned_xml, object certificate, object signature, object is_b2c) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_get_qr_code(self, journal_id, unsigned_xml, certificate, signature, is_b2c=False):
-            // """
-            //     Generate QR code string based on XML content of the Invoice UBL file, X509 Production Certificate
-            //     and company info.
-            // 
-            //     :return b64 encoded QR code string
-            // """
-            // 
-            // def xpath_ns(expr):
-            //     return root.xpath(expr, namespaces=edi_format._l10n_sa_get_namespaces())[0].text.strip()
-            // 
-            // qr_code_str = b''
-            // root = etree.fromstring(unsigned_xml)
-            // edi_format = self.env['account.edi.xml.ubl_21.zatca']
-            // 
-            // # Indent XML content to avoid indentation mismatches
-            // etree.indent(root, space='    ')
-            // 
-            // invoice_date = xpath_ns('//cbc:IssueDate')
-            // invoice_time = xpath_ns('//cbc:IssueTime')
-            // invoice_datetime = datetime.strptime(invoice_date + ' ' + invoice_time, '%Y-%m-%d %H:%M:%S')
-            // 
-            // if invoice_datetime and journal_id.company_id.vat and certificate and signature:
-            //     prehash_content = etree.tostring(root)
-            //     invoice_hash = edi_format._l10n_sa_generate_invoice_xml_hash(prehash_content, 'digest')
-            // 
-            //     amount_total = float(xpath_ns('//cbc:TaxInclusiveAmount'))
-            //     amount_tax = float(xpath_ns('//cac:TaxTotal/cbc:TaxAmount'))
-            //     seller_name_enc = self._l10n_sa_get_qr_code_encoding(1, journal_id.company_id.display_name.encode())
-            //     seller_vat_enc = self._l10n_sa_get_qr_code_encoding(2, journal_id.company_id.vat.encode())
-            //     timestamp_enc = self._l10n_sa_get_qr_code_encoding(3,
-            //                                                        invoice_datetime.strftime("%Y-%m-%dT%H:%M:%S").encode())
-            //     amount_total_enc = self._l10n_sa_get_qr_code_encoding(4, float_repr(abs(amount_total), 2).encode())
-            //     amount_tax_enc = self._l10n_sa_get_qr_code_encoding(5, float_repr(abs(amount_tax), 2).encode())
-            //     invoice_hash_enc = self._l10n_sa_get_qr_code_encoding(6, invoice_hash)
-            //     signature_enc = self._l10n_sa_get_qr_code_encoding(7, signature.encode())
-            //     public_key_enc = self._l10n_sa_get_qr_code_encoding(8, base64.b64decode(certificate._get_public_key_bytes(formatting='base64')))
-            // 
-            //     qr_code_str = (seller_name_enc + seller_vat_enc + timestamp_enc + amount_total_enc +
-            //                    amount_tax_enc + invoice_hash_enc + signature_enc + public_key_enc)
-            // 
-            //     if is_b2c:
-            //         qr_code_str += self._l10n_sa_get_qr_code_encoding(9, base64.b64decode(certificate._get_signature_bytes(formatting='base64')))
-            // 
-            // return qr_code_str
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaIsInChainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_is_in_chain(self):
-            // """
-            // If the invoice was successfully posted and confirmed by the government, then this would return True.
-            // If the invoice timed out, then its edi_document should still be in the 'to_send' state.
-            // """
-            // zatca_doc_ids = self.edi_document_ids.filtered(lambda d: d.edi_format_id.code == 'sa_zatca')
-            // return len(zatca_doc_ids) > 0 and not any(zatca_doc_ids.filtered(lambda d: d.state == 'to_send'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaIsSimplifiedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_is_simplified(self):
-            // """
-            //     Returns True if the customer is an individual, i.e: The invoice is B2C
-            // :return:
-            // """
-            // self.ensure_one()
-            // return self.partner_id.company_type == 'person'
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaLogResultsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_content, object response_data, object error) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_log_results(self, xml_content, response_data=None, error=False):
-            // """
-            //     Save submitted invoice XML hash in case of either Rejection or Acceptance.
-            // """
-            // self.ensure_one()
-            // self.journal_id.l10n_sa_latest_submission_hash = self.env['account.edi.xml.ubl_21.zatca']._l10n_sa_generate_invoice_xml_hash(
-            //     xml_content)
-            // bootstrap_cls, title, content = ("success", _("Invoice Successfully Submitted to ZATCA"),
-            //                                  "" if (not error or not response_data) else response_data)
-            // attachment = False
-            // if error:
-            //     xml_filename = self.env['account.edi.xml.ubl_21.zatca']._export_invoice_filename(self)
-            //     xml_filename = xml_filename[:-4] + '-rejected.xml'
-            //     attachment = self.env['ir.attachment'].create({
-            //         'raw': xml_content,
-            //         'name': xml_filename,
-            //         'description': 'Rejected ZATCA Document not to be deleted - ثيقة ZATCA المرفوضة لا يجوز حذفها',
-            //         'res_id': self.id,
-            //         'res_model': self._name,
-            //         'type': 'binary',
-            //         'mimetype': 'application/xml',
-            //     })
-            //     bootstrap_cls, title = ("danger", _("Invoice was rejected by ZATCA"))
-            //     error_msg = response_data['error']
-            //     content = Markup("""
-            //         <p class='mb-0'>
-            //             %s
-            //         </p>
-            //         <hr>
-            //         <p class='mb-0'>
-            //             %s
-            //         </p>
-            //     """) % (_('The invoice was rejected by ZATCA. Please, check the response below:'), error_msg)
-            // if response_data and response_data.get('validationResults', {}).get('warningMessages'):
-            //     status_code = response_data.get('status_code')
-            //     bootstrap_cls, title = ("warning", _("Invoice was Accepted by ZATCA (with Warnings)"))
-            //     content = Markup("""
-            //         <p class='mb-0'>
-            //             %s
-            //         </p>
-            //         <hr>
-            //         <p class='mb-0'>
-            //             <b>%s</b>%s
-            //         </p>
-            //     """) % (_('The invoice was accepted by ZATCA, but returned warnings. Please, check the response below:'),
-            //             f"[{status_code}] " if status_code else "",
-            //             Markup("<br/>").join([Markup("<b>%s</b> : %s") % (m['code'], m['message']) for m in response_data['validationResults']['warningMessages']]))
-            // self.with_context(no_new_invoice=True).message_post(body=Markup("""
-            //         <div role='alert' class='alert alert-%s'>
-            //             <h4 class='alert-heading'>%s</h4>%s
-            //         </div>
-            //     """) % (bootstrap_cls, title, content),
-            //     attachment_ids=attachment and [attachment.id] or []
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSaResetConfirmationDatetimeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: account_move.py) ---
-            // def _l10n_sa_reset_confirmation_datetime(self):
-            // for move in self.filtered(lambda m: m.country_code == 'SA'):
-            //     move.l10n_sa_confirmation_datetime = False
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _l10n_sa_reset_confirmation_datetime(self):
-            // """ OVERRIDE: we want rejected phase 2 invoices to keep the original confirmation datetime"""
-            // for move in self.filtered(lambda m: m.country_code == 'SA'):
-            //     zatca_doc = move.edi_document_ids.filtered(lambda d: d.edi_format_id.code == 'sa_zatca')
-            //     if not zatca_doc or zatca_doc[0].blocking_level != 'error':  # Error is the rejection case
-            //         move.l10n_sa_confirmation_datetime = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSeCheckPaymentReferenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _l10n_se_check_payment_reference(self):
-            // for invoice in self:
-            //     if (
-            //         (invoice.payment_reference or invoice.state == 'posted')
-            //         and invoice.partner_id
-            //         and invoice.move_type == 'in_invoice'
-            //         and invoice.partner_id.l10n_se_check_vendor_ocr
-            //         and invoice.country_code == 'SE'
-            //     ):
-            //         try:
-            //             luhn.validate(invoice.payment_reference)
-            //         except Exception:
-            //             raise ValidationError(_("Vendor require OCR Number as payment reference. Payment reference isn't a valid OCR Number."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nSgGetUuidInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_move.py) ---
-            // def _l10n_sg_get_uuid(self):
-            // """ SG Pint requires us to generate a uuid, to avoid storing a new field on the move,
-            // we derive it from the dbuuid and the move id. """
-            // self.ensure_one()
-            // dbuuid = self.env['ir.config_parameter'].sudo().get_param('database.uuid')
-            // guid = uuid.uuid5(namespace=uuid.UUID(dbuuid), name=str(self.id))
-            // return str(guid)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraAddPdfToInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object client, object invoice, object document_uuid) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_add_pdf_to_invoice(self, client, invoice, document_uuid):
-            // response = client.request(
-            //     "GET",
-            //     f"/einvoice/Purchase/{quote(document_uuid)}/pdf",
-            // )
-            // 
-            // filename = f'{invoice.ref}.pdf' if invoice.ref else 'Nilvera PDF.pdf'
-            // 
-            // attachment = self.env['ir.attachment'].create({
-            //     'name': filename,
-            //     'res_id': invoice.id,
-            //     'res_model': 'account.move',
-            //     'datas': response,
-            //     'type': 'binary',
-            //     'mimetype': 'application/pdf',
-            // })
-            // 
-            // if (invoice.message_main_attachment_id
-            //         and invoice.message_main_attachment_id.name.endswith('.xml')
-            //         and 'pdf' not in invoice.message_main_attachment_id.mimetype):
-            //     invoice.message_main_attachment_id = attachment
-            // invoice.with_context(no_new_invoice=True).message_post(attachment_ids=attachment.ids)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraEinvoiceCheckInvalidSubscriptionDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_einvoice_check_invalid_subscription_dates(self):
-            // if 'deferred_start_date' not in self.invoice_line_ids._fields:
-            //     return False
-            // 
-            // # Ensure that either no lines have the start and end dates or all lines have the same start and end dates.
-            // lines_to_check = self.invoice_line_ids.filtered(lambda line: line.display_type == 'product')
-            // if not (subscription_lines := lines_to_check.filtered('deferred_start_date')):
-            //     return False
-            // 
-            // return len(subscription_lines) != len(lines_to_check) or len(set(subscription_lines.mapped(
-            //     lambda aml: (aml.deferred_start_date, aml.deferred_end_date))
-            // )) > 1
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraEinvoiceGetErrorMessagesFromResponseInternalAsync<TEntity>(IEnumerable<TEntity> entities, object response) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_einvoice_get_error_messages_from_response(self, response):
-            // msg = ""
-            // error_codes = []
-            // 
-            // response_json = response.json()
-            // if errors := response_json.get('Errors'):
-            //     msg += _("The invoice couldn't be sent due to the following errors:\n")
-            //     for error in errors:
-            //         msg += "%s - %s: %s\n" % (error.get('Code'), error.get('Description'), error.get('Detail'))
-            //         error_codes.append(error.get('Code'))
-            // 
-            // return msg, error_codes
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraGetDocumentsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_get_documents(self):
-            // with _get_nilvera_client(self.env.company) as client:
-            //     response = client.request(
-            //         "GET",
-            //         "/einvoice/Purchase",
-            //     )
-            // 
-            //     if not response.get('Content'):
-            //         return
-            // 
-            //     journal = self.env.company.l10n_tr_nilvera_purchase_journal_id
-            //     if not journal:
-            //         journal = self.env['account.journal'].search([
-            //             *self.env['account.journal']._check_company_domain(self.env.company),
-            //             ('type', '=', 'purchase'),
-            //         ], limit=1)
-            // 
-            //     document_uuids = [content.get('UUID') for content in response.get('Content')]
-            //     document_uuids_count = dict(self.env['account.move']._read_group(
-            //         [('l10n_tr_nilvera_uuid', 'in', document_uuids)],
-            //         groupby=['l10n_tr_nilvera_uuid'],
-            //         aggregates=['__count'],
-            //     ))
-            //     for document_uuid in document_uuids:
-            //         # Skip invoices that have already been downloaded.
-            //         if document_uuid in document_uuids_count:
-            //             continue
-            //         move = self._l10n_tr_nilvera_get_invoice_from_uuid(client, journal, document_uuid)
-            //         self._l10n_tr_nilvera_add_pdf_to_invoice(client, move, document_uuid)
-            //         self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraGetInvoiceFromUuidInternalAsync<TEntity>(IEnumerable<TEntity> entities, object client, object journal, object document_uuid) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_get_invoice_from_uuid(self, client, journal, document_uuid):
-            // response = client.request(
-            //     "GET",
-            //     f"/einvoice/Purchase/{quote(document_uuid)}/xml",
-            // )
-            // 
-            // attachment_vals = {
-            //     'name': 'attachment.xml',
-            //     'raw': response,
-            //     'type': 'binary',
-            //     'mimetype': 'application/xml',
-            // }
-            // 
-            // attachment = self.env['ir.attachment'].create(attachment_vals)
-            // try:
-            //     move = journal.with_context(
-            //         default_move_type='in_invoice',
-            //         default_l10n_tr_nilvera_uuid=document_uuid,
-            //     )._create_document_from_attachment(attachment.id)
-            // 
-            //     # If move creation was successful, update the attachment name with the bill reference.
-            //     if move.ref:
-            //         attachment.name = f'{move.ref}.xml'
-            // 
-            //     move._message_log(body=_("Nilvera document has been received successfully"))
-            // except Exception:   # noqa: BLE001
-            //     # If the invoice creation fails, create an empty invoice with the attachment. The PDF will be
-            //     # added in a later step as well.
-            //     move = self.env['account.move'].create({
-            //         'move_type': 'in_invoice',
-            //         'company_id': self.env.company.id,
-            //         'l10n_tr_nilvera_uuid': document_uuid,
-            //     })
-            //     attachment.write({
-            //         'res_model': 'account.move',
-            //         'res_id': move.id,
-            //     })
-            // 
-            // return move
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraGetSubmittedDocumentStatusInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_get_submitted_document_status(self):
-            // with _get_nilvera_client(self.env.company) as client:
-            //     for invoice in self:
-            //         response = client.request(
-            //             "GET",
-            //             f"/einvoice/sale/{invoice.l10n_tr_nilvera_uuid}/Status",
-            //         )
-            // 
-            //         nilvera_status = response.get('InvoiceStatus', {}).get('Code')
-            //         if nilvera_status in dict(invoice._fields['l10n_tr_nilvera_send_status'].selection):
-            //             invoice.l10n_tr_nilvera_send_status = nilvera_status
-            //             if nilvera_status == 'error':
-            //                 invoice.message_post(
-            //                     body=Markup(
-            //                         "%s<br/>%s - %s<br/>"
-            //                     ) % (
-            //                         _("The invoice couldn't be sent to the recipient."),
-            //                         response['InvoiceStatus'].get('Description'),
-            //                         response['InvoiceStatus'].get('DetailDescription'),
-            //                     )
-            //                 )
-            //         else:
-            //             invoice.message_post(body=_("The invoice status couldn't be retrieved from Nilvera."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraPostSeriesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object endpoint, object client) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_post_series(self, endpoint, client):
-            // """Post the series to Nilvera based on the endpoint."""
-            // path = urlparse(endpoint).path  # Remove query params from te endpoint.
-            // if path == "/einvoice/Send/Xml":
-            //     series_endpoint = "/einvoice/Series"
-            // elif path == "/earchive/Send/Xml":
-            //     series_endpoint = "/earchive/Series"
-            // else:
-            //     # Return early if endpoint couldn't be matched.
-            //     return
-            // 
-            // if not self.sequence_prefix:
-            //     return
-            // 
-            // series = self.sequence_prefix.split('/', 1)[0]
-            // client.request(
-            //     "POST",
-            //     series_endpoint,
-            //     json={
-            //         'Name': series,
-            //         'IsActive': True,
-            //         'IsDefault': False,
-            //     },
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraSubmitDocumentInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_file, object endpoint, object post_series) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_submit_document(self, xml_file, endpoint, post_series=True):
-            // """
-            // Submits an e-invoice or e-archive document to Nilvera for processing.
-            // 
-            // :param xml_file: The XML file to be submitted.
-            // :type xml_file: file-like object
-            // :param endpoint: The Nilvera API endpoint for submission.
-            // :type endpoint: str
-            // :param post_series: Whether to attempt posting the series/sequence to Nilvera if it is missing.
-            //                     Defaults to True. Useful for avoiding an infinite loop.
-            // :type post_series: bool
-            // :raises UserError: If the API key lacks necessary rights (401 or 403 responses), if the response
-            //                     indicates a client error (4xx), or if a server error occurs (500).
-            // :return: None
-            // """
-            // with _get_nilvera_client(self.env.company) as client:
-            //     response = client.request(
-            //         "POST",
-            //         endpoint,
-            //         files={'file': (xml_file.name, xml_file, 'application/xml')},
-            //         handle_response=False,
-            //     )
-            // 
-            //     if response.status_code == 200:
-            //         self.is_move_sent = True
-            //         self.l10n_tr_nilvera_send_status = 'sent'
-            //     elif response.status_code in {401, 403}:
-            //         raise UserError(_("Oops, seems like you're unauthorised to do this. Try another API key with more rights or contact Nilvera."))
-            //     elif 400 <= response.status_code < 500:
-            //         error_message, error_codes = self._l10n_tr_nilvera_einvoice_get_error_messages_from_response(response)
-            // 
-            //         # If the sequence/series is not found on Nilvera, add it then retry.
-            //         if 3009 in error_codes and post_series:
-            //             self._l10n_tr_nilvera_post_series(endpoint, client)
-            //             return self._l10n_tr_nilvera_submit_document(xml_file, endpoint, post_series=False)
-            //         raise UserError(error_message)
-            //     elif response.status_code == 500:
-            //         raise UserError(_("Server error from Nilvera, please try again later."))
-            // 
-            //     self.message_post(body=_("The invoice has been successfully sent to Nilvera."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraSubmitEarchiveInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_file) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_submit_earchive(self, xml_file):
-            // self._l10n_tr_nilvera_submit_document(
-            //     xml_file=xml_file,
-            //     endpoint="/earchive/Send/Xml",
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nTrNilveraSubmitEinvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object xml_file, object customer_alias) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_einvoice, FILE: account_move.py) ---
-            // def _l10n_tr_nilvera_submit_einvoice(self, xml_file, customer_alias):
-            // self._l10n_tr_nilvera_submit_document(
-            //     xml_file=xml_file,
-            //     endpoint=f"/einvoice/Send/Xml?{urlencode({'Alias': customer_alias})}",
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nUyGetFormattedSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy, FILE: account_move.py) ---
-            // def _l10n_uy_get_formatted_sequence(self, number=0):
-            // return "%s A%07d" % (self.l10n_latam_document_type_id.doc_code_prefix, number)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddBuyerInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_buyer_information(self, json_values):
-            // """ Create and return the buyer information for the current invoice. """
-            // self.ensure_one()
-            // 
-            // commercial_partner_phone = self.commercial_partner_id.phone and self._l10n_vn_edi_format_phone_number(self.commercial_partner_id.phone)
-            // buyer_information = {
-            //     'buyerName': self.partner_id.name,
-            //     'buyerLegalName': self.commercial_partner_id.name,
-            //     'buyerTaxCode': self.commercial_partner_id.vat or '',
-            //     'buyerAddressLine': self.partner_id.street,
-            //     'buyerPhoneNumber': commercial_partner_phone or '',
-            //     'buyerEmail': self.commercial_partner_id.email or '',
-            //     'buyerCityName': self.partner_id.city or self.partner_id.state_id.name,
-            //     'buyerCountryCode': self.partner_id.country_id.code,
-            //     'buyerNotGetInvoice': 0,  # Set to 1 to no send the invoice to the buyer.
-            // }
-            // 
-            // if self.partner_bank_id:
-            //     buyer_information.update({
-            //         'buyerBankName': self.partner_bank_id.bank_name,
-            //         'buyerBankAccount': self.partner_bank_id.acc_number,
-            //     })
-            // 
-            // json_values['buyerInfo'] = buyer_information
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddGeneralInvoiceInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_general_invoice_information(self, json_values):
-            // """ General invoice information, such as the model number, invoice symbol, type, date of issues, ... """
-            // self.ensure_one()
-            // invoice_data = {
-            //     'transactionUuid': str(uuid.uuid4()),
-            //     'invoiceType': self.l10n_vn_edi_invoice_symbol.invoice_template_id.template_invoice_type,
-            //     'templateCode': self.l10n_vn_edi_invoice_symbol.invoice_template_id.name,
-            //     'invoiceSeries': self.l10n_vn_edi_invoice_symbol.name,
-            //     # This timestamp is important as it is used to check the chronological order of Invoice Numbers.
-            //     # Since this xml is generated upon posting, just like the invoice number, using now() should keep that order
-            //     # correct in most case.
-            //     'invoiceIssuedDate': self._l10n_vn_edi_format_date(self.l10n_vn_edi_issue_date),
-            //     'currencyCode': self.currency_id.name,
-            //     'adjustmentType': '1',  # 1 for original invoice, which is the case during first issuance.
-            //     'paymentStatus': self.payment_state in {'in_payment', 'paid'},
-            //     'cusGetInvoiceRight': True,  # Set to true, allowing the customer to see the invoice.
-            //     'validation': 1,  # Set to 1, SInvoice will validate tax information while processing the invoice.
-            // }
-            // 
-            // # When invoicing in a foreign currency, we need to provide the rate, or it will default to 1.
-            // if self.currency_id.name != 'VND':
-            //     invoice_data['exchangeRate'] = self.env['res.currency']._get_conversion_rate(
-            //         from_currency=self.currency_id,
-            //         to_currency=self.env.ref('base.VND'),
-            //         company=self.company_id,
-            //         date=self.invoice_date or self.date,
-            //     )
-            // 
-            // adjustment_origin_invoice = None
-            // if self.move_type == 'out_refund':  # Credit note are used to adjust an existing invoice
-            //     adjustment_origin_invoice = self.reversed_entry_id
-            // elif self.l10n_vn_edi_replacement_origin_id:  # 'Reverse and create invoice' is used to issue a replacement invoice
-            //     adjustment_origin_invoice = self.l10n_vn_edi_replacement_origin_id
-            // 
-            // if adjustment_origin_invoice:
-            //     invoice_data.update({
-            //         'adjustmentType': '5' if self.move_type == 'out_refund' else '3',  # Adjustment or replacement
-            //         'adjustmentInvoiceType': self.l10n_vn_edi_adjustment_type or '',
-            //         'originalInvoiceId': adjustment_origin_invoice.l10n_vn_edi_invoice_number,
-            //         'originalInvoiceIssueDate': self._l10n_vn_edi_format_date(adjustment_origin_invoice.l10n_vn_edi_issue_date),
-            //         'originalTemplateCode': adjustment_origin_invoice.l10n_vn_edi_invoice_symbol.invoice_template_id.name,
-            //         'additionalReferenceDesc': self.l10n_vn_edi_agreement_document_name,
-            //         'additionalReferenceDate': self._l10n_vn_edi_format_date(self.l10n_vn_edi_agreement_document_date),
-            //     })
-            // 
-            // json_values['generalInvoiceInfo'] = invoice_data
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddItemInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_item_information(self, json_values):
-            // """ Create and return the items information for the current invoice. """
-            // self.ensure_one()
-            // items_information = []
-            // code_map = {
-            //     'product': 1,
-            //     'line_note': 2,
-            //     'discount': 3,
-            // }
-            // for line in self.invoice_line_ids.filtered(lambda ln: ln.display_type == 'product'):
-            //     # For credit notes amount, we send negative values (reduces the amount of the original invoice)
-            //     sign = 1 if self.move_type == 'out_invoice' else -1
-            //     item_information = {
-            //         'itemCode': line.product_id.code,
-            //         'itemName': line.product_id.name,
-            //         'unitName': line.product_uom_id.name,
-            //         'unitPrice': line.price_unit * sign,
-            //         'quantity': line.quantity,
-            //         # This amount should be without discount applied.
-            //         'itemTotalAmountWithoutTax': line.currency_id.round(line.price_unit * line.quantity),
-            //         # In Vietnam a line will always have only one tax.
-            //         # Values are either: -2 (no tax), -1 (not declaring/paying taxes), 0,5,8,10 (the tax %)
-            //         # Most use cases will be -2 or a tax percentage, so we limit the support to these.
-            //         'taxPercentage': line.tax_ids and line.tax_ids[0].amount or -2,
-            //         'taxAmount': (line.price_total - line.price_subtotal),
-            //         'discount': line.discount,
-            //         'itemTotalAmountAfterDiscount': line.price_subtotal,
-            //         'itemTotalAmountWithTax': line.price_total,
-            //     }
-            //     if line.display_type in code_map:
-            //         item_information['selection'] = code_map[line.display_type]
-            //     if line.display_type == 'discount':
-            //         item_information['isIncreaseItem'] = False
-            //     if self.move_type == 'out_refund':
-            //         item_information.update({
-            //             'adjustmentTaxAmount': item_information['taxAmount'],
-            //             'isIncreaseItem': False,
-            //         })
-            //     items_information.append(item_information)
-            // 
-            // json_values['itemInfo'] = items_information
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddPaymentInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_payment_information(self, json_values):
-            // """ Create and return the payment information for the current invoice. Not fully supported. """
-            // self.ensure_one()
-            // json_values['payments'] = [{
-            //     # We need to provide a value but when we send the invoice, we may not have this information.
-            //     # According to VN laws, if the payment method has not been determined, we can fill in TM/CK.
-            //     # TM is for bank transfer, CK is for cash payment.
-            //     'paymentMethodName': 'TM/CK',
-            // }]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddSellerInformationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_seller_information(self, json_values):
-            // """ Create and return the seller information for the current invoice. """
-            // self.ensure_one()
-            // company_phone = self.company_id.phone and self._l10n_vn_edi_format_phone_number(self.company_id.phone)
-            // seller_information = {
-            //     'sellerLegalName': self.company_id.name,
-            //     'sellerTaxCode': self.company_id.vat,
-            //     'sellerAddressLine': self.company_id.street,
-            //     'sellerPhoneNumber': company_phone or '',
-            //     'sellerEmail': self.company_id.email,
-            //     'sellerDistrictName': self.company_id.state_id.name,
-            //     'sellerCountryCode': self.company_id.country_id.code,
-            //     'sellerWebsite': self.company_id.website,
-            // }
-            // 
-            // if self.partner_bank_id:
-            //     seller_information.update({
-            //         'sellerBankName': self.partner_bank_id.bank_name,
-            //         'sellerBankAccount': self.partner_bank_id.acc_number,
-            //     })
-            // 
-            //     if self.partner_bank_id.proxy_type == 'merchant_id':
-            //         seller_information.update({
-            //             'merchantCode': self.partner_bank_id.proxy_value,
-            //             'merchantName': self.company_id.name,
-            //             'merchantCity': self.company_id.city,
-            //         })
-            // 
-            // json_values['sellerInfo'] = seller_information
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiAddTaxBreakdownsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object json_values) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_add_tax_breakdowns(self, json_values):
-            // """ Create and return the tax breakdown of the current invoice. """
-            // self.ensure_one()
-            // 
-            // def grouping_key_generator(base_line, tax_data):
-            //     # Requirement is to generate a tax breakdown per taxPercentage
-            //     return {'tax_percentage': tax_data['tax'].amount or -2}
-            // 
-            // tax_breakdowns = []
-            // 
-            // tax_details_grouped = self._prepare_invoice_aggregated_taxes(grouping_key_generator=grouping_key_generator)
-            // for tax_percentage, tax_percentage_values in tax_details_grouped['tax_details'].items():
-            //     tax_breakdowns.append({
-            //         'taxPercentage': tax_percentage['tax_percentage'],
-            //         'taxableAmount': tax_percentage_values['base_amount_currency'],
-            //         'taxAmount': tax_percentage_values['tax_amount_currency'],
-            //         'taxableAmountPos': self.move_type == 'out_invoice',  # For adjustment invoice, the amount should be considered as negative.
-            //         'taxAmountPos': self.move_type == 'out_invoice',  # Same
-            //     })
-            // 
-            // json_values['taxBreakdowns'] = tax_breakdowns
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiCancelInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reason, object agreement_document_name, object agreement_document_date) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_cancel_invoice(self, reason, agreement_document_name, agreement_document_date):
-            // """ Send a request to cancel the invoice. """
-            // self.ensure_one()
-            // 
-            // # == Lock ==
-            // self.env['res.company']._with_locked_records(self)
-            // 
-            // # If no error raised, we try to cancel it on the EDI.
-            // access_token, error = self._l10n_vn_edi_get_access_token()
-            // if error:
-            //     raise UserError(error)
-            // 
-            // _request_response, error_message = _l10n_vn_edi_send_request(
-            //     method='POST',
-            //     url=f'{SINVOICE_API_URL}InvoiceAPI/InvoiceWS/cancelTransactionInvoice',
-            //     params={
-            //         'supplierTaxCode': self.company_id.vat,
-            //         'templateCode': self.l10n_vn_edi_invoice_symbol.invoice_template_id.name,
-            //         'invoiceNo': self.l10n_vn_edi_invoice_number,
-            //         'strIssueDate': self._l10n_vn_edi_format_date(self.l10n_vn_edi_issue_date),
-            //         'additionalReferenceDesc': agreement_document_name,
-            //         'additionalReferenceDate': self._l10n_vn_edi_format_date(agreement_document_date),
-            //         'reasonDelete': reason,
-            //     },
-            //     headers={
-            //         'Content-Type': 'application/x-www-form-urlencoded;',
-            //     },
-            //     cookies={'access_token': access_token},
-            // )
-            // 
-            // if error_message:
-            //     raise UserError(error_message)
-            // 
-            // self.l10n_vn_edi_invoice_state = 'canceled'
-            // 
-            // try:
-            //     self._check_fiscal_lock_dates()
-            //     self.line_ids._check_tax_lock_date()
-            // 
-            //     self.button_cancel()
-            // 
-            //     self.with_context(no_new_invoice=True).message_post(
-            //         body=_('The invoice has been canceled for reason: %(reason)s', reason=reason),
-            //     )
-            // except UserError as e:
-            //     self.with_context(no_new_invoice=True).message_post(
-            //         body=_('The invoice has been canceled on sinvoice for reason: %(reason)s'
-            //                'But the cancellation in Odoo failed with error: %(error)s', reason=reason, error=e),
-            //     )
-            // 
-            // if self._can_commit():
-            //     self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiCheckInvoiceConfigurationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_check_invoice_configuration(self):
-            // """ Some checks that are used to avoid common errors before sending the invoice. """
-            // self.ensure_one()
-            // company = self.company_id
-            // commercial_partner = self.commercial_partner_id
-            // errors = []
-            // if not company.l10n_vn_edi_username or not company.l10n_vn_edi_password:
-            //     errors.append(_('Sinvoice credentials are missing on company %s.', company.display_name))
-            // if not company.vat:
-            //     errors.append(_('VAT number is missing on company %s.', company.display_name))
-            // company_phone = company.phone and self._l10n_vn_edi_format_phone_number(company.phone)
-            // if company_phone and not company_phone.isdecimal():
-            //     errors.append(_('Phone number for company %s must only contain digits or +.', company.display_name))
-            // commercial_partner_phone = commercial_partner.phone and self._l10n_vn_edi_format_phone_number(commercial_partner.phone)
-            // if commercial_partner_phone and not commercial_partner_phone.isdecimal():
-            //     errors.append(_('Phone number for partner %s must only contain digits or +.', commercial_partner.display_name))
-            // if not self.l10n_vn_edi_invoice_symbol:
-            //     errors.append(_('The invoice symbol must be provided.'))
-            // if self.l10n_vn_edi_invoice_symbol and not self.l10n_vn_edi_invoice_symbol.invoice_template_id:
-            //     errors.append(_("The invoice symbol's template must be provided."))
-            // if self.move_type == 'out_refund' and (not self.reversed_entry_id or not self.reversed_entry_id._l10n_vn_edi_is_sent()):
-            //     errors.append(_('You can only send a credit note linked to a previously sent invoice.'))
-            // if not company.street or not company.state_id or not company.country_id:
-            //     errors.append(_('The street, state and country of company %s must be provided.', company.display_name))
-            // if self.company_currency_id.name != 'VND':
-            //     vnd = self.env.ref('base.VND')
-            //     rate = vnd.with_context(date=self.invoice_date or self.date).rate
-            //     if not vnd.active or rate == 1:
-            //         errors.append(_('Please make sure that the VND currency is enabled, and that the exchange rates are set.'))
-            // return errors
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiFetchInvoiceFileDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_format) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_fetch_invoice_file_data(self, file_format):
-            // """ Helper to try fetching a few time in case the files are not yet ready. """
-            // self.ensure_one()
-            // files_data, error_message = self._l10n_vn_edi_try_fetch_invoice_file_data(file_format)
-            // 
-            // if error_message:
-            //     return '', error_message
-            // 
-            // # Sometimes the documents are not available right away. This is quite rare, but I saw it happen a few times.
-            // # To handle that we will try up to three time to fetch the document => The impact should be negligible.
-            // threshold = 1
-            // while not files_data['fileToBytes'] and threshold < 3:
-            //     time.sleep(0.125 * threshold)
-            //     files_data, error_message = self._l10n_vn_edi_try_fetch_invoice_file_data(file_format)
-            //     threshold += 1
-            // return files_data, error_message
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiFetchInvoicePdfFileDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_fetch_invoice_pdf_file_data(self):
-            // """
-            // Query sinvoice in order to fetch the pdf data representation of the invoice.
-            // 
-            // Returns a tuple with the pdf name, mimetype, content and field.
-            // """
-            // self.ensure_one()
-            // file_data, error_message = self._l10n_vn_edi_fetch_invoice_file_data('PDF')
-            // if error_message:
-            //     return file_data, error_message
-            // 
-            // file_bytes = base64.b64decode(file_data['fileToBytes'])
-            // 
-            // return {
-            //     'name': file_data['fileName'],
-            //     'mimetype': 'application/pdf',
-            //     'raw': file_bytes,
-            //     'res_field': 'l10n_vn_edi_sinvoice_pdf_file',
-            // }, ""
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiFetchInvoiceXmlFileDataInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_fetch_invoice_xml_file_data(self):
-            // """
-            // Query sinvoice in order to fetch the xsl and xml data representation of the invoice.
-            // 
-            // Returns a list of tuple with both file names, mimetype, content and the field it should be stored in.
-            // """
-            // self.ensure_one()
-            // files_data, error_message = self._l10n_vn_edi_fetch_invoice_file_data('ZIP')
-            // if error_message:
-            //     return files_data, error_message
-            // 
-            // file_bytes = base64.b64decode(files_data['fileToBytes'])
-            // 
-            // # For some reason, request_response['fileToBytes'] is a zip file containing the other zip file.
-            // # The content of the inner zip is a xsl file as well as a xml file.
-            // # In our case the xsl file is not important, so we can simply ignore it.
-            // with zipfile.ZipFile(io.BytesIO(file_bytes)) as zip_file:
-            //     inner_zip_bytes = zip_file.read(zip_file.filelist[0])
-            //     with zipfile.ZipFile(io.BytesIO(inner_zip_bytes)) as inner_zip:
-            //         for file in inner_zip.filelist:
-            //             if file.filename.endswith('.xml'):
-            //                 return {
-            //                     'name': file.filename,
-            //                     'mimetype': 'application/xml',
-            //                     'raw': inner_zip.read(file),
-            //                     'res_field': 'l10n_vn_edi_sinvoice_xml_file',
-            //                 }, ""
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiFormatDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object date) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_format_date(self, date):
-            // """
-            // All APIs for Sinvoice uses the same time format, being the current hour, minutes and seconds converted into
-            // seconds since unix epoch, but formatting like milliseconds since unix epoch.
-            // It means that the time will end in 000 for the milliseconds as they are not as of today used by the system.
-            // """
-            // return int(date.timestamp()) * 1000 if date else 0
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiFormatPhoneNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_format_phone_number(self, number):
-            // """
-            // Simple helper that takes in a phone number and try to format it to fit sinvoice format.
-            // SInvoice only allows digits, so we will remove any (, ), -, + characters.
-            // """
-            // # We first replace + by 00, then we remove all non digit characters.
-            // number = number.replace('+', '00')
-            // return re.sub(r'[^0-9]+', '', number)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiGenerateInvoiceJsonInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_generate_invoice_json(self):
-            // """ Return the dict of data that will be sent to the api in order to create the invoice. """
-            // # We leave the summarized information computation to SInvoice.
-            // self.ensure_one()
-            // # This MUST match chronologically with the sequence they generate on their system, which is why it is set to now.
-            // self.l10n_vn_edi_issue_date = fields.Datetime.now()
-            // json_values = {}
-            // self._l10n_vn_edi_add_general_invoice_information(json_values)
-            // self._l10n_vn_edi_add_buyer_information(json_values)
-            // self._l10n_vn_edi_add_seller_information(json_values)
-            // self._l10n_vn_edi_add_payment_information(json_values)
-            // self._l10n_vn_edi_add_item_information(json_values)
-            // self._l10n_vn_edi_add_tax_breakdowns(json_values)
-            // return json_values
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiGetAccessTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_get_access_token(self):
-            // """ Return an access token to be used to contact the API. Either take a valid stored one or get a new one. """
-            // self.ensure_one()
-            // credentials_company = self._l10n_vn_edi_get_credentials_company()
-            // # First, check if we have a token stored and if it is still valid.
-            // if credentials_company.l10n_vn_edi_token and credentials_company.l10n_vn_edi_token_expiry > datetime.now():
-            //     return credentials_company.l10n_vn_edi_token, ""
-            // 
-            // data = {'username': credentials_company.l10n_vn_edi_username, 'password': credentials_company.l10n_vn_edi_password}
-            // request_response, error_message = _l10n_vn_edi_send_request(
-            //     method='POST',
-            //     url='https://api-vinvoice.viettel.vn/auth/login',  # This one is special and uses another base address.
-            //     json_data=data
-            // )
-            // if error_message:
-            //     return "", error_message
-            // if 'access_token' not in request_response:  # Just in case something else go wrong and it's missing the token
-            //     return "", _('Connection to the API failed, please try again later.')
-            // 
-            // access_token = request_response['access_token']
-            // 
-            // try:
-            //     access_token_expiry = datetime.now() + timedelta(seconds=int(request_response['expires_in']))
-            // except ValueError:  # Simple security measure in case we don't get the expected format in the response.
-            //     return "", _('Error while parsing API answer. Please try again later.')
-            // 
-            // # Tokens are valid for 5 minutes. Storing it helps reduce api calls and speed up things a little bit.
-            // credentials_company.write({
-            //     'l10n_vn_edi_token': access_token,
-            //     'l10n_vn_edi_token_expiry': access_token_expiry,
-            // })
-            // 
-            // return request_response['access_token'], ""
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiGetCredentialsCompanyInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_get_credentials_company(self):
-            // """ The company holding the credentials could be one of the parent companies.
-            // We need to ensure that:
-            //     - We use the credentials of the parent company, if no credentials are set on the child one.
-            //     - We store the access token on the appropriate company, based on which holds the credentials.
-            // """
-            // if self.company_id.l10n_vn_edi_username and self.company_id.l10n_vn_edi_password:
-            //     return self.company_id
-            // 
-            // return self.company_id.sudo().parent_ids.filtered(
-            //     lambda c: c.l10n_vn_edi_username and c.l10n_vn_edi_password
-            // )[-1:]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiIsSentInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_is_sent(self):
-            // """ Small helper that returns true if self has been sent to sinvoice. """
-            // self.ensure_one()
-            // sent_statuses = {'sent', 'payment_state_to_update', 'canceled', 'adjusted', 'replaced'}
-            // return self.l10n_vn_edi_invoice_state in sent_statuses
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiLookupInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_lookup_invoice(self):
-            // """ Lookup on invoice, returning its current details on SInvoice. """
-            // self.ensure_one()
-            // access_token, error = self._l10n_vn_edi_get_access_token()
-            // if error:
-            //     return {}, error
-            // 
-            // invoice_data, error_message = _l10n_vn_edi_send_request(
-            //     method='POST',
-            //     url=f'{SINVOICE_API_URL}InvoiceAPI/InvoiceWS/searchInvoiceByTransactionUuid',
-            //     params={
-            //         'supplierTaxCode': self.company_id.vat,
-            //         'transactionUuid': self.l10n_vn_edi_invoice_transaction_id,
-            //     },
-            //     headers={
-            //         'Content-Type': 'application/x-www-form-urlencoded;',
-            //     },
-            //     cookies={'access_token': access_token},
-            // )
-            // return invoice_data, error_message
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiSendInvoiceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice_json_data) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_send_invoice(self, invoice_json_data):
-            // """ Send an invoice to the SInvoice system.
-            // 
-            // Handles lookup on the system in order to ensure that the invoice was not sent successfully yet in case of
-            // timeout or other unforeseen error.
-            // """
-            // self.ensure_one()
-            // 
-            // # == Lock ==
-            // self.env['res.company']._with_locked_records(self)
-            // 
-            // invoice_data = {}
-            // # If the request was sent but ended up failing, there is still the possibility that the invoice was saved
-            // # on their system (timeout, for example)
-            // if self.l10n_vn_edi_invoice_transaction_id:
-            //     invoice_lookup, error_message = self._l10n_vn_edi_lookup_invoice()
-            //     if 'result' in invoice_lookup:
-            //         invoice_data = invoice_lookup['result'][0]
-            //     # note: We do not catch errors on this endpoint for simplicity, as it should not be required.
-            // else:
-            //     # We do not store the transaction id on the move right away so that we can avoid the above api call.
-            //     # When sending for the first time, we'll get the id from the file data, which we generated earlier in the flow.
-            //     self.l10n_vn_edi_invoice_transaction_id = invoice_json_data['generalInvoiceInfo']['transactionUuid']
-            // 
-            // # if the above request did not return data, we can assume that the invoice has failed to be created, or was never sent
-            // if not invoice_data:
-            //     # Send the invoice to the system
-            //     access_token, error = self._l10n_vn_edi_get_access_token()
-            //     if error:
-            //         return [error]
-            // 
-            //     request_response, error_message = _l10n_vn_edi_send_request(
-            //         method='POST',
-            //         url=f'{SINVOICE_API_URL}InvoiceAPI/InvoiceWS/createInvoice/{self.company_id.vat}',
-            //         json_data=invoice_json_data,
-            //         cookies={'access_token': access_token},
-            //     )
-            // 
-            //     if error_message:
-            //         return [error_message]
-            // 
-            //     invoice_data = request_response['result']
-            // 
-            // self.write({
-            //     'l10n_vn_edi_reservation_code': invoice_data['reservationCode'],
-            //     'l10n_vn_edi_invoice_number': invoice_data['invoiceNo'],
-            //     'l10n_vn_edi_invoice_state': 'sent',
-            // })
-            // 
-            // if self._can_commit():
-            //     self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiTryFetchInvoiceFileDataInternalAsync<TEntity>(IEnumerable<TEntity> entities, object file_format) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_edi_try_fetch_invoice_file_data(self, file_format):
-            // """
-            // Query sinvoice in order to fetch the data representation of the invoice, either zip or pdf.
-            // """
-            // self.ensure_one()
-            // if not self._l10n_vn_edi_is_sent():
-            //     return {}, _("In order to download the invoice's PDF file, you must first send it to SInvoice")
-            // 
-            // # == Lock ==
-            // self.env['res.company']._with_locked_records(self)
-            // 
-            // access_token, error = self._l10n_vn_edi_get_access_token()
-            // if error:
-            //     return {}, error
-            // 
-            // return _l10n_vn_edi_send_request(
-            //     method='POST',
-            //     url=f'{SINVOICE_API_URL}InvoiceAPI/InvoiceUtilsWS/getInvoiceRepresentationFile',
-            //     json_data={
-            //         'supplierTaxCode': self.company_id.vat,
-            //         'templateCode': self.l10n_vn_edi_invoice_symbol.invoice_template_id.name,
-            //         'invoiceNo': self.l10n_vn_edi_invoice_number,
-            //         'strIssueDate': self._l10n_vn_edi_format_date(self.l10n_vn_edi_issue_date),
-            //         'transactionUuid': self.l10n_vn_edi_invoice_transaction_id,
-            //         'fileType': file_format,
-            //     },
-            //     cookies={'access_token': access_token},
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnEdiUpdatePaymentStatusAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def action_l10n_vn_edi_update_payment_status(self):
-            // """ Send a request to update the payment status of the invoice. """
-            // 
-            // invoices = self.filtered(lambda i: i.l10n_vn_edi_invoice_state == 'payment_state_to_update')
-            // if not invoices:
-            //     return
-            // 
-            // # == Lock ==
-            // self.env['res.company']._with_locked_records(invoices)
-            // 
-            // for invoice in invoices:
-            //     sinvoice_status = 'unpaid'
-            // 
-            //     # SInvoice will return a NOT_FOUND_DATA error if the status in Odoo matches the one on their side.
-            //     # Because of that we wouldn't be able to differentiate a real issue (invoice on our side not matching theirs)
-            //     # With simply a status already up to date. So we need to check the status first to see if we need to update.
-            //     invoice_lookup, error_message = invoice._l10n_vn_edi_lookup_invoice()
-            //     if error_message:
-            //         raise UserError(error_message)
-            // 
-            //     if 'result' in invoice_lookup:
-            //         invoice_data = invoice_lookup['result'][0]
-            //         if invoice_data['status'] == 'Chưa thanh toán':  # Vietnamese for 'unpaid'
-            //             sinvoice_status = 'unpaid'
-            //         else:
-            //             sinvoice_status = 'paid'
-            // 
-            //     params = {
-            //         'supplierTaxCode': invoice.company_id.vat,
-            //         'invoiceNo': invoice.l10n_vn_edi_invoice_number,
-            //         'strIssueDate': invoice._l10n_vn_edi_format_date(invoice.l10n_vn_edi_issue_date),
-            //     }
-            // 
-            //     if invoice.payment_state in {'in_payment', 'paid'} and sinvoice_status == 'unpaid':
-            //         # Mark the invoice as paid
-            //         endpoint = f'{SINVOICE_API_URL}InvoiceAPI/InvoiceWS/updatePaymentStatus'
-            //         params['templateCode'] = invoice.l10n_vn_edi_invoice_symbol.invoice_template_id.name
-            //     elif invoice.payment_state not in {'in_payment', 'paid'} and sinvoice_status == 'paid':
-            //         # Mark the invoice as not paid
-            //         endpoint = f'{SINVOICE_API_URL}InvoiceAPI/InvoiceWS/cancelPaymentStatus'
-            //     else:
-            //         continue
-            // 
-            //     access_token, error = self._l10n_vn_edi_get_access_token()
-            //     if error:
-            //         raise UserError(error)
-            // 
-            //     _request_response, error_message = _l10n_vn_edi_send_request(
-            //         method='POST',
-            //         url=endpoint,
-            //         params=params,
-            //         headers={
-            //             'Content-Type': 'application/x-www-form-urlencoded;',
-            //         },
-            //         cookies={'access_token': access_token},
-            //     )
-            // 
-            //     if error_message:
-            //         raise UserError(error_message)
-            // 
-            //     # Revert back to the sent state as the status is up-to-date.
-            //     invoice.l10n_vn_edi_invoice_state = 'sent'
-            // 
-            //     if self._can_commit():
-            //         self._cr.commit()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> L10nVnNeedCancelRequestInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _l10n_vn_need_cancel_request(self):
-            // return self._l10n_vn_edi_is_sent() and self.l10n_vn_edi_invoice_state != 'canceled'
             */
             return default;
         }
@@ -21966,45 +10409,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LoadNarrationTranslationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _load_narration_translation(self):
-            // # Workaround to have the english/arabic version of the payment terms
-            // # in the report
-            // if not self:
-            //     return
-            // moves_to_fix = self.env['account.move']
-            // for move in self.filtered(lambda m: m.narration and m.is_sale_document(include_receipts=True) and m.company_id.country_id in self.env.ref('base.gulf_cooperation_council').country_ids):
-            //     lang = move.partner_id.lang or self.env.user.lang
-            //     if move.company_id.terms_type == 'html' or move.narration != move.company_id.with_context(lang=lang).invoice_terms:
-            //         continue
-            //     moves_to_fix |= move
-            // if not moves_to_fix:
-            //     return
-            // self.env['res.company'].flush_model(['invoice_terms'])
-            // self.env.cr.execute('SELECT "id","invoice_terms" FROM "res_company" WHERE id = any(%s)', [moves_to_fix.company_id.ids])
-            // translation_by_company_id = {company_id: narration for company_id, narration in self.env.cr.fetchall()}
-            // self.env.cache.update_raw(moves_to_fix, self._fields['narration'], [
-            //     translation_by_company_id[move.company_id.id]
-            //     for move in moves_to_fix
-            // ], dirty=True)
-            // moves_to_fix.modified(['narration'])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> LockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_lock(self):
-            // self.locked = True
-            */
-            return default;
-        }
-
         public async Task<TEntity> LogMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object meeting) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -22039,22 +10443,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _mailing_get_default_domain(self, mailing):
             // return ['&', ('move_type', '=', 'out_invoice'), ('state', '=', 'posted')]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MarkSentJoEdiInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _mark_sent_jo_edi(self):
-            // self.l10n_jo_edi_error = False
-            // self.l10n_jo_edi_state = 'sent'
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _mark_sent_jo_edi(self):
-            // super()._mark_sent_jo_edi()
-            // if self.env.company.l10n_jo_edi_demo_mode:
-            //     self.l10n_jo_edi_state = 'demo'
             */
             return default;
         }
@@ -22778,11 +11166,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not force and len(attachments) > 1 and self.message_main_attachment_id in self.edi_document_ids.attachment_id:
             //     force = True
             // super()._message_set_main_attachment_id(attachments, force=force, filter_xml=filter_xml)
-            --- ODOO METHOD SOURCE (MODULE: l10n_it, FILE: account_move.py) ---
-            // def _message_set_main_attachment_id(self, attachments, force=False, filter_xml=True):
-            // if self.message_main_attachment_id.mimetype == "application/pkcs7-mime":
-            //     force = True
-            // super()._message_set_main_attachment_id(attachments, force, filter_xml)
             */
             return default;
         }
@@ -22842,20 +11225,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // """
             // self.ensure_one()
             // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_hu_edi, FILE: account_move.py) ---
-            // def _need_cancel_request(self):
-            // # EXTEND account
-            // # Technical annulment should be available only in debug mode
-            // return super()._need_cancel_request() or (self.l10n_hu_edi_state in ['confirmed', 'confirmed_warning'] and request and request.session.debug)
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _need_cancel_request(self):
-            // # EXTENDS 'account'
-            // # For the in_progress state, we do not want to allow resetting to draft nor cancelling. We need to wait for the result first.
-            // return super()._need_cancel_request() or self.l10n_my_edi_state in ['valid', 'rejected']
-            --- ODOO METHOD SOURCE (MODULE: l10n_vn_edi_viettel, FILE: account_move.py) ---
-            // def _need_cancel_request(self):
-            // # EXTEND 'account'
-            // return super()._need_cancel_request() or self._l10n_vn_need_cancel_request()
             */
             return default;
         }
@@ -23031,57 +11400,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> Num2wordsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object number, object lang) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _num2words(self, number, lang):
-            // if num2words is None:
-            //     _logger.warning("The library 'num2words' is missing, cannot render textual amounts.")
-            //     return ""
-            // 
-            // return num2words(number, lang=lang).title()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> Number2numericAsync<TEntity>(IEnumerable<TEntity> entities, object number) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi, FILE: account_move.py) ---
-            // def number2numeric(self, number):
-            // 
-            // invoice_number = re.sub(r'\D', '', number)
-            // 
-            // if invoice_number == '' or invoice_number is False:
-            //     raise UserError(_('Invoice number must contain numeric characters'))
-            // 
-            // # Make sure the base number is 3...19 characters long
-            // if len(invoice_number) < 3:
-            //     invoice_number = ('11' + invoice_number)[-3:]
-            // elif len(invoice_number) > 19:
-            //     invoice_number = invoice_number[:19]
-            // 
-            // return invoice_number
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeAfipResponsibilityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _onchange_afip_responsibility(self):
-            // if self.company_id.account_fiscal_country_id.code == 'AR' and self.l10n_latam_use_documents and self.partner_id \
-            //    and not self.partner_id.l10n_ar_afip_responsibility_type_id:
-            //     return {'warning': {
-            //         'title': _('Missing Partner Configuration'),
-            //         'message': _('Please configure the AFIP Responsibility for "%s" in order to continue',
-            //             self.partner_id.name)}}
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangeAsync<TEntity>(IEnumerable<TEntity> entities, object values, object field_names, object fields_spec) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -23220,32 +11538,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OnchangeL10nIdTaxNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _onchange_l10n_id_tax_number(self):
-            // for record in self:
-            //     if record.l10n_id_tax_number and record.move_type not in self.get_purchase_types():
-            //         raise UserError(_("You can only change the number manually for a Vendor Bills and Credit Notes"))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OnchangeL10nLatamDocumentTypeIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _onchange_l10n_latam_document_type_id(self):
-            // # if we change document or journal and we are in draft and not posted, we clean number so that is recomputed
-            // if (self.journal_id.l10n_latam_use_documents and self.l10n_latam_document_type_id
-            //       and not self.l10n_latam_manual_document_number and self.state == 'draft' and not self.posted_before):
-            //     self.name = False
-            //     self._compute_name()
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangeMobileValidationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -23327,17 +11619,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'title': _("The sequence format has changed."),
             //             'message': "%s\n\n%s" % (changed, detected)
             //         }}
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_invoice.py) ---
-            // def _onchange_name_warning(self):
-            // if self.country_code == 'IN' and self.journal_id.type == 'sale' and self.name and (len(self.name) > 16 or not re.match(r'^[a-zA-Z0-9-\/]+$', self.name)):
-            //     return {'warning': {
-            //         'title' : _("Invalid sequence as per GST rule 46(b)"),
-            //         'message': _(
-            //             "The invoice number should not exceed 16 characters\n"
-            //             "and must only contain '-' (hyphen) and '/' (slash) as special characters"
-            //         )
-            //     }}
-            // return super()._onchange_name_warning()
             */
             return default;
         }
@@ -23424,12 +11705,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if p.invoice_warn == 'block':
             //             self.partner_id = False
             //         return {'warning': warning}
-            --- ODOO METHOD SOURCE (MODULE: l10n_se, FILE: account_move.py) ---
-            // def _onchange_partner_id(self):
-            // """ If Vendor Bill and Vendor OCR is set, add it. """
-            // if self.partner_id and self.move_type == 'in_invoice' and self.partner_id.l10n_se_default_vendor_payment_ref:
-            //     self.payment_reference = self.partner_id.l10n_se_default_vendor_payment_ref
-            // return super(AccountMove, self)._onchange_partner_id()
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
             // def _onchange_partner_id(self):
             // res = super(AccountMove, self)._onchange_partner_id()
@@ -23490,41 +11765,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OnchangePartnerJournalInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _onchange_partner_journal(self):
-            // """ This method is used when the invoice is created from the sale or subscription """
-            // expo_journals = ['FEERCEL', 'FEEWS', 'FEERCELP']
-            // for rec in self.filtered(lambda x: x.company_id.account_fiscal_country_id.code == "AR" and x.journal_id.type == 'sale'
-            //                          and x.l10n_latam_use_documents and x.partner_id.l10n_ar_afip_responsibility_type_id):
-            //     res_code = rec.partner_id.l10n_ar_afip_responsibility_type_id.code
-            //     domain = [
-            //         *self.env['account.journal']._check_company_domain(rec.company_id),
-            //         ('l10n_latam_use_documents', '=', True),
-            //         ('type', '=', 'sale'),
-            //     ]
-            //     journal = self.env['account.journal']
-            //     msg = False
-            //     if res_code in ['9', '10'] and rec.journal_id.l10n_ar_afip_pos_system not in expo_journals:
-            //         # if partner is foregin and journal is not of expo, we try to change to expo journal
-            //         journal = journal.search(domain + [('l10n_ar_afip_pos_system', 'in', expo_journals)], limit=1)
-            //         msg = _('You are trying to create an invoice for foreign partner but you don\'t have an exportation journal')
-            //     elif res_code not in ['9', '10'] and rec.journal_id.l10n_ar_afip_pos_system in expo_journals:
-            //         # if partner is NOT foregin and journal is for expo, we try to change to local journal
-            //         journal = journal.search(domain + [('l10n_ar_afip_pos_system', 'not in', expo_journals)], limit=1)
-            //         msg = _('You are trying to create an invoice for domestic partner but you don\'t have a domestic market journal')
-            //     if journal:
-            //         rec.journal_id = journal.id
-            //     elif msg:
-            //         # Throw an error to user in order to proper configure the journal for the type of operation
-            //         action = self.env.ref('account.action_account_journal_form')
-            //         raise RedirectWarning(msg, action.id, _('Go to Journals'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangePhoneValidationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -23560,12 +11800,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangePurchaseAutoCompleteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_purchase, FILE: account_move.py) ---
-            // def _onchange_purchase_auto_complete(self):
-            // purchase_order_id = self.purchase_vendor_bill_id.purchase_order_id or self.purchase_id
-            // if purchase_order_id and purchase_order_id.country_code == 'IN':
-            //     self.l10n_in_gst_treatment = purchase_order_id.l10n_in_gst_treatment
-            // return super()._onchange_purchase_auto_complete()
             --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
             // def _onchange_purchase_auto_complete(self):
             // r''' Load from either an old purchase order, either an old vendor bill.
@@ -23673,49 +11907,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_attachments(self):
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'ir.attachment',
-            //     'name': _('Documents'),
-            //     'context': {
-            //         'default_res_model': 'hr.applicant',
-            //         'default_res_id': self.ids[0],
-            //         'show_partner_name': 1,
-            //     },
-            //     'view_mode': 'list,form',
-            //     'views': [
-            //         (self.env.ref('hr_recruitment.ir_attachment_hr_recruitment_list_view').id, 'list'),
-            //         (False, 'form'),
-            //     ],
-            //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
-            //     'domain': [('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids), ],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_business_doc(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Order"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order',
-            //     'res_id': self.id,
-            //     'views': [(False, 'form')],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenCreatedCabaEntriesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -23729,114 +11920,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'view_mode': 'form',
             //     'domain': [('id', 'in', self.tax_cash_basis_created_move_ids.ids)],
             //     'views': [(self.env.ref('account.view_move_tree').id, 'list'), (False, 'form')],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenDeclarationOfIntentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: account_move.py) ---
-            // def action_open_declaration_of_intent(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Declaration of Intent for %s", self.display_name),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'l10n_it_edi_doi.declaration_of_intent',
-            //     'res_id': self.l10n_it_edi_doi_id.id,
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenDiscountWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_open_discount_wizard(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Discount"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order.discount',
-            //     'view_mode': 'form',
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenEmployeeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_employee(self):
-            // self.ensure_one()
-            // return self.candidate_id.action_open_employee()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenExpenseReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: account_move.py) ---
-            // def action_open_expense_report(self):
-            // self.ensure_one()
-            // return {
-            //     'name': self.expense_sheet_id.name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'views': [(False, 'form')],
-            //     'res_model': 'hr.expense.sheet',
-            //     'res_id': self.expense_sheet_id.id
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenL10nPh2307WizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ph, FILE: account_move.py) ---
-            // def action_open_l10n_ph_2307_wizard(self):
-            // vendor_bills = self.filtered_domain([('move_type', '=', 'in_invoice')])
-            // if vendor_bills:
-            //     wizard_action = self.env["ir.actions.act_window"]._for_xml_id("l10n_ph.view_l10n_ph_2307_wizard_act_window")
-            //     wizard_action.update({
-            //         'context': {'default_moves_to_export': vendor_bills.ids}
-            //     })
-            //     return wizard_action
-            // else:
-            //     raise UserError(_('Only Vendor Bills are available.'))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenOtherApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_other_applications(self):
-            // self.ensure_one()
-            // similar_candidates = (
-            //     self.env["hr.candidate"]
-            //     .with_context(active_test=False)
-            //     .search(self.candidate_id._get_similar_candidates_domain())
-            //     - self.candidate_id
-            // )
-            // return {
-            //     'name': _('Other Applications'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.applicant',
-            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
-            //     'domain': [('id', 'in', (self.candidate_id.applicant_ids + similar_candidates.applicant_ids).ids)],
-            //     'context': {
-            //         'active_test': False,
-            //         'search_default_stage': 1,
-            //     },
             // }
             */
             return default;
@@ -23862,7 +11945,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        public async Task<TEntity> PaymentActionCaptureAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -23877,7 +11960,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PaymentVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
+        public async Task<TEntity> PaymentActionVoidAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -24449,29 +12532,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
-            // def action_post(self):
-            // # inherit of the function from account.move to validate a new tax and the priceunit of a downpayment
-            // res = super(AccountMove, self).action_post()
-            // 
-            // # We cannot change lines content on locked SO, changes on invoices are not forwarded to the SO if the SO is locked
-            // dp_lines = self.line_ids.sale_line_ids.filtered(lambda l: l.is_downpayment and not l.display_type)
-            // dp_lines._compute_name()  # Update the description of DP lines (Draft -> Posted)
-            // downpayment_lines = dp_lines.filtered(lambda sol: not sol.order_id.locked)
-            // other_so_lines = downpayment_lines.order_id.order_line - downpayment_lines
-            // real_invoices = set(other_so_lines.invoice_lines.move_id)
-            // for so_dpl in downpayment_lines:
-            //     so_dpl.price_unit = so_dpl._get_downpayment_line_price_unit(real_invoices)
-            //     so_dpl.tax_id = so_dpl.invoice_lines.tax_ids
-            // 
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> PostInternalAsync<TEntity>(IEnumerable<TEntity> entities, object soft) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -24488,50 +12548,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     for line in move_lines:
             //         invoice.js_assign_outstanding_line(line.id)
             // return posted
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PostSignInvoicesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: account_move.py) ---
-            // def action_post_sign_invoices(self):
-            // # only sign invoices that are confirmed and not yet sent to the ETA.
-            // invoices = self.filtered(lambda r: r.country_code == 'EG' and r.state == 'posted' and not r.l10n_eg_submission_number and r.edi_document_ids.filtered(lambda e: e.edi_format_id.code == 'eg_eta'))
-            // if not invoices:
-            //     return
-            // 
-            // company_ids = invoices.mapped('company_id')
-            // # since the middleware accepts only one drive at a time, we have to limit signing to one company at a time
-            // if len(company_ids) > 1:
-            //     raise UserError(_('Please only sign invoices from one company at a time'))
-            // 
-            // company_id = company_ids[0]
-            // drive_id = self.env['l10n_eg_edi.thumb.drive'].search([('user_id', '=', self.env.user.id),
-            //                                                        ('company_id', '=', company_id.id)])
-            // 
-            // if not drive_id:
-            //     raise ValidationError(_('Please setup a personal drive for company %s', company_id.name))
-            // 
-            // if not drive_id.certificate:
-            //     raise ValidationError(_('Please setup the certificate on the thumb drive menu'))
-            // 
-            // invoices.write({'l10n_eg_signing_time': datetime.utcnow()})
-            // 
-            // for invoice in invoices:
-            //     eta_invoice = self.env['account.edi.format']._l10n_eg_eta_prepare_eta_invoice(invoice)
-            //     attachment = self.env['ir.attachment'].create({
-            //             'name': _('ETA_INVOICE_DOC_%s', invoice.name),
-            //             'res_id': invoice.id,
-            //             'res_model': invoice._name,
-            //             'type': 'binary',
-            //             'raw': json.dumps(dict(request=eta_invoice)),
-            //             'mimetype': 'application/json',
-            //             'description': _('Egyptian Tax authority JSON invoice generated for %s.', invoice.name),
-            //         })
-            //     invoice.l10n_eg_eta_json_doc_id = attachment.id
-            // return drive_id.action_sign_invoices(invoices)
             */
             return default;
         }
@@ -24818,30 +12834,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PrepareEfakturValsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move.py) ---
-            // def prepare_efaktur_vals(self):
-            // """ Get information required from invoice and lines to generate E-Faktur that will be used
-            // to load in the XML template later on"""
-            // invoice_vals = []
-            // idr = self.env.ref('base.IDR')
-            // 
-            // for move in self.filtered(lambda m: m.state == 'posted'):
-            //     vals = {}
-            //     move._l10n_id_coretax_build_invoice_vals(vals)
-            // 
-            //     for line in move.invoice_line_ids.filtered(lambda ml: ml.tax_ids):
-            //         line._l10n_id_coretax_build_invoice_line_vals(vals)
-            // 
-            //     invoice_vals.append(vals)
-            // 
-            // return invoice_vals
-            */
-            return default;
-        }
-
         public async Task<TEntity> PrepareEpdBaseLineForTaxesComputationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object epd_line) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -24907,17 +12899,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         rate=rate,
             //     ))
             // return epd_lines
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrepareEtaxInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def _prepare_etax(self):
-            // # These values are never set
-            // return {'JUMLAH_PPNBM': 0, 'UANG_MUKA_PPNBM': 0, 'JUMLAH_BARANG': 0, 'TARIF_PPNBM': 0, 'PPNBM': 0}
             */
             return default;
         }
@@ -25134,22 +13115,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if product_line.expense_id:
             //     results['special_mode'] = 'total_included'
             // return results
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: account_move.py) ---
-            // def _prepare_product_base_line_for_taxes_computation(self, product_line):
-            // """
-            //     Prepares tax base line. Rounding lines must appear in the XML,
-            //     so they are converted to regular lines with tax exemption code ('N2.2').
-            // """
-            // base_line = super()._prepare_product_base_line_for_taxes_computation(product_line)
-            // 
-            // if product_line.display_type == 'rounding':
-            //     base_line.update({
-            //         'quantity': 1,
-            //         'price_unit': -product_line.amount_currency,
-            //         'tax_ids': self._l10n_it_edi_search_tax_for_import(self.company_id, 0.0, l10n_it_exempt_reason='N2.2'),
-            //     })
-            // 
-            // return base_line
             */
             return default;
         }
@@ -25181,15 +13146,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if round_from_tax_lines:
             //     return [self._prepare_tax_line_for_taxes_computation(x) for x in tax_amls]
             // return []
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _prepare_tax_lines_for_taxes_computation(self, tax_amls, round_from_tax_lines):
-            // """
-            // If the final invoice has downpayment lines, we skip the tax correction, as we need to recalculate tax amounts
-            // without taking into account those lines
-            // """
-            // if self.country_code == 'SA' and not self._is_downpayment() and self.line_ids._get_downpayment_lines():
-            //     return []
-            // return super()._prepare_tax_lines_for_taxes_computation(tax_amls, round_from_tax_lines)
             */
             return default;
         }
@@ -25242,32 +13198,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PreviewSaleOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_preview_sale_order(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'target': 'self',
-            //     'url': self.get_portal_url(),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PrintPdfAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_print_pdf(self):
-            // self.ensure_one()
-            // return self.env.ref('account.account_invoices').report_action(self.id)
-            */
-            return default;
-        }
-
         public async Task<TEntity> ProcessAttachmentsForTemplatePostInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_template) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -25282,38 +13212,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         move_result.setdefault('attachment_ids', []).extend(edi_attachments.get('attachment_ids', []))
             //         move_result.setdefault('attachments', []).extend(edi_attachments.get('attachments', []))
             // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProcessEdiWebServicesAsync<TEntity>(IEnumerable<TEntity> entities, object with_commit) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi, FILE: account_move.py) ---
-            // def action_process_edi_web_services(self, with_commit=True):
-            // docs = self.edi_document_ids.filtered(lambda d: d.state in ('to_send', 'to_cancel') and d.blocking_level != 'error')
-            // docs._process_documents_web_services(with_commit=with_commit)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> PurchaseMatchingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
-            // def action_purchase_matching(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("Purchase Matching"),
-            //     'res_model': 'purchase.bill.line.match',
-            //     'domain': [
-            //         ('partner_id', 'in', (self.partner_id | self.partner_id.commercial_partner_id).ids),
-            //         ('company_id', 'in', self.env.company.ids),
-            //         ('account_move_id', 'in', [self.id, False]),
-            //     ],
-            //     'views': [(self.env.ref('purchase.purchase_bill_line_match_tree').id, 'list')],
-            // }
             */
             return default;
         }
@@ -25335,91 +13233,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if prev_move:
             //             invoice_date = self._get_accounting_date(prev_move.invoice_date, False)
             //         record.invoice_date = invoice_date
-            */
-            return default;
-        }
-
-        public async Task<TEntity> QuotationSendAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_send(self):
-            // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
-            // self.filtered(lambda so: so.state in ('draft', 'sent')).order_line._validate_analytic_distribution()
-            // lang = self.env.context.get('lang')
-            // 
-            // ctx = {
-            //     'default_model': 'sale.order',
-            //     'default_res_ids': self.ids,
-            //     'default_composition_mode': 'comment',
-            //     'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-            //     'email_notification_allow_footer': True,
-            //     'proforma': self.env.context.get('proforma', False),
-            // }
-            // 
-            // if len(self) > 1:
-            //     ctx['default_composition_mode'] = 'mass_mail'
-            // else:
-            //     ctx.update({
-            //         'force_email': True,
-            //         'model_description': self.with_context(lang=lang).type_name,
-            //     })
-            //     if not self.env.context.get('hide_default_template'):
-            //         mail_template = self._find_mail_template()
-            //         if mail_template:
-            //             ctx.update({
-            //                 'default_template_id': mail_template.id,
-            //                 'mark_so_as_sent': True,
-            //             })
-            //         if mail_template and mail_template.lang:
-            //             lang = mail_template._render_lang(self.ids)[self.id]
-            //     else:
-            //         for order in self:
-            //             order._portal_ensure_token()
-            // 
-            // action = {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mail.compose.message',
-            //     'views': [(False, 'form')],
-            //     'view_id': False,
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
-            // if (
-            //     self.env.context.get('check_document_layout')
-            //     and not self.env.context.get('discard_logo_check')
-            //     and self.env.is_admin()
-            //     and not self.env.company.external_report_layout_id
-            // ):
-            //     layout_action = self.env['ir.actions.report']._action_configure_external_report_layout(
-            //         action,
-            //     )
-            //     # Need to remove this context for windows action
-            //     action.pop('close_on_report_download', None)
-            //     layout_action['context']['dialog_size'] = 'extra-large'
-            //     return layout_action
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> QuotationSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_quotation_sent(self):
-            // """ Mark the given draft quotation(s) as sent.
-            // 
-            // :raise: UserError if any given SO is not in draft state.
-            // """
-            // if any(order.state != 'draft' for order in self):
-            //     raise UserError(_("Only draft orders can be marked as sent directly."))
-            // 
-            // for order in self:
-            //     order.message_subscribe(partner_ids=order.partner_id.ids)
-            // 
-            // self.write({'state': 'sent'})
             */
             return default;
         }
@@ -25745,23 +13558,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
             // def _refunds_origin_required(self):
             // return False
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move.py) ---
-            // def _refunds_origin_required(self):
-            // if self.l10n_es_tbai_is_required:
-            //     return True
-            // return super()._refunds_origin_required()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RegisterPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_register_payment(self):
-            // if any(m.state != 'posted' for m in self):
-            //     raise UserError(_("You can only register payment for posted journal entries."))
-            // return self.action_force_register_payment()
             */
             return default;
         }
@@ -25775,21 +13571,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for record in self:
             //     if record.auto_post != 'no' and record.is_purchase_document() and not record.invoice_date:
             //         raise ValidationError(_("For this entry to be automatically posted, it required a bill date."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_reschedule_meeting(self):
-            // self.ensure_one()
-            // action = self.action_schedule_meeting(smart_calendar=False)
-            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // if next_activity.calendar_event_id:
-            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
-            // return action
             */
             return default;
         }
@@ -25817,37 +13598,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ResetEfakturAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur, FILE: account_move.py) ---
-            // def reset_efaktur(self):
-            // """Reset E-Faktur, so it can be use for other invoice."""
-            // for move in self:
-            //     if move.l10n_id_efaktur_document:
-            //         raise UserError(_('You have already generated the tax report for this document: %s', move.name))
-            //     self.env['l10n_id_efaktur.efaktur.range'].push_number(move.company_id.id, move.l10n_id_tax_number[3:])
-            //     move.message_post(
-            //         body='e-Faktur Reset: %s ' % (move.l10n_id_tax_number),
-            //         subject="Reset Efaktur")
-            //     move.l10n_id_tax_number = False
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RetryEdiDocumentsErrorAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_edi, FILE: account_move.py) ---
-            // def action_retry_edi_documents_error(self):
-            // self._retry_edi_documents_error_hook()
-            // self.edi_document_ids.write({'error': False, 'blocking_level': False})
-            // self.action_process_edi_web_services()
-            */
-            return default;
-        }
-
         public async Task<TEntity> RetryEdiDocumentsErrorHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -25857,21 +13607,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // TO OVERRIDE
             // '''
             // return
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ReverseAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_reverse(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("account.action_view_account_move_reversal")
-            // 
-            // if self.is_invoice():
-            //     action['name'] = _('Credit Note')
-            // 
-            // return action
             */
             return default;
         }
@@ -25940,42 +13675,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             vals['line_ids'] += [(command, line_id, *line_vals)]
             //     del vals['invoice_line_ids']
             // return vals
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_schedule_meeting(self, smart_calendar=True):
-            // """ Open meeting's calendar view to schedule meeting on current opportunity.
-            // 
-            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
-            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
-            //     :return dict: dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
-            // partner_ids = self.env.user.partner_id.ids
-            // if self.partner_id:
-            //     partner_ids.append(self.partner_id.id)
-            // current_opportunity_id = self.id if self.type == 'opportunity' else False
-            // action['context'] = {
-            //     'search_default_opportunity_id': current_opportunity_id,
-            //     'default_opportunity_id': current_opportunity_id,
-            //     'default_partner_id': self.partner_id.id,
-            //     'default_partner_ids': partner_ids,
-            //     'default_team_id': self.team_id.id,
-            //     'default_name': self.name,
-            // }
-            // 
-            // # 'Smart' calendar view : get the most relevant time period to display to the user.
-            // if current_opportunity_id and smart_calendar:
-            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
-            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
-            // 
-            // return action
             */
             return default;
         }
@@ -26274,20 +13973,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SearchProductForImportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object item_description) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _search_product_for_import(self, item_description):
-            // # Exported Odoo XML will have item_description = "[default_code] name".
-            // # We can check if it follows the same format and search for the product with the default code and the name.
-            // code_and_name = re.match(r"(\[(?P<default_code>.*?)\]\s)?(?P<name>.*)", item_description).groupdict()
-            // product = self.env['product.product']._retrieve_product(**code_and_name)
-            // return product
-            */
-            return default;
-        }
-
         public async Task<TEntity> SearchSecuredInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -26302,24 +13987,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SearchTaxForImportInternalAsync<TEntity>(IEnumerable<TEntity> entities, object company, object amount, object is_fixed, object is_withheld, object is_purchase, object price_included) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_facturae, FILE: account_move.py) ---
-            // def _search_tax_for_import(self, company, amount, is_fixed, is_withheld, is_purchase, price_included):
-            // taxes = self.env['account.tax'].search([
-            //     ('company_id', '=', company.id),
-            //     ('amount', '=', -1.0 * amount if is_withheld else amount),
-            //     ('amount_type', '=', 'fixed' if is_fixed else 'percent'),
-            //     ('type_tax_use', '=', 'purchase' if is_purchase else 'sale'),
-            //     ('price_include', '=', price_included),
-            // ], limit=1)
-            // 
-            // return taxes
-            */
-            return default;
-        }
-
         public async Task<TEntity> SelectExpectedDateInternalAsync<TEntity>(IEnumerable<TEntity> entities, object expected_dates) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -26327,74 +13994,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def _select_expected_date(self, expected_dates):
             // self.ensure_one()
             // return min(expected_dates)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendAndPrintAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_send_and_print(self):
-            // self.env['account.move.send']._check_move_constrains(self)
-            // return {
-            //     'name': _("Print & Send"),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'account.move.send.wizard' if len(self) == 1 else 'account.move.send.batch.wizard',
-            //     'target': 'new',
-            //     'context': {
-            //         'active_model': 'account.move',
-            //         'active_ids': self.ids,
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_send_email(self):
-            // return {
-            //     'name': _('Send Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'new',
-            //     'view_mode': 'form',
-            //     'res_model': 'applicant.send.mail',
-            //     'context': {
-            //         'default_applicant_ids': self.ids,
-            //     }
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendL10nJoEdiRequestInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @params, object headers) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _send_l10n_jo_edi_request(self, params, headers):
-            // try:
-            //     response = requests.post(JOFOTARA_URL, json=params, headers=headers, timeout=50)
-            // except requests.exceptions.Timeout:
-            //     return {'error': _("Request timeout! Please try again.")}
-            // except requests.exceptions.RequestException as e:
-            //     return {'error': _("Invalid request: %s", e)}
-            // 
-            // if not response.ok:
-            //     content = response.content.decode()
-            //     if response.status_code == 403:
-            //         content = _("Access forbidden. Please verify your JoFotara credentials.")
-            //     return {'error': _("Request failed: %s", content)}
-            // dict_response = response.json()
-            // return dict_response
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi_extended, FILE: account_move.py) ---
-            // def _send_l10n_jo_edi_request(self, params, headers):
-            // if self.env.company.l10n_jo_edi_demo_mode:
-            //     return {'EINV_QR': "Demo JoFotara QR"}  # mocked response
-            // return super()._send_l10n_jo_edi_request(params, headers)
             */
             return default;
         }
@@ -26530,57 +14129,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetAfipResponsibilityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _set_afip_responsibility(self):
-            // """ We save the information about the receptor responsability at the time we validate the invoice, this is
-            // necessary because the user can change the responsability after that any time """
-            // for rec in self:
-            //     rec.l10n_ar_afip_responsibility_type_id = rec.commercial_partner_id.l10n_ar_afip_responsibility_type_id.id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetAfipServiceDatesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move.py) ---
-            // def _set_afip_service_dates(self):
-            // for rec in self.filtered(lambda m: m.invoice_date and m.l10n_ar_afip_concept in ['2', '3', '4']):
-            //     if not rec.l10n_ar_afip_service_start:
-            //         rec.l10n_ar_afip_service_start = rec.invoice_date + relativedelta(day=1)
-            //     if not rec.l10n_ar_afip_service_end:
-            //         rec.l10n_ar_afip_service_end = rec.invoice_date + relativedelta(day=1, days=-1, months=+1)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_automated_probability(self):
-            // self.write({'probability': self.automated_probability})
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_lost(self, **additional_values):
-            // """ Lost semantic: probability = 0 or active = False """
-            // res = self.action_archive()
-            // if additional_values:
-            //     self.write(dict(additional_values))
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> SetNextMadeSequenceGapInternalAsync<TEntity>(IEnumerable<TEntity> entities, bool made_gap) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -26602,10 +14150,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         ('sequence_number', 'in', [move.sequence_number + 1 for move in moves]),
             //     ])
             // next_moves.made_sequence_gap = made_gap
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _set_next_made_sequence_gap(self, made_gap: bool):
-            // if other_moves := self.filtered(lambda m: not m.journal_id.l10n_latam_use_documents):
-            //     super(AccountMove, other_moves)._set_next_made_sequence_gap(made_gap)
             */
             return default;
         }
@@ -26648,62 +14192,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //                                  and credit_note.invoice_line_ids.sale_line_ids in inv.invoice_line_ids.sale_line_ids)
             // if len(original_invoice) == 1 and original_invoice._refunds_origin_required():
             //     credit_note.reversed_entry_id = original_invoice.id
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won(self):
-            // """ Won semantic: probability = 100 (active untouched) """
-            // self.action_unarchive()
-            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
-            // leads_by_won_stage = {}
-            // for lead in self:
-            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
-            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
-            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
-            //     # sequence than any "won" stage. But while this is not the case, searching
-            //     # for the "won" stage while alterning the sequence order (see below) will correctly
-            //     # handle such a case :
-            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
-            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
-            //     #       not in [x (won)] nor [z (won)]
-            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
-            //     if not stage_id:
-            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
-            //     if stage_id in leads_by_won_stage:
-            //         leads_by_won_stage[stage_id] += lead
-            //     else:
-            //         leads_by_won_stage[stage_id] = lead
-            // for won_stage_id, leads in leads_by_won_stage.items():
-            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won_rainbowman(self):
-            // self.ensure_one()
-            // self.action_set_won()
-            // 
-            // message = self._get_rainbowman_message()
-            // if message:
-            //     return {
-            //         'effect': {
-            //             'fadeout': 'slow',
-            //             'message': message,
-            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
-            //             'type': 'rainbow_man',
-            //         }
-            //     }
-            // return True
             */
             return default;
         }
@@ -26784,66 +14272,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_show_potential_duplicates(self):
-            // """ Open kanban view to display duplicate leads or opportunity.
-            //     :return dict: dictionary value for created kanban view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
-            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
-            // action['context'] = {
-            //     'active_test': False,
-            //     'create': False
-            // }
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SkipFormatDocumentNumberInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec, FILE: account_move.py) ---
-            // def _skip_format_document_number(self):
-            // """
-            // If a Credit Note is created from a Vendor Bill and the partner_id != "EC",
-            // we want to allow the user to allocate any number without following the EC format.
-            // """
-            // self.ensure_one()
-            // if self.country_code == 'EC':
-            //     return (
-            //             self.l10n_latam_document_type_id.internal_type in ('credit_note', 'debit_note')
-            //             and self.partner_id.country_code != "EC"
-            //             and self.move_type == 'in_refund'
-            //             and self.journal_id.type == 'purchase'
-            //     )
-            // super()._skip_format_document_number()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move.py) ---
-            // def _skip_format_document_number(self):
-            // """Hook to be overridden in localisation"""
-            // self.ensure_one()
-            // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_snooze(self):
-            // self.ensure_one()
-            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // my_next_activity.action_snooze()
-            // return True
-            */
-            return default;
-        }
-
         public async Task<TEntity> SortByConfidenceLevelInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reverse) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -26871,37 +14299,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         -opportunity._origin.id
             // 
             // return self.sorted(key=opps_key, reverse=reverse)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SpaceQrrReferenceAsync<TEntity>(IEnumerable<TEntity> entities, object qrr_ref) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def space_qrr_reference(self, qrr_ref):
-            // """ Makes the provided QRR reference human-friendly, spacing its elements
-            // by blocks of 5 from right to left.
-            // """
-            // spaced_qrr_ref = ''
-            // i = len(qrr_ref) # i is the index after the last index to consider in substrings
-            // while i > 0:
-            //     spaced_qrr_ref = qrr_ref[max(i-5, 0) : i] + ' ' + spaced_qrr_ref
-            //     i -= 5
-            // return spaced_qrr_ref
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SpaceScorReferenceAsync<TEntity>(IEnumerable<TEntity> entities, object iso11649_ref) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ch, FILE: account_invoice.py) ---
-            // def space_scor_reference(self, iso11649_ref):
-            // """ Makes the provided SCOR reference human-friendly, spacing its elements
-            // by blocks of 5 from right to left.
-            // """
-            // return ' '.join(iso11649_ref[i:i + 4] for i in range(0, len(iso11649_ref), 4))
             */
             return default;
         }
@@ -27303,64 +14700,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         yield self.env['account.move.line'].browse(command[1]).move_id.id
             //     if command[0] == Command.SET:
             //         yield from self.env['account.move.line'].browse(command[2]).move_id.ids
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SubmitToJofotaraInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: account_move.py) ---
-            // def _submit_to_jofotara(self):
-            // self.ensure_one()
-            // headers = self._l10n_jo_build_jofotara_headers()
-            // xml_invoice = self.env['account.edi.xml.ubl_21.jo']._export_invoice(self)[0]
-            // params = {'invoice': base64.b64encode(xml_invoice).decode()}
-            // dict_response = self._send_l10n_jo_edi_request(params, headers)
-            // if 'error' in dict_response and len(dict_response) == 1:
-            //     return dict_response['error']
-            // self.l10n_jo_edi_qr = str(dict_response.get('EINV_QR', ''))
-            // self.invoice_pdf_report_id.res_field = False
-            // self.env["ir.attachment"].create(
-            //     {
-            //         "res_model": "account.move",
-            //         "res_id": self.id,
-            //         "res_field": "l10n_jo_edi_xml_attachment_file",
-            //         "name": self._l10n_jo_edi_get_xml_attachment_name(),
-            //         "raw": xml_invoice,
-            //     }
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SwitchMoveTypeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_switch_move_type(self):
-            // if any(move.posted_before for move in self):
-            //     raise ValidationError(_("You cannot switch the type of a document which has been posted once."))
-            // if any(move.move_type == "entry" for move in self):
-            //     raise ValidationError(_("This action isn't available for this document."))
-            // 
-            // for move in self:
-            //     in_out, old_move_type = move.move_type.split('_')
-            //     new_move_type = f"{in_out}_{'invoice' if old_move_type == 'refund' else 'refund'}"
-            //     move.name = False
-            //     move.write({
-            //         'move_type': new_move_type,
-            //         'currency_id': move.currency_id.id,
-            //         'fiscal_position_id': move.fiscal_position_id.id,
-            //     })
-            //     if move.amount_total < 0:
-            //         move.write({
-            //             'line_ids': [
-            //                 Command.update(line.id, {'quantity': -line.quantity})
-            //                 for line in move.line_ids
-            //                 if line.display_type == 'product'
-            //             ]
-            //         })
             */
             return default;
         }
@@ -27861,23 +15200,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ToggleBlockPaymentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_toggle_block_payment(self):
-            // self.ensure_one()
-            // if self.payment_state == 'blocked':
-            //     self.payment_state = 'not_paid'
-            //     self.env.add_to_compute(self._fields['payment_state'], self)
-            // else:
-            //     if self.payment_state in ('paid', 'in_payment'):
-            //         raise UserError(_("You can't block a paid invoice."))
-            //     self.payment_state = 'blocked'
-            */
-            return default;
-        }
-
         public async Task<TEntity> TrackFinalizeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -28138,16 +15460,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UnlockAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_unlock(self):
-            // self.locked = False
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateAutomatedProbabilitiesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -28233,18 +15545,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdateFposValuesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move.py) ---
-            // def action_update_fpos_values(self):
-            // self.invoice_line_ids._compute_price_unit()
-            // self.invoice_line_ids._compute_tax_ids()
-            // self.line_ids._compute_account_id()
-            */
-            return default;
-        }
-
         public async Task<TEntity> UpdateOrderLineInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid product_id, object quantity) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -28286,63 +15586,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UpdatePricesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_prices(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_prices()
-            // 
-            // if self.pricelist_id:
-            //     message = _("Product prices have been recomputed according to pricelist %s.",
-            //         self.pricelist_id._get_html_link())
-            // else:
-            //     message = _("Product prices have been recomputed.")
-            // self.message_post(body=message)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateTaxesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_update_taxes(self):
-            // self.ensure_one()
-            // 
-            // self._recompute_taxes()
-            // 
-            // if self.partner_id:
-            //     self.message_post(body=_("Product taxes have been recomputed according to fiscal position %s.",
-            //         self.fiscal_position_id._get_html_link() if self.fiscal_position_id else "")
-            //     )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UpdateValidationFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object validation_result) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def _update_validation_fields(self, validation_result):
-            // """ Update a few important fields in self based on the data received when an invoice gets to the 'valid' state. """
-            // self.ensure_one()
-            // # We receive a timezone_aware datetime, but it should always be in UTC.
-            // # Odoo expect a timezone unaware datetime in UTC, so we can safely remove the info without any more work needed.
-            // utc_tz_aware_datetime = dateutil.parser.isoparse(validation_result['valid_datetime'])
-            // self.l10n_my_edi_validation_time = utc_tz_aware_datetime.replace(tzinfo=None)
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move.py) ---
-            // def _update_validation_fields(self, validation_result):
-            // """ Extended to update the long id as well. """
-            // # EXTENDS 'l10n_my_edi'
-            // super()._update_validation_fields(validation_result)
-            // self.l10n_my_edi_invoice_long_id = validation_result['long_id']
-            */
-            return default;
-        }
-
         public async Task<TEntity> ValidateOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
         {
             /*
@@ -28375,230 +15618,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if record.fiscal_position_id and impacted_countries != record.fiscal_position_id.country_id:
             //             raise ValidationError(_("This entry contains taxes that are not compatible with your fiscal position. Check the country set in fiscal position and in your tax configuration."))
             //         raise ValidationError(_("This entry contains one or more taxes that are incompatible with your fiscal country. Check company fiscal country in the settings and tax country in taxes configuration."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ValidateTinAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi, FILE: account_move.py) ---
-            // def action_validate_tin(self):
-            // self.ensure_one()
-            // self.partner_id.action_validate_tin()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewDebitNotesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_debit_note, FILE: account_move.py) ---
-            // def action_view_debit_notes(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Debit Notes'),
-            //     'res_model': 'account.move',
-            //     'view_mode': 'list,form',
-            //     'domain': [('debit_origin_id', '=', self.id)],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, object invoices) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
-            // def action_view_invoice(self, invoices=False):
-            // if not invoices:
-            //     invoices = self.mapped('invoice_ids')
-            // action = self.env['ir.actions.actions']._for_xml_id('account.action_move_out_invoice_type')
-            // if len(invoices) > 1:
-            //     action['domain'] = [('id', 'in', invoices.ids)]
-            // elif len(invoices) == 1:
-            //     form_view = [(self.env.ref('account.view_move_form').id, 'form')]
-            //     if 'views' in action:
-            //         action['views'] = form_view + [(state,view) for state,view in action['views'] if view != 'form']
-            //     else:
-            //         action['views'] = form_view
-            //     action['res_id'] = invoices.id
-            // else:
-            //     action = {'type': 'ir.actions.act_window_close'}
-            // 
-            // context = {
-            //     'default_move_type': 'out_invoice',
-            // }
-            // if len(self) == 1:
-            //     context.update({
-            //         'default_partner_id': self.partner_id.id,
-            //         'default_partner_shipping_id': self.partner_shipping_id.id,
-            //         'default_invoice_payment_term_id': self.payment_term_id.id or self.partner_id.property_payment_term_id.id or self.env['account.move'].default_get(['invoice_payment_term_id']).get('invoice_payment_term_id'),
-            //         'default_invoice_origin': self.name,
-            //     })
-            // action['context'] = context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewLandedCostsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: stock_landed_costs, FILE: account_move.py) ---
-            // def action_view_landed_costs(self):
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("stock_landed_costs.action_stock_landed_cost")
-            // domain = [('id', 'in', self.landed_costs_ids.ids)]
-            // context = dict(self.env.context, default_vendor_bill_id=self.id)
-            // views = [(self.env.ref('stock_landed_costs.view_stock_landed_cost_tree2').id, 'list'), (False, 'form'), (False, 'kanban')]
-            // return dict(action, domain=domain, context=context, views=views)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewPaymentTransactionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: account_payment, FILE: account_move.py) ---
-            // def action_view_payment_transactions(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('payment.action_payment_transaction')
-            // 
-            // if len(self.transaction_ids) == 1:
-            //     action['view_mode'] = 'form'
-            //     action['res_id'] = self.transaction_ids.id
-            //     action['views'] = []
-            // else:
-            //     action['domain'] = [('id', 'in', self.transaction_ids.ids)]
-            // 
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSourcePurchaseOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: account_invoice.py) ---
-            // def action_view_source_purchase_orders(self):
-            // self.ensure_one()
-            // source_orders = self.line_ids.purchase_line_id.order_id
-            // result = self.env['ir.actions.act_window']._for_xml_id('purchase.purchase_form_action')
-            // if len(source_orders) > 1:
-            //     result['domain'] = [('id', 'in', source_orders.ids)]
-            // elif len(source_orders) == 1:
-            //     result['views'] = [(self.env.ref('purchase.purchase_order_form', False).id, 'form')]
-            //     result['res_id'] = source_orders.id
-            // else:
-            //     result = {'type': 'ir.actions.act_window_close'}
-            // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSourceSaleOrdersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: account_move.py) ---
-            // def action_view_source_sale_orders(self):
-            // self.ensure_one()
-            // source_orders = self.line_ids.sale_line_ids.order_id
-            // result = self.env['ir.actions.act_window']._for_xml_id('sale.action_orders')
-            // if len(source_orders) > 1:
-            //     result['domain'] = [('id', 'in', source_orders.ids)]
-            // elif len(source_orders) == 1:
-            //     result['views'] = [(self.env.ref('sale.view_order_form', False).id, 'form')]
-            //     result['res_id'] = source_orders.id
-            // else:
-            //     result = {'type': 'ir.actions.act_window_close'}
-            // return result
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewStatisticsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
-            // def action_view_statistics(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('link_tracker.link_tracker_click_action_statistics')
-            // action['domain'] = [('link_id', '=', self.id)]
-            // action['context'] = dict(self._context, create=False)
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTimesheetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sale_timesheet, FILE: account_move.py) ---
-            // def action_view_timesheet(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _('Timesheets'),
-            //     'domain': [('project_id', '!=', False)],
-            //     'res_model': 'account.analytic.line',
-            //     'view_id': False,
-            //     'view_mode': 'list,form',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             Record timesheets
-            //         </p><p>
-            //             You can register and track your workings hours by project every
-            //             day. Every time spent on a project will become a cost and can be re-invoiced to
-            //             customers if required.
-            //         </p>
-            //     """),
-            //     'limit': 80,
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         'search_default_project_id': [self.id]
-            //     }
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewWipProductionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: account_move.py) ---
-            // def action_view_wip_production(self):
-            // self.ensure_one()
-            // action = {
-            //     'res_model': 'mrp.production',
-            //     'type': 'ir.actions.act_window',
-            // }
-            // if len(self.wip_production_ids) == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'res_id': self.wip_production_ids.id,
-            //     })
-            // else:
-            //     action.update({
-            //         'name': _("WIP MOs of %s", self.name),
-            //         'domain': [('id', 'in', self.wip_production_ids.ids)],
-            //         'view_mode': 'list,form',
-            //     })
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> VisitPageAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
-            // def action_visit_page(self):
-            // return {
-            //     'name': _("Visit Webpage"),
-            //     'type': 'ir.actions.act_url',
-            //     'url': self.url,
-            //     'target': 'new',
-            // }
             */
             return default;
         }

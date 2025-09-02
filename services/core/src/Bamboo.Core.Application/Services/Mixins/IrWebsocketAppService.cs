@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("bus", Depends = new[] { "base", "web" })]
     public class IrWebsocketAppService : ApplicationService, IIrWebsocketAppService
     {
-
-        public IrWebsocketAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public IrWebsocketAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         protected async Task<object> AuthenticateInternalAsync()

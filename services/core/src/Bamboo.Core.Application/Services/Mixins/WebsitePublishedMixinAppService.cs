@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,57 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
     public class WebsitePublishedMixinAppService : ApplicationService, IWebsitePublishedMixinAppService
     {
-
-        public WebsitePublishedMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public WebsitePublishedMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionDislikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_dislike(self):
+            // self.check_access('read')
+            // return self._action_vote(upvote=False)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionJoinAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def action_join(self):
+            // self.ensure_one()
+            // self.user_ids = [Command.link(self.env.user.id)]
+            // self.env.user._bus_send_store(self, fields=["are_you_inside", "name"])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_like(self):
+            // self.check_access('read')
+            // return self._action_vote(upvote=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMarkCompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_mark_completed(self):
+            // if any(not slide.can_self_mark_completed for slide in self):
+            //     raise UserError(_('You cannot mark a slide as completed if you are not among its members.'))
+            // 
+            // return self._action_mark_completed()
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionMarkCompletedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
@@ -42,6 +91,39 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'partner_id': target_partner.id,
             //     'vote': 0,
             //     'completed': True} for new_slide in new_slides])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMarkUncompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_mark_uncompleted(self):
+            // if any(not slide.can_self_mark_uncompleted for slide in self):
+            //     raise UserError(_('You cannot mark a slide as uncompleted if you are not among its members.'))
+            // 
+            // completed_slides = self.filtered(lambda slide: slide.user_has_completed)
+            // 
+            // # Remove the Karma point gained
+            // completed_slides._action_set_quiz_done(completed=False)
+            // 
+            // self.env['slide.slide.partner'].sudo().search([
+            //     ('slide_id', 'in', completed_slides.ids),
+            //     ('partner_id', '=', self.env.user.partner_id.id),
+            // ]).completed = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionQuitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def action_quit(self):
+            // self.ensure_one()
+            // self.user_ids = [Command.unlink(self.env.user.id)]
+            // self.env.user._bus_send_store(self, fields=["are_you_inside", "name"])
             */
             return default;
         }
@@ -91,6 +173,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionSetViewedAsync<TEntity>(IEnumerable<TEntity> entities, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_set_viewed(self, quiz_attempts_inc=False):
+            // if any(not slide.channel_id.is_member for slide in self):
+            //     raise UserError(_('You cannot mark a slide as viewed if you are not among its members.'))
+            // 
+            // return bool(self._action_set_viewed(self.env.user.partner_id, quiz_attempts_inc=quiz_attempts_inc))
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionSetViewedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_partner, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
@@ -113,6 +208,56 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'partner_id': target_partner.id,
             //     'quiz_attempts_count': 1 if quiz_attempts_inc else 0,
             //     'vote': 0} for new_slide in new_slides])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewChatbotScriptsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def action_view_chatbot_scripts(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.chatbot_script_action')
+            // chatbot_script_ids = self.env['im_livechat.channel.rule'].search(
+            //     [('channel_id', 'in', self.ids)]).mapped('chatbot_script_id')
+            // if len(chatbot_script_ids) == 1:
+            //     action['res_id'] = chatbot_script_ids.id
+            //     action['view_mode'] = 'form'
+            //     action['views'] = [(False, 'form')]
+            // else:
+            //     action['domain'] = [('id', 'in', chatbot_script_ids.ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewEmbedsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_view_embeds(self):
+            // self.ensure_one()
+            // 
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_embed_action")
+            // action['context'] = {'search_default_slide_id': self.id}
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
+            // def action_view_rating(self):
+            // """ Action to display the rating relative to the channel, so all rating of the
+            //     sessions of the current channel
+            //     :returns : the ir.action 'action_view_rating' with the correct context
+            // """
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.rating_rating_action_livechat')
+            // action['context'] = {'search_default_parent_res_name': self.name}
+            // return action
             */
             return default;
         }
@@ -1527,17 +1672,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DislikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_dislike(self):
-            // self.check_access('read')
-            // return self._action_vote(upvote=False)
-            */
-            return default;
-        }
-
         public async Task<TEntity> EmbedIncrementInternalAsync<TEntity>(IEnumerable<TEntity> entities, object url) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
@@ -2486,29 +2620,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> JoinAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
-            // def action_join(self):
-            // self.ensure_one()
-            // self.user_ids = [Command.link(self.env.user.id)]
-            // self.env.user._bus_send_store(self, fields=["are_you_inside", "name"])
-            */
-            return default;
-        }
-
-        public async Task<TEntity> LikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_like(self):
-            // self.check_access('read')
-            // return self._action_vote(upvote=True)
-            */
-            return default;
-        }
-
         public async Task<TEntity> MailGetPartnerFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object introspect_fields) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
@@ -2528,40 +2639,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if self:
             //     tz = self.event_id._mail_get_timezone_with_default(default_tz=default_tz)
             // return tz or super()._mail_get_timezone_with_default(default_tz=default_tz)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MarkCompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_mark_completed(self):
-            // if any(not slide.can_self_mark_completed for slide in self):
-            //     raise UserError(_('You cannot mark a slide as completed if you are not among its members.'))
-            // 
-            // return self._action_mark_completed()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MarkUncompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_mark_uncompleted(self):
-            // if any(not slide.can_self_mark_uncompleted for slide in self):
-            //     raise UserError(_('You cannot mark a slide as uncompleted if you are not among its members.'))
-            // 
-            // completed_slides = self.filtered(lambda slide: slide.user_has_completed)
-            // 
-            // # Remove the Karma point gained
-            // completed_slides._action_set_quiz_done(completed=False)
-            // 
-            // self.env['slide.slide.partner'].sudo().search([
-            //     ('slide_id', 'in', completed_slides.ids),
-            //     ('partner_id', '=', self.env.user.partner_id.id),
-            // ]).completed = False
             */
             return default;
         }
@@ -2768,10 +2845,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OpenWebsiteUrlAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: test_website, FILE: model.py) ---
-            // def open_website_url(self):
-            // self.ensure_one()
-            // return self.env['website'].get_client_action(f'/test_model/{self.id}')
             --- ODOO METHOD SOURCE (MODULE: website, FILE: mixins.py) ---
             // def open_website_url(self):
             // return self.env['website'].get_client_action(self.website_url)
@@ -2839,18 +2912,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> QuitAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
-            // def action_quit(self):
-            // self.ensure_one()
-            // self.user_ids = [Command.unlink(self.env.user.id)]
-            // self.env.user._bus_send_store(self, fields=["are_you_inside", "name"])
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemainingSendingCalcInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
@@ -2878,20 +2939,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> SearchGetDetailInternalAsync<TEntity>(IEnumerable<TEntity> entities, object website, object order, object options) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: test_website, FILE: model.py) ---
-            // def _search_get_detail(self, website, order, options):
-            // return {
-            //     'model': 'test.model',
-            //     'base_domain': [],
-            //     'search_fields': ['name', 'submodel_ids.name', 'submodel_ids.tag_id.name'],
-            //     'fetch_fields': ['name'],
-            //     'mapping': {
-            //         'name': {'name': 'name', 'type': 'text', 'match': True},
-            //         'website_url': {'name': 'name', 'type': 'text', 'truncate': False},
-            //     },
-            //     'icon': 'fa-check-square-o',
-            //     'order': 'name asc, id desc',
-            // }
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def _search_get_detail(self, website, order, options):
             // with_description = options['displayDescription']
@@ -3013,19 +3060,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetViewedAsync<TEntity>(IEnumerable<TEntity> entities, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_set_viewed(self, quiz_attempts_inc=False):
-            // if any(not slide.channel_id.is_member for slide in self):
-            //     raise UserError(_('You cannot mark a slide as viewed if you are not among its members.'))
-            // 
-            // return bool(self._action_set_viewed(self.env.user.partner_id, quiz_attempts_inc=quiz_attempts_inc))
-            */
-            return default;
-        }
-
         public async Task<TEntity> SynchronizeWithPartnerInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fname) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
         {
             /*
@@ -3125,56 +3159,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // res = super(Slide, self).unlink()
             // channel_partner_ids._recompute_completion()
             // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewChatbotScriptsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
-            // def action_view_chatbot_scripts(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.chatbot_script_action')
-            // chatbot_script_ids = self.env['im_livechat.channel.rule'].search(
-            //     [('channel_id', 'in', self.ids)]).mapped('chatbot_script_id')
-            // if len(chatbot_script_ids) == 1:
-            //     action['res_id'] = chatbot_script_ids.id
-            //     action['view_mode'] = 'form'
-            //     action['views'] = [(False, 'form')]
-            // else:
-            //     action['domain'] = [('id', 'in', chatbot_script_ids.ids)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewEmbedsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_view_embeds(self):
-            // self.ensure_one()
-            // 
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_embed_action")
-            // action['context'] = {'search_default_slide_id': self.id}
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsitePublishedMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---
-            // def action_view_rating(self):
-            // """ Action to display the rating relative to the channel, so all rating of the
-            //     sessions of the current channel
-            //     :returns : the ir.action 'action_view_rating' with the correct context
-            // """
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.rating_rating_action_livechat')
-            // action['context'] = {'search_default_parent_res_name': self.name}
-            // return action
             */
             return default;
         }

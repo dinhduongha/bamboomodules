@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Crm
 {
     public partial class CrmLeadController
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/action-schedule-meeting")]
         public async Task<IActionResult> ActionScheduleMeetingAsync(Guid id, [FromBody] CrmLeadScheduleMeetingRequestDto input)
         {
-            var result = await _appService.ScheduleMeetingAsync(id, input.SmartCalendar);
+            var result = await _appService.ScheduleMeetingAsync(id, input);
             return Ok(result);
         }
         
@@ -140,7 +141,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/assign-geo-localize")]
         public async Task<IActionResult> AssignGeoLocalizeAsync(Guid id, [FromBody] CrmLeadAssignGeoLocalizeRequestDto input)
         {
-            var result = await _appService.AssignGeoLocalizeAsync(id, input.Latitude, input.Longitude);
+            var result = await _appService.AssignGeoLocalizeAsync(id, input);
             return Ok(result);
         }
         
@@ -148,7 +149,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/assign-partner")]
         public async Task<IActionResult> AssignPartnerAsync(Guid id, [FromBody] CrmLeadAssignPartnerRequestDto input)
         {
-            var result = await _appService.AssignPartnerAsync(id, input.PartnerId);
+            var result = await _appService.AssignPartnerAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/convert-opportunity")]
         public async Task<IActionResult> ConvertOpportunityAsync(Guid id, [FromBody] CrmLeadConvertOpportunityRequestDto input)
         {
-            var result = await _appService.ConvertOpportunityAsync(id, input.Partner, input.UserIds, input.TeamId);
+            var result = await _appService.ConvertOpportunityAsync(id, input);
             return Ok(result);
         }
         
@@ -172,7 +173,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] CrmLeadCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +181,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/create-opp-portal")]
         public async Task<IActionResult> CreateOppPortalAsync(Guid id, [FromBody] CrmLeadCreateOppPortalRequestDto input)
         {
-            var result = await _appService.CreateOppPortalAsync(id, input.Values);
+            var result = await _appService.CreateOppPortalAsync(id, input);
             return Ok(result);
         }
         
@@ -188,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] CrmLeadGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +213,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/iap-enrich")]
         public async Task<IActionResult> IapEnrichAsync(Guid id, [FromBody] CrmLeadIapEnrichRequestDto input)
         {
-            var result = await _appService.IapEnrichAsync(id, input.FromCron);
+            var result = await _appService.IapEnrichAsync(id, input);
             return Ok(result);
         }
         
@@ -220,7 +221,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/log-meeting")]
         public async Task<IActionResult> LogMeetingAsync(Guid id, [FromBody] CrmLeadLogMeetingRequestDto input)
         {
-            var result = await _appService.LogMeetingAsync(id, input.Meeting);
+            var result = await _appService.LogMeetingAsync(id, input);
             return Ok(result);
         }
         
@@ -228,7 +229,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/merge-opportunity")]
         public async Task<IActionResult> MergeOpportunityAsync(Guid id, [FromBody] CrmLeadMergeOpportunityRequestDto input)
         {
-            var result = await _appService.MergeOpportunityAsync(id, input.UserId, input.TeamId, input.AutoUnlink);
+            var result = await _appService.MergeOpportunityAsync(id, input);
             return Ok(result);
         }
         
@@ -236,7 +237,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] CrmLeadMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.MsgDict, input.CustomValues);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
         
@@ -244,7 +245,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/partner-desinterested")]
         public async Task<IActionResult> PartnerDesinterestedAsync(Guid id, [FromBody] CrmLeadPartnerDesinterestedRequestDto input)
         {
-            var result = await _appService.PartnerDesinterestedAsync(id, input.Comment, input.Contacted, input.Spam);
+            var result = await _appService.PartnerDesinterestedAsync(id, input);
             return Ok(result);
         }
         
@@ -252,7 +253,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/partner-interested")]
         public async Task<IActionResult> PartnerInterestedAsync(Guid id, [FromBody] CrmLeadPartnerInterestedRequestDto input)
         {
-            var result = await _appService.PartnerInterestedAsync(id, input.Comment);
+            var result = await _appService.PartnerInterestedAsync(id, input);
             return Ok(result);
         }
         
@@ -268,7 +269,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/search-fetch")]
         public async Task<IActionResult> SearchFetchAsync(Guid id, [FromBody] CrmLeadSearchFetchRequestDto input)
         {
-            var result = await _appService.SearchFetchAsync(id, input.Domain, input.FieldNames, input.Offset, input.Limit, input.Order);
+            var result = await _appService.SearchFetchAsync(id, input);
             return Ok(result);
         }
         
@@ -292,7 +293,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/update-contact-details-from-portal")]
         public async Task<IActionResult> UpdateContactDetailsFromPortalAsync(Guid id, [FromBody] CrmLeadUpdateContactDetailsFromPortalRequestDto input)
         {
-            var result = await _appService.UpdateContactDetailsFromPortalAsync(id, input.Values);
+            var result = await _appService.UpdateContactDetailsFromPortalAsync(id, input);
             return Ok(result);
         }
         
@@ -300,7 +301,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/update-lead-portal")]
         public async Task<IActionResult> UpdateLeadPortalAsync(Guid id, [FromBody] CrmLeadUpdateLeadPortalRequestDto input)
         {
-            var result = await _appService.UpdateLeadPortalAsync(id, input.Values);
+            var result = await _appService.UpdateLeadPortalAsync(id, input);
             return Ok(result);
         }
         
@@ -308,7 +309,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Crm
         [Route("{id}/website-form-input-filter")]
         public async Task<IActionResult> WebsiteFormInputFilterAsync(Guid id, [FromBody] CrmLeadWebsiteFormInputFilterRequestDto input)
         {
-            var result = await _appService.WebsiteFormInputFilterAsync(id, input.Request, input.Values);
+            var result = await _appService.WebsiteFormInputFilterAsync(id, input);
             return Ok(result);
         }
     }

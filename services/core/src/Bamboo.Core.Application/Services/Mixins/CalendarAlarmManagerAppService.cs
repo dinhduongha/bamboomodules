@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("calendar", Depends = new[] { "base", "mail" })]
     public class CalendarAlarmManagerAppService : ApplicationService, ICalendarAlarmManagerAppService
     {
-
-        public CalendarAlarmManagerAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public CalendarAlarmManagerAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> DoCheckAlarmForOneDateAsync<TEntity>(IEnumerable<TEntity> entities, object one_date, object @event, object event_maxdelta, object in_the_next_X_seconds, object alarm_type, object after, object missing) where TEntity : IEntity<Guid>, ICalendarAlarmManagerable

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -35,7 +36,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(Guid id, object lead_type, Guid team_id, List<Guid> tag_ids, Guid user_id, object company_data, object people_data)
+        public async Task<CrmIapLeadHelpers> LeadValsFromResponseAsync(Guid id, CrmIapLeadHelpersLeadValsFromResponseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_helpers.py) ---
@@ -74,7 +75,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<CrmIapLeadHelpers> NotifyNoMoreCreditAsync(Guid id, object service_name, object model_name, object notification_parameter)
+        public async Task<CrmIapLeadHelpers> NotifyNoMoreCreditAsync(Guid id, CrmIapLeadHelpersNotifyNoMoreCreditRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: crm_iap_mine, FILE: crm_iap_lead_helpers.py) ---

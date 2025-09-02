@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
 {
     public partial class HrLeaveController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/action-approve")]
         public async Task<IActionResult> ActionApproveAsync(Guid id, [FromBody] HrLeaveApproveRequestDto input)
         {
-            var result = await _appService.ApproveAsync(id, input.CheckState);
+            var result = await _appService.ApproveAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/action-open-records")]
         public async Task<IActionResult> ActionOpenRecordsAsync(Guid id, [FromBody] HrLeaveOpenRecordsRequestDto input)
         {
-            var result = await _appService.OpenRecordsAsync(id, input.LeaveIds);
+            var result = await _appService.OpenRecordsAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/action-validate")]
         public async Task<IActionResult> ActionValidateAsync(Guid id, [FromBody] HrLeaveValidateRequestDto input)
         {
-            var result = await _appService.ValidateAsync(id, input.CheckState);
+            var result = await _appService.ValidateAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/add-follower")]
         public async Task<IActionResult> AddFollowerAsync(Guid id, [FromBody] HrLeaveAddFollowerRequestDto input)
         {
-            var result = await _appService.AddFollowerAsync(id, input.EmployeeId);
+            var result = await _appService.AddFollowerAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrLeaveCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/get-unusual-days")]
         public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] HrLeaveGetUnusualDaysRequestDto input)
         {
-            var result = await _appService.GetUnusualDaysAsync(id, input.DateFrom, input.DateTo);
+            var result = await _appService.GetUnusualDaysAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/message-subscribe")]
         public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] HrLeaveMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input.PartnerIds, input.SubtypeIds);
+            var result = await _appService.MessageSubscribeAsync(id, input);
             return Ok(result);
         }
         

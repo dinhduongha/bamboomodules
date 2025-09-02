@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -622,7 +623,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> GetViewsAsync(Guid id, object views, object options)
+        public async Task<AccountAnalyticLine> GetViewsAsync(Guid id, AccountAnalyticLineGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_timesheet, FILE: hr_timesheet.py) ---
@@ -1080,7 +1081,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAnalyticLine> ViewHeaderGetAsync(Guid id, Guid view_id, object view_type)
+        public async Task<AccountAnalyticLine> ViewHeaderGetAsync(Guid id, AccountAnalyticLineViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_analytic_line.py) ---

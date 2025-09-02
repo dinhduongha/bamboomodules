@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,26 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("spreadsheet", Depends = new[] { "bus", "web", "portal" })]
     public class SpreadsheetMixinAppService : ApplicationService, ISpreadsheetMixinAppService
     {
-
-        public SpreadsheetMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public SpreadsheetMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionGetShareUrlAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
+            // def action_get_share_url(self, vals):
+            // if "excel_files" in vals:
+            //     excel_zip = self._zip_xslx_files(
+            //         vals["excel_files"]
+            //     )
+            //     del vals["excel_files"]
+            //     vals["excel_export"] = base64.b64encode(excel_zip)
+            // return self.create(vals).full_url
+            */
+            return default;
         }
 
         public async Task<TEntity> CheckDashboardAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object access_token) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
@@ -282,22 +300,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         return json.load(f)
             // except FileNotFoundError:
             //     return
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetShareUrlAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, ISpreadsheetMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: spreadsheet_dashboard, FILE: spreadsheet_dashboard_share.py) ---
-            // def action_get_share_url(self, vals):
-            // if "excel_files" in vals:
-            //     excel_zip = self._zip_xslx_files(
-            //         vals["excel_files"]
-            //     )
-            //     del vals["excel_files"]
-            //     vals["excel_export"] = base64.b64encode(excel_zip)
-            // return self.create(vals).full_url
             */
             return default;
         }

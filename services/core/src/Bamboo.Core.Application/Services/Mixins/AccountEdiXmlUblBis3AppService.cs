@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("account_edi_ubl_cii", Depends = new[] { "account" })]
     public class AccountEdiXmlUblBis3AppService : ApplicationService, IAccountEdiXmlUblBis3AppService
     {
-
-        public AccountEdiXmlUblBis3AppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public AccountEdiXmlUblBis3AppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AddDocumentCurrencyValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
@@ -166,21 +168,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //             'cbc:ID': {'_text': invoice.ref},
             //         }
             //     }
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_facturx_chorus_pro, FILE: account_edi_xml_ubl_bis3.py) ---
-            // def _add_invoice_header_nodes(self, document_node, vals):
-            // super()._add_invoice_header_nodes(document_node, vals)
-            // 
-            // invoice = vals['invoice']
-            // 
-            // if invoice.buyer_reference:
-            //     # Pagero doc states that the 'Service Code' should be in the BuyerReference node
-            //     document_node['cbc:BuyerReference'] = {'_text': invoice.buyer_reference}
-            // 
-            // if invoice.purchase_order_reference:
-            //     # Pagero doc states that the 'Commitment Number' should be in the OrderReference/ID node
-            //     document_node['cac:OrderReference'] = {
-            //         'cbc:ID': {'_text': invoice.purchase_order_reference}
-            //     }
             */
             return default;
         }
@@ -222,107 +209,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'bis3_de_supplier_telephone_required': self._check_required_fields(vals['supplier'], ['phone', 'mobile']),
             //     'bis3_de_supplier_electronic_mail_required': self._check_required_fields(vals['supplier'], 'email'),
             // })
-            // 
-            // return constraints
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // # EXTENDS account_edi_ubl_cii
-            // constraints = super()._export_invoice_constraints(invoice, vals)
-            // 
-            // # Tax category must be filled on the line, with a value from SG categories.
-            // for tax_total_val in vals['vals']['tax_total_vals']:
-            //     for tax_subtotal_val in tax_total_val.get('tax_subtotal_vals', ()):
-            //         if tax_subtotal_val['tax_category_vals']['tax_category_code'] not in ANZ_TAX_CATEGORIES:
-            //             constraints['sg_vat_category_required'] = _("You must set a tax category on each taxes of the invoice.\nValid categories are: S, E, Z, G, O")
-            // 
-            // # ALIGNED-IBR-001-AUNZ and ALIGNED-IBR-002-AUNZ
-            // for partner_type in ('supplier', 'customer'):
-            //     partner = vals[partner_type]
-            //     if partner.country_code == 'AU' and partner.peppol_eas != '0151':
-            //         constraints[f'au_{partner_type}_eas_0151'] = _("The Peppol EAS must be set to ABN (0151) if the partner country is Australia.")
-            //     elif partner.country_code == 'NZ' and partner.peppol_eas != '0088':
-            //         constraints[f'nz_{partner_type}_eas_0088'] = _("The Peppol EAS must be set to EAN (0088) if the partner country is New Zealand.")
-            // 
-            // return constraints
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_facturx_chorus_pro, FILE: account_edi_xml_ubl_bis3.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // constraints = super()._export_invoice_constraints(invoice, vals)
-            // customer, supplier = vals['customer'].commercial_partner_id, vals['supplier']
-            // if customer.peppol_eas and customer.peppol_endpoint and customer.peppol_eas + ":" + customer.peppol_endpoint == CHORUS_PRO_PEPPOL_ID:
-            //     if 'siret' not in customer._fields or not customer.siret:
-            //         constraints['chorus_customer'] = _("The siret is mandatory for the customer when invoicing to Chorus Pro.")
-            //     if supplier.country_code == 'FR' and ('siret' not in supplier._fields or not supplier.siret):
-            //         constraints['chorus_supplier'] = _("The siret is mandatory for french suppliers when invoicing to Chorus Pro.")
-            // return constraints
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // # EXTENDS account_edi_ubl_cii
-            // constraints = super()._export_invoice_constraints(invoice, vals)
-            // 
-            // # A tax category "Outside of tax cope" can only have an amount of 0.
-            // for tax_total_val in vals['vals']['tax_total_vals']:
-            //     for tax_subtotal_val in tax_total_val['tax_subtotal_vals']:
-            //         tax_category_vals = tax_subtotal_val['tax_category_vals']
-            //         if tax_category_vals['tax_category_code'] == 'O' and tax_category_vals['percent'] != 0:
-            //             constraints['peppol_my_sst_registration'] = _(
-            //                 "If your business is registered for SST, please provide your registration number in your company details.\n"
-            //                 "Otherwise, you are not allowed to charge sales or services taxes in the e-Invoice."
-            //             )
-            //             break
-            // 
-            // # In malaysia, tax on good is paid at the manufacturer level. It is thus common to invoice without taxes,
-            // # unless invoicing for a service.
-            // constraints.pop('tax_on_line', '')
-            // constraints.pop('cen_en16931_tax_line', '')
-            // 
-            // return constraints
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // constraints = super()._export_invoice_constraints(invoice, vals)
-            // 
-            // # Default VAT is only allowed for the receiver (customer), not the provider (supplier)
-            // supplier = vals['supplier'].commercial_partner_id
-            // if (
-            //     not _has_vat(supplier.vat)
-            //     and not vals['supplier'].commercial_partner_id.company_registry
-            // ):
-            //     constraints["ciusro_supplier_tax_identifier_required"] = _(
-            //         "The following partner doesn't have a VAT nor Company ID: %s. "
-            //         "At least one of them is required. ",
-            //         vals['supplier'].display_name)
-            // 
-            // for partner_type in ('supplier', 'customer'):
-            //     partner = vals[partner_type]
-            // 
-            //     constraints.update({
-            //         f"ciusro_{partner_type}_city_required": self._check_required_fields(partner, 'city'),
-            //         f"ciusro_{partner_type}_street_required": self._check_required_fields(partner, 'street'),
-            //         f"ciusro_{partner_type}_state_id_required": self._check_required_fields(partner, 'state_id'),
-            //     })
-            // 
-            //     if (partner.country_code == 'RO'
-            //             and partner.state_id
-            //             and partner.state_id.code == 'B'
-            //             and partner.city
-            //             and get_formatted_sector_ro(partner.city) not in SECTOR_RO_CODES):
-            //         constraints[f"ciusro_{partner_type}_invalid_city_name"] = _(
-            //             "The following partner's city name is invalid: %s. "
-            //             "If partner's state is București, the city name must be 'SECTORX', "
-            //             "where X is a number between 1-6.",
-            //             partner.display_name)
-            // 
-            // return constraints
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _export_invoice_constraints(self, invoice, vals):
-            // # EXTENDS account_edi_ubl_cii
-            // constraints = super()._export_invoice_constraints(invoice, vals)
-            // 
-            // # Tax category must be filled on the line, with a value from SG categories.
-            // for tax_total_val in vals['vals']['tax_total_vals']:
-            //     for tax_subtotal_val in tax_total_val.get('tax_subtotal_vals', ()):
-            //         if tax_subtotal_val['tax_category_vals']['tax_category_code'] not in SG_TAX_CATEGORIES:
-            //             constraints['sg_vat_category_required'] = _("You must set a Singaporean tax category on each taxes of the invoice.")
             // 
             // return constraints
             */
@@ -401,25 +287,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: account_edi_ubl_cii, FILE: account_edi_xml_ubl_xrechnung.py) ---
             // def _export_invoice_filename(self, invoice):
             // return f"{invoice.name.replace('/', '_')}_ubl_de.xml"
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // return f"{invoice.name.replace('/', '_')}_pint_anz.xml"
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // return f"{invoice.name.replace('/', '_')}_pint_jp.xml"
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // return f"{invoice.name.replace('/', '_')}_pint_my.xml"
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // return f"{invoice.name.replace('/', '_')}_cius_ro.xml"
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _export_invoice_filename(self, invoice):
-            // # OVERRIDE account_edi_ubl_cii
-            // return f"{invoice.name.replace('/', '_')}_pint_sg.xml"
             */
             return default;
         }
@@ -505,122 +372,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if not vals['vals'].get('buyer_reference'):
             //     vals['vals']['buyer_reference'] = 'N/A'
             // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._export_invoice_vals(invoice)
-            // 
-            // vals['vals'].update({
-            //     # see https://docs.peppol.eu/poac/aunz/pint-aunz/bis/#_identifying_the_a_nz_billing_specialisation
-            //     'customization_id': self._get_customization_ids()['pint_anz'],
-            //     'profile_id': 'urn:peppol:bis:billing',
-            // })
-            // 
-            // if invoice.currency_id != invoice.company_id.currency_id:
-            //     # see https://docs.peppol.eu/poac/aunz/pint-aunz/bis/#_tax_in_accounting_currency
-            //     vals['vals']['tax_currency_code'] = invoice.company_id.currency_id.name  # accounting currency
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_facturx_chorus_pro, FILE: account_edi_xml_ubl_bis3.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // """
-            // * Pagero doc states that the siret of the final customer (that has the Chorus peppol ID) should be located in
-            // the PartyIdentification node.
-            // * Chorus Pro doc states that french suppliers should mention their siret, and european non-french suppliers
-            // should put their VAT
-            // """
-            // # EXTENDS 'account.edi.xml.ubl_bis3'
-            // vals = super()._export_invoice_vals(invoice)
-            // if invoice.buyer_reference:
-            //     # Pagero doc states that the 'Service Code' should be in the BuyerReference node
-            //     vals['vals']['buyer_reference'] = invoice.buyer_reference
-            // if invoice.purchase_order_reference:
-            //     # Pagero doc states that the 'Commitment Number' should be in the OrderReference/ID node
-            //     vals['vals']['order_reference'] = invoice.purchase_order_reference
-            // 
-            // customer = vals['customer'].commercial_partner_id
-            // if customer.peppol_eas and customer.peppol_endpoint and customer.peppol_eas + ":" + customer.peppol_endpoint == CHORUS_PRO_PEPPOL_ID:
-            //     for role in ('supplier', 'customer'):
-            //         partner = vals[role].commercial_partner_id
-            //         if 'siret' in partner._fields and partner.siret and partner.country_code == 'FR':
-            //             vals['vals'][f'accounting_{role}_party_vals']['party_vals']['party_identification_vals'] = [{
-            //                 'id': partner.siret,
-            //                 'id_attrs': {'schemeID': FR_SCHEME_IDS['siret']},
-            //             }]
-            //         else:
-            //             vals['vals'][f'accounting_{role}_party_vals']['party_vals']['party_identification_vals'] = [{
-            //                 'id': partner.vat,
-            //                 'id_attrs': {'schemeID': FR_SCHEME_IDS['vat']},
-            //             }]
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._export_invoice_vals(invoice)
-            // vals['vals'].update({
-            //     # see https://docs.peppol.eu/poac/jp/pint-jp/bis/#profiles
-            //     'customization_id': self._get_customization_ids()['pint_jp'],
-            //     'profile_id': 'urn:peppol:bis:billing',
-            // })
-            // if invoice.currency_id != invoice.company_id.currency_id:
-            //     # see https://docs.peppol.eu/poac/jp/pint-jp/bis/#_tax_in_accounting_currency
-            //     vals['vals']['tax_currency_code'] = invoice.company_id.currency_id.name  # accounting currency
-            // 
-            // # aligned-ibr-jp-01 If the invoice is dated after 2023-10-01,
-            // # the tax ID must be the new "Registration Number for Qualified Invoice purpose in Japan" which shouldn't have JP added at the start.
-            // # Checked here as the partner methods don't have reference to the invoice.
-            // if invoice.invoice_date > fields.Date.from_string('2023-10-01'):
-            //     for party_vals in [vals['vals']['accounting_supplier_party_vals'], vals['vals']['accounting_customer_party_vals']]:
-            //         partner = party_vals['party_vals']['partner']
-            //         if partner.country_id.code == "JP" and partner.vat:
-            //             party_vals['party_vals']['party_tax_scheme_vals'][0]['company_id'] = partner.vat
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._export_invoice_vals(invoice)
-            // vals['vals'].update({
-            //     # see https://docs.peppol.eu/poac/my/pint-my/bis/#profiles
-            //     'customization_id': self._get_customization_ids()['pint_my'],
-            //     'profile_id': 'urn:peppol:bis:billing',
-            // })
-            // if invoice.currency_id != invoice.company_id.currency_id:
-            //     # see https://docs.peppol.eu/poac/my/pint-my/bis/#_tax_in_accounting_currency
-            //     vals['vals']['tax_currency_code'] = invoice.company_id.currency_id.name  # accounting currency
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // vals = super()._export_invoice_vals(invoice)
-            // 
-            // vals['vals'].update({
-            //     'customization_id': 'urn:cen.eu:en16931:2017#compliant#urn:efactura.mfinante.ro:CIUS-RO:1.0.1',
-            //     'tax_currency_code': 'RON',
-            // })
-            // 
-            // # Deal with legal_entity_vals here, as there is no way to distinguish between customer and supplier in _get_partner_party_legal_entity_vals_list
-            // for role in ['supplier', 'customer']:
-            //     for legal_entity_vals in vals['vals'][f'accounting_{role}_party_vals']['party_vals']['party_legal_entity_vals']:
-            //         partner = legal_entity_vals['commercial_partner']
-            //         if not _has_vat(partner.vat):
-            //             legal_entity_vals['company_id'] = partner.company_registry if role == 'supplier' else DEFAULT_VAT
-            // 
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _export_invoice_vals(self, invoice):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._export_invoice_vals(invoice)
-            // 
-            // vals['vals'].update({
-            //     # see https://docs.peppol.eu/poac/sg/2024-Q2/pint-sg/bis/#_bis_identifiers
-            //     'customization_id': self._get_customization_ids()['pint_sg'],
-            //     'profile_id': 'urn:peppol:bis:billing',
-            //     'uuid': invoice._l10n_sg_get_uuid(),
-            // })
-            // 
-            // if invoice.currency_id != invoice.company_id.currency_id:
-            //     # see https://docs.peppol.eu/poac/sg/2024-Q2/pint-sg/bis/#_invoice_totals_in_gst_accounting_currency
-            //     vals['vals']['tax_currency_code'] = invoice.company_id.currency_id.name  # accounting currency
-            // return vals
             */
             return default;
         }
@@ -695,30 +446,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetAdditionalDocumentReferenceListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _get_additional_document_reference_list(self, invoice):
-            // # EXTENDS account.edi.xml.ubl_20
-            // additional_document_reference_list = super()._get_additional_document_reference_list(invoice)
-            // if invoice.currency_id != invoice.company_id.currency_id:
-            //     amounts_in_accounting_currency = (
-            //         ('sgdtotal-excl-gst', invoice.amount_untaxed_signed),
-            //         ('sgdtotal-incl-gst', invoice.amount_total_signed),
-            //     )
-            //     # [BR-53-GST-SG]-If the GST accounting currency code (BT-6-GST) is present, then the Invoice total GST amount (BT-111-GST),
-            //     # Invoice total including GST amount and Invoice Total excluding GST amount in accounting currency shall be provided.
-            //     additional_document_reference_list.extend([{
-            //         'id': invoice.company_id.currency_id.name,
-            //         'document_description': amount,
-            //         'document_type_code': code,
-            //     } for code, amount in amounts_in_accounting_currency])
-            // return additional_document_reference_list
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetAddressNodeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
         {
             /*
@@ -773,18 +500,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'identification_code': country.code,
             //     'name': country.name,
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetCustomizationIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_customization_ids(self):
-            // vals = super()._get_customization_ids()
-            // vals['pint_anz'] = 'urn:peppol:pint:billing-1@aunz-1'
-            // return vals
             */
             return default;
         }
@@ -847,20 +562,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // allowance_charge_node = super()._get_document_allowance_charge_node(vals)
             // allowance_charge_node['cbc:MultiplierFactorNumeric'] = None
             // return allowance_charge_node
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetDocumentTypeCodeValsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object invoice_data) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _get_document_type_code_vals(self, invoice, invoice_data):
-            // # EXTENDS 'account_edi_ubl_cii
-            // vals = super()._get_document_type_code_vals(invoice, invoice_data)
-            // # [UBL-SR-43] DocumentTypeCode should only show up on a CreditNote XML with the value '50'
-            // vals['value'] = '50' if invoice.move_type == 'out_refund' else False
-            // return vals
             */
             return default;
         }
@@ -1011,23 +712,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetInvoicePeriodValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _get_invoice_period_vals_list(self, invoice):
-            // # EXTENDS
-            // vals_list = super()._get_invoice_period_vals_list(invoice)
-            // # [aligned-ibrp-052] An Invoice MUST have an invoice period (ibg-14) or an Invoice line period (ibg-26).
-            // vals_list.append({
-            //     'start_date': invoice.invoice_date,
-            //     'end_date': invoice.invoice_date,
-            // })
-            // return vals_list
-            */
-            return default;
-        }
-
         public async Task<TEntity> GetInvoiceTaxTotalsValsListInternalAsync<TEntity>(IEnumerable<TEntity> entities, object invoice, object taxes_vals) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
         {
             /*
@@ -1042,95 +726,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         subtotal_vals.pop('percent', None)
             //         subtotal_vals['currency_dp'] = 2
             // 
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // vals_list = super()._get_invoice_tax_totals_vals_list(invoice, taxes_vals)
-            // company_currency = invoice.company_id.currency_id
-            // if invoice.currency_id != company_currency:
-            //     # if company currency != invoice currency, need to add a TaxTotal section
-            //     # see https://docs.peppol.eu/poac/aunz/pint-aunz/bis/#_tax_in_accounting_currency
-            //     tax_totals_vals = {
-            //         'currency': company_currency,
-            //         'currency_dp': company_currency.decimal_places,
-            //         'tax_amount': taxes_vals['tax_amount'],
-            //     }
-            //     vals_list.append(tax_totals_vals)
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // # [aligned-ibr-jp-06]-Tax category tax amount (ibt-117) with currency code JPY and tax category tax amount
-            // # in accounting currency (ibt-190) shall not have decimal.
-            // # see also: https://docs.peppol.eu/poac/jp/pint-jp/bis/#_rounding
-            // vals_list = super()._get_invoice_tax_totals_vals_list(invoice, taxes_vals)
-            // for vals in vals_list:
-            //     vals['currency_dp'] = invoice.currency_id.decimal_places
-            //     for subtotal_vals in vals.get('tax_subtotal_vals', []):
-            //         subtotal_vals['currency_dp'] = invoice.currency_id.decimal_places
-            // 
-            // company_currency = invoice.company_id.currency_id
-            // if invoice.currency_id != company_currency:
-            //     # if company currency != invoice currency, need to add a TaxTotal section
-            //     # see https://docs.peppol.eu/poac/jp/pint-jp/bis/#_tax_in_accounting_currency
-            //     tax_totals_vals = {
-            //         'currency': company_currency,
-            //         'currency_dp': company_currency.decimal_places,
-            //         'tax_amount': taxes_vals['tax_amount'],
-            //         'tax_subtotal_vals': [],
-            //     }
-            //     for _grouping_key, vals in taxes_vals['tax_details'].items():
-            //         tax_totals_vals['tax_subtotal_vals'].append({
-            //             'currency': company_currency,
-            //             'currency_dp': company_currency.decimal_places,
-            //             'taxable_amount': vals['base_amount'],
-            //             'tax_amount': vals['tax_amount'],
-            //             'percent': vals['_tax_category_vals_']['percent'],
-            //             'tax_category_vals': vals['_tax_category_vals_'],
-            //         })
-            //     vals_list.append(tax_totals_vals)
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // # EXTENDS account_edi_ubl_cii
-            // vals_list = super()._get_invoice_tax_totals_vals_list(invoice, taxes_vals)
-            // company_currency = invoice.company_id.currency_id
-            // if invoice.currency_id != company_currency:
-            //     # see https://docs.peppol.eu/poac/my/pint-my/bis/#_tax_in_accounting_currency
-            //     vals_list.append({
-            //         'currency': company_currency,
-            //         'currency_dp': company_currency.decimal_places,
-            //         'tax_amount': taxes_vals['tax_amount'],
-            //         'tax_subtotal_vals': [],
-            //     })
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // vals_list = super()._get_invoice_tax_totals_vals_list(invoice, taxes_vals)
-            // 
-            // if invoice.currency_id.name != 'RON':
-            //     ron_currency = self.env.ref("base.RON")
-            //     vals_list.append({
-            //         'currency': ron_currency,
-            //         'currency_dp': ron_currency.decimal_places,
-            //         'tax_amount': taxes_vals['tax_amount'],
-            //     })
-            // 
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _get_invoice_tax_totals_vals_list(self, invoice, taxes_vals):
-            // # EXTENDS account_edi_ubl_cii
-            // vals_list = super()._get_invoice_tax_totals_vals_list(invoice, taxes_vals)
-            // company_currency = invoice.company_id.currency_id
-            // if invoice.currency_id != company_currency:
-            //     # if company currency != invoice currency, need to add a TaxTotal section
-            //     # see https://docs.peppol.eu/poac/sg/2024-Q2/pint-sg/bis/#_invoice_totals_in_gst_accounting_currency
-            //     tax_totals_vals = {
-            //         'currency': company_currency,
-            //         'currency_dp': company_currency.decimal_places,
-            //         'tax_amount': taxes_vals['tax_amount'],
-            //     }
-            //     vals_list.append(tax_totals_vals)
             // return vals_list
             */
             return default;
@@ -1276,25 +871,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // # /cbc:CountrySubentity) is not recommended
             // vals.pop('country_subentity', None)
             // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _get_partner_address_vals(self, partner):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._get_partner_address_vals(partner)
-            // vals.pop('country_subentity_code', None)
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _get_partner_address_vals(self, partner):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // vals = super()._get_partner_address_vals(partner)
-            // 
-            // if partner.state_id:
-            //     vals["country_subentity"] = partner.country_code + '-' + partner.state_id.code
-            // 
-            //     # Romania requires the CityName to be in the format of "SECTORX" if the address state is in Bucharest.
-            //     if partner.state_id.code == 'B' and partner.city:
-            //         vals['city_name'] = get_formatted_sector_ro(partner.city)
-            // 
-            // return vals
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
             // def _get_partner_address_vals(self, partner):
             // return {
@@ -1413,23 +989,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         vals['company_id'] = partner.peppol_endpoint
             // 
             // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_partner_party_legal_entity_vals_list(self, partner):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals_list = super()._get_partner_party_legal_entity_vals_list(partner)
-            // 
-            // for vals in vals_list:
-            //     # In both case the scheme must be set to a value that comes from the eas.
-            //     if partner.country_code in ('AU', 'NZ'):
-            //         vals['company_id_attrs'] = {'schemeID': partner.peppol_eas}
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_jp_ubl_pint, FILE: account_edi_xml_pint_jp.py) ---
-            // def _get_partner_party_legal_entity_vals_list(self, partner):
-            // # EXTENDS account_edi_ubl_cii
-            // vals_list = super()._get_partner_party_legal_entity_vals_list(partner)
-            // for vals in vals_list:
-            //     vals.pop('company_id')  # optional, if set: scheme_id should be taken from ISO/IEC 6523 list
-            // return vals_list
             */
             return default;
         }
@@ -1485,42 +1044,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     })
             // 
             // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _get_partner_party_tax_scheme_vals_list(self, partner, role):
-            // """ [aligned-ibrp-cl-01-my]-Malaysian invoice tax categories MUST be coded using Malaysian codes. """
-            // # EXTENDS account_edi_ubl_cii
-            // tax_scheme_vals_list = super()._get_partner_party_tax_scheme_vals_list(partner, role)
-            // # See https://docs.peppol.eu/poac/my/pint-my/bis/#_seller_tax_identifier
-            // tax_scheme_vals_list[0]['company_id'] = partner.sst_registration_number or 'NA'
-            // if role == 'supplier':
-            //     # TIN
-            //     gst_tax_scheme = tax_scheme_vals_list[0].copy()
-            //     gst_tax_scheme.update({
-            //         'company_id': partner.vat,
-            //         'tax_scheme_vals': {'id': 'GST'},
-            //     })
-            //     tax_scheme_vals_list.append(gst_tax_scheme)
-            // 
-            // return tax_scheme_vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_ro_edi, FILE: account_edi_xml_ubl_ciusro.py) ---
-            // def _get_partner_party_tax_scheme_vals_list(self, partner, role):
-            // # EXTENDS 'account_edi_ubl_cii'
-            // vals_list = super()._get_partner_party_tax_scheme_vals_list(partner, role)
-            // 
-            // if not _has_vat(partner.vat):
-            //     if (
-            //         role == 'supplier'
-            //         and partner.company_registry
-            //     ):
-            //         # Use company_registry (Company ID) as the VAT replacement
-            //         for vals in vals_list:
-            //             tax_scheme_id = 'VAT' if partner.company_registry[:2].isalpha() else 'NOT_EU_VAT'
-            //             vals.update({'company_id': partner.company_registry, 'tax_scheme_vals': {'id': tax_scheme_id}})
-            //     elif role == 'customer':
-            //         for vals in vals_list:
-            //             vals.update({'company_id': DEFAULT_VAT, 'tax_scheme_vals': {'id': 'NOT_EU_VAT'}})
-            // 
-            // return vals_list
             */
             return default;
         }
@@ -1573,24 +1096,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'endpoint_id': partner.email,
             //         'endpoint_id_attrs': {'schemeID': 'EM'},
             //     })
-            // 
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_partner_party_vals(self, partner, role):
-            // # EXTENDS account.edi.xml.ubl_bis3
-            // vals = super()._get_partner_party_vals(partner, role)
-            // 
-            // for party_tax_scheme in vals['party_tax_scheme_vals']:
-            //     party_tax_scheme['tax_scheme_vals'] = {'id': 'GST'}
-            // 
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _get_partner_party_vals(self, partner, role):
-            // # EXTENDS account_edi_ubl_cii
-            // vals = super()._get_partner_party_vals(partner, role)
-            // 
-            // for party_tax_scheme in vals['party_tax_scheme_vals']:
-            //     party_tax_scheme['tax_scheme_vals'] = {'id': 'GST'}
             // 
             // return vals
             --- ODOO METHOD SOURCE (MODULE: purchase_edi_ubl_bis3, FILE: purchase_edi_xml_ubl_bis3.py) ---
@@ -1685,36 +1190,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // 
             // party_node['cac:Contact']['cbc:ID'] = None
             // return party_node
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_facturx_chorus_pro, FILE: account_edi_xml_ubl_bis3.py) ---
-            // def _get_party_node(self, vals):
-            // # * Pagero doc states that the siret of the final customer (that has the Chorus peppol ID) should be located in
-            // # the PartyIdentification node.
-            // # * Chorus Pro doc states that french suppliers should mention their siret, and european non-french suppliers
-            // # should put their VAT
-            // party_node = super()._get_party_node(vals)
-            // 
-            // customer = vals['customer'].commercial_partner_id
-            // partner = vals['partner'].commercial_partner_id
-            // 
-            // if (
-            //     customer.peppol_eas and
-            //     customer.peppol_endpoint and
-            //     customer.peppol_eas + ":" + customer.peppol_endpoint == CHORUS_PRO_PEPPOL_ID
-            // ):
-            //     party_node['cac:PartyIdentification'] = {
-            //         'cbc:ID': {
-            //             '_text': (
-            //                 partner.siret
-            //                 if 'siret' in partner._fields and partner.siret and partner.country_code == 'FR'
-            //                 else partner.vat
-            //             ),
-            //             'schemeID': (
-            //                 FR_SCHEME_IDS['siret'] if 'siret' in partner._fields and partner.siret and partner.country_code == 'FR' else FR_SCHEME_IDS['vat']
-            //             ),
-            //         }
-            //     }
-            // 
-            // return party_node
             */
             return default;
         }
@@ -1770,20 +1245,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         'tax_scheme_vals': {'id': 'GST'},
             //     })
             // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_tax_category_list(self, customer, supplier, taxes):
-            // # EXTENDS account_edi_ubl_cii
-            // vals_list = super()._get_tax_category_list(customer, supplier, taxes)
-            // for vals in vals_list:
-            //     vals['tax_scheme_vals'] = {'id': 'GST'}
-            // return vals_list
-            --- ODOO METHOD SOURCE (MODULE: l10n_sg_ubl_pint, FILE: account_edi_xml_pint_sg.py) ---
-            // def _get_tax_category_list(self, customer, supplier, taxes):
-            // # EXTENDS account_edi_ubl_cii
-            // vals_list = super()._get_tax_category_list(customer, supplier, taxes)
-            // for vals in vals_list:
-            //     vals['tax_scheme_vals'] = {'id': 'GST'}
-            // return vals_list
             */
             return default;
         }
@@ -1851,49 +1312,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // tax_subtotal_node = super()._get_tax_subtotal_node(vals)
             // tax_subtotal_node['cbc:Percent'] = None
             // return tax_subtotal_node
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetTaxUneceCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object customer, object supplier, object tax) where TEntity : IEntity<Guid>, IAccountEdiXmlUblBis3able
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_anz_ubl_pint, FILE: account_edi_xml_pint_anz.py) ---
-            // def _get_tax_unece_codes(self, customer, supplier, tax):
-            // """ The GST category must be provided in the file.
-            // See https://docs.peppol.eu/poac/aunz/pint-aunz/bis/#_tax_category_code
-            // """
-            // # OVERRIDE account_edi_ubl_cii
-            // if not supplier.vat:
-            //     return {
-            //         'tax_category_code': 'O',
-            //         'tax_exemption_reason_code': False,
-            //         'tax_exemption_reason': False,
-            //     }  # a business is not registered for GST, the business cannot issue tax invoices. In this case, the GST category code should be O (Outside scope of tax).
-            // return super()._get_tax_unece_codes(customer, supplier, tax)
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_ubl_pint, FILE: account_edi_xml_pint_my.py) ---
-            // def _get_tax_unece_codes(self, customer, supplier, tax):
-            // """
-            // In malaysia, only the following codes can be used: T, E, O
-            // https://docs.peppol.eu/poac/my/pint-my/bis/#_tax_category_code
-            // """
-            // # OVERRIDE account_edi_ubl_cii
-            // codes = {
-            //     'tax_category_code': False,
-            //     'tax_exemption_reason_code': False,
-            //     'tax_exemption_reason': False,
-            // }
-            // # If a business is not registered for SST and/or TTx, the business is not allowed to charge sales tax,
-            // # service tax or tourism tax in the e-Invoice.
-            // # In this case, the tax category code should be 'O' (Outside scope of tax).
-            // # For now, we do not properly support Tourism tax (TTx) due to a lack of clarity on the subject.
-            // if not supplier.sst_registration_number:
-            //     codes['tax_category_code'] = 'O'
-            // elif tax.amount != 0:
-            //     codes['tax_category_code'] = 'T'
-            // else:
-            //     codes['tax_category_code'] = 'E'
-            // return codes
             */
             return default;
         }

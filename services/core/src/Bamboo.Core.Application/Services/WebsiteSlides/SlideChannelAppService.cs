@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -544,7 +545,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> CopyDataAsync(Guid id, object @default)
+        public async Task<SlideChannel> CopyDataAsync(Guid id, SlideChannelCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -818,7 +819,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SlideChannel> GrantAccessAsync(Guid id, Guid partner_id)
+        public async Task<SlideChannel> GrantAccessAsync(Guid id, SlideChannelGrantAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1045,7 +1046,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SlideChannel> RedirectToMembersAsync(Guid id, object status_filter)
+        public async Task<SlideChannel> RedirectToMembersAsync(Guid id, SlideChannelRedirectToMembersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
@@ -1081,7 +1082,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SlideChannel> RefuseAccessAsync(Guid id, Guid partner_id)
+        public async Task<SlideChannel> RefuseAccessAsync(Guid id, SlideChannelRefuseAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---

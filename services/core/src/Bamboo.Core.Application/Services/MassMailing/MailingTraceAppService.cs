@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -84,7 +85,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailingTrace> SetBouncedAsync(Guid id, object domain, object bounce_message)
+        public async Task<MailingTrace> SetBouncedAsync(Guid id, MailingTraceSetBouncedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -100,7 +101,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetCanceledAsync(Guid id, object domain)
+        public async Task<MailingTrace> SetCanceledAsync(Guid id, MailingTraceSetCanceledRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -112,7 +113,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetClickedAsync(Guid id, object domain)
+        public async Task<MailingTrace> SetClickedAsync(Guid id, MailingTraceSetClickedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -124,7 +125,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetFailedAsync(Guid id, object domain, object failure_type)
+        public async Task<MailingTrace> SetFailedAsync(Guid id, MailingTraceSetFailedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -136,7 +137,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetOpenedAsync(Guid id, object domain)
+        public async Task<MailingTrace> SetOpenedAsync(Guid id, MailingTraceSetOpenedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -151,7 +152,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetRepliedAsync(Guid id, object domain)
+        public async Task<MailingTrace> SetRepliedAsync(Guid id, MailingTraceSetRepliedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---
@@ -163,7 +164,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailingTrace> SetSentAsync(Guid id, object domain)
+        public async Task<MailingTrace> SetSentAsync(Guid id, MailingTraceSetSentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_trace.py) ---

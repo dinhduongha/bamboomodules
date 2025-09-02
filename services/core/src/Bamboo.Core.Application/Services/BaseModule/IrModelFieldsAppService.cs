@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -336,7 +337,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelFields> FormbuilderWhitelistAsync(Guid id, object model, object fields)
+        public async Task<IrModelFields> FormbuilderWhitelistAsync(Guid id, IrModelFieldsFormbuilderWhitelistRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---
@@ -371,7 +372,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModelFields> GetFieldHelpAsync(Guid id, object model_name)
+        public async Task<IrModelFields> GetFieldHelpAsync(Guid id, IrModelFieldsGetFieldHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -388,7 +389,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModelFields> GetFieldSelectionAsync(Guid id, object model_name, object field_name)
+        public async Task<IrModelFields> GetFieldSelectionAsync(Guid id, IrModelFieldsGetFieldSelectionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -406,7 +407,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModelFields> GetFieldStringAsync(Guid id, object model_name)
+        public async Task<IrModelFields> GetFieldStringAsync(Guid id, IrModelFieldsGetFieldStringRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---

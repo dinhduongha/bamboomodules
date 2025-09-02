@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1039,25 +1040,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> CheckL10nItEdiDoiIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _check_l10n_it_edi_doi_id(self):
-            // for order in self:
-            //     declaration = order.l10n_it_edi_doi_id
-            //     if not declaration:
-            //         return
-            //     partner = order.partner_id.commercial_partner_id
-            //     errors = declaration._get_validity_warnings(
-            //         order.company_id, partner, order.currency_id, order.l10n_it_edi_doi_date, only_blocking=True, sales_order=True
-            //     )
-            //     if errors:
-            //         raise ValidationError('\n'.join(errors))
-            */
-            return default;
-        }
-
         protected async Task<SaleOrder> CheckOptionalProductCompanyIdInternalAsync()
         {
             /*
@@ -1583,60 +1565,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> ComputeFiscalPositionIdInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale, FILE: sale_order.py) ---
-            // def _compute_fiscal_position_id(self):
-            // 
-            // def _get_fiscal_state(order, foreign_state):
-            //     """
-            //     Maps each order to its corresponding fiscal state based on its type,
-            //     fiscal conditions, and the state of the associated partner or company.
-            //     """
-            // 
-            //     if (
-            //         order.country_code != 'IN'
-            //         # Partner's FP takes precedence through super
-            //         or order.partner_shipping_id.property_account_position_id
-            //         or order.partner_id.property_account_position_id
-            //     ):
-            //         return False
-            //     elif order.l10n_in_gst_treatment == 'special_economic_zone':
-            //         # Special Economic Zone
-            //         return foreign_state
-            //     
-            //     # Computing Place of Supply for particular order
-            //     partner_state = (
-            //         order.partner_id.commercial_partner_id == order.partner_shipping_id.commercial_partner_id
-            //         and order.partner_shipping_id.state_id
-            //         or order.partner_id.state_id
-            //     )
-            //     if not partner_state:
-            //         partner_state = order.partner_id.commercial_partner_id.state_id or order.company_id.state_id
-            //     if partner_state.country_id.code != 'IN':
-            //         partner_state = foreign_state
-            //     return partner_state
-            // 
-            // FiscalPosition = self.env['account.fiscal.position']
-            // foreign_state = self.env['res.country.state'].search([('code', '!=', 'IN')], limit=1)
-            // for state_id, orders in self.grouped(lambda order: _get_fiscal_state(order, foreign_state)).items():
-            //     if state_id:
-            //         virtual_partner = self.env['res.partner'].new({
-            //             'state_id': state_id.id,
-            //             'country_id': state_id.country_id.id,
-            //         })
-            //         # Group orders by company to avoid multi-company conflicts
-            //         for company_id, company_orders in orders.grouped('company_id').items():
-            //             company_orders.fiscal_position_id = FiscalPosition.with_company(
-            //                 company_id.id
-            //             )._get_fiscal_position(virtual_partner)
-            //     else:
-            //         super(SaleOrder, orders)._compute_fiscal_position_id()
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_fiscal_position_id(self):
-            // super()._compute_fiscal_position_id()
-            // for order in self:
-            //     declaration_fiscal_position = order.company_id.l10n_it_edi_doi_fiscal_position_id
-            //     if declaration_fiscal_position and order.l10n_it_edi_doi_id:
-            //         order.fiscal_position_id = declaration_fiscal_position
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _compute_fiscal_position_id(self):
             // """
@@ -1829,138 +1757,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> ComputeL10nInGstTreatmentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale, FILE: sale_order.py) ---
-            // def _compute_l10n_in_gst_treatment(self):
-            // for order in self:
-            //     # set default value as False so CacheMiss error never occurs for this field.
-            //     order.l10n_in_gst_treatment = False
-            //     if order.country_code == 'IN':
-            //         l10n_in_gst_treatment = order.partner_id.l10n_in_gst_treatment
-            //         if not l10n_in_gst_treatment and order.partner_id.country_id and order.partner_id.country_id.code != 'IN':
-            //             l10n_in_gst_treatment = 'overseas'
-            //         if not l10n_in_gst_treatment:
-            //             l10n_in_gst_treatment = order.partner_id.vat and 'regular' or 'consumer'
-            //         order.l10n_in_gst_treatment = l10n_in_gst_treatment
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItEdiDoiDateInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_l10n_it_edi_doi_date(self):
-            // for order in self:
-            //     order.l10n_it_edi_doi_date = order.date_order or fields.Date.context_today(self)
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItEdiDoiIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_l10n_it_edi_doi_id(self):
-            // for order in self:
-            //     if not order.l10n_it_edi_doi_use or order.state != 'draft' and not order.l10n_it_edi_doi_id:
-            //         order.l10n_it_edi_doi_id = False
-            //         continue
-            //     partner = order.partner_id.commercial_partner_id
-            // 
-            //     # Avoid a query or changing a manually set declaration of intent
-            //     # (if the declaration is still valid).
-            //     validity_warnings = order.l10n_it_edi_doi_id._get_validity_warnings(
-            //         order.company_id, partner, order.currency_id, order.l10n_it_edi_doi_date, sales_order=True
-            //     )
-            //     if order.l10n_it_edi_doi_id and not validity_warnings:
-            //         continue
-            // 
-            //     declaration = self.env['l10n_it_edi_doi.declaration_of_intent']\
-            //         ._fetch_valid_declaration_of_intent(order.company_id, partner, order.currency_id, order.l10n_it_edi_doi_date)
-            //     order.l10n_it_edi_doi_id = declaration
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItEdiDoiNotYetInvoicedInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_l10n_it_edi_doi_not_yet_invoiced(self):
-            // for order in self:
-            //     declaration = order.l10n_it_edi_doi_id
-            //     order.l10n_it_edi_doi_not_yet_invoiced = order._l10n_it_edi_doi_get_amount_not_yet_invoiced(declaration)
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItEdiDoiUseInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_l10n_it_edi_doi_use(self):
-            // for order in self:
-            //     order.l10n_it_edi_doi_use = order.l10n_it_edi_doi_id \
-            //         or order.country_code == "IT"
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItEdiDoiWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _compute_l10n_it_edi_doi_warning(self):
-            // for order in self:
-            //     order.l10n_it_edi_doi_warning = ''
-            //     declaration = order.l10n_it_edi_doi_id
-            // 
-            //     show_warning = declaration and order.state != 'cancelled'
-            //     if not show_warning:
-            //         continue
-            // 
-            //     declaration_not_yet_invoiced = declaration.not_yet_invoiced
-            //     # Exactly the confirmed SOs (state == 'sale') are included in `declaration.not_yet_invoiced`.
-            //     # The amount of `declaration.not_yet_invoiced` may change due to confirming or saving `order`.
-            //     #   * An unconfirmed order is being confirmed:
-            //     #     We have to add the order amount to `declaration.not_yet_invoiced`.
-            //     #   * A confirmed SO is being edited:
-            //     #     The field `declaration.not_yet_invoiced` will be updated when saving.
-            //     #     But we want to update the warning during the editing already (before saving).
-            //     #     We first have to remove the "old amount" from `declaration.not_yet_invoiced`
-            //     #     before adding the current amount.
-            //     if order.state == 'sale':
-            //         old_order_state = order._origin
-            //         declaration_not_yet_invoiced -= old_order_state.l10n_it_edi_doi_not_yet_invoiced
-            //     declaration_not_yet_invoiced += order.l10n_it_edi_doi_not_yet_invoiced
-            // 
-            //     validity_warnings = declaration._get_validity_warnings(
-            //         order.company_id, order.partner_id.commercial_partner_id, order.currency_id, order.l10n_it_edi_doi_date,
-            //         sales_order=True
-            //     )
-            // 
-            //     threshold_warning = declaration._build_threshold_warning_message(declaration.invoiced, declaration_not_yet_invoiced)
-            // 
-            //     order.l10n_it_edi_doi_warning = '{}\n\n{}'.format('\n'.join(validity_warnings), threshold_warning).strip()
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> ComputeL10nItPartnerPaInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_sale, FILE: sale_order.py) ---
-            // def _compute_l10n_it_partner_pa(self):
-            // for order in self:
-            //     partner = order.partner_id.commercial_partner_id
-            //     order.l10n_it_partner_pa = partner and (partner._l10n_it_edi_is_public_administration() or len(partner.l10n_it_pa_index or '') == 7)
-            */
-            return default;
-        }
-
         protected async Task<SaleOrder> ComputeLoyaltyDataInternalAsync()
         {
             /*
@@ -2139,20 +1935,6 @@ namespace Bamboo.Core.Application.Services
             //         order.partner_shipping_id = order.partner_id
             */
             return default;
-        }
-
-        public async Task<SaleOrder> ComputePaymentReferenceFinnishAsync(Guid id, object number)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi_sale, FILE: sale.py) ---
-            // def compute_payment_reference_finnish(self, number):
-            // # Drop all non-numeric characters
-            // so_number = self.number2numeric(number)
-            // # Calculate the Finnish check digit
-            // check_digit = self.get_finnish_check_digit(so_number)
-            // return so_number + check_digit
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<SaleOrder> ComputePaymentTermIdInternalAsync()
@@ -2774,10 +2556,6 @@ namespace Bamboo.Core.Application.Services
             //             default_sale_order_id=so.id
             //         )._for_xml_id('event_sale.action_sale_order_event_registration')
             // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def action_confirm(self):
-            // self._l10n_it_edi_doi_check_configuration()
-            // return super().action_confirm()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_confirm(self):
             // """ Confirm the given quotation(s) and set their confirmation date.
@@ -2909,19 +2687,9 @@ namespace Bamboo.Core.Application.Services
             return await base.CopyAsync(id, fields, defaultValues);
         }
 
-        public async Task<SaleOrder> CopyDataAsync(Guid id, object @default)
+        public async Task<SaleOrder> CopyDataAsync(Guid id, SaleOrderCopyDataRequestDto input)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def copy_data(self, default=None):
-            // data_list = super().copy_data(default)
-            // for order, data in zip(self, data_list):
-            //     partner = order.partner_id.commercial_partner_id
-            //     date = fields.Date.context_today(self)
-            //     if order.l10n_it_edi_doi_id._get_validity_warnings(order.company_id, partner, order.currency_id, date, sales_order=True):
-            //         del data['l10n_it_edi_doi_id']
-            //         del data['fiscal_position_id']
-            // return data_list
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def copy_data(self, default=None):
             // default = dict(default or {})
@@ -2954,24 +2722,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> CreateAccountInvoicesInternalAsync(object invoice_vals_list, object final)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_website_sale, FILE: sale_order.py) ---
-            // def _create_account_invoices(self, invoice_vals_list, final):
-            // """ EXTENDS 'sale'
-            // Necessary because if someone creates an invoice after 9 pm Argentina time, if the invoice is created
-            // automatically, then it is created with the date of the next day (UTC date) instead of today.
-            // 
-            // This fix is necessary because it causes problems validating invoices in ARCA (ex AFIP), since when generating
-            // the invoice with the date of the next day, no more invoices could be generated with today's date.
-            // 
-            // We took the same approach that was used in the POS module to set the date, in this case always forcing the
-            // Argentina timezone """
-            // invoices = super()._create_account_invoices(invoice_vals_list, final)
-            // for invoice in invoices:
-            //     if invoice.country_code == 'AR':
-            //         timezone = pytz.timezone('America/Buenos_Aires')
-            //         context_today_ar = fields.Datetime.now().astimezone(timezone).date()
-            //         invoice.invoice_date = context_today_ar
-            // return invoices
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _create_account_invoices(self, invoice_vals_list, final):
             // """Small method to allow overriding the behavior right after an invoice is created."""
@@ -3076,7 +2826,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> CreateDocumentFromAttachmentAsync(Guid id, List<Guid> attachment_ids)
+        public async Task<SaleOrder> CreateDocumentFromAttachmentAsync(Guid id, SaleOrderCreateDocumentFromAttachmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -3096,25 +2846,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> CreateInvoicesInternalAsync(object grouped, object final, object date)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec_website_sale, FILE: sale_order.py) ---
-            // def _create_invoices(self, grouped=False, final=False, date=None):
-            // """ Create invoice(s) for the given Sales Order(s).
-            // 
-            // :param bool grouped: if True, invoices are grouped by SO id.
-            //     If False, invoices are grouped by keys returned by :meth:`_get_invoice_grouping_keys`
-            // :param bool final: if True, refunds will be generated if necessary
-            // :param date: unused parameter
-            // :returns: created invoices
-            // :rtype: `account.move` recordset
-            // :raises: UserError if one of the orders has no invoiceable lines.
-            // """
-            // moves = super()._create_invoices(grouped=grouped, final=final, date=date)
-            // for move in moves:
-            //     if move.transaction_ids:
-            //         sri_payment_methods = move.transaction_ids.mapped('payment_method_id.l10n_ec_sri_payment_id')
-            //         if len(sri_payment_methods) == 1:
-            //             move.l10n_ec_sri_payment_id = sri_payment_methods
-            // return moves
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _create_invoices(self, grouped=False, final=False, date=None):
             // """ Create invoice(s) for the given Sales Order(s).
@@ -4449,7 +4180,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> GetEmptyListHelpAsync(Guid id, object help_msg)
+        public async Task<SaleOrder> GetEmptyListHelpAsync(Guid id, SaleOrderGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -4474,21 +4205,6 @@ namespace Bamboo.Core.Application.Services
             // return weight
             */
             return default;
-        }
-
-        public async Task<SaleOrder> GetFinnishCheckDigitAsync(Guid id, object base_number)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi_sale, FILE: sale.py) ---
-            // def get_finnish_check_digit(self, base_number):
-            // # Multiply digits from end to beginning with 7, 3 and 1 and
-            // # calculate the sum of the products
-            // total = sum((7, 3, 1)[idx % 3] * int(val) for idx, val in
-            //             enumerate(base_number[::-1]))
-            // # Subtract the sum from the next decade. 10 = 0
-            // return str((10 - (total % 10)) % 10)
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<SaleOrder> GetFreeShippingLinesInternalAsync()
@@ -4650,10 +4366,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> GetNamePortalContentViewInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_br_sales, FILE: sale_order.py) ---
-            // def _get_name_portal_content_view(self):
-            // self.ensure_one()
-            // return 'l10n_br_sales.sale_order_portal_content_brazil' if self.company_id.country_code == 'BR' else super()._get_name_portal_content_view()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_name_portal_content_view(self):
             // """ This method can be inherited by localizations who want to localize the online quotation view. """
@@ -4666,10 +4378,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> GetNameTaxTotalsViewInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_br_sales, FILE: sale_order.py) ---
-            // def _get_name_tax_totals_view(self):
-            // self.ensure_one()
-            // return 'l10n_br_sales.document_tax_totals_brazil' if self.company_id.country_code == 'BR' else super()._get_name_tax_totals_view()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _get_name_tax_totals_view(self):
             // """ This method can be inherited by localizations who want to localize the taxes displayed on the portal and sale order report. """
@@ -5159,7 +4867,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> GetPromoCodeErrorAsync(Guid id, object delete)
+        public async Task<SaleOrder> GetPromoCodeErrorAsync(Guid id, SaleOrderGetPromoCodeErrorRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
@@ -5172,7 +4880,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SaleOrder> GetPromoCodeSuccessMessageAsync(Guid id, object delete)
+        public async Task<SaleOrder> GetPromoCodeSuccessMessageAsync(Guid id, SaleOrderGetPromoCodeSuccessMessageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale_loyalty, FILE: sale_order.py) ---
@@ -5966,95 +5674,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<SaleOrder> L10nItEdiDoiCheckConfigurationInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _l10n_it_edi_doi_check_configuration(self):
-            // """
-            // Raise a UserError in case the configuration of the sale order is invalid.
-            // """
-            // errors = []
-            // for order in self:
-            //     declaration = order.l10n_it_edi_doi_id
-            //     if declaration:
-            //         validity_warnings = declaration._get_validity_warnings(
-            //             order.company_id, order.partner_id.commercial_partner_id, order.currency_id, order.l10n_it_edi_doi_date,
-            //             only_blocking=True, sales_order=True,
-            //         )
-            //         errors.extend(validity_warnings)
-            // 
-            //     declaration_of_intent_tax = order.company_id.l10n_it_edi_doi_tax_id
-            //     if not declaration_of_intent_tax:
-            //         continue
-            //     declaration_tax_lines = order.order_line.filtered(
-            //         lambda line: declaration_of_intent_tax in line.tax_id
-            //     )
-            //     if declaration_tax_lines and not order.l10n_it_edi_doi_id:
-            //         errors.append(_('Given the tax %s is applied, there should be a Declaration of Intent selected.',
-            //                         declaration_of_intent_tax.name))
-            //     if any(line.tax_id != declaration_of_intent_tax for line in declaration_tax_lines):
-            //         errors.append(_('A line using tax %s should not contain any other taxes',
-            //                         declaration_of_intent_tax.name))
-            // if errors:
-            //     raise UserError('\n'.join(errors))
-            */
-            return default;
-        }
-
-        protected async Task<SaleOrder> L10nItEdiDoiGetAmountNotYetInvoicedInternalAsync(object declaration, object additional_invoiced_qty)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _l10n_it_edi_doi_get_amount_not_yet_invoiced(self, declaration, additional_invoiced_qty=None):
-            // """
-            // Consider sales orders in self that use declaration of intent `declaration`.
-            // For each sales order we compute the amount that is tax exempt due to the declaration of intent
-            // (line has special declaration of intent tax applied) but not yet invoiced.
-            // For each line of the SO we i.e. use the not yet invoiced quantity to compute this amount.
-            // The aforementioned quantity is computed from field `qty_invoiced_posted` and parameter `additional_invoiced_qty`
-            // Return the sum of all these amounts on the SOs.
-            // :param declaration:             We only consider sales orders using Declaration of Intent `declaration`.
-            // :param additional_invoiced_qty: Dictionary (sale order line id -> float)
-            //                                 The float represents additional invoiced amount qty for the sale order.
-            //                                 This can i.e. be used to simulate posting an already linked invoice.
-            // """
-            // if not declaration:
-            //     return 0
-            // 
-            // if additional_invoiced_qty is None:
-            //     additional_invoiced_qty = {}
-            // 
-            // tax = declaration.company_id.l10n_it_edi_doi_tax_id
-            // if not tax:
-            //     return 0
-            // 
-            // not_yet_invoiced = 0
-            // for order in self:
-            //     if declaration != order.l10n_it_edi_doi_id:
-            //         continue
-            // 
-            //     order_lines = order.order_line.filtered(
-            //         # The declaration tax cannot be used with other taxes on a single line
-            //         # (checked in `action_confirm`)
-            //         lambda line: line.tax_id.ids == tax.ids
-            //     )
-            //     order_not_yet_invoiced = 0
-            //     for line in order_lines:
-            //         price_reduce = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            //         qty_invoiced = line.qty_invoiced_posted
-            //         if line.ids and additional_invoiced_qty:
-            //             qty_invoiced += additional_invoiced_qty.get(line.ids[0], 0)
-            //         qty_to_invoice = line.product_uom_qty - qty_invoiced
-            //         order_not_yet_invoiced += price_reduce * qty_to_invoice
-            //     if declaration.currency_id.compare_amounts(order_not_yet_invoiced, 0) > 0:
-            //         not_yet_invoiced += order_not_yet_invoiced
-            // 
-            // return not_yet_invoiced
-            */
-            return default;
-        }
-
         protected async Task<SaleOrder> LoadPosDataDomainInternalAsync(object data)
         {
             /*
@@ -6310,26 +5929,6 @@ namespace Bamboo.Core.Application.Services
             // return groups
             */
             return default;
-        }
-
-        public async Task<SaleOrder> Number2numericAsync(Guid id, object number)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi_sale, FILE: sale.py) ---
-            // def number2numeric(self, number):
-            // so_number = re.sub(r'\D', '', number)
-            // if so_number == '' or so_number is False:
-            //     raise UserError(_('Reference must contain numeric characters'))
-            // 
-            // # Make sure the base number is 3...19 characters long
-            // if len(so_number) < 3:
-            //     so_number = ('11' + so_number)[-3:]
-            // elif len(so_number) > 19:
-            //     so_number = so_number[:19]
-            // 
-            // return so_number
-            */
-            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<SaleOrder> OnchangeCommitmentDateInternalAsync()
@@ -6640,23 +6239,6 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SaleOrder> OpenDeclarationOfIntentAsync(Guid id)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def action_open_declaration_of_intent(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Declaration of Intent for %s", self.display_name),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'l10n_it_edi_doi.declaration_of_intent',
-            //     'res_id': self.l10n_it_edi_doi_id.id,
-            // }
-            */
-            var entity = await Repository.GetAsync(id); return entity;
-        }
-
         public async Task<SaleOrder> OpenDeliveryWizardAsync(Guid id)
         {
             /*
@@ -6906,59 +6488,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<SaleOrder> PrepareInvoiceInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_sale, FILE: sale_order.py) ---
-            // def _prepare_invoice(self):
-            // invoice_vals = super(SaleOrder, self)._prepare_invoice()
-            // if self.country_code == 'IN':
-            //     invoice_vals['l10n_in_reseller_partner_id'] = self.l10n_in_reseller_partner_id.id
-            //     invoice_vals['l10n_in_gst_treatment'] = self.l10n_in_gst_treatment
-            // return invoice_vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def _prepare_invoice(self):
-            // """
-            // Prepare the dict of values to create the new invoice for a sales order. This method may be
-            // overridden to implement custom invoice generation (making sure to call super() to establish
-            // a clean extension chain).
-            // """
-            // vals = super()._prepare_invoice()
-            // declaration = self.l10n_it_edi_doi_id
-            // if declaration:
-            //     date = fields.Date.context_today(self)
-            //     validity_warnings = declaration._get_validity_warnings(
-            //         self.company_id, self.partner_id.commercial_partner_id, self.currency_id, date, sales_order=True
-            //     )
-            //     if not validity_warnings:
-            //         vals['l10n_it_edi_doi_id'] = declaration.id
-            // return vals
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_sale, FILE: sale_order.py) ---
-            // def _prepare_invoice(self):
-            // res = super()._prepare_invoice()
-            // has_origin_document_fields_filled = any([
-            //     self.l10n_it_origin_document_type,
-            //     self.l10n_it_origin_document_name,
-            //     self.l10n_it_origin_document_date
-            // ])
-            // has_cup_or_cig_fields_filled = self.l10n_it_cig or self.l10n_it_cup
-            // # If at least one of the origin_document fields is filled, we do not fill missing values with the sale order
-            // # values to avoid having mismatched origin_document information (e.g. user-entered doc name but SO date)
-            // if has_origin_document_fields_filled:
-            //     res.update({
-            //         "l10n_it_origin_document_type": self.l10n_it_origin_document_type,
-            //         "l10n_it_origin_document_name": self.l10n_it_origin_document_name,
-            //         "l10n_it_origin_document_date": self.l10n_it_origin_document_date,
-            //         "l10n_it_cig": self.l10n_it_cig,
-            //         "l10n_it_cup": self.l10n_it_cup,
-            //     })
-            // # Otherwise, if the CUP and/or CIG are filled but origin_document fields are not, pass SO values to invoice
-            // elif has_cup_or_cig_fields_filled:
-            //     res.update({
-            //         "l10n_it_origin_document_type": "purchase_order",
-            //         "l10n_it_origin_document_name": self.name,
-            //         "l10n_it_origin_document_date": self.date_order,
-            //         "l10n_it_cig": self.l10n_it_cig,
-            //         "l10n_it_cup": self.l10n_it_cup,
-            //     })
-            // return res
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def _prepare_invoice(self):
             // """
@@ -7353,10 +6882,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<SaleOrder> QuotationSendAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def action_quotation_send(self):
-            // self._l10n_it_edi_doi_check_configuration()
-            // return super().action_quotation_send()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_quotation_send(self):
             // """ Opens a wizard to compose an email, with relevant mail template loaded by default """
@@ -7422,10 +6947,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<SaleOrder> QuotationSentAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_doi, FILE: sale_order.py) ---
-            // def action_quotation_sent(self):
-            // self._l10n_it_edi_doi_check_configuration()
-            // return super().action_quotation_sent()
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def action_quotation_sent(self):
             // """ Mark the given draft quotation(s) as sent.
@@ -7581,7 +7102,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> SaveIncludedPdfAsync(Guid id, object selected_pdf)
+        public async Task<SaleOrder> SaveIncludedPdfAsync(Guid id, SaleOrderSaveIncludedPdfRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
@@ -7612,7 +7133,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SaleOrder> SaveNewCustomContentAsync(Guid id, object document_type, object form_field, object content)
+        public async Task<SaleOrder> SaveNewCustomContentAsync(Guid id, SaleOrderSaveNewCustomContentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_pdf_quote_builder, FILE: sale_order.py) ---
@@ -7849,7 +7370,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrder> SetDeliveryLineAsync(Guid id, object carrier, object amount)
+        public async Task<SaleOrder> SetDeliveryLineAsync(Guid id, SaleOrderSetDeliveryLineRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: delivery, FILE: sale_order.py) ---
@@ -8867,7 +8388,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<SaleOrder> ViewInvoiceAsync(Guid id, object invoices)
+        public async Task<SaleOrder> ViewInvoiceAsync(Guid id, SaleOrderViewInvoiceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
@@ -9153,14 +8674,6 @@ namespace Bamboo.Core.Application.Services
             //     registrations_toupdate = self.env['event.registration'].sudo().search([('sale_order_id', 'in', self.ids)])
             //     registrations_toupdate.write({'partner_id': vals['partner_id']})
             // return result
-            --- ODOO METHOD SOURCE (MODULE: l10n_fi_sale, FILE: sale.py) ---
-            // def write(self, values):
-            // # We compute the l10n_fi/SaleOrder.reference from itself the same way
-            // # we compute the l10n_fi/AccountMove.invoice_payment_ref from its name.
-            // reference = values.get('reference', False)
-            // if reference:
-            //     values['reference'] = self.compute_payment_reference_finnish(reference)
-            // return super().write(values)
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
             // def write(self, vals):
             // if 'pricelist_id' in vals and any(so.state == 'sale' for so in self):

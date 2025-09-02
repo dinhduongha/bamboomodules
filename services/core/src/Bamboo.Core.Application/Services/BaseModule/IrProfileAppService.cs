@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -80,7 +81,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrProfile> SetProfilingAsync(Guid id, object profile, object collectors, object @params)
+        public async Task<IrProfile> SetProfilingAsync(Guid id, IrProfileSetProfilingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_profile.py) ---

@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class ImageMixinAppService : ApplicationService, IImageMixinAppService
     {
-
-        public ImageMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public ImageMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ActionAddMembersInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_partners, object member_status, object raise_on_access) where TEntity : IEntity<Guid>, IImageMixinable
@@ -92,6 +94,28 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionChannelEnrollAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_channel_enroll(self):
+            // template = self.env.ref('website_slides.mail_template_slide_channel_enroll', raise_if_not_found=False)
+            // return self._action_channel_open_invite_wizard(template, enroll_mode=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionChannelInviteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_channel_invite(self):
+            // template = self.env.ref('website_slides.mail_template_slide_channel_invite', raise_if_not_found=False)
+            // return self._action_channel_open_invite_wizard(template)
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionChannelOpenInviteWizardInternalAsync<TEntity>(IEnumerable<TEntity> entities, object mail_template, object enroll_mode) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -128,6 +152,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionDislikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_dislike(self):
+            // self.check_access('read')
+            // return self._action_vote(upvote=False)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGrantAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_grant_access(self, partner_id):
+            // partner = self.env['res.partner'].browse(partner_id).exists()
+            // if partner:
+            //     if self._action_add_members(partner):
+            //         self.activity_search(
+            //             ['website_slides.mail_activity_data_access_request'],
+            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //         ).action_feedback(feedback=_('Access Granted'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_like(self):
+            // self.check_access('read')
+            // return self._action_vote(upvote=True)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMarkCompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_mark_completed(self):
+            // if any(not slide.can_self_mark_completed for slide in self):
+            //     raise UserError(_('You cannot mark a slide as completed if you are not among its members.'))
+            // 
+            // return self._action_mark_completed()
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionMarkCompletedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -151,6 +226,186 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'partner_id': target_partner.id,
             //     'vote': 0,
             //     'completed': True} for new_slide in new_slides])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionMarkUncompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_mark_uncompleted(self):
+            // if any(not slide.can_self_mark_uncompleted for slide in self):
+            //     raise UserError(_('You cannot mark a slide as uncompleted if you are not among its members.'))
+            // 
+            // completed_slides = self.filtered(lambda slide: slide.user_has_completed)
+            // 
+            // # Remove the Karma point gained
+            // completed_slides._action_set_quiz_done(completed=False)
+            // 
+            // self.env['slide.slide.partner'].sudo().search([
+            //     ('slide_id', 'in', completed_slides.ids),
+            //     ('partner_id', '=', self.env.user.partner_id.id),
+            // ]).completed = False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenDocumentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            // def action_open_documents(self):
+            // self.ensure_one()
+            // return {
+            //     'name': _('Documents'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'product.document',
+            //     'view_mode': 'kanban,list,form',
+            //     'context': {
+            //         'default_res_model': self._name,
+            //         'default_res_id': self.id,
+            //         'default_company_id': self.company_id.id,
+            //     },
+            //     'domain': self._get_product_document_domain(),
+            //     'target': 'current',
+            //     'help': """
+            //         <p class="o_view_nocontent_smiling_face">
+            //             %s
+            //         </p>
+            //         <p>
+            //             %s
+            //             <br/>
+            //             %s
+            //         </p>
+            //         <p>
+            //             <a class="oe_link" href="https://www.odoo.com/documentation/18.0/_downloads/c2c6ce32294dfddffcfefcf2775f7a09/pdfquotebuilderexamples.zip">
+            //             %s
+            //             </a>
+            //         </p>
+            //     """ % (
+            //         _("Upload files to your product"),
+            //         _("Use this feature to store any files you would like to share with your customers"),
+            //         _("(e.g: product description, ebook, legal notice, ...)."),
+            //         _("Download examples")
+            //     )
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenLabelLayoutAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            // def action_open_label_layout(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('product.action_open_label_layout')
+            // action['context'] = {'default_product_tmpl_ids': self.ids}
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToCompletedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_completed_members(self):
+            // return self.action_redirect_to_members('completed')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToEngagedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_engaged_members(self):
+            // return self.action_redirect_to_members('engaged')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToInvitedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_invited_members(self):
+            // return self.action_redirect_to_members('invited')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToMembersAsync<TEntity>(IEnumerable<TEntity> entities, object status_filter) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_redirect_to_members(self, status_filter=''):
+            // """ Redirects to attendees of the course. If status_filter is set to 'invited' /
+            // 'engaged' ('joined' + 'ongoing') / 'completed', attendees are filtered accordingly."""
+            // action_ctx = {}
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_channel_partner_action")
+            // if status_filter == 'engaged':
+            //     action_ctx['search_default_filter_joined'] = 1
+            //     action_ctx['search_default_filter_ongoing'] = 1
+            // elif status_filter:
+            //     action_ctx[f'search_default_filter_{status_filter}'] = 1
+            // action['domain'] = [('channel_id', 'in', self.ids)]
+            // action['sample'] = 1
+            // if status_filter == 'completed':
+            //     help_message = {
+            //         'header_message': _("No Attendee has completed this course yet!"),
+            //         'body_message': ""
+            //     }
+            // else:
+            //     help_message = {
+            //         'header_message': _("No Attendees Yet!"),
+            //         'body_message': _("From here you'll be able to monitor attendees and to track their progress.")
+            //     }
+            // action['help'] = Markup("""<p class="o_view_nocontent_smiling_face">%(header_message)s</p><p>%(body_message)s</p>""") % help_message
+            // if len(self) == 1:
+            //     action['display_name'] = _('Attendees of %s', self.name)
+            //     action_ctx['default_channel_id'] = self.id
+            // action['context'] = action_ctx
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRefuseAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_refuse_access(self, partner_id):
+            // partner = self.env['res.partner'].browse(partner_id).exists()
+            // if partner:
+            //     self.activity_search(
+            //         ['website_slides.mail_activity_data_access_request'],
+            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
+            //     ).action_feedback(feedback=_('Access Refused'))
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRequestAccessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_request_access(self):
+            // """ Request access to the channel. Returns a dict with keys being either 'error'
+            // (specific error raised) or 'done' (request done or not). """
+            // if self.env.user._is_public():
+            //     return {'error': _('You have to sign in before')}
+            // if not self.is_published:
+            //     return {'error': _('Course not published yet')}
+            // if self.is_member:
+            //     return {'error': _('Already member')}
+            // if self.enroll == 'invite':
+            //     activities = self.sudo()._action_request_access(self.env.user.partner_id)
+            //     if activities:
+            //         return {'done': True}
+            //     return {'error': _('Already Requested')}
+            // return {'done': False}
             */
             return default;
         }
@@ -223,6 +478,19 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionSetViewedAsync<TEntity>(IEnumerable<TEntity> entities, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_set_viewed(self, quiz_attempts_inc=False):
+            // if any(not slide.channel_id.is_member for slide in self):
+            //     raise UserError(_('You cannot mark a slide as viewed if you are not among its members.'))
+            // 
+            // return bool(self._action_set_viewed(self.env.user.partner_id, quiz_attempts_inc=quiz_attempts_inc))
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionSetViewedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object target_partner, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -245,6 +513,62 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'partner_id': target_partner.id,
             //     'quiz_attempts_count': 1 if quiz_attempts_inc else 0,
             //     'vote': 0} for new_slide in new_slides])
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewEmbedsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
+            // def action_view_embeds(self):
+            // self.ensure_one()
+            // 
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_embed_action")
+            // action['context'] = {'search_default_slide_id': self.id}
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewLivechatChannelsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
+            // def action_view_livechat_channels(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.im_livechat_channel_action')
+            // action['domain'] = [('rule_ids.chatbot_script_id', 'in', self.ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_view_ratings(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
+            // action['name'] = _('Rating of %s', self.name)
+            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewSlidesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
+            // def action_view_slides(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_slide_action")
+            // action['context'] = {
+            //     'search_default_published': 1,
+            //     'default_channel_id': self.id
+            // }
+            // action['domain'] = [('channel_id', "=", self.id), ('is_category', '=', False)]
+            // return action
             */
             return default;
         }
@@ -466,28 +790,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     else:
             //         # else we go to the next line
             //         line_index += 1
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ChannelEnrollAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_channel_enroll(self):
-            // template = self.env.ref('website_slides.mail_template_slide_channel_enroll', raise_if_not_found=False)
-            // return self._action_channel_open_invite_wizard(template, enroll_mode=True)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ChannelInviteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_channel_invite(self):
-            // template = self.env.ref('website_slides.mail_template_slide_channel_invite', raise_if_not_found=False)
-            // return self._action_channel_open_invite_wizard(template)
             */
             return default;
         }
@@ -2614,17 +2916,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DislikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_dislike(self):
-            // self.check_access('read')
-            // return self._action_vote(upvote=False)
-            */
-            return default;
-        }
-
         public async Task<TEntity> EmbedIncrementInternalAsync<TEntity>(IEnumerable<TEntity> entities, object url) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -4127,22 +4418,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GrantAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_grant_access(self, partner_id):
-            // partner = self.env['res.partner'].browse(partner_id).exists()
-            // if partner:
-            //     if self._action_add_members(partner):
-            //         self.activity_search(
-            //             ['website_slides.mail_activity_data_access_request'],
-            //             user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
-            //         ).action_feedback(feedback=_('Access Granted'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> HasDynamicAttributesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -4277,17 +4552,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LikeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_like(self):
-            // self.check_access('read')
-            // return self._action_vote(upvote=True)
-            */
-            return default;
-        }
-
         public async Task<TEntity> MailGetPartnerFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object introspect_fields) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -4297,40 +4561,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
             // def _mail_get_partner_fields(self, introspect_fields=False):
             // return []
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MarkCompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_mark_completed(self):
-            // if any(not slide.can_self_mark_completed for slide in self):
-            //     raise UserError(_('You cannot mark a slide as completed if you are not among its members.'))
-            // 
-            // return self._action_mark_completed()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MarkUncompletedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_mark_uncompleted(self):
-            // if any(not slide.can_self_mark_uncompleted for slide in self):
-            //     raise UserError(_('You cannot mark a slide as uncompleted if you are not among its members.'))
-            // 
-            // completed_slides = self.filtered(lambda slide: slide.user_has_completed)
-            // 
-            // # Remove the Karma point gained
-            // completed_slides._action_set_quiz_done(completed=False)
-            // 
-            // self.env['slide.slide.partner'].sudo().search([
-            //     ('slide_id', 'in', completed_slides.ids),
-            //     ('partner_id', '=', self.env.user.partner_id.id),
-            // ]).completed = False
             */
             return default;
         }
@@ -4559,61 +4789,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenDocumentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
-            // def action_open_documents(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _('Documents'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'product.document',
-            //     'view_mode': 'kanban,list,form',
-            //     'context': {
-            //         'default_res_model': self._name,
-            //         'default_res_id': self.id,
-            //         'default_company_id': self.company_id.id,
-            //     },
-            //     'domain': self._get_product_document_domain(),
-            //     'target': 'current',
-            //     'help': """
-            //         <p class="o_view_nocontent_smiling_face">
-            //             %s
-            //         </p>
-            //         <p>
-            //             %s
-            //             <br/>
-            //             %s
-            //         </p>
-            //         <p>
-            //             <a class="oe_link" href="https://www.odoo.com/documentation/18.0/_downloads/c2c6ce32294dfddffcfefcf2775f7a09/pdfquotebuilderexamples.zip">
-            //             %s
-            //             </a>
-            //         </p>
-            //     """ % (
-            //         _("Upload files to your product"),
-            //         _("Use this feature to store any files you would like to share with your customers"),
-            //         _("(e.g: product description, ebook, legal notice, ...)."),
-            //         _("Download examples")
-            //     )
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenLabelLayoutAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
-            // def action_open_label_layout(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('product.action_open_label_layout')
-            // action['context'] = {'default_product_tmpl_ids': self.ids}
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> OpenPricelistRulesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -4817,87 +4992,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RedirectToCompletedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_completed_members(self):
-            // return self.action_redirect_to_members('completed')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToEngagedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_engaged_members(self):
-            // return self.action_redirect_to_members('engaged')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToInvitedMembersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_invited_members(self):
-            // return self.action_redirect_to_members('invited')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToMembersAsync<TEntity>(IEnumerable<TEntity> entities, object status_filter) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_redirect_to_members(self, status_filter=''):
-            // """ Redirects to attendees of the course. If status_filter is set to 'invited' /
-            // 'engaged' ('joined' + 'ongoing') / 'completed', attendees are filtered accordingly."""
-            // action_ctx = {}
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_channel_partner_action")
-            // if status_filter == 'engaged':
-            //     action_ctx['search_default_filter_joined'] = 1
-            //     action_ctx['search_default_filter_ongoing'] = 1
-            // elif status_filter:
-            //     action_ctx[f'search_default_filter_{status_filter}'] = 1
-            // action['domain'] = [('channel_id', 'in', self.ids)]
-            // action['sample'] = 1
-            // if status_filter == 'completed':
-            //     help_message = {
-            //         'header_message': _("No Attendee has completed this course yet!"),
-            //         'body_message': ""
-            //     }
-            // else:
-            //     help_message = {
-            //         'header_message': _("No Attendees Yet!"),
-            //         'body_message': _("From here you'll be able to monitor attendees and to track their progress.")
-            //     }
-            // action['help'] = Markup("""<p class="o_view_nocontent_smiling_face">%(header_message)s</p><p>%(body_message)s</p>""") % help_message
-            // if len(self) == 1:
-            //     action['display_name'] = _('Attendees of %s', self.name)
-            //     action_ctx['default_channel_id'] = self.id
-            // action['context'] = action_ctx
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RefuseAccessAsync<TEntity>(IEnumerable<TEntity> entities, Guid partner_id) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_refuse_access(self, partner_id):
-            // partner = self.env['res.partner'].browse(partner_id).exists()
-            // if partner:
-            //     self.activity_search(
-            //         ['website_slides.mail_activity_data_access_request'],
-            //         user_id=self.user_id.id, additional_domain=[('request_partner_id', '=', partner.id)]
-            //     ).action_feedback(feedback=_('Access Refused'))
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemainingSendingCalcInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -4944,29 +5038,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     removed_channel_partner = self.env['slide.channel.partner'].sudo().search(removed_channel_partner_domain)
             //     if removed_channel_partner:
             //         removed_channel_partner.action_archive()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RequestAccessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_request_access(self):
-            // """ Request access to the channel. Returns a dict with keys being either 'error'
-            // (specific error raised) or 'done' (request done or not). """
-            // if self.env.user._is_public():
-            //     return {'error': _('You have to sign in before')}
-            // if not self.is_published:
-            //     return {'error': _('Course not published yet')}
-            // if self.is_member:
-            //     return {'error': _('Already member')}
-            // if self.enroll == 'invite':
-            //     activities = self.sudo()._action_request_access(self.env.user.partner_id)
-            //     if activities:
-            //         return {'done': True}
-            //     return {'error': _('Already Requested')}
-            // return {'done': False}
             */
             return default;
         }
@@ -5413,19 +5484,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetViewedAsync<TEntity>(IEnumerable<TEntity> entities, object quiz_attempts_inc) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_set_viewed(self, quiz_attempts_inc=False):
-            // if any(not slide.channel_id.is_member for slide in self):
-            //     raise UserError(_('You cannot mark a slide as viewed if you are not among its members.'))
-            // 
-            // return bool(self._action_set_viewed(self.env.user.partner_id, quiz_attempts_inc=quiz_attempts_inc))
-            */
-            return default;
-        }
-
         public async Task<TEntity> SetVolumeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
         {
             /*
@@ -5596,62 +5654,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'posted_message': posted_message,
             //     'error_message': error_message,
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewEmbedsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_slide.py) ---
-            // def action_view_embeds(self):
-            // self.ensure_one()
-            // 
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_embed_action")
-            // action['context'] = {'search_default_slide_id': self.id}
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewLivechatChannelsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
-            // def action_view_livechat_channels(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.im_livechat_channel_action')
-            // action['domain'] = [('rule_ids.chatbot_script_id', 'in', self.ids)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_view_ratings(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.rating_rating_action_slide_channel")
-            // action['name'] = _('Rating of %s', self.name)
-            // action['domain'] = expression.AND([ast.literal_eval(action.get('domain', '[]')), [('res_id', 'in', self.ids)]])
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewSlidesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IImageMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: website_slides, FILE: slide_channel.py) ---
-            // def action_view_slides(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("website_slides.slide_slide_action")
-            // action['context'] = {
-            //     'search_default_published': 1,
-            //     'default_channel_id': self.id
-            // }
-            // action['domain'] = [('channel_id', "=", self.id), ('is_category', '=', False)]
-            // return action
             */
             return default;
         }

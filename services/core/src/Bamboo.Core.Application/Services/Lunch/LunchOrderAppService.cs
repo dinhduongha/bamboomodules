@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -362,7 +363,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<LunchOrder> UpdateQuantityAsync(Guid id, object increment)
+        public async Task<LunchOrder> UpdateQuantityAsync(Guid id, LunchOrderUpdateQuantityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: lunch, FILE: lunch_order.py) ---

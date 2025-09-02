@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -25,7 +26,7 @@ namespace Bamboo.Core.Application.Services
             _websiteSearchableMixinAppService = websiteSearchableMixinAppService;
         }
 
-        public async Task<WebsitePage> ClonePageAsync(Guid id, Guid page_id, object page_name, object clone_menu)
+        public async Task<WebsitePage> ClonePageAsync(Guid id, WebsitePageClonePageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_page.py) ---
@@ -116,7 +117,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<WebsitePage> CopyDataAsync(Guid id, object @default)
+        public async Task<WebsitePage> CopyDataAsync(Guid id, WebsitePageCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_page.py) ---

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrDefaultController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/discard-records")]
         public async Task<IActionResult> DiscardRecordsAsync(Guid id, [FromBody] IrDefaultDiscardRecordsRequestDto input)
         {
-            var result = await _appService.DiscardRecordsAsync(id, input.Records);
+            var result = await _appService.DiscardRecordsAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/discard-values")]
         public async Task<IActionResult> DiscardValuesAsync(Guid id, [FromBody] IrDefaultDiscardValuesRequestDto input)
         {
-            var result = await _appService.DiscardValuesAsync(id, input.ModelName, input.FieldName, input.Values);
+            var result = await _appService.DiscardValuesAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/set")]
         public async Task<IActionResult> SetAsync(Guid id, [FromBody] IrDefaultSetRequestDto input)
         {
-            var result = await _appService.SetAsync(id, input.ModelName, input.FieldName, input.Value, input.UserId, input.CompanyId, input.Condition);
+            var result = await _appService.SetAsync(id, input);
             return Ok(result);
         }
     }

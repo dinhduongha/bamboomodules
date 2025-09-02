@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -23,7 +24,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<LinkTrackerClick> AddClickAsync(Guid id, object code)
+        public async Task<LinkTrackerClick> AddClickAsync(Guid id, LinkTrackerClickAddClickRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---

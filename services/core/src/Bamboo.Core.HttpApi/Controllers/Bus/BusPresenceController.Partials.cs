@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Bus
 {
     public partial class BusPresenceController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Bus
         [Route("{id}/update-presence")]
         public async Task<IActionResult> UpdatePresenceAsync(Guid id, [FromBody] BusPresenceUpdatePresenceRequestDto input)
         {
-            var result = await _appService.UpdatePresenceAsync(id, input.InactivityPeriod, input.IdentityField, input.IdentityValue);
+            var result = await _appService.UpdatePresenceAsync(id, input);
             return Ok(result);
         }
     }

@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Hr
 {
     public partial class HrDepartmentController
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Hr
         [Route("{id}/get-formview-action")]
         public async Task<IActionResult> GetFormviewActionAsync(Guid id, [FromBody] HrDepartmentGetFormviewActionRequestDto input)
         {
-            var result = await _appService.GetFormviewActionAsync(id, input.AccessUid);
+            var result = await _appService.GetFormviewActionAsync(id, input);
             return Ok(result);
         }
     }

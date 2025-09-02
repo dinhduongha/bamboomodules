@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -436,21 +437,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> ComputeDisplayNameInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: product.py) ---
-            // def _compute_display_name(self):
-            // """ In a string consisting of space-delimited substrings, force a double-space between
-            // substrings where (when looking right to left) the first substring ends with a numeral and
-            // the second begins with an Arabic character.
-            // """
-            // def repl(match_occurrence):
-            //     # group(1): (\d) == numeral
-            //     # group(3): ([\u0600-\u06FF]) == Arabic character
-            //     return f'{match_occurrence.group(1)}  {match_occurrence.group(3)}'
-            // 
-            // super()._compute_display_name()
-            // for product in self:
-            //     if product.display_name:
-            //         product.display_name = re.sub(r'(\d)(\s)([\u0600-\u06FF])', repl, product.display_name)
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
             // def _compute_display_name(self):
             // 
@@ -1529,7 +1515,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<object> FieldsGetAsync(object allfields, object attributes)
+        public override async Task<Dictionary<string, Dictionary<string, object>>> FieldsGetAsync(List<string> fields = null, Dictionary<string, List<string>> attributes = null)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: product.py) ---
@@ -1562,8 +1548,7 @@ namespace Bamboo.Core.Application.Services
             //             res['qty_available']['string'] = _('Produced Qty')
             // return res
             */
-            //return await base.FieldsGetAsync();
-            return default;
+            return await base.FieldsGetAsync(fields, attributes);
         }
 
         protected async Task<List<Dictionary<string, object>>> FilterApplicableAttributesInternalAsync(Guid attributes_by_ptal_id)
@@ -1962,7 +1947,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<ProductProduct> GetEmptyListHelpAsync(Guid id, ProductProductGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
@@ -2197,7 +2182,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductProduct> GetProductInfoPosAsync(Guid id, object price, object quantity, Guid pos_config_id)
+        public async Task<ProductProduct> GetProductInfoPosAsync(Guid id, ProductProductGetProductInfoPosRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
@@ -2652,12 +2637,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ProductProduct> LoadPosDataFieldsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_pos, FILE: product_product.py) ---
-            // def _load_pos_data_fields(self, config_id):
-            // fields = super()._load_pos_data_fields(config_id)
-            // if self.env.company.country_id.code == 'IN':
-            //     fields += ['l10n_in_hsn_code']
-            // return fields
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product.py) ---
             // def _load_pos_data_fields(self, config_id):
             // return [
@@ -4684,7 +4663,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProductProduct> ViewHeaderGetAsync(Guid id, Guid view_id, object view_type)
+        public async Task<ProductProduct> ViewHeaderGetAsync(Guid id, ProductProductViewHeaderGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---

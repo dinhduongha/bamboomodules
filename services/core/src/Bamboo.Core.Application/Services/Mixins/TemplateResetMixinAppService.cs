@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,50 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("mail", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
     public class TemplateResetMixinAppService : ApplicationService, ITemplateResetMixinAppService
     {
-
-        public TemplateResetMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public TemplateResetMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionCreateSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
+            // def action_create_sidebar_action(self):
+            // ActWindow = self.env['ir.actions.act_window']
+            // view = self.env.ref('sms.sms_composer_view_form')
+            // 
+            // for template in self:
+            //     button_name = _('Send SMS (%s)', template.name)
+            //     action = ActWindow.create({
+            //         'name': button_name,
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'sms.composer',
+            //         # Add default_composition_mode to guess to determine if need to use mass or comment composer
+            //         'context': "{'default_template_id' : %d, 'sms_composition_mode': 'guess', 'default_res_ids': active_ids, 'default_res_id': active_id}" % (template.id),
+            //         'view_mode': 'form',
+            //         'view_id': view.id,
+            //         'target': 'new',
+            //         'binding_model_id': template.model_id.id,
+            //     })
+            //     template.write({'sidebar_action_id': action.id})
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlinkSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
+            // def action_unlink_sidebar_action(self):
+            // for template in self:
+            //     if template.sidebar_action_id:
+            //         template.sidebar_action_id.unlink()
+            // return True
+            */
+            return default;
         }
 
         public async Task<TEntity> CancelUnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable
@@ -178,33 +220,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if path_info:
             //             vals['template_fs'] = '/'.join(path_info[0:2])
             // return super().create(vals_list)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
-            // def action_create_sidebar_action(self):
-            // ActWindow = self.env['ir.actions.act_window']
-            // view = self.env.ref('sms.sms_composer_view_form')
-            // 
-            // for template in self:
-            //     button_name = _('Send SMS (%s)', template.name)
-            //     action = ActWindow.create({
-            //         'name': button_name,
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'sms.composer',
-            //         # Add default_composition_mode to guess to determine if need to use mass or comment composer
-            //         'context': "{'default_template_id' : %d, 'sms_composition_mode': 'guess', 'default_res_ids': active_ids, 'default_res_id': active_id}" % (template.id),
-            //         'view_mode': 'form',
-            //         'view_id': view.id,
-            //         'target': 'new',
-            //         'binding_model_id': template.model_id.id,
-            //     })
-            //     template.write({'sidebar_action_id': action.id})
-            // return True
             */
             return default;
         }
@@ -944,19 +959,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // def unlink(self):
             // self.sudo().mapped('sidebar_action_id').unlink()
             // return super(SMSTemplate, self).unlink()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> UnlinkSidebarActionAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, ITemplateResetMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: sms, FILE: sms_template.py) ---
-            // def action_unlink_sidebar_action(self):
-            // for template in self:
-            //     if template.sidebar_action_id:
-            //         template.sidebar_action_id.unlink()
-            // return True
             */
             return default;
         }

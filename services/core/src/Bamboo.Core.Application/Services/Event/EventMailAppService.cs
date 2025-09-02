@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -349,7 +350,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<EventMail> RunAsync(Guid id, object autocommit)
+        public async Task<EventMail> RunAsync(Guid id, EventMailRunRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail.py) ---
@@ -361,7 +362,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<EventMail> ScheduleCommunicationsAsync(Guid id, object autocommit)
+        public async Task<EventMail> ScheduleCommunicationsAsync(Guid id, EventMailScheduleCommunicationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: event, FILE: event_mail.py) ---

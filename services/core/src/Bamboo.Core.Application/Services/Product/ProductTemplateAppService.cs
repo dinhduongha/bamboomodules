@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -801,62 +802,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<ProductTemplate> ComputeL10nEgEtaCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: product_template.py) ---
-            // def _compute_l10n_eg_eta_code(self):
-            // self.l10n_eg_eta_code = False
-            // for template in self:
-            //     if len(template.product_variant_ids) == 1:
-            //         template.l10n_eg_eta_code = template.product_variant_ids.l10n_eg_eta_code
-            */
-            return default;
-        }
-
-        protected async Task<ProductTemplate> ComputeL10nIdProductCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: product_template.py) ---
-            // def _compute_l10n_id_product_code(self):
-            // # used for setting default product code depending on product being goods/service
-            // # 000000 is default for both general goods/service
-            // for record in self:
-            //     if record.type == 'service':
-            //         record.l10n_id_product_code = self.env.ref('l10n_id_efaktur_coretax.product_code_000000_service', raise_if_not_found=False)
-            //     else:
-            //         record.l10n_id_product_code = self.env.ref('l10n_id_efaktur_coretax.product_code_000000_goods', raise_if_not_found=False)
-            */
-            return default;
-        }
-
-        protected async Task<ProductTemplate> ComputeL10nInHsnWarningInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: product_template.py) ---
-            // def _compute_l10n_in_hsn_warning(self):
-            // digit_suffixes = {
-            //     '4': _("either 4, 6 or 8"),
-            //     '6': _("either 6 or 8"),
-            //     '8': _("8")
-            // }
-            // active_hsn_code_digit_len = max(
-            //     int(company.l10n_in_hsn_code_digit)
-            //     for company in self.env.companies
-            // )
-            // for record in self:
-            //     check_hsn = record.sale_ok and record.l10n_in_hsn_code and active_hsn_code_digit_len
-            //     if check_hsn and (not re.match(r'^\d{4}$|^\d{6}$|^\d{8}$', record.l10n_in_hsn_code) or len(record.l10n_in_hsn_code) < active_hsn_code_digit_len):
-            //         record.l10n_in_hsn_warning = _(
-            //             "HSN code field must consist solely of digits and be %s in length.",
-            //             digit_suffixes.get(str(active_hsn_code_digit_len))
-            //         )
-            //         continue
-            //     record.l10n_in_hsn_warning = False
-            */
-            return default;
-        }
-
         protected async Task<ProductTemplate> ComputeLotValuatedInternalAsync()
         {
             /*
@@ -1390,62 +1335,6 @@ namespace Bamboo.Core.Application.Services
             // else:
             //     tax_string = " "
             // return tax_string
-            --- ODOO METHOD SOURCE (MODULE: l10n_account_withholding_tax, FILE: product_template.py) ---
-            // def _construct_tax_string(self, price):
-            // """ Updates the tax string computation to include the withheld amount when withholding taxes are involved. """
-            // # OVERRIDE 'account'
-            // company_taxes = self.taxes_id.filtered(lambda t: t.company_id == self.env.company)
-            // 
-            // def _get_withheld_amount():
-            //     if not company_taxes:
-            //         return 0.0
-            // 
-            //     base_line = company_taxes._prepare_base_line_for_taxes_computation(
-            //         None,
-            //         partner_id=self.env["res.partner"],
-            //         currency_id=self.env.company.currency_id,
-            //         product_id=self,
-            //         quantity=1.0,
-            //         tax_ids=company_taxes,
-            //         price_unit=price,
-            //         calculate_withholding_taxes=True,
-            //     )
-            //     company_taxes._add_tax_details_in_base_line(base_line, self.env.company)
-            //     company_taxes._round_base_lines_tax_details([base_line], self.env.company)
-            //     company_taxes._add_accounting_data_to_base_line_tax_details(
-            //         base_line,
-            //         self.env.company,
-            //     )
-            //     tax_details = base_line['tax_details']
-            //     wth_total = 0.0
-            //     for tax_data in tax_details['taxes_data']:
-            //         if tax_data['tax'].is_withholding_tax_on_payment:
-            //             wth_total -= tax_data['tax_amount_currency']
-            //     return wth_total
-            // 
-            // # Reimplement the tax string by taking into account the withholding taxes.
-            // # First step; compute the amounts excluding withholding taxes.
-            // res = company_taxes.compute_all(
-            //     price, product=self, partner=self.env['res.partner']
-            // )
-            // joined = []
-            // included = res['total_included']
-            // excluded = res['total_excluded']
-            // # Second step, compute the withholding tax amounts
-            // withheld_amount = _get_withheld_amount()
-            // 
-            // currency = self.currency_id
-            // if currency.compare_amounts(included, price):
-            //     joined.append(self.env._('%(amount)s Incl. Taxes', amount=format_amount(self.env, included, currency)))
-            // if currency.compare_amounts(excluded, price):
-            //     joined.append(self.env._('%(amount)s Excl. Taxes', amount=format_amount(self.env, excluded, currency)))
-            // if not currency.is_zero(withheld_amount):
-            //     joined.append(self.env._('%(amount)s Tax Withheld', amount=format_amount(self.env, withheld_amount, currency)))
-            // if joined:
-            //     tax_string = f"(= {', '.join(joined)})"
-            // else:
-            //     tax_string = " "
-            // return tax_string
             */
             return default;
         }
@@ -1485,7 +1374,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CopyAsync(id, fields, defaultValues);
         }
 
-        public async Task<ProductTemplate> CopyDataAsync(Guid id, object @default)
+        public async Task<ProductTemplate> CopyDataAsync(Guid id, ProductTemplateCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
@@ -1519,29 +1408,6 @@ namespace Bamboo.Core.Application.Services
             // if other_companies and products:
             //     products_without_company = products.filtered(lambda p: not p.company_id).sudo()
             //     products_without_company._force_default_tax(other_companies)
-            // return products
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: product_template.py) ---
-            // def create(self, vals_list):
-            // templates = super().create(vals_list)
-            // 
-            // for template, vals in zip(templates, vals_list):
-            //     related_vals = {}
-            //     if vals.get('l10n_eg_eta_code'):
-            //         related_vals['l10n_eg_eta_code'] = vals['l10n_eg_eta_code']
-            //     if related_vals:
-            //         template.write(related_vals)
-            // 
-            // return templates
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr, FILE: product.py) ---
-            // def create(self, vals_list):
-            // products = super().create(vals_list)
-            // 
-            // for product in products:
-            //     if product.company_id.country_code == 'TR':
-            //         ChartTemplate = self.env['account.chart.template'].with_company(product.company_id)
-            //         return_account = ChartTemplate.ref('tr610', raise_if_not_found=False)
-            //         product.l10n_tr_default_sales_return_account_id = return_account
-            // 
             // return products
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
             // def create(self, vals_list):
@@ -1703,7 +1569,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTemplate> CreateProductVariantAsync(Guid id, List<Guid> product_template_attribute_value_ids)
+        public async Task<ProductTemplate> CreateProductVariantAsync(Guid id, ProductTemplateCreateProductVariantRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: product_template.py) ---
@@ -2815,7 +2681,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTemplate> GetContextualPriceAsync(Guid id, object product)
+        public async Task<ProductTemplate> GetContextualPriceAsync(Guid id, ProductTemplateGetContextualPriceRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
@@ -2885,7 +2751,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTemplate> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<ProductTemplate> GetEmptyListHelpAsync(Guid id, ProductTemplateGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
@@ -3356,7 +3222,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProductTemplate> GetProductAccountsAsync(Guid id, object fiscal_pos)
+        public async Task<ProductTemplate> GetProductAccountsAsync(Guid id, ProductTemplateGetProductAccountsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: product.py) ---
@@ -3386,34 +3252,6 @@ namespace Bamboo.Core.Application.Services
             //     'income': self.property_account_income_id or self.categ_id.property_account_income_categ_id,
             //     'expense': self.property_account_expense_id or self.categ_id.property_account_expense_categ_id
             // }
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: datev.py) ---
-            // def _get_product_accounts(self):
-            // """ As taxes with a different rate need a different income/expense account, we add this logic in case people only use
-            //  invoicing to not be blocked by the above constraint"""
-            // result = super(ProductTemplate, self)._get_product_accounts()
-            // company = self.env.company
-            // if company.account_fiscal_country_id.code == "DE":
-            //     if not self.property_account_income_id:
-            //         taxes = self.taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(company))
-            //         if not result['income'] or (result['income'].tax_ids and taxes and taxes[0] not in result['income'].tax_ids):
-            //             result_income = self.env['account.account'].with_company(company).search([
-            //                 *self.env['account.account']._check_company_domain(company),
-            //                 ('internal_group', '=', 'income'),
-            //                 ('deprecated', '=', False),
-            //                 ('tax_ids', 'in', taxes.ids)
-            //             ], limit=1)
-            //             result['income'] = result_income or result['income']
-            //     if not self.property_account_expense_id:
-            //         supplier_taxes = self.supplier_taxes_id.filtered_domain(self.env['account.tax']._check_company_domain(company))
-            //         if not result['expense'] or (result['expense'].tax_ids and supplier_taxes and supplier_taxes[0] not in result['expense'].tax_ids):
-            //             result_expense = self.env['account.account'].with_company(company).search([
-            //                 *self.env['account.account']._check_company_domain(company),
-            //                 ('internal_group', '=', 'expense'),
-            //                 ('deprecated', '=', False),
-            //                 ('tax_ids', 'in', supplier_taxes.ids),
-            //             ], limit=1)
-            //             result['expense'] = result_expense or result['expense']
-            // return result
             --- ODOO METHOD SOURCE (MODULE: mrp_account, FILE: product.py) ---
             // def _get_product_accounts(self):
             // accounts = super()._get_product_accounts()
@@ -5018,17 +4856,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
             // def _set_default_code(self):
             // self._set_product_variant_field('default_code')
-            */
-            return default;
-        }
-
-        protected async Task<ProductTemplate> SetL10nEgEtaCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: product_template.py) ---
-            // def _set_l10n_eg_eta_code(self):
-            // if len(self.product_variant_ids) == 1:
-            //     self.product_variant_ids.l10n_eg_eta_code = self.l10n_eg_eta_code
             */
             return default;
         }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -117,16 +118,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_payment_method.py) ---
             // def _ensure_unique_name_for_journal(self):
             // self.journal_id._check_payment_method_line_ids_multiplicity()
-            */
-            return default;
-        }
-
-        protected async Task<AccountPaymentMethodLine> GetL10nItPaymentMethodSelectionCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi_ndd, FILE: account_payment_methode_line.py) ---
-            // def _get_l10n_it_payment_method_selection_code(self):
-            // return [payment_method[0] for payment_method in L10N_IT_PAYMENT_METHOD_SELECTION]
             */
             return default;
         }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -116,7 +117,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> CopyDataAsync(Guid id, object @default)
+        public async Task<MailTemplate> CopyDataAsync(Guid id, MailTemplateCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -628,7 +629,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailTemplate> SendMailAsync(Guid id, Guid res_id, object force_send, object raise_exception, object email_values, object email_layout_xmlid)
+        public async Task<MailTemplate> SendMailAsync(Guid id, MailTemplateSendMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---
@@ -659,7 +660,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailTemplate> SendMailBatchAsync(Guid id, List<Guid> res_ids, object force_send, object raise_exception, object email_values, object email_layout_xmlid)
+        public async Task<MailTemplate> SendMailBatchAsync(Guid id, MailTemplateSendMailBatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_template.py) ---

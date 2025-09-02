@@ -1,24 +1,27 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
-
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule")]
-    public class ResDeviceAppService : ApplicationService, IResDeviceAppService
+    public class ResDeviceAppService : GenericApplicationService<ResDevice>, IResDeviceAppService
     {
-        private readonly IResDeviceRepository _resDeviceRepository;
-        public ResDeviceAppService(IResDeviceRepository resDeviceRepository) 
+
+        public ResDeviceAppService(IRepository<ResDevice, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _resDeviceRepository = resDeviceRepository;
+
         }
 
         protected async Task<ResDevice> ComputeDisplayNameInternalAsync()
@@ -114,8 +117,7 @@ namespace Bamboo.Core.Application.Services
             //     SQL(self._query)
             // ))
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResDevice> IsMobileInternalAsync(object platform)
@@ -160,8 +162,7 @@ namespace Bamboo.Core.Application.Services
             // def revoke(self):
             // return self._revoke()
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResDevice> RevokeInternalAsync()

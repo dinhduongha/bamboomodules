@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -602,7 +603,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrCron> ToggleAsync(Guid id, object model, object domain)
+        public async Task<IrCron> ToggleAsync(Guid id, IrCronToggleRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_cron.py) ---
@@ -725,7 +726,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrCron> TryWriteAsync(Guid id, object values)
+        public async Task<IrCron> TryWriteAsync(Guid id, IrCronTryWriteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_cron.py) ---

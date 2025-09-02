@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Iap
 {
     public partial class IapAccountController
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Iap
         [Route("{id}/get")]
         public async Task<IActionResult> GetAsync(Guid id, [FromBody] IapAccountGetRequestDto input)
         {
-            var result = await _appService.GetAsync(id, input.ServiceName, input.ForceCreate);
+            var result = await _appService.GetAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Iap
         [Route("{id}/get-account-id")]
         public async Task<IActionResult> GetAccountIdAsync(Guid id, [FromBody] IapAccountGetAccountIdRequestDto input)
         {
-            var result = await _appService.GetAccountIdAsync(id, input.ServiceName);
+            var result = await _appService.GetAccountIdAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Iap
         [Route("{id}/get-credits")]
         public async Task<IActionResult> GetCreditsAsync(Guid id, [FromBody] IapAccountGetCreditsRequestDto input)
         {
-            var result = await _appService.GetCreditsAsync(id, input.ServiceName);
+            var result = await _appService.GetCreditsAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Iap
         [Route("{id}/get-credits-url")]
         public async Task<IActionResult> GetCreditsUrlAsync(Guid id, [FromBody] IapAccountGetCreditsUrlRequestDto input)
         {
-            var result = await _appService.GetCreditsUrlAsync(id, input.ServiceName, input.BaseUrl, input.Credit, input.Trial, input.AccountToken);
+            var result = await _appService.GetCreditsUrlAsync(id, input);
             return Ok(result);
         }
         

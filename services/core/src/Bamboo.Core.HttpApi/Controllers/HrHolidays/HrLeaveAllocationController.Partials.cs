@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
 {
     public partial class HrLeaveAllocationController
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/add-follower")]
         public async Task<IActionResult> AddFollowerAsync(Guid id, [FromBody] HrLeaveAllocationAddFollowerRequestDto input)
         {
-            var result = await _appService.AddFollowerAsync(id, input.EmployeeId);
+            var result = await _appService.AddFollowerAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
         [Route("{id}/message-subscribe")]
         public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] HrLeaveAllocationMessageSubscribeRequestDto input)
         {
-            var result = await _appService.MessageSubscribeAsync(id, input.PartnerIds, input.SubtypeIds);
+            var result = await _appService.MessageSubscribeAsync(id, input);
             return Ok(result);
         }
     }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -502,17 +503,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosConfig> ComputeIsSpanishInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_pos, FILE: pos_config.py) ---
-            // def _compute_is_spanish(self):
-            // for pos in self:
-            //     pos.is_spanish = pos.company_id.country_code == "ES" and pos.l10n_es_simplified_invoice_journal_id
-            */
-            return default;
-        }
-
         protected async Task<PosConfig> ComputeLastSessionInternalAsync()
         {
             /*
@@ -572,17 +562,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosConfig> ComputeSimplifiedPartnerIdInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_pos, FILE: pos_config.py) ---
-            // def _compute_simplified_partner_id(self):
-            // for config in self:
-            //     config.simplified_partner_id = self.env.ref("l10n_es.partner_simplified").id
-            */
-            return default;
-        }
-
         protected async Task<PosConfig> ComputeStatusInternalAsync()
         {
             /*
@@ -597,9 +576,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosConfig> ConfigSequenceImplementationInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: pos.py) ---
-            // def _config_sequence_implementation(self):
-            // return 'no_gap' if self.env.company._is_accounting_unalterable() else super()._config_sequence_implementation()
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def _config_sequence_implementation(self):
             // return 'standard'
@@ -747,35 +723,6 @@ namespace Bamboo.Core.Application.Services
             // payment_methods |= pay_later_pm
             // 
             // return journal, payment_methods.ids
-            */
-            return default;
-        }
-
-        protected async Task<PosConfig> CreateTakeawayFiscalPositionInternalAsync(object config)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be_pos_restaurant, FILE: pos_config.py) ---
-            // def _create_takeaway_fiscal_position(self, config):
-            // ChartTemplate = self.env['account.chart.template'].with_company(self.env.company)
-            // tax_21 = ChartTemplate.ref('attn_VAT-OUT-21-L', raise_if_not_found=False)
-            // tax_12 = ChartTemplate.ref('attn_VAT-OUT-12-L', raise_if_not_found=False)
-            // tax_6 = ChartTemplate.ref('attn_VAT-OUT-06-L', raise_if_not_found=False)
-            // 
-            // if tax_21 and tax_12 and tax_6:
-            //     fp = self.env['account.fiscal.position'].create({
-            //         'name': 'Take out',
-            //     })
-            //     self.env['account.fiscal.position.tax'].create({
-            //         'tax_src_id': tax_21.id,
-            //         'tax_dest_id': tax_6.id,
-            //         'position_id': fp.id
-            //     })
-            //     self.env['account.fiscal.position.tax'].create({
-            //         'tax_src_id': tax_12.id,
-            //         'tax_dest_id': tax_6.id,
-            //         'position_id': fp.id
-            //     })
-            //     config.write({'takeaway': True, 'takeaway_fp_id': fp.id})
             */
             return default;
         }
@@ -995,7 +942,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> GetCategoriesAsync(Guid id, object categories)
+        public async Task<PosConfig> GetCategoriesAsync(Guid id, PosConfigGetCategoriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -1124,26 +1071,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosConfig> GetLimitedPartnersLoadingAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_pos, FILE: pos_config.py) ---
-            // def get_limited_partners_loading(self):
-            // partner_ids = super().get_limited_partners_loading()
-            // if (self.env.ref('l10n_ar.par_cfa').id,) not in partner_ids:
-            //     partner_ids.append((self.env.ref('l10n_ar.par_cfa').id,))
-            // return partner_ids
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_pos, FILE: pos_config.py) ---
-            // def get_limited_partners_loading(self):
-            // # this function normally returns 100 partners, but we have to make sure that
-            // # the simplified partner is also loaded
-            // res = super().get_limited_partners_loading()
-            // if (self.simplified_partner_id.id,) not in res:
-            //     res.append((self.simplified_partner_id.id,))
-            // return res
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_pos, FILE: pos_config.py) ---
-            // def get_limited_partners_loading(self):
-            // partner_ids = super().get_limited_partners_loading()
-            // if (self.env.ref('l10n_pe_pos.partner_pe_cf').id,) not in partner_ids:
-            //     partner_ids.append((self.env.ref('l10n_pe_pos.partner_pe_cf').id,))
-            // return partner_ids
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def get_limited_partners_loading(self):
             // return self.env.execute_query(SQL("""
@@ -1183,7 +1110,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> GetLimitedProductsLoadingAsync(Guid id, object fields)
+        public async Task<PosConfig> GetLimitedProductsLoadingAsync(Guid id, PosConfigGetLimitedProductsLoadingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -1317,7 +1244,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> GetRecordsAsync(Guid id, object data)
+        public async Task<PosConfig> GetRecordsAsync(Guid id, PosConfigGetRecordsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -1582,17 +1509,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosConfig> LoadOnboardingBarScenarioAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be_pos_restaurant, FILE: pos_config.py) ---
-            // def load_onboarding_bar_scenario(self):
-            // super().load_onboarding_bar_scenario()
-            // if (self.env.company.chart_template or '').startswith('be'):
-            //     ChartTemplate = self.env['account.chart.template'].with_company(self.env.company)
-            //     tax_alcohol = ChartTemplate.ref('tax_alcohol_luxury')
-            //     cocktails_category = self.env.ref('pos_restaurant.pos_category_cocktails', raise_if_not_found=False)
-            //     if cocktails_category:
-            //         self.env['product.template'].search([
-            //             ('pos_categ_ids', 'in', [cocktails_category.id])
-            //         ]).write({'taxes_id': [(6, 0, [tax_alcohol.id])]})
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
             // def load_onboarding_bar_scenario(self):
             // ref_name = 'pos_restaurant.pos_config_main_bar'
@@ -1734,13 +1650,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosConfig> LoadOnboardingRestaurantScenarioAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_be_pos_restaurant, FILE: pos_config.py) ---
-            // def load_onboarding_restaurant_scenario(self):
-            // super().load_onboarding_restaurant_scenario()
-            // if (self.env.company.chart_template or '').startswith('be'):
-            //     config = self.env.ref(self._get_suffixed_ref_name('pos_restaurant.pos_config_main_restaurant'), raise_if_not_found=False)
-            //     if config:
-            //         self._create_takeaway_fiscal_position(config)
             --- ODOO METHOD SOURCE (MODULE: pos_restaurant, FILE: pos_config.py) ---
             // def load_onboarding_restaurant_scenario(self):
             // ref_name = 'pos_restaurant.pos_config_main_restaurant'
@@ -1864,7 +1773,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> NotifySynchronisationAsync(Guid id, Guid session_id, object login_number, object records)
+        public async Task<PosConfig> NotifySynchronisationAsync(Guid id, PosConfigNotifySynchronisationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -1993,41 +1902,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosConfig> OpenUiAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: pos.py) ---
-            // def open_ui(self):
-            // for config in self:
-            //     if not config.company_id.country_id:
-            //         raise UserError(_("You have to set a country in your company setting."))
-            //     if config.company_id._is_accounting_unalterable():
-            //         if config.current_session_id:
-            //             config.current_session_id._check_session_timing()
-            // return super(pos_config, self).open_ui()
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi_pos, FILE: pos_config.py) ---
-            // def open_ui(self):
-            // for config in self:
-            //     if (
-            //             config.company_id.country_id.code == 'SA'
-            //             and config.invoice_journal_id
-            //             and (config.invoice_journal_id.edi_format_ids.filtered(lambda f: f.code == "sa_zatca")
-            //                  and not config.invoice_journal_id._l10n_sa_ready_to_submit_einvoices())
-            //     ):
-            //         msg = _("The invoice journal of the point of sale %s must be properly onboarded "
-            //                 "according to ZATCA specifications.\n", config.name)
-            //         action = {
-            //             "view_mode": "form",
-            //             "res_model": "account.journal",
-            //             "type": "ir.actions.act_window",
-            //             "res_id": config.invoice_journal_id.id,
-            //             "views": [[False, "form"]],
-            //         }
-            //         raise RedirectWarning(msg, action, _('Go to Journal configuration'))
-            // return super().open_ui()
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_pos, FILE: pos_config.py) ---
-            // def open_ui(self):
-            // for config in self:
-            //     if not config.company_id.country_id:
-            //         raise UserError(_("You have to set a country in your company setting."))
-            // return super(pos_config, self).open_ui()
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
             // def open_ui(self):
             // """Open the pos interface with config_id as an extra argument.
@@ -2200,7 +2074,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosConfig> ReadConfigOpenOrdersAsync(Guid id, object domain, List<Guid> record_ids)
+        public async Task<PosConfig> ReadConfigOpenOrdersAsync(Guid id, PosConfigReadConfigOpenOrdersRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -2365,7 +2239,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> UpdateCustomerDisplayAsync(Guid id, object order, object access_token)
+        public async Task<PosConfig> UpdateCustomerDisplayAsync(Guid id, PosConfigUpdateCustomerDisplayRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_config.py) ---
@@ -2412,7 +2286,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosConfig> UseCouponCodeAsync(Guid id, object code, object creation_date, Guid partner_id, Guid pricelist_id)
+        public async Task<PosConfig> UseCouponCodeAsync(Guid id, PosConfigUseCouponCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: pos_config.py) ---

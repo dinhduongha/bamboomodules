@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<ImLivechatChannelRule> MatchRuleAsync(Guid id, Guid channel_id, object url, Guid country_id)
+        public async Task<ImLivechatChannelRule> MatchRuleAsync(Guid id, ImLivechatChannelRuleMatchRuleRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---

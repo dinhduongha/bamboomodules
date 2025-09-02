@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -109,7 +110,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> CheckAsync(Guid id, object mode, object values)
+        public async Task<IrAttachment> CheckAsync(Guid id, IrAttachmentCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -397,7 +398,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CopyAsync(id, fields, defaultValues);
         }
 
-        public async Task<IrAttachment> CopyDataAsync(Guid id, object @default)
+        public async Task<IrAttachment> CopyDataAsync(Guid id, IrAttachmentCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -494,7 +495,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CreateAsync(entity, fields);
         }
 
-        public async Task<IrAttachment> CreateUniqueAsync(Guid id, object values_list)
+        public async Task<IrAttachment> CreateUniqueAsync(Guid id, IrAttachmentCreateUniqueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -541,39 +542,6 @@ namespace Bamboo.Core.Application.Services
             //     'sort_weight': 100,
             //     'type': 'binary',
             // }]
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> DecodeEdiL10nItEdiInternalAsync(object name, object content)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: ir_attachment.py) ---
-            // def _decode_edi_l10n_it_edi(self, name, content):
-            // """ Decodes a  into a list of one dictionary representing an attachment.
-            //     :returns:           A list with a dictionary.
-            // """
-            // def parse_xml(parser, name, content):
-            //     try:
-            //         return etree.fromstring(content, parser)
-            //     except (etree.ParseError, ValueError) as e:
-            //         _logger.info("XML parsing of %s failed: %s", name, e)
-            // 
-            // parser = etree.XMLParser(recover=True, resolve_entities=False)
-            // if (xml_tree := parse_xml(parser, name, content)) is None:
-            //     # The file may have a Cades signature, trying to remove it
-            //     if (xml_tree := parse_xml(parser, name, remove_signature(content))) is None:
-            //         _logger.info("Italian EDI invoice file %s cannot be decoded.", name)
-            //         return []
-            // 
-            // return [{
-            //     'filename': name,
-            //     'content': content,
-            //     'attachment': self,
-            //     'xml_tree': xml_move_tree,
-            //     'type': 'l10n_it_edi',
-            //     'sort_weight': 11,
-            // } for xml_move_tree in xml_tree.xpath('//FatturaElettronicaBody')]
             */
             return default;
         }
@@ -670,52 +638,6 @@ namespace Bamboo.Core.Application.Services
             //         },
             //     )
             // self.unlink()
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> ExceptAuditTrailInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: ir_attachment.py) ---
-            // def _except_audit_trail(self):
-            // audit_trail_attachments = self.filtered(lambda attachment:
-            //     attachment.res_model == 'account.move'
-            //     and attachment.res_id
-            //     and attachment.raw
-            //     and attachment.company_id.check_account_audit_trail
-            //     and guess_mimetype(attachment.raw) in (
-            //         'application/pdf',
-            //         'application/xml',
-            //     )
-            // )
-            // id2move = self.env['account.move'].browse(set(audit_trail_attachments.mapped('res_id'))).exists().grouped('id')
-            // for attachment in audit_trail_attachments:
-            //     move = id2move.get(attachment.res_id)
-            //     if move and move.posted_before and move.country_code == 'DE':
-            //         ue = UserError(_("You cannot remove parts of the audit trail."))
-            //         ue._audit_trail = True
-            //         raise ue
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> ExceptSubmittedInvoicesPdfsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_jo_edi, FILE: ir_attachment.py) ---
-            // def _except_submitted_invoices_pdfs(self):
-            // submitted_invoices_pdfs = self.filtered(
-            //     lambda attachment:
-            //     attachment.res_model == 'account.move'
-            //     and attachment.res_id
-            //     and attachment.res_field == 'invoice_pdf_report_file'
-            // )
-            // 
-            // moves = self.env['account.move'].browse(submitted_invoices_pdfs.mapped('res_id')).exists()
-            // moves_with_jo_qr = moves.filtered('l10n_jo_edi_qr')
-            // if moves_with_jo_qr:
-            //     raise UserError(_("You cannot delete this Invoice PDF as it has been submitted to JoFotara"))
             */
             return default;
         }
@@ -1274,17 +1196,6 @@ namespace Bamboo.Core.Application.Services
             //         'decoder': self._decode_edi_binary,
             //     },
             // ]
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: ir_attachment.py) ---
-            // def _get_edi_supported_formats(self):
-            // """ XML files could be l10n_it_edi related or not, so check it
-            //     before demanding the decoding to the the standard XML methods.
-            // """
-            // # EXTENDS 'account'
-            // return [{
-            //     'format': 'l10n_it_edi',
-            //     'check': lambda a: a._is_l10n_it_edi_import_file(),
-            //     'decoder': self._decode_edi_l10n_it_edi,
-            // }] + super()._get_edi_supported_formats()
             */
             return default;
         }
@@ -1318,23 +1229,6 @@ namespace Bamboo.Core.Application.Services
             // if os.path.isfile(full_path) and not self._same_content(bin_data, full_path):
             //     raise UserError(_("The attachment collides with an existing file."))
             // return fname, full_path
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> GetPostedPdfMovesToCheckInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: ir_attachment.py) ---
-            // def _get_posted_pdf_moves_to_check(self):
-            // '''
-            // Returns the moves to check whether they can be unlinked.
-            // '''
-            // return self.env['account.move'].browse(self.filtered(lambda rec: rec.res_model == 'account.move' and rec.res_field == 'invoice_pdf_report_file').mapped('res_id'))
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: ir_attachment.py) ---
-            // def _get_posted_pdf_moves_to_check(self):
-            // # Extends l10n_sa: to bypass the unlink check in l10n_sa for posted moves
-            // return super()._get_posted_pdf_moves_to_check().filtered(lambda rec: not rec.edi_state)
             */
             return default;
         }
@@ -1567,23 +1461,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrAttachment> IsL10nItEdiImportFileInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_edi, FILE: ir_attachment.py) ---
-            // def _is_l10n_it_edi_import_file(self):
-            // is_xml = (
-            //     self.name.endswith('.xml')
-            //     or self.mimetype.endswith('/xml')
-            //     or 'text/plain' in self.mimetype
-            //     and self.raw
-            //     and self.raw.startswith(b'<?xml'))
-            // is_p7m = self.mimetype == 'application/pkcs7-mime'
-            // return (is_xml or is_p7m) and re.search(FATTURAPA_FILENAME_RE, self.name)
-            */
-            return default;
-        }
-
         protected async Task<IrAttachment> MarkForGcInternalAsync(object fname)
         {
             /*
@@ -1729,7 +1606,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrAttachment> RegisterAsMainAttachmentAsync(Guid id, object force)
+        public async Task<IrAttachment> RegisterAsMainAttachmentAsync(Guid id, IrAttachmentRegisterAsMainAttachmentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_attachment.py) ---
@@ -2038,30 +1915,6 @@ namespace Bamboo.Core.Application.Services
             //             attachments_to_unlink += sheet.expense_line_ids.attachment_ids.filtered(lambda att: att.checksum in checksums)
             //     super(IrAttachment, attachments_to_unlink).unlink()
             // return super().unlink()
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: ir_attachment.py) ---
-            // def unlink(self):
-            // invoice_pdf_attachments = self.filtered(lambda attachment:
-            //     attachment.res_model == 'account.move'
-            //     and attachment.res_id
-            //     and attachment.res_field in ('invoice_pdf_report_file', 'ubl_cii_xml_file')
-            //     and attachment.company_id.check_account_audit_trail
-            //     and attachment.company_id.account_fiscal_country_id.code == 'DE'
-            // )
-            // if invoice_pdf_attachments:
-            //     # only detach the document from the field, but keep it in the database for the audit trail
-            //     # it shouldn't be an issue as there aren't any security group on the fields as it is the public report
-            //     invoice_pdf_attachments.res_field = False
-            //     today = format_date(self.env, fields.Date.context_today(self))
-            //     for attachment in invoice_pdf_attachments:
-            //         attachment_name, attachment_extension = os.path.splitext(attachment.name)
-            //         attachment.name = _(
-            //             '%(attachment_name)s (detached by %(user)s on %(date)s)%(attachment_extension)s',
-            //             attachment_name=attachment_name,
-            //             attachment_extension=attachment_extension,
-            //             user=self.env.user.name,
-            //             date=today,
-            //         )
-            // return super(IrAttachment, self - invoice_pdf_attachments).unlink()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def unlink(self):
             // if not self:
@@ -2092,69 +1945,6 @@ namespace Bamboo.Core.Application.Services
             // linked_edi_formats_ws = linked_edi_documents.edi_format_id.filtered(lambda edi_format: edi_format._needs_web_services())
             // if linked_edi_formats_ws:
             //     raise UserError(_("You can't unlink an attachment being an EDI document sent to the government."))
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> UnlinkExceptPostedPdfInvoicesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa, FILE: ir_attachment.py) ---
-            // def _unlink_except_posted_pdf_invoices(self):
-            // '''
-            // Prevents unlinking of invoice pdfs linked to an invoice that is posted.
-            // '''
-            // restricted_moves = self._get_posted_pdf_moves_to_check().filtered(lambda move: move.country_code == 'SA' and move.state == 'posted')
-            // if restricted_moves:
-            //     raise UserError(_("The Invoice PDF(s) cannot be deleted according to ZATCA rules: %s", ', '.join(restricted_moves.mapped('invoice_pdf_report_id.name'))))
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> UnlinkExceptRejectedZatcaDocumentInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: ir_attachment.py) ---
-            // def _unlink_except_rejected_zatca_document(self):
-            // '''
-            // Prevents unlinking of rejected XML documents
-            // '''
-            // descr = 'Rejected ZATCA Document not to be deleted - ثيقة ZATCA المرفوضة لا يجوز حذفها'
-            // for attach in self.filtered(lambda a: a.description == descr and a.res_model == 'account.move'):
-            //     move = self.env['account.move'].browse(attach.res_id)
-            //     if move.country_code == "SA":
-            //         raise UserError(_("You can't unlink an attachment being an EDI document refused by the government."))
-            */
-            return default;
-        }
-
-        protected async Task<IrAttachment> UnlinkExceptValidatedPdfInvoicesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: ir_attachment.py) ---
-            // def _unlink_except_validated_pdf_invoices(self):
-            // '''
-            // Prevents unlinking of invoice pdfs linked to an invoice
-            // where the pdf attachment was created after or at the same time as the edi_documents last write date.
-            // '''
-            // attachments_to_check = self.filtered(
-            //     lambda attachment: attachment.res_model == "account.move"
-            //     and attachment.res_field == "invoice_pdf_report_file"
-            // )
-            // res = self.env["account.edi.document"]._read_group(
-            //     domain=[("move_id", "in", attachments_to_check.mapped("res_id")), ("state", "=", "sent"), ("edi_format_id.code", "=", "sa_zatca")],
-            //     aggregates=["write_date:min"],
-            //     groupby=["move_id"],
-            // )
-            // edi_documents = {doc[0].id: doc[1] for doc in res}
-            // restricted_attachments = self.env["ir.attachment"]
-            // for attachment in attachments_to_check:
-            //     if (document_date := edi_documents.get(attachment.res_id)) and attachment.create_date >= document_date:
-            //         restricted_attachments += attachment
-            // if restricted_attachments:
-            //     raise UserError(_(
-            //         "Oops! The invoice PDF(s) are linked to a validated EDI document and cannot be deleted according to ZATCA rules: %s",
-            //         ", ".join(restricted_attachments.mapped("name"))))
             */
             return default;
         }
@@ -2192,7 +1982,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrAttachment> ValidateAccessAsync(Guid id, object access_token)
+        public async Task<IrAttachment> ValidateAccessAsync(Guid id, IrAttachmentValidateAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
@@ -2219,37 +2009,6 @@ namespace Bamboo.Core.Application.Services
             // return self
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, IrAttachment entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_de, FILE: ir_attachment.py) ---
-            // def write(self, vals):
-            // if vals.keys() & {'res_id', 'res_model', 'raw', 'datas', 'store_fname', 'db_datas', 'company_id'}:
-            //     try:
-            //         self._except_audit_trail()
-            //     except UserError as e:
-            //         if (
-            //             not hasattr(e, '_audit_trail')
-            //             or vals.get('res_model') != 'documents.document'
-            //             or vals.keys() & {'raw', 'datas', 'store_fname', 'db_datas'}
-            //         ):
-            //             raise  # do not raise if trying to version the attachment through a document
-            //         vals.pop('res_model', None)
-            //         vals.pop('res_id', None)
-            // return super().write(vals)
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def write(self, vals):
-            // self.check('write', values=vals)
-            // # remove computed field depending of datas
-            // for field in ('file_size', 'checksum', 'store_fname'):
-            //     vals.pop(field, False)
-            // if 'mimetype' in vals or 'datas' in vals or 'raw' in vals:
-            //     vals = self._check_contents(vals)
-            // return super(IrAttachment, self).write(vals)
-            */
-            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

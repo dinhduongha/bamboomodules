@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Analytic
 {
     public partial class AccountAnalyticAccountController
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Analytic
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAnalyticAccountCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Analytic
         [Route("{id}/web-read")]
         public async Task<IActionResult> WebReadAsync(Guid id, [FromBody] AccountAnalyticAccountWebReadRequestDto input)
         {
-            var result = await _appService.WebReadAsync(id, input.Specification);
+            var result = await _appService.WebReadAsync(id, input);
             return Ok(result);
         }
     }

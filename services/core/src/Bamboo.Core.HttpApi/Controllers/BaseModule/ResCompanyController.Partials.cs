@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class ResCompanyController
@@ -41,14 +42,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/action-update-state-as-per-gstin")]
-        public async Task<IActionResult> ActionUpdateStateAsPerGstinAsync(Guid id)
-        {
-            var result = await _appService.UpdateStateAsPerGstinAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/cache-invalidation-fields")]
         public async Task<IActionResult> CacheInvalidationFieldsAsync(Guid id)
         {
@@ -68,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/compute-fiscalyear-dates")]
         public async Task<IActionResult> ComputeFiscalyearDatesAsync(Guid id, [FromBody] ResCompanyComputeFiscalyearDatesRequestDto input)
         {
-            var result = await _appService.ComputeFiscalyearDatesAsync(id, input.CurrentDate);
+            var result = await _appService.ComputeFiscalyearDatesAsync(id, input);
             return Ok(result);
         }
         
@@ -164,15 +157,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-fiscal-dates")]
         public async Task<IActionResult> GetFiscalDatesAsync(Guid id, [FromBody] ResCompanyGetFiscalDatesRequestDto input)
         {
-            var result = await _appService.GetFiscalDatesAsync(id, input.Payload);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/get-l10n-de-stnr-national")]
-        public async Task<IActionResult> GetL10nDeStnrNationalAsync(Guid id)
-        {
-            var result = await _appService.GetL10nDeStnrNationalAsync(id);
+            var result = await _appService.GetFiscalDatesAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/get-new-account-code")]
         public async Task<IActionResult> GetNewAccountCodeAsync(Guid id, [FromBody] ResCompanyGetNewAccountCodeRequestDto input)
         {
-            var result = await _appService.GetNewAccountCodeAsync(id, input.CurrentCode, input.OldPrefix, input.NewPrefix);
+            var result = await _appService.GetNewAccountCodeAsync(id, input);
             return Ok(result);
         }
         
@@ -204,7 +189,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/google-map-img")]
         public async Task<IActionResult> GoogleMapImgAsync(Guid id, [FromBody] ResCompanyGoogleMapImgRequestDto input)
         {
-            var result = await _appService.GoogleMapImgAsync(id, input.Zoom, input.Width, input.Height);
+            var result = await _appService.GoogleMapImgAsync(id, input);
             return Ok(result);
         }
         
@@ -212,7 +197,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/google-map-link")]
         public async Task<IActionResult> GoogleMapLinkAsync(Guid id, [FromBody] ResCompanyGoogleMapLinkRequestDto input)
         {
-            var result = await _appService.GoogleMapLinkAsync(id, input.Zoom);
+            var result = await _appService.GoogleMapLinkAsync(id, input);
             return Ok(result);
         }
         
@@ -241,14 +226,6 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         }
         
         [HttpPost]
-        [Route("{id}/onchange-country")]
-        public async Task<IActionResult> OnchangeCountryAsync(Guid id)
-        {
-            var result = await _appService.OnchangeCountryAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/opening-move-posted")]
         public async Task<IActionResult> OpeningMovePostedAsync(Guid id)
         {
@@ -260,7 +237,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/reflect-code-prefix-change")]
         public async Task<IActionResult> ReflectCodePrefixChangeAsync(Guid id, [FromBody] ResCompanyReflectCodePrefixChangeRequestDto input)
         {
-            var result = await _appService.ReflectCodePrefixChangeAsync(id, input.OldCode, input.NewCode);
+            var result = await _appService.ReflectCodePrefixChangeAsync(id, input);
             return Ok(result);
         }
         

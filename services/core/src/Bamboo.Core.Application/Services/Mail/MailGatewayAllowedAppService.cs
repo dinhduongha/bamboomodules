@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -33,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailGatewayAllowed> GetEmptyListHelpAsync(Guid id, object help_message)
+        public async Task<MailGatewayAllowed> GetEmptyListHelpAsync(Guid id, MailGatewayAllowedGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_gateway_allowed.py) ---

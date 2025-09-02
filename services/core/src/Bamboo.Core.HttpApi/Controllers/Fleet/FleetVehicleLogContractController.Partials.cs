@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Fleet
 {
     public partial class FleetVehicleLogContractController
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Fleet
         [Route("{id}/compute-next-year-date")]
         public async Task<IActionResult> ComputeNextYearDateAsync(Guid id, [FromBody] FleetVehicleLogContractComputeNextYearDateRequestDto input)
         {
-            var result = await _appService.ComputeNextYearDateAsync(id, input.Strdate);
+            var result = await _appService.ComputeNextYearDateAsync(id, input);
             return Ok(result);
         }
         

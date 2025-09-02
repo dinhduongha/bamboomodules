@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -33,7 +34,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrModelAccess> CheckAsync(Guid id, object model, object mode, object raise_exception)
+        public async Task<IrModelAccess> CheckAsync(Guid id, IrModelAccessCheckRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---
@@ -106,7 +107,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModelAccess> GroupNamesWithAccessAsync(Guid id, object model_name, object access_mode)
+        public async Task<IrModelAccess> GroupNamesWithAccessAsync(Guid id, IrModelAccessGroupNamesWithAccessRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_model.py) ---

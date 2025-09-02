@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Payment
 {
     public partial class PaymentProviderController
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Payment
         [Route("{id}/action-stripe-connect-account")]
         public async Task<IActionResult> ActionStripeConnectAccountAsync(Guid id, [FromBody] PaymentProviderStripeConnectAccountRequestDto input)
         {
-            var result = await _appService.StripeConnectAccountAsync(id, input.MenuId);
+            var result = await _appService.StripeConnectAccountAsync(id, input);
             return Ok(result);
         }
         

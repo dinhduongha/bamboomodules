@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -289,7 +290,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ImLivechatChannel> GetLivechatInfoAsync(Guid id, object username)
+        public async Task<ImLivechatChannel> GetLivechatInfoAsync(Guid id, ImLivechatChannelGetLivechatInfoRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: im_livechat_channel.py) ---

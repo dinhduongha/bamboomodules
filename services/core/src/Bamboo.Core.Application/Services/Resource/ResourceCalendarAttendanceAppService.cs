@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -101,7 +102,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResourceCalendarAttendance> GetWeekTypeAsync(Guid id, object date)
+        public async Task<ResourceCalendarAttendance> GetWeekTypeAsync(Guid id, ResourceCalendarAttendanceGetWeekTypeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_calendar_attendance.py) ---

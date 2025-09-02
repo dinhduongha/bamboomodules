@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1314,7 +1315,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockMoveLine> GetMoveLineQuantMatchAsync(Guid id, Guid move_id, List<Guid> dirty_move_line_ids, List<Guid> dirty_quant_ids)
+        public async Task<StockMoveLine> GetMoveLineQuantMatchAsync(Guid id, StockMoveLineGetMoveLineQuantMatchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_move_line.py) ---

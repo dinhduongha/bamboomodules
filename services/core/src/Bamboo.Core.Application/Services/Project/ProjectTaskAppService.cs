@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -933,7 +934,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProjectTask> CopyDataAsync(Guid id, object @default)
+        public async Task<ProjectTask> CopyDataAsync(Guid id, ProjectTaskCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1242,7 +1243,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> EmailSplitAsync(Guid id, object msg)
+        public async Task<ProjectTask> EmailSplitAsync(Guid id, ProjectTaskEmailSplitRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1544,7 +1545,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetEmptyListHelpAsync(Guid id, object help)
+        public async Task<ProjectTask> GetEmptyListHelpAsync(Guid id, ProjectTaskGetEmptyListHelpRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1637,7 +1638,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> GetMentionSuggestionsAsync(Guid id, object search, object limit)
+        public async Task<ProjectTask> GetMentionSuggestionsAsync(Guid id, ProjectTaskGetMentionSuggestionsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -1877,7 +1878,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProjectTask> GetUnusualDaysAsync(Guid id, object date_from, object date_to)
+        public async Task<ProjectTask> GetUnusualDaysAsync(Guid id, ProjectTaskGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2114,7 +2115,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> MessageNewAsync(Guid id, object msg, object custom_values)
+        public async Task<ProjectTask> MessageNewAsync(Guid id, ProjectTaskMessageNewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2178,7 +2179,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> MessageSubscribeAsync(Guid id, List<Guid> partner_ids, List<Guid> subtype_ids)
+        public async Task<ProjectTask> MessageSubscribeAsync(Guid id, ProjectTaskMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2196,7 +2197,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProjectTask> MessageUpdateAsync(Guid id, object msg, object update_vals)
+        public async Task<ProjectTask> MessageUpdateAsync(Guid id, ProjectTaskMessageUpdateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -2608,7 +2609,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ProjectTask> RatingApplyAsync(Guid id, object rate, object token, object rating, object feedback, object subtype_xmlid, object notify_delay_send)
+        public async Task<ProjectTask> RatingApplyAsync(Guid id, ProjectTaskRatingApplyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3051,7 +3052,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> StageFindAsync(Guid id, Guid section_id, object domain, object order)
+        public async Task<ProjectTask> StageFindAsync(Guid id, ProjectTaskStageFindRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
@@ -3217,7 +3218,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectTask> UpdateDateEndAsync(Guid id, Guid stage_id)
+        public async Task<ProjectTask> UpdateDateEndAsync(Guid id, ProjectTaskUpdateDateEndRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---

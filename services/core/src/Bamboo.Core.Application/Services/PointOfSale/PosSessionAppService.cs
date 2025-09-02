@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -437,17 +438,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<PosSession> CheckSessionTimingInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: pos.py) ---
-            // def _check_session_timing(self):
-            // self.ensure_one()
-            // return True
-            */
-            return default;
-        }
-
         protected async Task<PosSession> CheckStartDateInternalAsync()
         {
             /*
@@ -491,7 +481,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> CloseSessionFromUiAsync(Guid id, object bank_payment_method_diff_pairs)
+        public async Task<PosSession> CloseSessionFromUiAsync(Guid id, PosSessionCloseSessionFromUiRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1216,7 +1206,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosSession> FindProductByBarcodeAsync(Guid id, object barcode, Guid config_id)
+        public async Task<PosSession> FindProductByBarcodeAsync(Guid id, PosSessionFindProductByBarcodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1598,7 +1588,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> GetPosUiProductPricelistItemByProductAsync(Guid id, List<Guid> product_tmpl_ids, List<Guid> product_ids, Guid config_id)
+        public async Task<PosSession> GetPosUiProductPricelistItemByProductAsync(Guid id, PosSessionGetPosUiProductPricelistItemByProductRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1855,7 +1845,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> LoadDataAsync(Guid id, object models_to_load, object only_data)
+        public async Task<PosSession> LoadDataAsync(Guid id, PosSessionLoadDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -1911,39 +1901,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosSession> LoadPosDataInternalAsync(object data)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_pos, FILE: pos_session.py) ---
-            // def _load_pos_data(self, data):
-            // data = super()._load_pos_data(data)
-            // if self.env.company.country_id.code == 'AR':
-            //     data['data'][0]['_consumidor_final_anonimo_id'] = self.env.ref('l10n_ar.par_cfa').id
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: l10n_be_pos_sale, FILE: pos_session.py) ---
-            // def _load_pos_data(self, data):
-            // data = super()._load_pos_data(data)
-            // if self.env.company.country_code == 'BE':
-            //     intracom_fpos = self.env["account.chart.template"].with_company(self.company_id.root_id).sudo().ref("fiscal_position_template_3", False)
-            //     if intracom_fpos:
-            //         data['data'][0]['_intracom_tax_ids'] = intracom_fpos.tax_ids.tax_dest_id.ids
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai_pos, FILE: pos_session.py) ---
-            // def _load_pos_data(self, models_to_load):
-            // data = super()._load_pos_data(models_to_load)
-            // 
-            // tbai_refund_reason_field = self.env['ir.model.fields']._get('account.move', 'l10n_es_tbai_refund_reason')
-            // data['data'][0]['_tbai_refund_reasons'] = [
-            //     {'value': refund_reason.value, 'name': refund_reason.name}
-            //     for refund_reason in tbai_refund_reason_field.selection_ids
-            //     if refund_reason.value != 'R5'  # R5 is for simplified invoice
-            // ]
-            // 
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_pos, FILE: pos_session.py) ---
-            // def _load_pos_data(self, data):
-            // data = super()._load_pos_data(data)
-            // if self.env.company.country_id.code == "PE":
-            //     data['data'][0]['_default_l10n_latam_identification_type_id'] = self.env.ref('l10n_pe.it_DNI').id
-            //     data['data'][0]['_consumidor_final_anonimo_id'] = self.env.ref('l10n_pe_pos.partner_pe_cf').id
-            // return data
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
             // def _load_pos_data(self, data):
             // domain = self._load_pos_data_domain(data)
@@ -1983,18 +1940,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<PosSession> LoadPosDataModelsInternalAsync(Guid config_id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_pos, FILE: pos_session.py) ---
-            // def _load_pos_data_models(self, config_id):
-            // data = super()._load_pos_data_models(config_id)
-            // if self.env.company.country_id.code == 'AR':
-            //     data += ['l10n_ar.afip.responsibility.type', 'l10n_latam.identification.type']
-            // return data
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_pos, FILE: pos_session.py) ---
-            // def _load_pos_data_models(self, config_id):
-            // data = super()._load_pos_data_models(config_id)
-            // if self.env.company.country_id.code == "PE":
-            //     data += ['l10n_pe.res.city.district', 'l10n_latam.identification.type', 'res.city']
-            // return data
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
             // def _load_pos_data_models(self, config_id):
             // return ['pos.config', 'pos.order', 'pos.order.line', 'pos.pack.operation.lot', 'pos.payment', 'pos.payment.method', 'pos.printer',
@@ -2116,7 +2061,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> LogPartnerMessageAsync(Guid id, Guid partner_id, object action, object message_type)
+        public async Task<PosSession> LogPartnerMessageAsync(Guid id, PosSessionLogPartnerMessageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2154,13 +2099,6 @@ namespace Bamboo.Core.Application.Services
         public async Task<PosSession> OpenFrontendCbAsync(Guid id)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_pos_cert, FILE: pos.py) ---
-            // def open_frontend_cb(self):
-            // sessions_to_check = self.filtered(lambda s: s.config_id.company_id._is_accounting_unalterable())
-            // sessions_to_check.filtered(lambda s: s.state == 'opening_control').start_at = fields.Datetime.now()
-            // for session in sessions_to_check:
-            //     session._check_session_timing()
-            // return super(pos_session, self).open_frontend_cb()
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
             // def open_frontend_cb(self):
             // """Open the pos interface with config_id as an extra argument.
@@ -2187,7 +2125,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> PosSessionCloseAsync(Guid id, object balancing_account, object amount_to_balance, object bank_payment_method_diffs)
+        public async Task<PosSession> PosSessionCloseAsync(Guid id, PosSessionPosSessionCloseRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2201,7 +2139,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosSession> PosSessionClosingControlAsync(Guid id, object balancing_account, object amount_to_balance, object bank_payment_method_diffs)
+        public async Task<PosSession> PosSessionClosingControlAsync(Guid id, PosSessionPosSessionClosingControlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2249,7 +2187,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosSession> PosSessionValidateAsync(Guid id, object balancing_account, object amount_to_balance, object bank_payment_method_diffs)
+        public async Task<PosSession> PosSessionValidateAsync(Guid id, PosSessionPosSessionValidateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2294,7 +2232,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosSession> PostClosingCashDetailsAsync(Guid id, object counted_cash)
+        public async Task<PosSession> PostClosingCashDetailsAsync(Guid id, PosSessionPostClosingCashDetailsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2532,7 +2470,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> SetOpeningControlAsync(Guid id, int cashbox_value, string notes)
+        public async Task<PosSession> SetOpeningControlAsync(Guid id, PosSessionSetOpeningControlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2635,7 +2573,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<PosSession> TryCashInOutAsync(Guid id, object _type, object amount, object reason, object extras)
+        public async Task<PosSession> TryCashInOutAsync(Guid id, PosSessionTryCashInOutRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---
@@ -2722,7 +2660,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PosSession> UpdateClosingControlStateSessionAsync(Guid id, object notes)
+        public async Task<PosSession> UpdateClosingControlStateSessionAsync(Guid id, PosSessionUpdateClosingControlStateSessionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: pos_session.py) ---

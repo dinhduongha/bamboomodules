@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,222 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("utm", Depends = new[] { "base", "web" })]
     public class UtmSourceMixinAppService : ApplicationService, IUtmSourceMixinAppService
     {
-
-        public UtmSourceMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public UtmSourceMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionCancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_cancel(self):
+            // self.write({'state': 'draft', 'schedule_date': False, 'schedule_type': 'now', 'next_departure': False})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCompareVersionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_compare_versions(self):
+            // self.ensure_one()
+            // if not self.campaign_id:
+            //     raise ValueError(_("No mailing campaign has been found"))
+            // return {
+            //     'name': _('A/B Tests'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'list,kanban,form,calendar,graph',
+            //     'res_model': 'mailing.mailing',
+            //     'domain': expression.AND([
+            //         [('campaign_id', '=', self.campaign_id.id)],
+            //         [('ab_testing_enabled', '=', True)],
+            //         [('mailing_type', '=', self.mailing_type)]
+            //     ]),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_duplicate(self):
+            // self.ensure_one()
+            // if mass_mailing_copy := self.copy():
+            //     return {
+            //         'type': 'ir.actions.act_window',
+            //         'view_mode': 'form',
+            //         'res_model': 'mailing.mailing',
+            //         'res_id': mass_mailing_copy.id,
+            //         'context': dict(self.env.context),
+            //     }
+            // return False
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionFetchFavoritesAsync<TEntity>(IEnumerable<TEntity> entities, object extra_domain) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_fetch_favorites(self, extra_domain=None):
+            // """Return all mailings set as favorite and skip mailings with empty body.
+            // 
+            // Return archived mailing templates as well, so the user can archive the templates
+            // while keeping using it, without cluttering the Kanban view if they're a lot of
+            // templates.
+            // """
+            // domain = [('favorite', '=', True)]
+            // if extra_domain:
+            //     domain = expression.AND([domain, extra_domain])
+            // 
+            // values_list = self.with_context(active_test=False).search_read(
+            //     domain=domain,
+            //     fields=['id', 'subject', 'body_arch', 'user_id', 'mailing_model_id'],
+            //     order='favorite_date DESC',
+            // )
+            // 
+            // values_list = [
+            //     values for values in values_list
+            //     if not tools.is_html_empty(values['body_arch'])
+            // ]
+            // 
+            // # You see first the mailings without responsible, then your mailings and then the others
+            // values_list.sort(
+            //     key=lambda values:
+            //     values['user_id'][0] != self.env.user.id if values['user_id'] else -1
+            // )
+            // 
+            // return values_list
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionLaunchAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_launch(self):
+            // self.write({'schedule_type': 'now'})
+            // return self.action_put_in_queue()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionPutInQueueAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_put_in_queue(self):
+            // self.write({'state': 'in_queue'})
+            // cron = self.env.ref('mass_mailing.ir_cron_mass_mailing_queue')
+            // cron._trigger(
+            //     schedule_date or fields.Datetime.now()
+            //     for schedule_date in self.mapped('schedule_date')
+            // )
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionReloadAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_reload(self):
+            // pass
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRemoveFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_remove_favorite(self):
+            // """Remove the current mailing from the favorites list."""
+            // self.favorite = False
+            // 
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'message': _(
+            //             'Design removed from the %s Templates!',
+            //             ', '.join(self.mapped('mailing_model_id.name')),
+            //         ),
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //         'sticky': False,
+            //         'type': 'info',
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRetryFailedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_retry_failed(self):
+            // failed_mails = self.env['mail.mail'].sudo().search([
+            //     ('mailing_id', 'in', self.ids),
+            //     ('state', '=', 'exception')
+            // ])
+            // failed_mails.mapped('mailing_trace_ids').unlink()
+            // failed_mails.unlink()
+            // self.action_put_in_queue()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionScheduleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_schedule(self):
+            // self.ensure_one()
+            // if self.schedule_date and self.schedule_date > fields.Datetime.now():
+            //     return self.action_put_in_queue()
+            // action = self.env["ir.actions.actions"]._for_xml_id("mass_mailing.mailing_mailing_schedule_date_action")
+            // action['context'] = dict(self.env.context, default_mass_mailing_id=self.id, dialog_size='medium')
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSelectAsWinnerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_select_as_winner(self):
+            // self.ensure_one()
+            // if not self.ab_testing_enabled:
+            //     raise ValueError(_("A/B test option has not been enabled"))
+            // final_mailing = self.copy({
+            //     'ab_testing_pc': 100,
+            //     'name': _(" %(subject)s (final)", subject=self.name)  # Add suffix on name to show it's the final mailing
+            // })
+            // self.campaign_id.ab_testing_winner_mailing_id = final_mailing
+            // final_mailing.action_launch()
+            // action = self.env['ir.actions.act_window']._for_xml_id('mass_mailing.action_ab_testing_open_winner_mailing')
+            // action['res_id'] = final_mailing.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendMailAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_send_mail(self, res_ids=None):
+            // return self._action_send_mail(res_ids)
+            */
+            return default;
         }
 
         public async Task<TEntity> ActionSendMailInternalAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids) where TEntity : IEntity<Guid>, IUtmSourceMixinable
@@ -152,6 +366,112 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionSendWinnerMailingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_send_winner_mailing(self):
+            // """Send the winner mailing based on the winner selection field.
+            // This action is used in 2 cases:
+            //     - When the user clicks on a button to send the winner mailing. There is only one mailing in self
+            //     - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
+            //     case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
+            //     winner.
+            // If the winner mailing is computed automatically, we sudo the mailings of the campaign in order to sort correctly
+            // the mailings based on the selection that can be used with sub-modules like CRM and Sales
+            // """
+            // if len(self.campaign_id) != 1:
+            //     raise ValueError(_("To send the winner mailing the same campaign should be used by the mailings"))
+            // if any(mailing.ab_testing_completed for mailing in self):
+            //     raise ValueError(_("To send the winner mailing the campaign should not have been completed."))
+            // final_mailing = self[0]
+            // sorted_by = final_mailing._get_ab_testing_winner_selection()['value']
+            // if sorted_by != 'manual':
+            //     ab_testing_mailings = final_mailing._get_ab_testing_siblings_mailings().sudo()
+            //     selected_mailings = ab_testing_mailings.filtered(lambda m: m.state == 'done').sorted(sorted_by, reverse=True)
+            //     if selected_mailings:
+            //         final_mailing = selected_mailings[0]
+            //     else:
+            //         raise ValidationError(_("No mailing for this A/B testing campaign has been sent yet! Send one first and try again later."))
+            // return final_mailing.action_select_as_winner()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_set_favorite(self):
+            // """Add the current mailing in the favorites list."""
+            // self.favorite = True
+            // 
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'message': _(
+            //             'Design added to the %s Templates!',
+            //             ', '.join(self.mapped('mailing_model_id.name')),
+            //         ),
+            //         'next': {'type': 'ir.actions.act_window_close'},
+            //         'sticky': False,
+            //         'type': 'info',
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionTestAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_test(self):
+            // self.ensure_one()
+            // ctx = dict(self.env.context, default_mass_mailing_id=self.id, dialog_size='medium')
+            // return {
+            //     'name': _('Test Mailing'),
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'form',
+            //     'res_model': 'mailing.mailing.test',
+            //     'target': 'new',
+            //     'context': ctx,
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewBouncedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_bounced(self):
+            // return self._action_view_documents_filtered('bounce')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewClickedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_clicked(self):
+            // return self._action_view_documents_filtered('clicked')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewDeliveredAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_delivered(self):
+            // return self._action_view_documents_filtered('delivered')
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionViewDocumentsFilteredInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_filter) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -213,6 +533,103 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
+        public async Task<TEntity> ActionViewLinkTrackersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_link_trackers(self):
+            // model_name = self.env['ir.model']._get('link.tracker').display_name
+            // recipient = self.env['ir.model']._get(self.mailing_model_real).display_name
+            // helper_header = _("No Link Tracker for that mailing!")
+            // helper_message = _("Link Trackers will measure how many times each link is clicked as well as "
+            //                    "the proportion of %s who clicked at least once in your mailing.", recipient)
+            // return {
+            //     'name': model_name,
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': 'list,form',
+            //     'res_model': 'link.tracker',
+            //     'domain': [('mass_mailing_id', '=', self.id)],
+            //     'help': Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
+            //         helper_header, helper_message,
+            //     ),
+            //     'context': dict(self._context, create=False)
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewLivechatChannelsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
+            // def action_view_livechat_channels(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.im_livechat_channel_action')
+            // action['domain'] = [('rule_ids.chatbot_script_id', 'in', self.ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewMailingContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_mailing_contacts(self):
+            // """Show the mailing contacts who are in a mailing list selected for this mailing."""
+            // self.ensure_one()
+            // action = self.env['ir.actions.actions']._for_xml_id('mass_mailing.action_view_mass_mailing_contacts')
+            // if self.contact_list_ids:
+            //     action['context'] = {
+            //         'default_mailing_list_ids': self.contact_list_ids[0].ids,
+            //         'default_subscription_ids': [(0, 0, {'list_id': self.contact_list_ids[0].id})],
+            //     }
+            // action['domain'] = [('list_ids', 'in', self.contact_list_ids.ids)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewOpenedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_opened(self):
+            // return self._action_view_documents_filtered('open')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewRepliedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_replied(self):
+            // return self._action_view_documents_filtered('reply')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTracesCanceledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_traces_canceled(self):
+            // return self._action_view_traces_filtered('canceled')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTracesFailedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_traces_failed(self):
+            // return self._action_view_traces_filtered('failed')
+            */
+            return default;
+        }
+
         public async Task<TEntity> ActionViewTracesFilteredInternalAsync<TEntity>(IEnumerable<TEntity> entities, object view_filter) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -232,12 +649,32 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CancelAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        public async Task<TEntity> ActionViewTracesProcessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_cancel(self):
-            // self.write({'state': 'draft', 'schedule_date': False, 'schedule_type': 'now', 'next_departure': False})
+            // def action_view_traces_process(self):
+            // return self._action_view_traces_filtered('process')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTracesScheduledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_traces_scheduled(self):
+            // return self._action_view_traces_filtered('scheduled')
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTracesSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
+            // def action_view_traces_sent(self):
+            // return self._action_view_traces_filtered('sent')
             */
             return default;
         }
@@ -265,29 +702,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for step in self.script_step_ids:
             //     if step.step_type == "question_selection" and not step.answer_ids:
             //         raise ValidationError(self.env._("Step of type 'Question' must have answers."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CompareVersionsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_compare_versions(self):
-            // self.ensure_one()
-            // if not self.campaign_id:
-            //     raise ValueError(_("No mailing campaign has been found"))
-            // return {
-            //     'name': _('A/B Tests'),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'list,kanban,form,calendar,graph',
-            //     'res_model': 'mailing.mailing',
-            //     'domain': expression.AND([
-            //         [('campaign_id', '=', self.campaign_id.id)],
-            //         [('ab_testing_enabled', '=', True)],
-            //         [('mailing_type', '=', self.mailing_type)]
-            //     ]),
-            // }
             */
             return default;
         }
@@ -1134,62 +1548,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DuplicateAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_duplicate(self):
-            // self.ensure_one()
-            // if mass_mailing_copy := self.copy():
-            //     return {
-            //         'type': 'ir.actions.act_window',
-            //         'view_mode': 'form',
-            //         'res_model': 'mailing.mailing',
-            //         'res_id': mass_mailing_copy.id,
-            //         'context': dict(self.env.context),
-            //     }
-            // return False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> FetchFavoritesAsync<TEntity>(IEnumerable<TEntity> entities, object extra_domain) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_fetch_favorites(self, extra_domain=None):
-            // """Return all mailings set as favorite and skip mailings with empty body.
-            // 
-            // Return archived mailing templates as well, so the user can archive the templates
-            // while keeping using it, without cluttering the Kanban view if they're a lot of
-            // templates.
-            // """
-            // domain = [('favorite', '=', True)]
-            // if extra_domain:
-            //     domain = expression.AND([domain, extra_domain])
-            // 
-            // values_list = self.with_context(active_test=False).search_read(
-            //     domain=domain,
-            //     fields=['id', 'subject', 'body_arch', 'user_id', 'mailing_model_id'],
-            //     order='favorite_date DESC',
-            // )
-            // 
-            // values_list = [
-            //     values for values in values_list
-            //     if not tools.is_html_empty(values['body_arch'])
-            // ]
-            // 
-            // # You see first the mailings without responsible, then your mailings and then the others
-            // values_list.sort(
-            //     key=lambda values:
-            //     values['user_id'][0] != self.env.user.id if values['user_id'] else -1
-            // )
-            // 
-            // return values_list
-            */
-            return default;
-        }
-
         public async Task<TEntity> FixAttachmentOwnershipInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -1689,17 +2047,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LaunchAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_launch(self):
-            // self.write({'schedule_type': 'now'})
-            // return self.action_put_in_queue()
-            */
-            return default;
-        }
-
         public async Task<TEntity> OnchangeScriptStepIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -1869,194 +2216,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> PutInQueueAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_put_in_queue(self):
-            // self.write({'state': 'in_queue'})
-            // cron = self.env.ref('mass_mailing.ir_cron_mass_mailing_queue')
-            // cron._trigger(
-            //     schedule_date or fields.Datetime.now()
-            //     for schedule_date in self.mapped('schedule_date')
-            // )
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ReloadAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_reload(self):
-            // pass
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RemoveFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_remove_favorite(self):
-            // """Remove the current mailing from the favorites list."""
-            // self.favorite = False
-            // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'message': _(
-            //             'Design removed from the %s Templates!',
-            //             ', '.join(self.mapped('mailing_model_id.name')),
-            //         ),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //         'sticky': False,
-            //         'type': 'info',
-            //     }
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RetryFailedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_retry_failed(self):
-            // failed_mails = self.env['mail.mail'].sudo().search([
-            //     ('mailing_id', 'in', self.ids),
-            //     ('state', '=', 'exception')
-            // ])
-            // failed_mails.mapped('mailing_trace_ids').unlink()
-            // failed_mails.unlink()
-            // self.action_put_in_queue()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ScheduleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_schedule(self):
-            // self.ensure_one()
-            // if self.schedule_date and self.schedule_date > fields.Datetime.now():
-            //     return self.action_put_in_queue()
-            // action = self.env["ir.actions.actions"]._for_xml_id("mass_mailing.mailing_mailing_schedule_date_action")
-            // action['context'] = dict(self.env.context, default_mass_mailing_id=self.id, dialog_size='medium')
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SelectAsWinnerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_select_as_winner(self):
-            // self.ensure_one()
-            // if not self.ab_testing_enabled:
-            //     raise ValueError(_("A/B test option has not been enabled"))
-            // final_mailing = self.copy({
-            //     'ab_testing_pc': 100,
-            //     'name': _(" %(subject)s (final)", subject=self.name)  # Add suffix on name to show it's the final mailing
-            // })
-            // self.campaign_id.ab_testing_winner_mailing_id = final_mailing
-            // final_mailing.action_launch()
-            // action = self.env['ir.actions.act_window']._for_xml_id('mass_mailing.action_ab_testing_open_winner_mailing')
-            // action['res_id'] = final_mailing.id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendMailAsync<TEntity>(IEnumerable<TEntity> entities, List<Guid> res_ids) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_send_mail(self, res_ids=None):
-            // return self._action_send_mail(res_ids)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendWinnerMailingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_send_winner_mailing(self):
-            // """Send the winner mailing based on the winner selection field.
-            // This action is used in 2 cases:
-            //     - When the user clicks on a button to send the winner mailing. There is only one mailing in self
-            //     - When the cron is executed to send winner mailing based on the A/B testing schedule datetime. In this
-            //     case 'self' contains all the mailing for the campaigns so we just need to take the first to determine the
-            //     winner.
-            // If the winner mailing is computed automatically, we sudo the mailings of the campaign in order to sort correctly
-            // the mailings based on the selection that can be used with sub-modules like CRM and Sales
-            // """
-            // if len(self.campaign_id) != 1:
-            //     raise ValueError(_("To send the winner mailing the same campaign should be used by the mailings"))
-            // if any(mailing.ab_testing_completed for mailing in self):
-            //     raise ValueError(_("To send the winner mailing the campaign should not have been completed."))
-            // final_mailing = self[0]
-            // sorted_by = final_mailing._get_ab_testing_winner_selection()['value']
-            // if sorted_by != 'manual':
-            //     ab_testing_mailings = final_mailing._get_ab_testing_siblings_mailings().sudo()
-            //     selected_mailings = ab_testing_mailings.filtered(lambda m: m.state == 'done').sorted(sorted_by, reverse=True)
-            //     if selected_mailings:
-            //         final_mailing = selected_mailings[0]
-            //     else:
-            //         raise ValidationError(_("No mailing for this A/B testing campaign has been sent yet! Send one first and try again later."))
-            // return final_mailing.action_select_as_winner()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetFavoriteAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_set_favorite(self):
-            // """Add the current mailing in the favorites list."""
-            // self.favorite = True
-            // 
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'message': _(
-            //             'Design added to the %s Templates!',
-            //             ', '.join(self.mapped('mailing_model_id.name')),
-            //         ),
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //         'sticky': False,
-            //         'type': 'info',
-            //     }
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> TestAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_test(self):
-            // self.ensure_one()
-            // ctx = dict(self.env.context, default_mass_mailing_id=self.id, dialog_size='medium')
-            // return {
-            //     'name': _('Test Mailing'),
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'form',
-            //     'res_model': 'mailing.mailing.test',
-            //     'target': 'new',
-            //     'context': ctx,
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> UnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
         {
             /*
@@ -2093,163 +2252,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'posted_message': posted_message,
             //     'error_message': error_message,
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewBouncedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_bounced(self):
-            // return self._action_view_documents_filtered('bounce')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewClickedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_clicked(self):
-            // return self._action_view_documents_filtered('clicked')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewDeliveredAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_delivered(self):
-            // return self._action_view_documents_filtered('delivered')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewLinkTrackersAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_link_trackers(self):
-            // model_name = self.env['ir.model']._get('link.tracker').display_name
-            // recipient = self.env['ir.model']._get(self.mailing_model_real).display_name
-            // helper_header = _("No Link Tracker for that mailing!")
-            // helper_message = _("Link Trackers will measure how many times each link is clicked as well as "
-            //                    "the proportion of %s who clicked at least once in your mailing.", recipient)
-            // return {
-            //     'name': model_name,
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': 'list,form',
-            //     'res_model': 'link.tracker',
-            //     'domain': [('mass_mailing_id', '=', self.id)],
-            //     'help': Markup('<p class="o_view_nocontent_smiling_face">%s</p><p>%s</p>') % (
-            //         helper_header, helper_message,
-            //     ),
-            //     'context': dict(self._context, create=False)
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewLivechatChannelsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: im_livechat, FILE: chatbot_script.py) ---
-            // def action_view_livechat_channels(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('im_livechat.im_livechat_channel_action')
-            // action['domain'] = [('rule_ids.chatbot_script_id', 'in', self.ids)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewMailingContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_mailing_contacts(self):
-            // """Show the mailing contacts who are in a mailing list selected for this mailing."""
-            // self.ensure_one()
-            // action = self.env['ir.actions.actions']._for_xml_id('mass_mailing.action_view_mass_mailing_contacts')
-            // if self.contact_list_ids:
-            //     action['context'] = {
-            //         'default_mailing_list_ids': self.contact_list_ids[0].ids,
-            //         'default_subscription_ids': [(0, 0, {'list_id': self.contact_list_ids[0].id})],
-            //     }
-            // action['domain'] = [('list_ids', 'in', self.contact_list_ids.ids)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewOpenedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_opened(self):
-            // return self._action_view_documents_filtered('open')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewRepliedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_replied(self):
-            // return self._action_view_documents_filtered('reply')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTracesCanceledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_traces_canceled(self):
-            // return self._action_view_traces_filtered('canceled')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTracesFailedAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_traces_failed(self):
-            // return self._action_view_traces_filtered('failed')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTracesProcessAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_traces_process(self):
-            // return self._action_view_traces_filtered('process')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTracesScheduledAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_traces_scheduled(self):
-            // return self._action_view_traces_filtered('scheduled')
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTracesSentAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IUtmSourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing.py) ---
-            // def action_view_traces_sent(self):
-            // return self._action_view_traces_filtered('sent')
             */
             return default;
         }

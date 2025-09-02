@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -862,7 +863,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<DigestDigest> SetPeriodicityAsync(Guid id, object periodicity)
+        public async Task<DigestDigest> SetPeriodicityAsync(Guid id, DigestDigestSetPeriodicityRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: digest, FILE: digest.py) ---

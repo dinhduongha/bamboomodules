@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrModelAccessController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/check")]
         public async Task<IActionResult> CheckAsync(Guid id, [FromBody] IrModelAccessCheckRequestDto input)
         {
-            var result = await _appService.CheckAsync(id, input.Model, input.Mode, input.RaiseException);
+            var result = await _appService.CheckAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/group-names-with-access")]
         public async Task<IActionResult> GroupNamesWithAccessAsync(Guid id, [FromBody] IrModelAccessGroupNamesWithAccessRequestDto input)
         {
-            var result = await _appService.GroupNamesWithAccessAsync(id, input.ModelName, input.AccessMode);
+            var result = await _appService.GroupNamesWithAccessAsync(id, input);
             return Ok(result);
         }
     }

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -179,7 +180,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModel> DisplayNameForAsync(Guid id, object models)
+        public async Task<IrModel> DisplayNameForAsync(Guid id, IrModelDisplayNameForRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_model.py) ---
@@ -246,7 +247,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrModel> GetAuthorizedFieldsAsync(Guid id, object model_name, object property_origins)
+        public async Task<IrModel> GetAuthorizedFieldsAsync(Guid id, IrModelGetAuthorizedFieldsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website_form.py) ---

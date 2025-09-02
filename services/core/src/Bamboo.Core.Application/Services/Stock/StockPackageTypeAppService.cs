@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -59,7 +60,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPackageType> CopyDataAsync(Guid id, object @default)
+        public async Task<StockPackageType> CopyDataAsync(Guid id, StockPackageTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_package_type.py) ---

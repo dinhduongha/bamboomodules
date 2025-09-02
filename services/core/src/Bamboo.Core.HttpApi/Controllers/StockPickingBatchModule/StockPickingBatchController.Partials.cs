@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.StockPickingBatchModule
 {
     public partial class StockPickingBatchController
@@ -37,22 +38,6 @@ namespace Bamboo.Core.HttpApi.Controllers.StockPickingBatchModule
         public async Task<IActionResult> ActionDoneAsync(Guid id)
         {
             var result = await _appService.DoneAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-ro-edi-stock-fetch-status")]
-        public async Task<IActionResult> ActionL10nRoEdiStockFetchStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nRoEdiStockFetchStatusAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/action-l10n-ro-edi-stock-send-etransport")]
-        public async Task<IActionResult> ActionL10nRoEdiStockSendEtransportAsync(Guid id)
-        {
-            var result = await _appService.L10nRoEdiStockSendEtransportAsync(id);
             return Ok(result);
         }
         

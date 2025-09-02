@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -4100,7 +4101,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentTransaction> RefundAsync(Guid id, object amount_to_refund)
+        public async Task<PaymentTransaction> RefundAsync(Guid id, PaymentTransactionRefundRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment, FILE: payment_transaction.py) ---

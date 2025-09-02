@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -305,7 +306,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MrpBom> ExplodeAsync(Guid id, object product, object quantity, object picking_type, object never_attribute_values)
+        public async Task<MrpBom> ExplodeAsync(Guid id, MrpBomExplodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_bom.py) ---

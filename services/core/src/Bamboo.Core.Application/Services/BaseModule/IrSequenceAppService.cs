@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -46,7 +47,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> GetAsync(Guid id, object code)
+        public async Task<IrSequence> GetAsync(Guid id, IrSequenceGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -83,7 +84,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> GetIdAsync(Guid id, Guid sequence_code_or_id, Guid code_or_id)
+        public async Task<IrSequence> GetIdAsync(Guid id, IrSequenceGetIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -104,7 +105,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrSequence> GetNextCharAsync(Guid id, object number_next)
+        public async Task<IrSequence> GetNextCharAsync(Guid id, IrSequenceGetNextCharRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -173,7 +174,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrSequence> NextByCodeAsync(Guid id, object sequence_code, object sequence_date)
+        public async Task<IrSequence> NextByCodeAsync(Guid id, IrSequenceNextByCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---
@@ -195,7 +196,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrSequence> NextByIdAsync(Guid id, object sequence_date)
+        public async Task<IrSequence> NextByIdAsync(Guid id, IrSequenceNextByIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_sequence.py) ---

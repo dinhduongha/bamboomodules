@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class IrQwebAppService : ApplicationService, IIrQwebAppService
     {
-
-        public IrQwebAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public IrQwebAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> AdaptStyleBackgroundImageInternalAsync<TEntity>(IEnumerable<TEntity> entities, object atts, object url_adapter) where TEntity : IEntity<Guid>, IIrQwebable
@@ -2157,11 +2159,6 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetBundlesToPregenarateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
         {
             #if PYTHON_CODE
-            --- ODOO METHOD SOURCE (MODULE: test_mass_mailing, FILE: ir_qweb.py) ---
-            // def _get_bundles_to_pregenarate(self):
-            // js_assets, css_assets = super(IrQWeb, self)._get_bundles_to_pregenarate()
-            // assets = {'mass_mailing.iframe_css_assets_edit'}
-            // return (js_assets | assets, css_assets | assets)
             --- ODOO METHOD SOURCE (MODULE: web_editor, FILE: ir_qweb.py) ---
             // def _get_bundles_to_pregenarate(self):
             // js_assets, css_assets = super(IrQWeb, self)._get_bundles_to_pregenarate()
@@ -2875,22 +2872,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // irQweb = irQweb.with_context(cookies_allowed=is_allowed_optional_cookies)
             // 
             // return irQweb
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RegisterHookInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IIrQwebable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_assetsbundle, FILE: ir_qweb.py) ---
-            // def _register_hook(self):
-            // super()._register_hook()
-            // # if this module is installed, we are in a test environement, this is
-            // # especially true on runbot where all modules are installed.
-            // # pregenerate assets at the end of the loading to speedup tests
-            // registry = self.env.registry
-            // if init and registry.updated_modules and not registry.ready:
-            //     self._pregenerate_assets_bundles()
             */
             return default;
         }

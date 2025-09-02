@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -25,7 +26,7 @@ namespace Bamboo.Core.Application.Services
             _mailThreadPhoneAppService = mailThreadPhoneAppService;
         }
 
-        public async Task<MailingContact> AddToListAsync(Guid id, object name, Guid list_id)
+        public async Task<MailingContact> AddToListAsync(Guid id, MailingContactAddToListRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---

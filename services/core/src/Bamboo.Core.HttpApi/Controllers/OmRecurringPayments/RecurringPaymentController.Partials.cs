@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.OmRecurringPayments
 {
     public partial class RecurringPaymentController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmRecurringPayments
         [Route("{id}/action-create-lines")]
         public async Task<IActionResult> ActionCreateLinesAsync(Guid id, [FromBody] RecurringPaymentCreateLinesRequestDto input)
         {
-            var result = await _appService.CreateLinesAsync(id, input.Date);
+            var result = await _appService.CreateLinesAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmRecurringPayments
         [Route("{id}/compute-next-date")]
         public async Task<IActionResult> ComputeNextDateAsync(Guid id, [FromBody] RecurringPaymentComputeNextDateRequestDto input)
         {
-            var result = await _appService.ComputeNextDateAsync(id, input.Date);
+            var result = await _appService.ComputeNextDateAsync(id, input);
             return Ok(result);
         }
     }

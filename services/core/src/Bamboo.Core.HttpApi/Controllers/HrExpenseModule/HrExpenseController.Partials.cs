@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.HrExpenseModule
 {
     public partial class HrExpenseController
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrExpenseModule
         [Route("{id}/check-amount-not-zero")]
         public async Task<IActionResult> CheckAmountNotZeroAsync(Guid id, [FromBody] HrExpenseCheckAmountNotZeroRequestDto input)
         {
-            var result = await _appService.CheckAmountNotZeroAsync(id, input.Vals);
+            var result = await _appService.CheckAmountNotZeroAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrExpenseModule
         [Route("{id}/create-expense-from-attachments")]
         public async Task<IActionResult> CreateExpenseFromAttachmentsAsync(Guid id, [FromBody] HrExpenseCreateExpenseFromAttachmentsRequestDto input)
         {
-            var result = await _appService.CreateExpenseFromAttachmentsAsync(id, input.AttachmentIds, input.ViewType);
+            var result = await _appService.CreateExpenseFromAttachmentsAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrExpenseModule
         [Route("{id}/get-empty-list-help")]
         public async Task<IActionResult> GetEmptyListHelpAsync(Guid id, [FromBody] HrExpenseGetEmptyListHelpRequestDto input)
         {
-            var result = await _appService.GetEmptyListHelpAsync(id, input.HelpMessage);
+            var result = await _appService.GetEmptyListHelpAsync(id, input);
             return Ok(result);
         }
         
@@ -116,7 +117,7 @@ namespace Bamboo.Core.HttpApi.Controllers.HrExpenseModule
         [Route("{id}/message-new")]
         public async Task<IActionResult> MessageNewAsync(Guid id, [FromBody] HrExpenseMessageNewRequestDto input)
         {
-            var result = await _appService.MessageNewAsync(id, input.MsgDict, input.CustomValues);
+            var result = await _appService.MessageNewAsync(id, input);
             return Ok(result);
         }
     }

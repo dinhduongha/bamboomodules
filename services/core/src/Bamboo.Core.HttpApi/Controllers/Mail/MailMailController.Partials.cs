@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mail
 {
     public partial class MailMailController
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/process-email-queue")]
         public async Task<IActionResult> ProcessEmailQueueAsync(Guid id, [FromBody] MailMailProcessEmailQueueRequestDto input)
         {
-            var result = await _appService.ProcessEmailQueueAsync(id, input.Ids, input.BatchSize);
+            var result = await _appService.ProcessEmailQueueAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/send")]
         public async Task<IActionResult> SendAsync(Guid id, [FromBody] MailMailSendRequestDto input)
         {
-            var result = await _appService.SendAsync(id, input.AutoCommit, input.RaiseException, input.PostSendCallback);
+            var result = await _appService.SendAsync(id, input);
             return Ok(result);
         }
         

@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("stock", Depends = new[] { "product", "barcodes_gs1_nomenclature", "digest" })]
     public class StockReplenishMixinAppService : ApplicationService, IStockReplenishMixinAppService
     {
-
-        public StockReplenishMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public StockReplenishMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ComputeAllowedRouteIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IStockReplenishMixinable

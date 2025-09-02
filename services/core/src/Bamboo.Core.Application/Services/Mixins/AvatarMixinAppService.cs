@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,13 +15,34 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("base")]
     public class AvatarMixinAppService : ApplicationService, IAvatarMixinAppService
     {
-
-        public AvatarMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public AvatarMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> AcceptDriverChangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ActShowLogCostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
+            // def act_show_log_cost(self):
+            // """ This opens log view to view and add new log for this vehicle, groupby default to only show effective costs
+            //     @return: the costs log view
+            // """
+            // self.ensure_one()
+            // copy_context = dict(self.env.context)
+            // copy_context.pop('group_by', None)
+            // res = self.env['ir.actions.act_window']._for_xml_id('fleet.fleet_vehicle_costs_action')
+            // res.update(
+            //     context=dict(copy_context, default_vehicle_id=self.id, search_default_parent_false=True),
+            //     domain=[('vehicle_id', '=', self.id)]
+            // )
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionAcceptDriverChangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -40,23 +63,99 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ActShowLogCostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ActionCreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_user(self):
+            // self.ensure_one()
+            // if self.user_id:
+            //     raise ValidationError(_("This employee already has an user."))
+            // return {
+            //     'name': _('Create User'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.users',
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
+            //     'target': 'new',
+            //     'context': dict(self._context, **{
+            //         'default_create_employee_id': self.id,
+            //         'default_name': self.name,
+            //         'default_phone': self.work_phone,
+            //         'default_mobile': self.mobile_phone,
+            //         'default_login': self.work_email,
+            //         'default_partner_id': self.work_contact_id.id,
+            //     })
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionModelVehicleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
+            // def action_model_vehicle(self):
+            // self.ensure_one()
+            // context = {'default_model_id': self.id}
+            // if self.vehicle_count:
+            //     view_mode = 'kanban,list,form'
+            //     name = _('Vehicles')
+            //     context['search_default_model_id'] = self.id
+            // else:
+            //     view_mode = 'form'
+            //     name = _('Vehicle')
+            // view = {
+            //     'type': 'ir.actions.act_window',
+            //     'view_mode': view_mode,
+            //     'res_model': 'fleet.vehicle',
+            //     'name': name,
+            //     'context': context,
+            // }
+            // 
+            // return view
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_related_contacts(self):
+            // related_partners = self._get_related_partners()
+            // action = {
+            //     'name': _("Related Contacts"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.partner',
+            //     'view_mode': 'form',
+            // }
+            // if len(related_partners) > 1:
+            //     action['view_mode'] = 'kanban,list,form'
+            //     action['domain'] = [('id', 'in', related_partners.ids)]
+            //     return action
+            // else:
+            //     action['res_id'] = related_partners.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def act_show_log_cost(self):
-            // """ This opens log view to view and add new log for this vehicle, groupby default to only show effective costs
-            //     @return: the costs log view
-            // """
-            // self.ensure_one()
-            // copy_context = dict(self.env.context)
-            // copy_context.pop('group_by', None)
-            // res = self.env['ir.actions.act_window']._for_xml_id('fleet.fleet_vehicle_costs_action')
-            // res.update(
-            //     context=dict(copy_context, default_vehicle_id=self.id, search_default_parent_false=True),
-            //     domain=[('vehicle_id', '=', self.id)]
-            // )
-            // return res
+            // def action_send_email(self):
+            // return {
+            //     'name': _('Send Email'),
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'view_mode': 'form',
+            //     'res_model': 'fleet.vehicle.send.mail',
+            //     'context': {
+            //         'default_vehicle_ids': self.ids,
+            //     }
+            // }
             */
             return default;
         }
@@ -1139,34 +1238,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_create_user(self):
-            // self.ensure_one()
-            // if self.user_id:
-            //     raise ValidationError(_("This employee already has an user."))
-            // return {
-            //     'name': _('Create User'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.users',
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
-            //     'target': 'new',
-            //     'context': dict(self._context, **{
-            //         'default_create_employee_id': self.id,
-            //         'default_name': self.name,
-            //         'default_phone': self.work_phone,
-            //         'default_mobile': self.mobile_phone,
-            //         'default_login': self.work_email,
-            //         'default_partner_id': self.work_contact_id.id,
-            //     })
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> CronCheckWorkPermitValidityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -1942,33 +2013,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ModelVehicleAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle_model.py) ---
-            // def action_model_vehicle(self):
-            // self.ensure_one()
-            // context = {'default_model_id': self.id}
-            // if self.vehicle_count:
-            //     view_mode = 'kanban,list,form'
-            //     name = _('Vehicles')
-            //     context['search_default_model_id'] = self.id
-            // else:
-            //     view_mode = 'form'
-            //     name = _('Vehicle')
-            // view = {
-            //     'type': 'ir.actions.act_window',
-            //     'view_mode': view_mode,
-            //     'res_model': 'fleet.vehicle',
-            //     'name': name,
-            //     'context': context,
-            // }
-            // 
-            // return view
-            */
-            return default;
-        }
-
         public async Task<TEntity> NameCreateAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -2217,29 +2261,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_related_contacts(self):
-            // related_partners = self._get_related_partners()
-            // action = {
-            //     'name': _("Related Contacts"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.partner',
-            //     'view_mode': 'form',
-            // }
-            // if len(related_partners) > 1:
-            //     action['view_mode'] = 'kanban,list,form'
-            //     action['domain'] = [('id', 'in', related_partners.ids)]
-            //     return action
-            // else:
-            //     action['res_id'] = related_partners.id
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemoveWorkContactIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object user, object employee_company) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
@@ -2258,7 +2279,7 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ReturnToOpenAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
+        public async Task<TEntity> ReturnActionToOpenAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
@@ -2419,25 +2440,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // elif operator == '>':
             //     fleet_models = fleet_models.filtered(lambda m: m.vehicle_count > value)
             // return [('id', 'in', fleet_models.ids)]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IAvatarMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: fleet, FILE: fleet_vehicle.py) ---
-            // def action_send_email(self):
-            // return {
-            //     'name': _('Send Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'new',
-            //     'view_mode': 'form',
-            //     'res_model': 'fleet.vehicle.send.mail',
-            //     'context': {
-            //         'default_vehicle_ids': self.ids,
-            //     }
-            // }
             */
             return default;
         }

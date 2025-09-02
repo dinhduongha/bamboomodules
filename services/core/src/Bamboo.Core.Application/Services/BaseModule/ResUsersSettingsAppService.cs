@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -202,7 +203,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettings> SetCustomNotificationsAsync(Guid id, object custom_notifications)
+        public async Task<ResUsersSettings> SetCustomNotificationsAsync(Guid id, ResUsersSettingsSetCustomNotificationsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
@@ -226,7 +227,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResUsersSettings> SetResUsersSettingsAsync(Guid id, object new_settings)
+        public async Task<ResUsersSettings> SetResUsersSettingsAsync(Guid id, ResUsersSettingsSetResUsersSettingsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---
@@ -248,7 +249,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsersSettings> SetVolumeSettingAsync(Guid id, Guid partner_id, object volume, Guid guest_id)
+        public async Task<ResUsersSettings> SetVolumeSettingAsync(Guid id, ResUsersSettingsSetVolumeSettingRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_users_settings.py) ---

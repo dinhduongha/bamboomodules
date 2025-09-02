@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrCronController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/toggle")]
         public async Task<IActionResult> ToggleAsync(Guid id, [FromBody] IrCronToggleRequestDto input)
         {
-            var result = await _appService.ToggleAsync(id, input.Model, input.Domain);
+            var result = await _appService.ToggleAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/try-write")]
         public async Task<IActionResult> TryWriteAsync(Guid id, [FromBody] IrCronTryWriteRequestDto input)
         {
-            var result = await _appService.TryWriteAsync(id, input.Values);
+            var result = await _appService.TryWriteAsync(id, input);
             return Ok(result);
         }
     }

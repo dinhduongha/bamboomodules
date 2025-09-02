@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -118,7 +119,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MrpWorkorder> ButtonStartAsync(Guid id, object raise_on_invalid_state)
+        public async Task<MrpWorkorder> ButtonStartAsync(Guid id, MrpWorkorderButtonStartRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---
@@ -612,7 +613,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MrpWorkorder> EndPreviousAsync(Guid id, object doall)
+        public async Task<MrpWorkorder> EndPreviousAsync(Guid id, MrpWorkorderEndPreviousRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workorder.py) ---

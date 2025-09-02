@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -115,7 +116,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeave> AddFollowerAsync(Guid id, Guid employee_id)
+        public async Task<HrLeave> AddFollowerAsync(Guid id, HrLeaveAddFollowerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -127,7 +128,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeave> ApproveAsync(Guid id, object check_state)
+        public async Task<HrLeave> ApproveAsync(Guid id, HrLeaveApproveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -685,19 +686,6 @@ namespace Bamboo.Core.Application.Services
             // 
             //         holiday.date_from = self._to_utc(compensated_request_date_from, hour_from, holiday.employee_id or holiday)
             //         holiday.date_to = self._to_utc(compensated_request_date_to, hour_to, holiday.employee_id or holiday)
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_hr_holidays, FILE: hr_leave.py) ---
-            // def _compute_date_from_to(self):
-            // super()._compute_date_from_to()
-            // for leave in self:
-            //     if leave._l10n_fr_leave_applies():
-            //         new_date_from, new_date_to = leave._get_fr_date_from_to(leave.date_from, leave.date_to)
-            //         if new_date_from != leave.date_from:
-            //             leave.date_from = new_date_from
-            //         if new_date_to != leave.date_to:
-            //             leave.date_to = new_date_to
-            //             leave.l10n_fr_date_to_changed = True
-            //         else:
-            //             leave.l10n_fr_date_to_changed = False
             */
             return default;
         }
@@ -1017,7 +1005,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeave> CopyDataAsync(Guid id, object @default)
+        public async Task<HrLeave> CopyDataAsync(Guid id, HrLeaveCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1284,55 +1272,6 @@ namespace Bamboo.Core.Application.Services
             //         days = ceil(days)
             //     result[leave.id] = (days, hours)
             // return result
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_hr_holidays, FILE: hr_leave.py) ---
-            // def _get_durations(self, check_leave_type=True, resource_calendar=None):
-            // """
-            // In french time off laws, if an employee has a part time contract, when taking time off
-            // before one of his off day (compared to the company's calendar) it should also count the time
-            // between the time off and the next calendar work day/company off day (weekends).
-            // 
-            // For example take an employee working mon-wed in a company where the regular calendar is mon-fri.
-            // If the employee were to take a time off ending on wednesday, the legal duration would count until friday.
-            // """
-            // if not resource_calendar:
-            //     fr_leaves = self.filtered(lambda leave: leave._l10n_fr_leave_applies())
-            //     duration_by_leave_id = super(HrLeave, self - fr_leaves)._get_durations(resource_calendar=resource_calendar)
-            //     fr_leaves_by_company = fr_leaves.grouped('company_id')
-            //     for company, leaves in fr_leaves_by_company.items():
-            //         duration_by_leave_id.update(leaves._get_durations(resource_calendar=company.resource_calendar_id))
-            //     return duration_by_leave_id
-            // return super()._get_durations(resource_calendar=resource_calendar)
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_hr_holidays, FILE: hr_leave.py) ---
-            // def _get_durations(self, check_leave_type=True, resource_calendar=None):
-            // result = super()._get_durations(check_leave_type, resource_calendar)
-            // indian_leaves = self.filtered(lambda c: c.company_id.country_id.code == 'IN')
-            // if not indian_leaves:
-            //     return result
-            // 
-            // public_holidays = self.env['resource.calendar.leaves'].search([
-            //     ('resource_id', '=', False),
-            //     ('company_id', 'in', indian_leaves.company_id.ids),
-            // ])
-            // leaves_by_employee = dict(self._read_group(
-            //     domain=[
-            //         ('id', 'not in', self.ids),
-            //         ('employee_id', 'in', self.employee_id.ids),
-            //         ('state', 'not in', ['cancel', 'refuse']),
-            //         ('leave_type_request_unit', '=', 'day'),
-            //     ],
-            //     groupby=['employee_id'],
-            //     aggregates=['id:recordset'],
-            // ))
-            // for leave in indian_leaves:
-            //     if leave.holiday_status_id.l10n_in_is_sandwich_leave:
-            //         days, hours = result[leave.id]
-            //         updated_days = leave._l10n_in_apply_sandwich_rule(public_holidays, leaves_by_employee.get(leave.employee_id, []))
-            //         result[leave.id] = (updated_days, hours)
-            //         if updated_days and leave.state not in ['validate', 'validate1']:
-            //             leave.l10n_in_contains_sandwich_leaves = updated_days != days
-            //     elif leave.state not in ['validate', 'validate1']:
-            //         leave.l10n_in_contains_sandwich_leaves = False
-            // return result
             */
             return default;
         }
@@ -1353,79 +1292,6 @@ namespace Bamboo.Core.Application.Services
             //         ('leave_manager_id', '=', self.env.uid),
             //     ]
             // return domain
-            */
-            return default;
-        }
-
-        protected async Task<HrLeave> GetFrDateFromToInternalAsync(object date_from, object date_to)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_hr_holidays, FILE: hr_leave.py) ---
-            // def _get_fr_date_from_to(self, date_from, date_to):
-            // self.ensure_one()
-            // # What we need to compute is how much we will need to push date_to in order to account for the lost days
-            // # This gets even more complicated in two_weeks_calendars
-            // 
-            // # The following computation doesn't work for resource calendars in
-            // # which the employee works zero hours.
-            // if not (self.resource_calendar_id.attendance_ids):
-            //     raise UserError(_("An employee can't take paid time off in a period without any work hours."))
-            // 
-            // if not self.request_unit_hours:
-            //     # Use company's working schedule hours for the leave to avoid duration calculation issues.
-            //     def adjust_date_range(date_from, date_to, period, attendance_ids, employee_id):
-            //         period_ids_from = attendance_ids.filtered(lambda a: a.day_period in period
-            //                                                             and int(a.dayofweek) == date_from.weekday()
-            //                                                             and (not a.two_weeks_calendar or int(a.week_type) == a.get_week_type(date_from)))
-            //         period_ids_to = attendance_ids.filtered(lambda a: a.day_period in period
-            //                                                             and int(a.dayofweek) == date_to.weekday()
-            //                                                             and (not a.two_weeks_calendar or int(a.week_type) == a.get_week_type(date_to)))
-            //         if period_ids_from:
-            //             min_hour = min(attendance.hour_from for attendance in period_ids_from)
-            //             date_from = self._to_utc(date_from, min_hour, employee_id)
-            //         if period_ids_to:
-            //             max_hour = max(attendance.hour_to for attendance in period_ids_to)
-            //             date_to = self._to_utc(date_to, max_hour, employee_id)
-            //         return date_from, date_to
-            // 
-            //     if self.request_unit_half:
-            //         period = ['morning'] if self.request_date_from_period == 'am' else ['afternoon']
-            //     else:
-            //         period = ['morning', 'afternoon']
-            //     attendance_ids = self.company_id.resource_calendar_id.attendance_ids
-            //     date_from, date_to = adjust_date_range(date_from, date_to, period, attendance_ids, self.employee_id)
-            // 
-            // if self.request_unit_half and self.request_date_from_period == 'am':
-            //     # In normal workflows request_unit_half implies that date_from and date_to are the same
-            //     # request_unit_half allows us to choose between `am` and `pm`
-            //     # In a case where we work from mon-wed and request a half day in the morning
-            //     # we do not want to push date_to since the next work attendance is actually in the afternoon
-            //     date_from_weektype = str(self.env['resource.calendar.attendance'].get_week_type(date_from))
-            //     date_from_dayofweek = str(date_from.weekday())
-            //     # Fetch the attendances we care about
-            //     attendance_ids = self.resource_calendar_id.attendance_ids.filtered(lambda a:
-            //         a.dayofweek == date_from_dayofweek
-            //         and a.day_period != "lunch"
-            //         and (not self.resource_calendar_id.two_weeks_calendar or a.week_type == date_from_weektype))
-            //     if len(attendance_ids) == 2:
-            //         # The employee took the morning off on a day where he works the afternoon aswell
-            //         return (date_from, date_to)
-            // 
-            // # Check calendars for working days until we find the right target, start at date_to + 1 day
-            // # Postpone date_target until the next working day
-            // date_start = date_from
-            // date_target = date_to
-            // # It is necessary to move the start date up to the first work day of
-            // # the employee calendar as otherwise days worked on by the company
-            // # calendar before the actual start of the leave would be taken into
-            // # account.
-            // while not self.resource_calendar_id._works_on_date(date_start):
-            //     date_start += relativedelta(days=1)
-            // while not self.resource_calendar_id._works_on_date(date_target + relativedelta(days=1)):
-            //     date_target += relativedelta(days=1)
-            // 
-            // # Undo the last day increment
-            // return (date_start, date_target)
             */
             return default;
         }
@@ -1564,7 +1430,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> GetUnusualDaysAsync(Guid id, object date_from, object date_to)
+        public async Task<HrLeave> GetUnusualDaysAsync(Guid id, HrLeaveGetUnusualDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1601,68 +1467,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<HrLeave> L10nFrLeaveAppliesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_fr_hr_holidays, FILE: hr_leave.py) ---
-            // def _l10n_fr_leave_applies(self):
-            // # The french l10n is meant to be computed only in very specific cases:
-            // # - there is only one employee affected by the leave
-            // # - the company is french
-            // # - the leave_type is the reference leave_type of that company
-            // self.ensure_one()
-            // return self.employee_id and \
-            //        self.company_id.country_id.code == 'FR' and \
-            //        self.resource_calendar_id != self.company_id.resource_calendar_id and \
-            //        self.holiday_status_id == self.company_id._get_fr_reference_leave_type()
-            */
-            return default;
-        }
-
-        protected async Task<HrLeave> L10nInApplySandwichRuleInternalAsync(object public_holidays, object employee_leaves)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_hr_holidays, FILE: hr_leave.py) ---
-            // def _l10n_in_apply_sandwich_rule(self, public_holidays, employee_leaves):
-            // self.ensure_one()
-            // if not self.request_date_from or not self.request_date_to:
-            //     return
-            // date_from = self.request_date_from
-            // date_to = self.request_date_to
-            // total_leaves = (self.request_date_to - self.request_date_from).days + 1
-            // 
-            // def is_non_working_day(calendar, date):
-            //     return not calendar._works_on_date(date) or any(
-            //         datetime.date(holiday['date_from']) <= date <= datetime.date(holiday['date_to']) for holiday in public_holidays
-            //     )
-            // 
-            // def count_sandwich_days(calendar, date, direction):
-            //     current_date = date + timedelta(days=direction)
-            //     days_count = 0
-            //     while is_non_working_day(calendar, current_date):
-            //         days_count += 1
-            //         current_date += timedelta(days=direction)
-            //     for leave in employee_leaves:
-            //         if leave['request_date_from'] <= current_date <= leave['request_date_to']:
-            //             return days_count
-            //     return 0
-            // 
-            // calendar = self.resource_calendar_id
-            // total_leaves += count_sandwich_days(calendar, date_from, -1) + count_sandwich_days(calendar, date_to, 1)
-            // if is_non_working_day(calendar, date_from):
-            //     total_leaves -= 1
-            //     if is_non_working_day(calendar, date_from + timedelta(days=+1)):
-            //         total_leaves -= 1
-            // if is_non_working_day(calendar, date_to):
-            //     total_leaves -= 1
-            //     if is_non_working_day(calendar, date_to + timedelta(days=-1)):
-            //         total_leaves -= 1
-            // return total_leaves
-            */
-            return default;
-        }
-
-        public async Task<HrLeave> MessageSubscribeAsync(Guid id, List<Guid> partner_ids, List<Guid> subtype_ids)
+        public async Task<HrLeave> MessageSubscribeAsync(Guid id, HrLeaveMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -1810,7 +1615,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrLeave> OpenRecordsAsync(Guid id, List<Guid> leave_ids)
+        public async Task<HrLeave> OpenRecordsAsync(Guid id, HrLeaveOpenRecordsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---
@@ -2232,7 +2037,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeave> ValidateAsync(Guid id, object check_state)
+        public async Task<HrLeave> ValidateAsync(Guid id, HrLeaveValidateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave.py) ---

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -39,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IapAccount> GetAccountIdAsync(Guid id, object service_name)
+        public async Task<IapAccount> GetAccountIdAsync(Guid id, IapAccountGetAccountIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -109,7 +110,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IapAccount> GetAsync(Guid id, object service_name, object force_create)
+        public async Task<IapAccount> GetAsync(Guid id, IapAccountGetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -187,7 +188,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IapAccount> GetCreditsAsync(Guid id, object service_name)
+        public async Task<IapAccount> GetCreditsAsync(Guid id, IapAccountGetCreditsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -215,7 +216,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IapAccount> GetCreditsUrlAsync(Guid id, object service_name, object base_url, object credit, object trial, object account_token)
+        public async Task<IapAccount> GetCreditsUrlAsync(Guid id, IapAccountGetCreditsUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: iap, FILE: iap_account.py) ---
@@ -249,27 +250,6 @@ namespace Bamboo.Core.Application.Services
             // return hasattr(threading.current_thread(), 'testing') and threading.current_thread().testing
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        protected async Task<IapAccount> L10nInConnectToServerInternalAsync(object is_production, object @params, object url_path, object config_parameter, object timeout)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: iap_account.py) ---
-            // def _l10n_in_connect_to_server(self, is_production, params, url_path, config_parameter, timeout=25):
-            // user_token = self.get(IAP_SERVICE_NAME)
-            // params.update({
-            //     "dbuuid": self.env["ir.config_parameter"].sudo().get_param("database.uuid"),
-            //     "account_token": user_token.account_token,
-            // })
-            // if is_production:
-            //     default_endpoint = DEFAULT_IAP_ENDPOINT
-            // else:
-            //     default_endpoint = DEFAULT_IAP_TEST_ENDPOINT
-            // endpoint = self.env["ir.config_parameter"].sudo().get_param(config_parameter, default_endpoint)
-            // url = "%s%s" % (endpoint, url_path)
-            // return jsonrpc(url, params=params, timeout=timeout)
-            */
-            return default;
         }
 
         public async Task<IapAccount> OpenRegistrationWizardAsync(Guid id)

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -206,7 +207,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(Guid id, object date, object asset_type)
+        public async Task<AccountAssetAsset> ComputeGeneratedEntriesAsync(Guid id, AccountAssetAssetComputeGeneratedEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -228,7 +229,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAssetAsset> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountAssetAsset> CopyDataAsync(Guid id, AccountAssetAssetCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---
@@ -319,7 +320,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(Guid id, Guid category_id)
+        public async Task<AccountAssetAsset> OnchangeCategoryIdValuesAsync(Guid id, AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_asset.py) ---

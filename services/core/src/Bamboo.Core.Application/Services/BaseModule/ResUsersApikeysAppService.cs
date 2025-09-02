@@ -1,23 +1,27 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Domain.Repositories;
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Models;
+using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using Volo.Abp.Application.Services;
-using Bamboo.Core.Models;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule")]
-    public class ResUsersApikeysAppService : ApplicationService, IResUsersApikeysAppService
+    public class ResUsersApikeysAppService : GenericApplicationService<ResUsersApikeys>, IResUsersApikeysAppService
     {
-        private readonly IResUsersApikeysRepository _resUsersApikeysRepository;
-        public ResUsersApikeysAppService(IResUsersApikeysRepository resUsersApikeysRepository) 
+
+        public ResUsersApikeysAppService(IRepository<ResUsersApikeys, Guid> repository, IServiceProvider serviceProvider, AuthorizationService authorizationService, DomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
-            _resUsersApikeysRepository = resUsersApikeysRepository;
+
         }
 
         protected async Task<ResUsersApikeys> CheckCredentialsForUidInternalAsync()
@@ -157,8 +161,7 @@ namespace Bamboo.Core.Application.Services
             //     table,
             // ))
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         public async Task<ResUsersApikeys> RemoveAsync(Guid id)
@@ -168,8 +171,7 @@ namespace Bamboo.Core.Application.Services
             // def remove(self):
             // return self._remove()
             */
-            //var entity = await Repository.GetAsync(id); return entity;
-            return default;
+            var entity = await Repository.GetAsync(id); return entity;
         }
 
         protected async Task<ResUsersApikeys> RemoveInternalAsync()

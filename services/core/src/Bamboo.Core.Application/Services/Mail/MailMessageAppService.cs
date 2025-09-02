@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -486,7 +487,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> ExportDataAsync(Guid id, object fields_to_export)
+        public async Task<MailMessage> ExportDataAsync(Guid id, MailMessageExportDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -518,7 +519,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> FetchAsync(Guid id, object field_names)
+        public async Task<MailMessage> FetchAsync(Guid id, MailMessageFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -893,7 +894,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> IsThreadMessageAsync(Guid id, object vals)
+        public async Task<MailMessage> IsThreadMessageAsync(Guid id, MailMessageIsThreadMessageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -931,7 +932,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> MarkAllAsReadAsync(Guid id, object domain)
+        public async Task<MailMessage> MarkAllAsReadAsync(Guid id, MailMessageMarkAllAsReadRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_message.py) ---
@@ -1155,7 +1156,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMessage> PortalMessageFormatAsync(Guid id, object options)
+        public async Task<MailMessage> PortalMessageFormatAsync(Guid id, MailMessagePortalMessageFormatRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: portal, FILE: mail_message.py) ---

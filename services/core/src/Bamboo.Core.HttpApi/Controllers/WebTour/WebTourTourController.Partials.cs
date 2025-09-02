@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.WebTour
 {
     public partial class WebTourTourController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebTour
         [Route("{id}/consume")]
         public async Task<IActionResult> ConsumeAsync(Guid id, [FromBody] WebTourTourConsumeRequestDto input)
         {
-            var result = await _appService.ConsumeAsync(id, input.TourName);
+            var result = await _appService.ConsumeAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.WebTour
         [Route("{id}/get-tour-json-by-name")]
         public async Task<IActionResult> GetTourJsonByNameAsync(Guid id, [FromBody] WebTourTourGetTourJsonByNameRequestDto input)
         {
-            var result = await _appService.GetTourJsonByNameAsync(id, input.TourName);
+            var result = await _appService.GetTourJsonByNameAsync(id, input);
             return Ok(result);
         }
     }

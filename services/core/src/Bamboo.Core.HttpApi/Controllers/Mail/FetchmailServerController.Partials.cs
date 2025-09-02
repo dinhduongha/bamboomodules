@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Mail
 {
     public partial class FetchmailServerController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/connect")]
         public async Task<IActionResult> ConnectAsync(Guid id, [FromBody] FetchmailServerConnectRequestDto input)
         {
-            var result = await _appService.ConnectAsync(id, input.AllowArchived);
+            var result = await _appService.ConnectAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Mail
         [Route("{id}/fetch-mail")]
         public async Task<IActionResult> FetchMailAsync(Guid id, [FromBody] FetchmailServerFetchMailRequestDto input)
         {
-            var result = await _appService.FetchMailAsync(id, input.RaiseException);
+            var result = await _appService.FetchMailAsync(id, input);
             return Ok(result);
         }
         

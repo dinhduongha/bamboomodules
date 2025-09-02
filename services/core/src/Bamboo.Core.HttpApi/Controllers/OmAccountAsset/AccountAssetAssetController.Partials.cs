@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
 {
     public partial class AccountAssetAssetController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
         [Route("{id}/compute-generated-entries")]
         public async Task<IActionResult> ComputeGeneratedEntriesAsync(Guid id, [FromBody] AccountAssetAssetComputeGeneratedEntriesRequestDto input)
         {
-            var result = await _appService.ComputeGeneratedEntriesAsync(id, input.Date, input.AssetType);
+            var result = await _appService.ComputeGeneratedEntriesAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountAssetAssetCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
         [Route("{id}/onchange-category-id-values")]
         public async Task<IActionResult> OnchangeCategoryIdValuesAsync(Guid id, [FromBody] AccountAssetAssetOnchangeCategoryIdValuesRequestDto input)
         {
-            var result = await _appService.OnchangeCategoryIdValuesAsync(id, input.CategoryId);
+            var result = await _appService.OnchangeCategoryIdValuesAsync(id, input);
             return Ok(result);
         }
         

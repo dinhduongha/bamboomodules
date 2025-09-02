@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
 {
     public partial class AccountAssetDepreciationLineController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
         [Route("{id}/create-grouped-move")]
         public async Task<IActionResult> CreateGroupedMoveAsync(Guid id, [FromBody] AccountAssetDepreciationLineCreateGroupedMoveRequestDto input)
         {
-            var result = await _appService.CreateGroupedMoveAsync(id, input.PostMove);
+            var result = await _appService.CreateGroupedMoveAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.OmAccountAsset
         [Route("{id}/create-move")]
         public async Task<IActionResult> CreateMoveAsync(Guid id, [FromBody] AccountAssetDepreciationLineCreateMoveRequestDto input)
         {
-            var result = await _appService.CreateMoveAsync(id, input.PostMove);
+            var result = await _appService.CreateMoveAsync(id, input);
             return Ok(result);
         }
         

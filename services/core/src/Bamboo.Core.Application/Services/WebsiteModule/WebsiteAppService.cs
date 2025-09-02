@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -168,7 +169,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> ButtonGoWebsiteAsync(Guid id, object path)
+        public async Task<Website> ButtonGoWebsiteAsync(Guid id, WebsiteButtonGoWebsiteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -997,7 +998,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> ConfiguratorMissingIndustryAsync(Guid id, object unknown_industry)
+        public async Task<Website> ConfiguratorMissingIndustryAsync(Guid id, WebsiteConfiguratorMissingIndustryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1013,7 +1014,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> ConfiguratorRecommendedThemesAsync(Guid id, Guid industry_id, object palette, object result_nbr_max)
+        public async Task<Website> ConfiguratorRecommendedThemesAsync(Guid id, WebsiteConfiguratorRecommendedThemesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1038,7 +1039,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> ConfiguratorSetMenuLinksAsync(Guid id, object menu_company, object module_data)
+        public async Task<Website> ConfiguratorSetMenuLinksAsync(Guid id, WebsiteConfiguratorSetMenuLinksRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1088,7 +1089,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> CopyMenuHierarchyAsync(Guid id, object top_menu)
+        public async Task<Website> CopyMenuHierarchyAsync(Guid id, WebsiteCopyMenuHierarchyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1126,12 +1127,6 @@ namespace Bamboo.Core.Application.Services
         public override async Task<Website> CreateAsync(Website entity, List<string> fields)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_br_website_sale, FILE: website.py) ---
-            // def create(self, vals_list):
-            // for website in vals_list:
-            //     if website.get('company_id') and self.env['res.company'].browse(website['company_id']).country_code == "BR":
-            //         website.setdefault('show_line_subtotals_tax_selection', 'tax_included')
-            // return super().create(vals_list)
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def create(self, vals_list):
             // for vals in vals_list:
@@ -1351,29 +1346,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<Website> DisplayPartnerB2bFieldsInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar_website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """ Argentinean localization must always display b2b fields """
-            // self.ensure_one()
-            // return self.company_id.country_id.code == "AR" or super()._display_partner_b2b_fields()
-            --- ODOO METHOD SOURCE (MODULE: l10n_br_website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """ Brazil localization must always display b2b fields. """
-            // return self.company_id.country_id.code == 'BR' or super()._display_partner_b2b_fields()
-            --- ODOO METHOD SOURCE (MODULE: l10n_ec_website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """Ecuadorian localization must always display b2b fields"""
-            // self.ensure_one()
-            // return self.company_id.country_id.code == "EC" or super()._display_partner_b2b_fields()
-            --- ODOO METHOD SOURCE (MODULE: l10n_pe_website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """Peruvian localization must always display b2b fields"""
-            // self.ensure_one()
-            // return self.company_id.country_id.code == "PE" or super()._display_partner_b2b_fields()
-            --- ODOO METHOD SOURCE (MODULE: l10n_uy_website_sale, FILE: website.py) ---
-            // def _display_partner_b2b_fields(self):
-            // """ Uruguay localization must always display b2b fields. """
-            // return self.company_id.country_id.code == 'UY' or super()._display_partner_b2b_fields()
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
             // def _display_partner_b2b_fields(self):
             // """ This method is to be inherited by localizations and return
@@ -1597,7 +1569,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> GetCdnUrlAsync(Guid id, object uri)
+        public async Task<Website> GetCdnUrlAsync(Guid id, WebsiteGetCdnUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1698,7 +1670,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> GetClientActionAsync(Guid id, object url, object mode_edit, Guid website_id)
+        public async Task<Website> GetClientActionAsync(Guid id, WebsiteGetClientActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1716,7 +1688,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> GetClientUrlAsync(Guid id, object url, object mode_edit)
+        public async Task<Website> GetClientUrlAsync(Guid id, WebsiteGetClientUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1743,7 +1715,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> GetCtaDataAsync(Guid id, object website_purpose, object website_type)
+        public async Task<Website> GetCtaDataAsync(Guid id, WebsiteGetCtaDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -1837,7 +1809,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> GetCurrentWebsiteAsync(Guid id, object fallback)
+        public async Task<Website> GetCurrentWebsiteAsync(Guid id, WebsiteGetCurrentWebsiteRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2213,7 +2185,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> GetPricelistAvailableAsync(Guid id, object show_visible)
+        public async Task<Website> GetPricelistAvailableAsync(Guid id, WebsiteGetPricelistAvailableRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
@@ -2396,7 +2368,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> GetTemplateAsync(Guid id, object template)
+        public async Task<Website> GetTemplateAsync(Guid id, WebsiteGetTemplateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2411,7 +2383,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> GetThemeConfiguratorSnippetsAsync(Guid id, object theme_name)
+        public async Task<Website> GetThemeConfiguratorSnippetsAsync(Guid id, WebsiteGetThemeConfiguratorSnippetsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2424,7 +2396,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> GetUniqueKeyAsync(Guid id, object @string, object template_module)
+        public async Task<Website> GetUniqueKeyAsync(Guid id, WebsiteGetUniqueKeyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2455,7 +2427,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> GetUniquePathAsync(Guid id, object page_url)
+        public async Task<Website> GetUniquePathAsync(Guid id, WebsiteGetUniquePathRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2612,7 +2584,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> ImageUrlAsync(Guid id, object record, object field, object size)
+        public async Task<Website> ImageUrlAsync(Guid id, WebsiteImageUrlRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2684,7 +2656,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> IsPricelistAvailableAsync(Guid id, Guid pl_id)
+        public async Task<Website> IsPricelistAvailableAsync(Guid id, WebsiteIsPricelistAvailableRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
@@ -2743,7 +2715,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> IsViewActiveAsync(Guid id, object key)
+        public async Task<Website> IsViewActiveAsync(Guid id, WebsiteIsViewActiveRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2757,7 +2729,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> NewPageAsync(Guid id, object name, object add_menu, object template, object ispage, object @namespace, object page_values, object menu_values, object sections_arch)
+        public async Task<Website> NewPageAsync(Guid id, WebsiteNewPageRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2876,7 +2848,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> PagerAsync(Guid id, object url, object total, object page, object step, object scope, object url_args)
+        public async Task<Website> PagerAsync(Guid id, WebsitePagerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2938,7 +2910,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> RuleIsEnumerableAsync(Guid id, object rule)
+        public async Task<Website> RuleIsEnumerableAsync(Guid id, WebsiteRuleIsEnumerableRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -2972,7 +2944,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<Website> SaleGetOrderAsync(Guid id, object force_create)
+        public async Task<Website> SaleGetOrderAsync(Guid id, WebsiteSaleGetOrderRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: website.py) ---
@@ -3193,12 +3165,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<Website> SearchGetDetailsInternalAsync(object search_type, object order, object options)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: test_website, FILE: website.py) ---
-            // def _search_get_details(self, search_type, order, options):
-            // result = super()._search_get_details(search_type, order, options)
-            // if search_type in ['test']:
-            //     result.append(self.env['test.model']._search_get_detail(self, order, options))
-            // return result
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
             // def _search_get_details(self, search_type, order, options):
             // """
@@ -3311,7 +3277,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> SearchPagesAsync(Guid id, object needle, object limit)
+        public async Task<Website> SearchPagesAsync(Guid id, WebsiteSearchPagesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -3372,7 +3338,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> SearchUrlDependenciesAsync(Guid id, object res_model, List<Guid> res_ids)
+        public async Task<Website> SearchUrlDependenciesAsync(Guid id, WebsiteSearchUrlDependenciesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -3653,7 +3619,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> ViewrefAsync(Guid id, Guid view_id, object raise_if_not_found)
+        public async Task<Website> ViewrefAsync(Guid id, WebsiteViewrefRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---
@@ -3712,7 +3678,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<Website> WebsiteDomainAsync(Guid id, Guid website_id)
+        public async Task<Website> WebsiteDomainAsync(Guid id, WebsiteWebsiteDomainRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: website.py) ---

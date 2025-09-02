@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -22,7 +23,7 @@ namespace Bamboo.Core.Application.Services
 
         }
 
-        public async Task<CalendarFilters> UnlinkFromPartnerIdAsync(Guid id, Guid partner_id)
+        public async Task<CalendarFilters> UnlinkFromPartnerIdAsync(Guid id, CalendarFiltersUnlinkFromPartnerIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_filter.py) ---

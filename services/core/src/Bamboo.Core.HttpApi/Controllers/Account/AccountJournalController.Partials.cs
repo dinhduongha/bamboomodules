@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountJournalController
@@ -57,18 +58,10 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         }
         
         [HttpPost]
-        [Route("{id}/check-use-document")]
-        public async Task<IActionResult> CheckUseDocumentAsync(Guid id)
-        {
-            var result = await _appService.CheckUseDocumentAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] AccountJournalCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/create-document-from-attachment")]
         public async Task<IActionResult> CreateDocumentFromAttachmentAsync(Guid id, [FromBody] AccountJournalCreateDocumentFromAttachmentRequestDto input)
         {
-            var result = await _appService.CreateDocumentFromAttachmentAsync(id, input.AttachmentIds);
+            var result = await _appService.CreateDocumentFromAttachmentAsync(id, input);
             return Ok(result);
         }
         
@@ -108,23 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/get-next-bank-cash-default-code")]
         public async Task<IActionResult> GetNextBankCashDefaultCodeAsync(Guid id, [FromBody] AccountJournalGetNextBankCashDefaultCodeRequestDto input)
         {
-            var result = await _appService.GetNextBankCashDefaultCodeAsync(id, input.JournalType, input.Company, input.Cache, input.ProtectedCodes);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-tr-nilvera-get-documents")]
-        public async Task<IActionResult> L10nTrNilveraGetDocumentsAsync(Guid id)
-        {
-            var result = await _appService.L10nTrNilveraGetDocumentsAsync(id);
-            return Ok(result);
-        }
-        
-        [HttpPost]
-        [Route("{id}/l10n-tr-nilvera-get-message-status")]
-        public async Task<IActionResult> L10nTrNilveraGetMessageStatusAsync(Guid id)
-        {
-            var result = await _appService.L10nTrNilveraGetMessageStatusAsync(id);
+            var result = await _appService.GetNextBankCashDefaultCodeAsync(id, input);
             return Ok(result);
         }
         
@@ -156,7 +133,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/open-payments-action")]
         public async Task<IActionResult> OpenPaymentsActionAsync(Guid id, [FromBody] AccountJournalOpenPaymentsActionRequestDto input)
         {
-            var result = await _appService.OpenPaymentsActionAsync(id, input.PaymentType, input.Mode);
+            var result = await _appService.OpenPaymentsActionAsync(id, input);
             return Ok(result);
         }
         
@@ -180,7 +157,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/set-bank-account")]
         public async Task<IActionResult> SetBankAccountAsync(Guid id, [FromBody] AccountJournalSetBankAccountRequestDto input)
         {
-            var result = await _appService.SetBankAccountAsync(id, input.AccNumber, input.BankId);
+            var result = await _appService.SetBankAccountAsync(id, input);
             return Ok(result);
         }
         

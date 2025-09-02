@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -11,7 +12,7 @@ using System;
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
-#if ODOO12
+
 namespace Bamboo.Core.Application.Services
 {
     [Module("Mail", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
@@ -95,7 +96,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PublisherWarrantyContract> UpdateNotificationAsync(Guid id, object cron_mode)
+        public async Task<PublisherWarrantyContract> UpdateNotificationAsync(Guid id, PublisherWarrantyContractUpdateNotificationRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: update.py) ---
@@ -144,4 +145,3 @@ namespace Bamboo.Core.Application.Services
         }
     }
 }
-#endif

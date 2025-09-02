@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,28 +15,13 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("resource", Depends = new[] { "base", "web" })]
     public class ResourceMixinAppService : ApplicationService, IResourceMixinAppService
     {
-
-        public ResourceMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public ResourceMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<TEntity> AdjustToCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object end) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_mixin.py) ---
-            // def _adjust_to_calendar(self, start, end):
-            // resource_results = self.resource_id._adjust_to_calendar(start, end)
-            // # change dict keys from resources to associated records.
-            // return {
-            //     record: resource_results[record.resource_id]
-            //     for record in self
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
@@ -54,6 +41,112 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         },
             //     }
             // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_create_user(self):
+            // self.ensure_one()
+            // if self.user_id:
+            //     raise ValidationError(_("This employee already has an user."))
+            // return {
+            //     'name': _('Create User'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.users',
+            //     'view_mode': 'form',
+            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
+            //     'target': 'new',
+            //     'context': dict(self._context, **{
+            //         'default_create_employee_id': self.id,
+            //         'default_name': self.name,
+            //         'default_phone': self.work_phone,
+            //         'default_mobile': self.mobile_phone,
+            //         'default_login': self.work_email,
+            //         'default_partner_id': self.work_contact_id.id,
+            //     })
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
+            // def action_related_contacts(self):
+            // related_partners = self._get_related_partners()
+            // action = {
+            //     'name': _("Related Contacts"),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'res.partner',
+            //     'view_mode': 'form',
+            // }
+            // if len(related_partners) > 1:
+            //     action['view_mode'] = 'kanban,list,form'
+            //     action['domain'] = [('id', 'in', related_partners.ids)]
+            //     return action
+            // else:
+            //     action['res_id'] = related_partners.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowOperationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_show_operations(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.actions']._for_xml_id('mrp.mrp_routing_action')
+            // action['domain'] = [('workcenter_id', '=', self.id)]
+            // action['context'] = {
+            //     'default_workcenter_id': self.id,
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionWorkOrderAlternativesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_work_order_alternatives(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_workorder_todo")
+            // action['domain'] = ['|', ('workcenter_id', 'in', self.alternative_workcenter_ids.ids),
+            //                     ('workcenter_id.alternative_workcenter_ids', '=', self.id)]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionWorkOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
+            // def action_work_order(self):
+            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> AdjustToCalendarInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object end) where TEntity : IEntity<Guid>, IResourceMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: resource, FILE: resource_mixin.py) ---
+            // def _adjust_to_calendar(self, start, end):
+            // resource_results = self.resource_id._adjust_to_calendar(start, end)
+            // # change dict keys from resources to associated records.
+            // return {
+            //     record: resource_results[record.resource_id]
+            //     for record in self
+            // }
             */
             return default;
         }
@@ -499,34 +592,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         if not vals.get('resource_id'):
             //             vals['resource_id'] = next(resources_iter)
             // return super(ResourceMixin, self.with_context(check_idempotence=True)).create(vals_list)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> CreateUserAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_create_user(self):
-            // self.ensure_one()
-            // if self.user_id:
-            //     raise ValidationError(_("This employee already has an user."))
-            // return {
-            //     'name': _('Create User'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.users',
-            //     'view_mode': 'form',
-            //     'view_id': self.env.ref('hr.view_users_simple_form').id,
-            //     'target': 'new',
-            //     'context': dict(self._context, **{
-            //         'default_create_employee_id': self.id,
-            //         'default_name': self.name,
-            //         'default_phone': self.work_phone,
-            //         'default_mobile': self.mobile_phone,
-            //         'default_login': self.work_email,
-            //         'default_partner_id': self.work_contact_id.id,
-            //     })
-            // }
             */
             return default;
         }
@@ -1407,29 +1472,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RelatedContactsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
-            // def action_related_contacts(self):
-            // related_partners = self._get_related_partners()
-            // action = {
-            //     'name': _("Related Contacts"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'res.partner',
-            //     'view_mode': 'form',
-            // }
-            // if len(related_partners) > 1:
-            //     action['view_mode'] = 'kanban,list,form'
-            //     action['domain'] = [('id', 'in', related_partners.ids)]
-            //     return action
-            // else:
-            //     action['res_id'] = related_partners.id
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> RemoveWorkContactIdInternalAsync<TEntity>(IEnumerable<TEntity> entities, object user, object employee_company) where TEntity : IEntity<Guid>, IResourceMixinable
         {
             /*
@@ -1490,22 +1532,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     raise AccessError(_('You do not have access to this document.'))
             // # the result is expected from this table, so we should link tables
             // return super(HrEmployeePrivate, self.sudo())._search([('id', 'in', ids)], order=order)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowOperationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_show_operations(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.actions']._for_xml_id('mrp.mrp_routing_action')
-            // action['domain'] = [('workcenter_id', '=', self.id)]
-            // action['context'] = {
-            //     'default_workcenter_id': self.id,
-            // }
-            // return action
             */
             return default;
         }
@@ -1620,30 +1646,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // for employee in self:
             //     if employee.pin and not employee.pin.isdigit():
             //         raise ValidationError(_("The PIN must be a sequence of digits."))
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WorkOrderAlternativesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_work_order_alternatives(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.mrp_workorder_todo")
-            // action['domain'] = ['|', ('workcenter_id', 'in', self.alternative_workcenter_ids.ids),
-            //                     ('workcenter_id.alternative_workcenter_ids', '=', self.id)]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> WorkOrderAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IResourceMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: mrp_workcenter.py) ---
-            // def action_work_order(self):
-            // action = self.env["ir.actions.actions"]._for_xml_id("mrp.action_work_orders")
-            // return action
             */
             return default;
         }

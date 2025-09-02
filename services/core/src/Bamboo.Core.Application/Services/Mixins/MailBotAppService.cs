@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("mail_bot", Depends = new[] { "mail" })]
     public class MailBotAppService : ApplicationService, IMailBotAppService
     {
-
-        public MailBotAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public MailBotAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ApplyLogicInternalAsync<TEntity>(IEnumerable<TEntity> entities, object record, object values, object command) where TEntity : IEntity<Guid>, IMailBotable

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -2394,7 +2395,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<PaymentProvider> StripeConnectAccountAsync(Guid id, Guid menu_id)
+        public async Task<PaymentProvider> StripeConnectAccountAsync(Guid id, PaymentProviderStripeConnectAccountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: payment_stripe, FILE: payment_provider.py) ---

@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -129,7 +130,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> AddFollowerAsync(Guid id, Guid employee_id)
+        public async Task<HrLeaveAllocation> AddFollowerAsync(Guid id, HrLeaveAllocationAddFollowerRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---
@@ -796,7 +797,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrLeaveAllocation> MessageSubscribeAsync(Guid id, List<Guid> partner_ids, List<Guid> subtype_ids)
+        public async Task<HrLeaveAllocation> MessageSubscribeAsync(Guid id, HrLeaveAllocationMessageSubscribeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_leave_allocation.py) ---

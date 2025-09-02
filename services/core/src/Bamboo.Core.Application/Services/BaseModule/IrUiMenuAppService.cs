@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -195,7 +196,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiMenu> LoadMenusAsync(Guid id, object debug)
+        public async Task<IrUiMenu> LoadMenusAsync(Guid id, IrUiMenuLoadMenusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
@@ -395,7 +396,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiMenu> LoadWebMenusAsync(Guid id, object debug)
+        public async Task<IrUiMenu> LoadWebMenusAsync(Guid id, IrUiMenuLoadWebMenusRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: web, FILE: ir_ui_menu.py) ---
@@ -500,7 +501,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrUiMenu> SearchCountAsync(Guid id, object domain, object limit)
+        public async Task<IrUiMenu> SearchCountAsync(Guid id, IrUiMenuSearchCountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---
@@ -511,7 +512,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrUiMenu> SearchFetchAsync(Guid id, object domain, object field_names, object offset, object limit, object order)
+        public async Task<IrUiMenu> SearchFetchAsync(Guid id, IrUiMenuSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_menu.py) ---

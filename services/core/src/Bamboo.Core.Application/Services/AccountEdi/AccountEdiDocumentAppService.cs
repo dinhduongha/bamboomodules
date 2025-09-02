@@ -1,4 +1,4 @@
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -156,25 +156,6 @@ namespace Bamboo.Core.Application.Services
             //         batch['documents'] |= edi_doc
             // 
             // return list(to_process.values())
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_edi_document.py) ---
-            // def _prepare_jobs(self):
-            // """
-            // Override to achieve the following:
-            // 
-            // If there is a job to process that may already be part of the chain (posted invoice that timed out),
-            // Moves it at the beginning of the list.
-            // """
-            // jobs = super()._prepare_jobs()
-            // if len(jobs) > 1:
-            //     move_first_index = 0
-            //     for index, job in enumerate(jobs):
-            //         documents = job['documents']
-            //         if any(d.edi_format_id.code == 'sa_zatca' and d.state == 'to_send' and d.move_id.l10n_sa_chain_index for d in documents):
-            //             move_first_index = index
-            //             break
-            //     jobs = [jobs[move_first_index]] + jobs[:move_first_index] + jobs[move_first_index + 1:]
-            // 
-            // return jobs
             */
             return default;
         }

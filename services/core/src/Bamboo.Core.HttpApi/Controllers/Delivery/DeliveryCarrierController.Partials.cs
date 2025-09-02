@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Delivery
 {
     public partial class DeliveryCarrierController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/available-carriers")]
         public async Task<IActionResult> AvailableCarriersAsync(Guid id, [FromBody] DeliveryCarrierAvailableCarriersRequestDto input)
         {
-            var result = await _appService.AvailableCarriersAsync(id, input.Partner, input.Order);
+            var result = await _appService.AvailableCarriersAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/base-on-rule-cancel-shipment")]
         public async Task<IActionResult> BaseOnRuleCancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleCancelShipmentRequestDto input)
         {
-            var result = await _appService.BaseOnRuleCancelShipmentAsync(id, input.Pickings);
+            var result = await _appService.BaseOnRuleCancelShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/base-on-rule-get-tracking-link")]
         public async Task<IActionResult> BaseOnRuleGetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.BaseOnRuleGetTrackingLinkAsync(id, input.Picking);
+            var result = await _appService.BaseOnRuleGetTrackingLinkAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/base-on-rule-rate-shipment")]
         public async Task<IActionResult> BaseOnRuleRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleRateShipmentRequestDto input)
         {
-            var result = await _appService.BaseOnRuleRateShipmentAsync(id, input.Order);
+            var result = await _appService.BaseOnRuleRateShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/base-on-rule-send-shipping")]
         public async Task<IActionResult> BaseOnRuleSendShippingAsync(Guid id, [FromBody] DeliveryCarrierBaseOnRuleSendShippingRequestDto input)
         {
-            var result = await _appService.BaseOnRuleSendShippingAsync(id, input.Pickings);
+            var result = await _appService.BaseOnRuleSendShippingAsync(id, input);
             return Ok(result);
         }
         
@@ -52,7 +53,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/cancel-shipment")]
         public async Task<IActionResult> CancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierCancelShipmentRequestDto input)
         {
-            var result = await _appService.CancelShipmentAsync(id, input.Pickings);
+            var result = await _appService.CancelShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -60,7 +61,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/copy-data")]
         public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] DeliveryCarrierCopyDataRequestDto input)
         {
-            var result = await _appService.CopyDataAsync(id, input.Default);
+            var result = await _appService.CopyDataAsync(id, input);
             return Ok(result);
         }
         
@@ -68,7 +69,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/fixed-cancel-shipment")]
         public async Task<IActionResult> FixedCancelShipmentAsync(Guid id, [FromBody] DeliveryCarrierFixedCancelShipmentRequestDto input)
         {
-            var result = await _appService.FixedCancelShipmentAsync(id, input.Pickings);
+            var result = await _appService.FixedCancelShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -76,7 +77,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/fixed-get-tracking-link")]
         public async Task<IActionResult> FixedGetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierFixedGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.FixedGetTrackingLinkAsync(id, input.Picking);
+            var result = await _appService.FixedGetTrackingLinkAsync(id, input);
             return Ok(result);
         }
         
@@ -84,7 +85,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/fixed-rate-shipment")]
         public async Task<IActionResult> FixedRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierFixedRateShipmentRequestDto input)
         {
-            var result = await _appService.FixedRateShipmentAsync(id, input.Order);
+            var result = await _appService.FixedRateShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -92,7 +93,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/fixed-send-shipping")]
         public async Task<IActionResult> FixedSendShippingAsync(Guid id, [FromBody] DeliveryCarrierFixedSendShippingRequestDto input)
         {
-            var result = await _appService.FixedSendShippingAsync(id, input.Pickings);
+            var result = await _appService.FixedSendShippingAsync(id, input);
             return Ok(result);
         }
         
@@ -100,7 +101,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/gelato-rate-shipment")]
         public async Task<IActionResult> GelatoRateShipmentAsync(Guid id, [FromBody] DeliveryCarrierGelatoRateShipmentRequestDto input)
         {
-            var result = await _appService.GelatoRateShipmentAsync(id, input.Order);
+            var result = await _appService.GelatoRateShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -108,7 +109,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/get-return-label")]
         public async Task<IActionResult> GetReturnLabelAsync(Guid id, [FromBody] DeliveryCarrierGetReturnLabelRequestDto input)
         {
-            var result = await _appService.GetReturnLabelAsync(id, input.Pickings, input.TrackingNumber, input.OriginDate);
+            var result = await _appService.GetReturnLabelAsync(id, input);
             return Ok(result);
         }
         
@@ -124,7 +125,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/get-tracking-link")]
         public async Task<IActionResult> GetTrackingLinkAsync(Guid id, [FromBody] DeliveryCarrierGetTrackingLinkRequestDto input)
         {
-            var result = await _appService.GetTrackingLinkAsync(id, input.Picking);
+            var result = await _appService.GetTrackingLinkAsync(id, input);
             return Ok(result);
         }
         
@@ -148,7 +149,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/log-xml")]
         public async Task<IActionResult> LogXmlAsync(Guid id, [FromBody] DeliveryCarrierLogXmlRequestDto input)
         {
-            var result = await _appService.LogXmlAsync(id, input.XmlString, input.Func);
+            var result = await _appService.LogXmlAsync(id, input);
             return Ok(result);
         }
         
@@ -156,7 +157,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/rate-shipment")]
         public async Task<IActionResult> RateShipmentAsync(Guid id, [FromBody] DeliveryCarrierRateShipmentRequestDto input)
         {
-            var result = await _appService.RateShipmentAsync(id, input.Order);
+            var result = await _appService.RateShipmentAsync(id, input);
             return Ok(result);
         }
         
@@ -164,7 +165,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Delivery
         [Route("{id}/send-shipping")]
         public async Task<IActionResult> SendShippingAsync(Guid id, [FromBody] DeliveryCarrierSendShippingRequestDto input)
         {
-            var result = await _appService.SendShippingAsync(id, input.Pickings);
+            var result = await _appService.SendShippingAsync(id, input);
             return Ok(result);
         }
         

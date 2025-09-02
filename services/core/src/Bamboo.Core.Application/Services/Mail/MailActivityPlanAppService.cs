@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -127,7 +128,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailActivityPlan> CopyDataAsync(Guid id, object @default)
+        public async Task<MailActivityPlan> CopyDataAsync(Guid id, MailActivityPlanCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_activity_plan.py) ---

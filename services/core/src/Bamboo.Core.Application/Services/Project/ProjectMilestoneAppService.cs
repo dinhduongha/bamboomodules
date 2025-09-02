@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -208,7 +209,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ProjectMilestone> ToggleIsReachedAsync(Guid id, object is_reached)
+        public async Task<ProjectMilestone> ToggleIsReachedAsync(Guid id, ProjectMilestoneToggleIsReachedRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_milestone.py) ---

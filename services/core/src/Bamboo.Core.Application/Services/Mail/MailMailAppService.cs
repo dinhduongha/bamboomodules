@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -555,7 +556,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<MailMail> ProcessEmailQueueAsync(Guid id, object ids, object batch_size)
+        public async Task<MailMail> ProcessEmailQueueAsync(Guid id, MailMailProcessEmailQueueRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---
@@ -663,7 +664,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<MailMail> SendAsync(Guid id, object auto_commit, object raise_exception, object post_send_callback)
+        public async Task<MailMail> SendAsync(Guid id, MailMailSendRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: mail_mail.py) ---

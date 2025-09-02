@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -46,7 +47,7 @@ namespace Bamboo.Core.Application.Services
             return await base.CreateAsync(entity, fields);
         }
 
-        public async Task<IrConfigParameter> GetParamAsync(Guid id, object key, object @default)
+        public async Task<IrConfigParameter> GetParamAsync(Guid id, IrConfigParameterGetParamRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_config_parameter.py) ---
@@ -79,7 +80,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrConfigParameter> InitAsync(Guid id, object force)
+        public async Task<IrConfigParameter> InitAsync(Guid id, IrConfigParameterInitRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_oauth, FILE: ir_config_parameter.py) ---
@@ -124,7 +125,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrConfigParameter> SetParamAsync(Guid id, object key, object @value)
+        public async Task<IrConfigParameter> SetParamAsync(Guid id, IrConfigParameterSetParamRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_config_parameter.py) ---

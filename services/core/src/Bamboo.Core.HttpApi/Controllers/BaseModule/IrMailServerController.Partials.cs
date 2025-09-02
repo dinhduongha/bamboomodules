@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.BaseModule
 {
     public partial class IrMailServerController
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/build-email")]
         public async Task<IActionResult> BuildEmailAsync(Guid id, [FromBody] IrMailServerBuildEmailRequestDto input)
         {
-            var result = await _appService.BuildEmailAsync(id, input.EmailFrom, input.EmailTo, input.Subject, input.Body, input.EmailCc, input.EmailBcc, input.ReplyTo, input.Attachments, input.MessageId, input.References, input.ObjectId, input.Subtype, input.Headers, input.BodyAlternative, input.SubtypeAlternative);
+            var result = await _appService.BuildEmailAsync(id, input);
             return Ok(result);
         }
         
@@ -28,7 +29,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/connect")]
         public async Task<IActionResult> ConnectAsync(Guid id, [FromBody] IrMailServerConnectRequestDto input)
         {
-            var result = await _appService.ConnectAsync(id, input.Host, input.Port, input.User, input.Password, input.Encryption, input.SmtpFrom, input.SslCertificate, input.SslPrivateKey, input.SmtpDebug, input.MailServerId, input.AllowArchived);
+            var result = await _appService.ConnectAsync(id, input);
             return Ok(result);
         }
         
@@ -36,7 +37,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/send-email")]
         public async Task<IActionResult> SendEmailAsync(Guid id, [FromBody] IrMailServerSendEmailRequestDto input)
         {
-            var result = await _appService.SendEmailAsync(id, input.Message, input.MailServerId, input.SmtpServer, input.SmtpPort, input.SmtpUser, input.SmtpPassword, input.SmtpEncryption, input.SmtpSslCertificate, input.SmtpSslPrivateKey, input.SmtpDebug, input.SmtpSession);
+            var result = await _appService.SendEmailAsync(id, input);
             return Ok(result);
         }
         
@@ -44,7 +45,7 @@ namespace Bamboo.Core.HttpApi.Controllers.BaseModule
         [Route("{id}/test-smtp-connection")]
         public async Task<IActionResult> TestSmtpConnectionAsync(Guid id, [FromBody] IrMailServerTestSmtpConnectionRequestDto input)
         {
-            var result = await _appService.TestSmtpConnectionAsync(id, input.AutodetectMaxEmailSize);
+            var result = await _appService.TestSmtpConnectionAsync(id, input);
             return Ok(result);
         }
     }

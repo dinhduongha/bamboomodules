@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("mail", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
     public class MailComposerMixinAppService : ApplicationService, IMailComposerMixinAppService
     {
-
-        public MailComposerMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public MailComposerMixinAppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ComputeBodyHasTemplateValueInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable
@@ -107,16 +109,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         composer_mixin.lang = composer_mixin.template_id.lang
             //     elif not composer_mixin.template_id:
             //         composer_mixin.lang = False
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ComputeRenderModelInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailComposerMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail, FILE: test_mail_models.py) ---
-            // def _compute_render_model(self):
-            // self.render_model = 'mail.test.composer.source'
             */
             return default;
         }

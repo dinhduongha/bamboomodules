@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -116,7 +117,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<FetchmailServer> ConnectAsync(Guid id, object allow_archived)
+        public async Task<FetchmailServer> ConnectAsync(Guid id, FetchmailServerConnectRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---
@@ -143,7 +144,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<FetchmailServer> FetchMailAsync(Guid id, object raise_exception)
+        public async Task<FetchmailServer> FetchMailAsync(Guid id, FetchmailServerFetchMailRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: fetchmail.py) ---

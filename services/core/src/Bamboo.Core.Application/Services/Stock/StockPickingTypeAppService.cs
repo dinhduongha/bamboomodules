@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -489,7 +490,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<StockPickingType> CopyDataAsync(Guid id, object @default)
+        public async Task<StockPickingType> CopyDataAsync(Guid id, StockPickingTypeCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
@@ -504,45 +505,6 @@ namespace Bamboo.Core.Application.Services
             // return vals_list
             */
             var entity = await Repository.GetAsync(id); return entity;
-        }
-
-        public override async Task<StockPickingType> CreateAsync(StockPickingType entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: stock_picking.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     company = self.env['res.company'].browse(vals.get('company_id', False)) or self.env.company
-            //     if company.country_id.code == 'IT' and vals.get('code') == 'outgoing' and ('l10n_it_ddt_sequence_id' not in vals or not vals['l10n_it_ddt_sequence_id']):
-            //         ir_seq_name, ir_seq_prefix = self._get_dtt_ir_seq_vals(vals.get('warehouse_id'), vals['sequence_code'])
-            //         vals['l10n_it_ddt_sequence_id'] = self.env['ir.sequence'].create({
-            //                 'name': ir_seq_name,
-            //                 'prefix': ir_seq_prefix,
-            //                 'padding': 5,
-            //                 'company_id': company.id,
-            //                 'implementation': 'no_gap',
-            //             }).id
-            // return super().create(vals_list)
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
-            // def create(self, vals_list):
-            // for vals in vals_list:
-            //     if not vals.get('sequence_id') and vals.get('sequence_code'):
-            //         if vals.get('warehouse_id'):
-            //             wh = self.env['stock.warehouse'].browse(vals['warehouse_id'])
-            //             vals['sequence_id'] = self.env['ir.sequence'].sudo().create({
-            //                 'name': _('%(warehouse)s Sequence %(code)s', warehouse=wh.name, code=vals['sequence_code']),
-            //                 'prefix': wh.code + '/' + vals['sequence_code'] + '/', 'padding': 5,
-            //                 'company_id': wh.company_id.id,
-            //             }).id
-            //         else:
-            //             vals['sequence_id'] = self.env['ir.sequence'].sudo().create({
-            //                 'name': _('Sequence %(code)s', code=vals['sequence_code']),
-            //                 'prefix': vals['sequence_code'], 'padding': 5,
-            //                 'company_id': vals.get('company_id') or self.env.company.id,
-            //             }).id
-            // return super().create(vals_list)
-            */
-            return await base.CreateAsync(entity, fields);
         }
 
         protected async Task<StockPickingType> GetActionInternalAsync(object action_xmlid)
@@ -677,23 +639,6 @@ namespace Bamboo.Core.Application.Services
             --- ODOO METHOD SOURCE (MODULE: delivery_stock_picking_batch, FILE: stock_picking.py) ---
             // def _get_default_weight_uom(self):
             // return self.env['product.template']._get_weight_uom_name_from_ir_config_parameter()
-            */
-            return default;
-        }
-
-        protected async Task<StockPickingType> GetDttIrSeqValsInternalAsync(Guid warehouse_id, object sequence_code)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: stock_picking.py) ---
-            // def _get_dtt_ir_seq_vals(self, warehouse_id, sequence_code):
-            // if warehouse_id:
-            //     wh = self.env['stock.warehouse'].browse(warehouse_id)
-            //     ir_seq_name = _('%(warehouse)s Sequence %(code)s', warehouse=wh.name, code=sequence_code)
-            //     ir_seq_prefix = wh.code + '/' + sequence_code + '/DDT'
-            // else:
-            //     ir_seq_name = _('Sequence %(code)s', code=sequence_code)
-            //     ir_seq_prefix = sequence_code + '/DDT'
-            // return ir_seq_name, ir_seq_prefix
             */
             return default;
         }
@@ -910,16 +855,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<StockPickingType> OnchangeSequenceCodeInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr_nilvera_edispatch, FILE: stock_picking_type.py) ---
-            // def _onchange_sequence_code(self):
-            // if (
-            //     self.company_id.account_fiscal_country_id.code == 'TR'
-            //     and self.code == 'outgoing'
-            //     and self.sequence_code
-            //     and len(self.sequence_code) != 3
-            // ):
-            //     raise UserError(_("Only 3 characters are allowed in the Sequence Prefix by GİB"))
-            // return super()._onchange_sequence_code()
             --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _onchange_sequence_code(self):
             // if not self.sequence_code:
@@ -1061,61 +996,6 @@ namespace Bamboo.Core.Application.Services
             //         raise ValidationError(_("If the Automatic Batches feature is enabled, at least one 'Group by' option must be selected."))
             */
             return default;
-        }
-
-        public override async Task<List<object>> WriteAsync(List<Guid> ids, StockPickingType entity, List<string> fields)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_it_stock_ddt, FILE: stock_picking.py) ---
-            // def write(self, vals):
-            // if 'sequence_code' in vals:
-            //     for picking_type in self.filtered(lambda p: p.l10n_it_ddt_sequence_id):
-            //         warehouse = picking_type.warehouse_id.id if 'warehouse_id' not in vals else vals['warehouse_ids']
-            //         ir_seq_name, ir_seq_prefix = self._get_dtt_ir_seq_vals(warehouse, vals['sequence_code'])
-            //         picking_type.l10n_it_ddt_sequence_id.write({
-            //                 'name': ir_seq_name,
-            //                 'prefix': ir_seq_prefix,
-            //             })
-            // return super(StockPickingType, self).write(vals)
-            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
-            // def write(self, vals):
-            // if 'company_id' in vals:
-            //     for picking_type in self:
-            //         if picking_type.company_id.id != vals['company_id']:
-            //             raise UserError(_("Changing the company of this record is forbidden at this point, you should rather archive it and create a new one."))
-            // if 'sequence_code' in vals:
-            //     for picking_type in self:
-            //         if picking_type.warehouse_id:
-            //             picking_type.sequence_id.sudo().write({
-            //                 'name': _('%(warehouse)s Sequence %(code)s', warehouse=picking_type.warehouse_id.name, code=vals['sequence_code']),
-            //                 'prefix': picking_type.warehouse_id.code + '/' + vals['sequence_code'] + '/', 'padding': 5,
-            //                 'company_id': picking_type.warehouse_id.company_id.id,
-            //             })
-            //         else:
-            //             picking_type.sequence_id.sudo().write({
-            //                 'name': _('Sequence %(code)s', code=vals['sequence_code']),
-            //                 'prefix': vals['sequence_code'], 'padding': 5,
-            //                 'company_id': picking_type.env.company.id,
-            //             })
-            // if 'reservation_method' in vals:
-            //     if vals['reservation_method'] == 'by_date':
-            //         if picking_types := self.filtered(lambda p: p.reservation_method != 'by_date'):
-            //             domain = [('picking_type_id', 'in', picking_types.ids), ('state', 'in', ('draft', 'confirmed', 'waiting', 'partially_available'))]
-            //             group_by = ['picking_type_id']
-            //             aggregates = ['id:recordset']
-            //             for picking_type, moves in self.env['stock.move']._read_group(domain, group_by, aggregates):
-            //                 common_days = vals.get('reservation_days_before') or picking_type.reservation_days_before
-            //                 priority_days = vals.get('reservation_days_before_priority') or picking_type.reservation_days_before_priority
-            //                 for move in moves:
-            //                     move.reservation_date = fields.Date.to_date(move.date) - timedelta(days=priority_days if move.priority == '1' else common_days)
-            //     else:
-            //         if picking_types := self.filtered(lambda p: p.reservation_method == 'by_date'):
-            //             moves = self.env['stock.move'].search([('picking_type_id', 'in', picking_types.ids), ('state', 'not in', ('assigned', 'done', 'cancel'))])
-            //             moves.reservation_date = False
-            // 
-            // return super(PickingType, self).write(vals)
-            */
-            return await base.WriteAsync(ids, entity, fields);
         }
     }
 }

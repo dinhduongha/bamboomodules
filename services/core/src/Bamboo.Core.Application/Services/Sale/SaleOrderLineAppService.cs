@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -1762,7 +1763,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrderLine> ComputeUomQtyAsync(Guid id, object new_qty, object stock_move, object rounding)
+        public async Task<SaleOrderLine> ComputeUomQtyAsync(Guid id, SaleOrderLineComputeUomQtyRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
@@ -1879,7 +1880,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<SaleOrderLine> CopyDataAsync(Guid id, object @default)
+        public async Task<SaleOrderLine> CopyDataAsync(Guid id, SaleOrderLineCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order_line.py) ---
@@ -3449,7 +3450,7 @@ namespace Bamboo.Core.Application.Services
             return await base.NameCreateAsync(name);
         }
 
-        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string args, string @operator, int limit)
+        public override async Task<List<(Guid Id, string Name)>> NameSearchAsync(string name, string domain = null, string @operator = "ilike", int limit = 100)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sale_service, FILE: sale_order_line.py) ---
@@ -3463,7 +3464,7 @@ namespace Bamboo.Core.Application.Services
             //     return [(sol.id, sol.display_name) for sol in sols]
             // return super().name_search(name, domain, operator, limit)
             */
-            return await base.NameSearchAsync(name, args, @operator, limit);
+            return await base.NameSearchAsync(name, domain, @operator, limit);
         }
 
         protected async Task<SaleOrderLine> OnchangeEventIdBoothInternalAsync()

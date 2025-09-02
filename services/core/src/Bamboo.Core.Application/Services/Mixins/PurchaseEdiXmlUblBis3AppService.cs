@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,10 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("purchase_edi_ubl_bis3", Depends = new[] { "purchase", "account_edi_ubl_cii" })]
     public class PurchaseEdiXmlUblBis3AppService : ApplicationService, IPurchaseEdiXmlUblBis3AppService
     {
-
-        public PurchaseEdiXmlUblBis3AppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public PurchaseEdiXmlUblBis3AppService(IServiceProvider serviceProvider) 
         {
-
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<TEntity> ExportOrderInternalAsync<TEntity>(IEnumerable<TEntity> entities, object order) where TEntity : IEntity<Guid>, IPurchaseEdiXmlUblBis3able

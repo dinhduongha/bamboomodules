@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -171,7 +172,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> ConvertLinksAsync(Guid id, object html, object vals, object blacklist)
+        public async Task<LinkTracker> ConvertLinksAsync(Guid id, LinkTrackerConvertLinksRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -204,7 +205,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> GetUrlFromCodeAsync(Guid id, object code)
+        public async Task<LinkTracker> GetUrlFromCodeAsync(Guid id, LinkTrackerGetUrlFromCodeRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -234,7 +235,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<LinkTracker> RecentLinksAsync(Guid id, object filter, object limit)
+        public async Task<LinkTracker> RecentLinksAsync(Guid id, LinkTrackerRecentLinksRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---
@@ -251,7 +252,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<LinkTracker> SearchOrCreateAsync(Guid id, object vals_list)
+        public async Task<LinkTracker> SearchOrCreateAsync(Guid id, LinkTrackerSearchOrCreateRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: link_tracker, FILE: link_tracker.py) ---

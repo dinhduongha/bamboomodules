@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -124,7 +125,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(Guid id, object requests)
+        public async Task<ResCurrencyRate> GetRatesForSpreadsheetAsync(Guid id, ResCurrencyRateGetRatesForSpreadsheetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: spreadsheet, FILE: res_currency_rate.py) ---
@@ -211,23 +212,6 @@ namespace Bamboo.Core.Application.Services
         protected async Task<ResCurrencyRate> OnchangeRateWarningInternalAsync()
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_eg_edi_eta, FILE: res_currency_rate.py) ---
-            // def _onchange_rate_warning(self):
-            // # We send the ETA a rate that is 5 decimal accuracy, so to ensure consistency, Odoo should also operate with 5 decimal accuracy rate
-            // if (
-            //     self.company_id.account_fiscal_country_id.code == 'EG' and
-            //     float_compare(self.inverse_company_rate, round(self.inverse_company_rate, 5), precision_digits=10) != 0
-            //     ):
-            //     return {
-            //         'warning': {
-            //             'title': _("Warning for %s", self.currency_id.name),
-            //             'message': _(
-            //                 "Please make sure that the EGP per unit is within 5 decimal accuracy.\n"
-            //                 "Higher decimal accuracy might lead to inconsistency with the ETA invoicing portal!"
-            //             )
-            //         }
-            //     }
-            // return super()._onchange_rate_warning()
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def _onchange_rate_warning(self):
             // latest_rate = self._get_latest_rate()

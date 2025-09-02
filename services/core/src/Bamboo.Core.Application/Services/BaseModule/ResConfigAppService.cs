@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Domain.Shared.Attributes;
@@ -43,7 +44,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfig> CancelAsync1(Guid id)
+        public async Task<ResConfig> ActionCancelAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -99,7 +100,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfig> NextAsync1(Guid id)
+        public async Task<ResConfig> ActionNextAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---

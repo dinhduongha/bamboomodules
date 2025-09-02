@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -830,7 +831,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> FetchAsync(Guid id, object field_names)
+        public async Task<HrEmployee> FetchAsync(Guid id, HrEmployeeFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -861,7 +862,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrEmployee> GenerateWorkEntriesAsync(Guid id, object date_start, object date_stop, object force)
+        public async Task<HrEmployee> GenerateWorkEntriesAsync(Guid id, HrEmployeeGenerateWorkEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry_contract, FILE: hr_employee.py) ---
@@ -1175,7 +1176,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetFormviewActionAsync(Guid id, object access_uid)
+        public async Task<HrEmployee> GetFormviewActionAsync(Guid id, HrEmployeeGetFormviewActionRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1194,7 +1195,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrEmployee> GetFormviewIdAsync(Guid id, object access_uid)
+        public async Task<HrEmployee> GetFormviewIdAsync(Guid id, HrEmployeeGetFormviewIdRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1249,7 +1250,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetMandatoryDaysAsync(Guid id, object start_date, object end_date)
+        public async Task<HrEmployee> GetMandatoryDaysAsync(Guid id, HrEmployeeGetMandatoryDaysRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -1269,7 +1270,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrEmployee> GetMandatoryDaysDataAsync(Guid id, object date_start, object date_end)
+        public async Task<HrEmployee> GetMandatoryDaysDataAsync(Guid id, HrEmployeeGetMandatoryDaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -1347,7 +1348,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetPublicHolidaysDataAsync(Guid id, object date_start, object date_end)
+        public async Task<HrEmployee> GetPublicHolidaysDataAsync(Guid id, HrEmployeeGetPublicHolidaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -1403,7 +1404,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetSpecialDaysDataAsync(Guid id, object date_start, object date_end)
+        public async Task<HrEmployee> GetSpecialDaysDataAsync(Guid id, HrEmployeeGetSpecialDaysDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: hr_employee.py) ---
@@ -1501,7 +1502,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> GetViewAsync(Guid id, Guid view_id, object view_type)
+        public async Task<HrEmployee> GetViewAsync(Guid id, HrEmployeeGetViewRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1513,7 +1514,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrEmployee> GetViewsAsync(Guid id, object views, object options)
+        public async Task<HrEmployee> GetViewsAsync(Guid id, HrEmployeeGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---
@@ -1806,7 +1807,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<HrEmployee> OpenWorkEntriesAsync(Guid id, object initial_date)
+        public async Task<HrEmployee> OpenWorkEntriesAsync(Guid id, HrEmployeeOpenWorkEntriesRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr_work_entry, FILE: hr_employee.py) ---
@@ -1898,7 +1899,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<HrEmployee> SearchFetchAsync(Guid id, object domain, object field_names, object offset, object limit, object order)
+        public async Task<HrEmployee> SearchFetchAsync(Guid id, HrEmployeeSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: hr, FILE: hr_employee.py) ---

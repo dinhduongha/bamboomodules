@@ -1,8 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Bamboo.Core.Application.Contracts.DTOs;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using Bamboo.Core.Application.Contracts.DTOs;
+using System.Threading.Tasks;
+using System;
+using Bamboo.Core.Models;
 namespace Bamboo.Core.HttpApi.Controllers.Account
 {
     public partial class AccountCashRoundingController
@@ -12,7 +13,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/compute-difference")]
         public async Task<IActionResult> ComputeDifferenceAsync(Guid id, [FromBody] AccountCashRoundingComputeDifferenceRequestDto input)
         {
-            var result = await _appService.ComputeDifferenceAsync(id, input.Currency, input.Amount);
+            var result = await _appService.ComputeDifferenceAsync(id, input);
             return Ok(result);
         }
         
@@ -20,7 +21,7 @@ namespace Bamboo.Core.HttpApi.Controllers.Account
         [Route("{id}/round")]
         public async Task<IActionResult> RoundAsync(Guid id, [FromBody] AccountCashRoundingRoundRequestDto input)
         {
-            var result = await _appService.RoundAsync(id, input.Amount);
+            var result = await _appService.RoundAsync(id, input);
             return Ok(result);
         }
         

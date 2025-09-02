@@ -1,3 +1,4 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Services.Commons;
@@ -299,16 +300,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountMoveLine> ApplyRetentionTaxFilterInternalAsync(object tax_values)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _apply_retention_tax_filter(self, tax_values):
-            // return not tax_values['tax_id'].l10n_sa_is_retention
-            */
-            return default;
-        }
-
         public async Task<AccountMoveLine> AssetCreateAsync(Guid id)
         {
             /*
@@ -344,37 +335,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<AccountMoveLine> AutoInitInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _auto_init(self):
-            // """
-            // Create all compute-stored fields here to avoid MemoryError when initializing on large databases.
-            // """
-            // for column_name, column_type in (
-            //     ('l10n_gr_edi_detail_type', 'varchar'),
-            //     ('l10n_gr_edi_cls_category', 'varchar'),
-            //     ('l10n_gr_edi_cls_type', 'varchar'),
-            //     ('l10n_gr_edi_cls_vat', 'varchar'),
-            //     ('l10n_gr_edi_tax_exemption_category', 'varchar'),
-            // ):
-            //     if not column_exists(self.env.cr, 'account_move_line', column_name):
-            //         create_column(self.env.cr, 'account_move_line', column_name, column_type)
-            // 
-            // return super()._auto_init()
-            --- ODOO METHOD SOURCE (MODULE: l10n_latam_invoice_document, FILE: account_move_line.py) ---
-            // def _auto_init(self):
-            // # Skip the computation of the field `l10n_latam_document_type_id` at the module installation
-            // # See `_auto_init` in `l10n_latam_invoice_document/models/account_move.py` for more information
-            // if not column_exists(self.env.cr, "account_move_line", "l10n_latam_document_type_id"):
-            //     create_column(self.env.cr, "account_move_line", "l10n_latam_document_type_id", "int4")
-            // return super()._auto_init()
-            */
-            return default;
-        }
-
-        public async Task<AccountMoveLine> AutomaticEntryAsync(Guid id, object default_action)
+        public async Task<AccountMoveLine> AutomaticEntryAsync(Guid id, AccountMoveLineAutomaticEntryRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -709,19 +670,6 @@ namespace Bamboo.Core.Application.Services
             //             line.account_id = previous_two_accounts
             //         else:
             //             line.account_id = line.move_id.journal_id.default_account_id
-            --- ODOO METHOD SOURCE (MODULE: l10n_tr, FILE: account_move_line.py) ---
-            // def _compute_account_id(self):
-            // # OVERRIDE
-            // super()._compute_account_id()
-            // 
-            // for line in self.filtered(lambda l: l.company_id.country_code == 'TR'
-            //                           and l.move_id.move_type == 'out_refund'
-            //                           and l.display_type == 'product'
-            //                           ):
-            //     if (product := line.product_id) and product.with_company(line.company_id).l10n_tr_default_sales_return_account_id:
-            //         line.account_id = product.with_company(line.company_id).l10n_tr_default_sales_return_account_id
-            //     elif (journal := line.move_id.journal_id) and journal.l10n_tr_default_sales_return_account_id:
-            //         line.account_id = journal.l10n_tr_default_sales_return_account_id
             --- ODOO METHOD SOURCE (MODULE: stock_account, FILE: account_move.py) ---
             // def _compute_account_id(self):
             // super()._compute_account_id()
@@ -1186,188 +1134,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountMoveLine> ComputeL10nGccLineNameInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _compute_l10n_gcc_line_name(self):
-            // def lang_product_name(line, lang):
-            //     return line.with_context(lang=lang).product_id.display_name
-            // for line in self:
-            //     if line.product_id and line.name in [lang_product_name(line, lang) for lang in ('ar_001', 'en_US')]:
-            //         line.l10n_gcc_line_name = lang_product_name(line, line.move_id.partner_id.lang)
-            //     else:
-            //         line.l10n_gcc_line_name = line.name
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiAvailableClsCategoryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_available_cls_category(self):
-            // for line in self:
-            //     inv_type = line.move_id.l10n_gr_edi_inv_type
-            // 
-            //     # we need inv_type to calculate available_cls_category
-            //     if not inv_type or (
-            //             inv_type
-            //             and CLASSIFICATION_MAP[inv_type] == 'associate'
-            //             and not line.move_id.l10n_gr_edi_correlation_id
-            //     ):  # associate inv_type must have a correlation_id, otherwise inv_type is considered empty
-            //         line.l10n_gr_edi_available_cls_category = False
-            //         continue
-            // 
-            //     if CLASSIFICATION_MAP[inv_type] == 'associate':
-            //         inv_type = line.move_id.l10n_gr_edi_correlation_id.l10n_gr_edi_inv_type
-            // 
-            //     is_income = (
-            //         line.move_type in ('out_invoice', 'out_refund')
-            //         and inv_type not in TYPES_WITH_SEND_EXPENSE
-            //         and (not line.l10n_gr_edi_detail_type or line.l10n_gr_edi_detail_type == '2')
-            //     )
-            // 
-            //     line.l10n_gr_edi_available_cls_category = self.env['l10n_gr_edi.preferred_classification']._get_l10n_gr_edi_available_cls_category(
-            //         inv_type=inv_type, category_type='1' if is_income else '2')
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiAvailableClsTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_available_cls_type(self):
-            // for line in self:
-            //     inv_type = line.move_id.l10n_gr_edi_inv_type
-            //     cls_category = line.l10n_gr_edi_cls_category
-            // 
-            //     if inv_type and CLASSIFICATION_MAP[inv_type] == 'associate' and line.move_id.l10n_gr_edi_correlation_id:
-            //         inv_type = line.move_id.l10n_gr_edi_correlation_id.l10n_gr_edi_inv_type
-            // 
-            //     if cls_category:
-            //         line.l10n_gr_edi_available_cls_type = self.env['l10n_gr_edi.preferred_classification']._get_l10n_gr_edi_available_cls_type(inv_type, cls_category)
-            //         line.l10n_gr_edi_available_cls_vat = self.env['l10n_gr_edi.preferred_classification']._get_l10n_gr_edi_available_cls_vat(inv_type, cls_category)
-            //     else:
-            //         line.l10n_gr_edi_available_cls_type = False
-            //         line.l10n_gr_edi_available_cls_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiClsCategoryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_cls_category(self):
-            // for line in self:
-            //     if not line.l10n_gr_edi_available_cls_category:
-            //         line.l10n_gr_edi_cls_category = False
-            //     elif preferred_id := line._l10n_gr_edi_get_preferred_classification_id():
-            //         line.l10n_gr_edi_cls_category = preferred_id.l10n_gr_edi_cls_category
-            //     elif line.l10n_gr_edi_cls_category and line.l10n_gr_edi_cls_category in line.l10n_gr_edi_available_cls_category:
-            //         line.l10n_gr_edi_cls_category = line.l10n_gr_edi_cls_category
-            //     else:
-            //         line.l10n_gr_edi_cls_category = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiClsTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_cls_type(self):
-            // for line in self:
-            //     if not line.l10n_gr_edi_available_cls_type:
-            //         line.l10n_gr_edi_cls_type = False
-            //     elif preferred_id := line._l10n_gr_edi_get_preferred_classification_id(with_category=True):
-            //         line.l10n_gr_edi_cls_type = preferred_id.l10n_gr_edi_cls_type
-            //     elif line.l10n_gr_edi_cls_type and line.l10n_gr_edi_cls_type in line.l10n_gr_edi_available_cls_type:
-            //         line.l10n_gr_edi_cls_type = line.l10n_gr_edi_cls_type
-            //     else:
-            //         line.l10n_gr_edi_cls_type = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiClsVatInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_cls_vat(self):
-            // self.l10n_gr_edi_cls_vat = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiDetailTypeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_detail_type(self):
-            // self.l10n_gr_edi_detail_type = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiNeedExemptionCategoryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_need_exemption_category(self):
-            // for line in self:
-            //     taxes = line.tax_ids.flatten_taxes_hierarchy()
-            //     line.l10n_gr_edi_need_exemption_category = len(taxes) == 1 and taxes.amount == 0
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nGrEdiTaxExemptionCategoryInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _compute_l10n_gr_edi_tax_exemption_category(self):
-            // for line in self:
-            //     taxes = line.tax_ids.flatten_taxes_hierarchy()
-            //     if line.move_id.country_code == 'GR' and len(taxes) == 1 and taxes.amount == 0:
-            //         if line.l10n_gr_edi_tax_exemption_category:
-            //             line.l10n_gr_edi_tax_exemption_category = line.l10n_gr_edi_tax_exemption_category
-            //         else:
-            //             line.l10n_gr_edi_tax_exemption_category = taxes.l10n_gr_edi_default_tax_exemption_category or '1'
-            //     else:
-            //         line.l10n_gr_edi_tax_exemption_category = False
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nInHsnCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in, FILE: account_move_line.py) ---
-            // def _compute_l10n_in_hsn_code(self):
-            // for line in self:
-            //     if line.move_id.country_code == 'IN' and line.parent_state == 'draft':
-            //         line.l10n_in_hsn_code = line.product_id.l10n_in_hsn_code
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeL10nMyEdiClassificationCodeInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_my_edi_extended, FILE: account_move_line.py) ---
-            // def _compute_l10n_my_edi_classification_code(self):
-            // """ Default to the product classification if any """
-            // for line in self:
-            //     # We don't want to automatically update it on invoices that were sent to MyInvois
-            //     if not line.move_id.l10n_my_edi_external_uuid:
-            //         line.l10n_my_edi_classification_code = line.product_id.product_tmpl_id.l10n_my_edi_classification_code or line.l10n_my_edi_classification_code
-            */
-            return default;
-        }
-
         protected async Task<AccountMoveLine> ComputeNameInternalAsync()
         {
             /*
@@ -1538,35 +1304,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountMoveLine> ComputeTaxAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gcc_invoice, FILE: account_move.py) ---
-            // def _compute_tax_amount(self):
-            // for record in self:
-            //     record.l10n_gcc_invoice_tax_amount = record.price_total - record.price_subtotal
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _compute_tax_amount(self):
-            // super()._compute_tax_amount()
-            // AccountTax = self.env['account.tax']
-            // for line in self:
-            //     if (
-            //         line.move_id.country_code == 'SA'
-            //         and line.move_id.is_invoice(include_receipts=True)
-            //         and line.display_type == 'product'
-            //     ):
-            //         base_line = line.move_id._prepare_product_base_line_for_taxes_computation(line)
-            //         AccountTax._add_tax_details_in_base_line(base_line, line.company_id)
-            //         AccountTax._round_base_lines_tax_details([base_line], line.company_id)
-            //         line.l10n_gcc_invoice_tax_amount = sum(
-            //             tax_data['tax_amount_currency']
-            //             for tax_data in base_line['tax_details']['taxes_data']
-            //             if not tax_data['tax'].l10n_sa_is_retention
-            //         )
-            */
-            return default;
-        }
-
         protected async Task<AccountMoveLine> ComputeTaxIdsInternalAsync()
         {
             /*
@@ -1655,31 +1392,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<AccountMoveLine> ComputeVatAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ae, FILE: account_move_line.py) ---
-            // def _compute_vat_amount(self):
-            // for record in self:
-            //     record.l10n_ae_vat_amount = record.price_total - record.price_subtotal
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> ComputeWithholdTaxAmountInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_in_withholding, FILE: account_move_line.py) ---
-            // def _compute_withhold_tax_amount(self):
-            // # Compute the withhold tax amount for the withholding lines
-            // withholding_lines = self.filtered('move_id.l10n_in_is_withholding')
-            // (self - withholding_lines).l10n_in_withhold_tax_amount = False
-            // for line in withholding_lines:
-            //     line.l10n_in_withhold_tax_amount = line.currency_id.round(abs(line.price_total - line.price_subtotal))
-            */
-            return default;
-        }
-
         protected async Task<AccountMoveLine> ConditionalAddToComputeInternalAsync(object fname, object condition)
         {
             /*
@@ -1721,7 +1433,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> CopyDataAsync(Guid id, object @default)
+        public async Task<AccountMoveLine> CopyDataAsync(Guid id, AccountMoveLineCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2062,7 +1774,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> FlushModelAsync(Guid id, object fnames)
+        public async Task<AccountMoveLine> FlushModelAsync(Guid id, AccountMoveLineFlushModelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2072,7 +1784,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountMoveLine> FlushRecordsetAsync(Guid id, object fnames)
+        public async Task<AccountMoveLine> FlushRecordsetAsync(Guid id, AccountMoveLineFlushRecordsetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -2505,7 +2217,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetInvoiceLineAccountAsync(Guid id, object type, object product, object fpos, object company)
+        public async Task<AccountMoveLine> GetInvoiceLineAccountAsync(Guid id, AccountMoveLineGetInvoiceLineAccountRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: om_account_asset, FILE: account_move.py) ---
@@ -3231,13 +2943,6 @@ namespace Bamboo.Core.Application.Services
             // def _get_rate_date(self):
             // self.ensure_one()
             // return self.move_id.invoice_date or self.move_id.date or fields.Date.context_today(self)
-            --- ODOO METHOD SOURCE (MODULE: l10n_cz, FILE: account_move_line.py) ---
-            // def _get_rate_date(self):
-            // # EXTENDS 'account'
-            // self.ensure_one()
-            // if self.move_id.country_code == 'CZ':
-            //     return self.move_id.taxable_supply_date or self.move_id.date or fields.Date.context_today(self)
-            // return super()._get_rate_date()
             */
             return default;
         }
@@ -3417,7 +3122,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> GetViewsAsync(Guid id, object views, object options)
+        public async Task<AccountMoveLine> GetViewsAsync(Guid id, AccountMoveLineGetViewsRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3461,7 +3166,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountMoveLine> InvalidateModelAsync(Guid id, object fnames, object flush)
+        public async Task<AccountMoveLine> InvalidateModelAsync(Guid id, AccountMoveLineInvalidateModelRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3478,7 +3183,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<AccountMoveLine> InvalidateRecordsetAsync(Guid id, object fnames, object flush)
+        public async Task<AccountMoveLine> InvalidateRecordsetAsync(Guid id, AccountMoveLineInvalidateRecordsetRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -3602,326 +3307,6 @@ namespace Bamboo.Core.Application.Services
             //             rec.asset_category_id = rec.product_id.product_tmpl_id.deferred_revenue_category_id.id
             //         elif rec.move_id.move_type == 'in_invoice':
             //             rec.asset_category_id = rec.product_id.product_tmpl_id.asset_category_id.id
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> IsGlobalDiscountLineInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_sa_edi, FILE: account_move.py) ---
-            // def _is_global_discount_line(self):
-            // """
-            //     Any line that has a negative amount and is not linked to a down-payment is considered as a
-            //     global discount line. These can be created either manually, or through a promotions program.
-            // """
-            // self.ensure_one()
-            // return not self._get_downpayment_lines() and self.price_subtotal < 0
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nArPricesAndTaxesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_ar, FILE: account_move_line.py) ---
-            // def _l10n_ar_prices_and_taxes(self):
-            // self.ensure_one()
-            // invoice = self.move_id
-            // include_vat = invoice._l10n_ar_include_vat()
-            // 
-            // AccountTax = self.env['account.tax']
-            // base_line = invoice._prepare_product_base_line_for_taxes_computation(self)
-            // if include_vat:
-            //     base_line['tax_ids'] = self.tax_ids.filtered('tax_group_id.l10n_ar_vat_afip_code')
-            // AccountTax._add_tax_details_in_base_line(base_line, self.company_id, rounding_method='round_globally')
-            // 
-            // tax_details = base_line['tax_details']
-            // discount = base_line['discount']
-            // price_unit = base_line['price_unit']
-            // quantity = base_line['quantity']
-            // if include_vat:
-            //     raw_total = tax_details['raw_total_included_currency']
-            // else:
-            //     raw_total = tax_details['raw_total_excluded_currency']
-            // 
-            // if discount == 100.0:
-            //     price_subtotal_before_discount = price_unit * quantity
-            // else:
-            //     price_subtotal_before_discount = raw_total / (1 - discount / 100.0)
-            // 
-            // if quantity:
-            //     price_unit = price_subtotal_before_discount / quantity
-            //     price_net = raw_total / quantity
-            // else:
-            //     price_unit = 0.0
-            //     price_net = 0.0
-            // 
-            // return {
-            //     'price_unit': price_unit,
-            //     'price_subtotal': invoice.currency_id.round(raw_total),
-            //     'price_net': price_net,
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nClGetLineAmountsInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move_line.py) ---
-            // def _l10n_cl_get_line_amounts(self):
-            // """
-            // This method is used to calculate the amount and taxes of the lines required in the Chilean localization
-            // electronic documents.
-            // """
-            // # If in this fix we should check for boletas, we have the following cases, and how this affects the xml
-            // # for facturas and boletas:
-            // 
-            // # 1. local invoice in same currency tax not included in price
-            // # 2. local invoice in same currency tax included in price (there is difference of -1 peso in amount_untaxed
-            // # and +1 peso in vat tax amount. The lines are OK
-            // # 3. local invoice in different currency tax not included in price
-            // # 4. local invoice in different currency tax include in price -> this is the most problematic case because
-            // # 5. foreign invoice in different currency (without tax)
-            // if self.display_type != 'product':
-            //     return {
-            //         'price_subtotal': 0,
-            //     }
-            // line_sign = self.price_subtotal / abs(self.price_subtotal) if self.price_subtotal else 0
-            // domestic_invoice_other_currency = self.move_id.currency_id != self.move_id.company_id.currency_id and not \
-            //     self.move_id.l10n_latam_document_type_id._is_doc_type_export()
-            // export = self.move_id.l10n_latam_document_type_id._is_doc_type_export()
-            // if not export:
-            //     # This is to manage case 1, 2, 3 and 4
-            //     # cases 1 and 2: domestic invoice in same currency and cases 3 and 4 with other currency
-            //     main_currency = self.move_id.company_id.currency_id
-            //     main_currency_field = 'balance'
-            //     second_currency_field = 'price_subtotal'
-            //     second_currency = self.currency_id
-            //     main_currency_rate = 1
-            //     second_currency_rate = 1 / self.move_id.invoice_currency_rate if self.move_id.invoice_currency_rate else 1
-            //     inverse_rate = second_currency_rate if domestic_invoice_other_currency else main_currency_rate
-            // else:
-            //     # This is to manage case 5 (export docs)
-            //     main_currency = self.currency_id
-            //     second_currency = self.move_id.company_id.currency_id
-            //     main_currency_field = 'price_subtotal'
-            //     second_currency_field = 'balance'
-            //     inverse_rate = 1 / self.move_id.invoice_currency_rate if self.move_id.invoice_currency_rate else 1
-            // price_subtotal = abs(self[main_currency_field]) * line_sign
-            // if self.quantity and self.discount != 100.0:
-            //     price_unit = (price_subtotal / abs(self.quantity)) / (1 - self.discount / 100)
-            //     if self.move_id.l10n_latam_document_type_id._is_doc_type_electronic_ticket():
-            //         price_item_document = (self.price_total / abs(self.quantity)) / (1 - self.discount / 100)
-            //         price_line_document = self.price_total
-            //     else:
-            //         price_item_document = price_unit
-            //         price_line_document = price_subtotal
-            // else:
-            //     price_item_document = price_line_document = 0.0
-            //     price_unit = self.price_unit
-            // 
-            // if self.discount == 100:
-            //     price_before_discount = price_unit * self.quantity
-            // else:
-            //     price_before_discount = price_subtotal / (1 - self.discount / 100)
-            // discount_amount = price_before_discount * self.discount / 100
-            // values = {
-            //     'decimal_places': main_currency.decimal_places,
-            //     'price_item': round(price_unit, 6),
-            //     'price_item_document': round(price_item_document, 2),
-            //     'price_line_document': price_line_document,
-            //     'total_discount': main_currency.round(discount_amount),
-            //     'price_subtotal': main_currency.round(price_subtotal),
-            //     'exempt': bool(not self.tax_ids),
-            //     'main_currency': main_currency,
-            // }
-            // if domestic_invoice_other_currency or export:
-            //     price_subtotal_second = abs(self[second_currency_field]) * line_sign
-            //     if self.quantity and self.discount != 100.0:
-            //         price_unit_second = (price_subtotal_second / abs(self.quantity)) / (1 - self.discount / 100)
-            //     else:
-            //         price_unit_second = self.price_unit
-            //     discount_amount_second = price_unit_second * self.quantity - price_subtotal_second
-            //     values['second_currency'] = {
-            //         'price': second_currency.round(price_unit_second),
-            //         'currency_name': self.move_id._format_length(second_currency.name, 3),
-            //         'conversion_rate': round(inverse_rate, 4),
-            //         'amount_discount': second_currency.round(discount_amount_second),
-            //         'total_amount': second_currency.round(price_subtotal_second),
-            //         'round_currency': second_currency.decimal_places,
-            //     }
-            // 
-            // values['line_description'] = '%s (%s: %s @ %s)' % (
-            //     self.name,
-            //     values['second_currency']['currency_name'],
-            //     float_repr(values['second_currency']['price'], values['second_currency']['round_currency']),
-            //     self.move_id._float_repr_float_round(values['second_currency']['conversion_rate'], values['second_currency']['round_currency']),
-            // ) if values.get('second_currency') and not self.l10n_latam_document_type_id._is_doc_type_export() else self.name
-            // return values
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nClPricesAndTaxesInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_cl, FILE: account_move_line.py) ---
-            // def _l10n_cl_prices_and_taxes(self):
-            // """ this method is preserved here to allow compatibility with old templates,
-            // Nevertheless it will be deprecated in future versions, since it had been replaced by
-            // the method _l10n_cl_get_line_amounts, which is the same method used to calculate
-            // the values for the XML (DTE) file
-            // """
-            // self.ensure_one()
-            // invoice = self.move_id
-            // included_taxes = self.tax_ids.filtered(lambda x: x.l10n_cl_sii_code == 14) if self.move_id._l10n_cl_include_sii() else self.tax_ids
-            // if not included_taxes:
-            //     price_unit = self.tax_ids.compute_all(
-            //         self.price_unit,
-            //         currency=invoice.currency_id,
-            //         product=self.product_id,
-            //         partner=invoice.partner_id,
-            //         rounding_method='round_globally',
-            //     )
-            //     price_unit = price_unit['total_excluded']
-            //     price_subtotal = self.price_subtotal
-            // else:
-            //     price_unit = included_taxes.compute_all(
-            //         self.price_unit, invoice.currency_id, 1.0, self.product_id, invoice.partner_id)['total_included']
-            //     price = self.price_unit * (1 - (self.discount or 0.0) / 100.0)
-            //     price_subtotal = included_taxes.compute_all(
-            //         price, invoice.currency_id, self.quantity, self.product_id, invoice.partner_id)['total_included']
-            // price_net = price_unit * (1 - (self.discount or 0.0) / 100.0)
-            // return {
-            //     'price_unit': price_unit,
-            //     'price_subtotal': price_subtotal,
-            //     'price_net': price_net
-            // }
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nEsTbaiIsIgnoredInternalAsync()
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_es_edi_tbai, FILE: account_move_line.py) ---
-            // def _l10n_es_tbai_is_ignored(self):
-            // self.ensure_one()
-            // 
-            // return 'ignore' in self.tax_ids.mapped('l10n_es_type')
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nGrEdiGetPreferredClassificationIdInternalAsync(object with_category)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_gr_edi, FILE: account_move_line.py) ---
-            // def _l10n_gr_edi_get_preferred_classification_id(self, with_category=False):
-            // self.ensure_one()
-            // if with_category:  # for _compute_l10n_gr_edi_cls_type
-            //     domain = [
-            //         ('l10n_gr_edi_inv_type', '=', self.move_id.l10n_gr_edi_inv_type),
-            //         ('l10n_gr_edi_cls_category', '=', self.l10n_gr_edi_cls_category),
-            //         ('l10n_gr_edi_cls_type', 'in', self.l10n_gr_edi_available_cls_type.split(',')),
-            //     ]
-            // else:  # for _compute_l10n_gr_edi_cls_category
-            //     domain = [
-            //         ('l10n_gr_edi_inv_type', '=', self.move_id.l10n_gr_edi_inv_type),
-            //         ('l10n_gr_edi_cls_category', 'in', self.l10n_gr_edi_available_cls_category.split(',')),
-            //     ]
-            // 
-            // preferred_id = self.env['l10n_gr_edi.preferred_classification']
-            // # Try to get from the move's fiscal position first
-            // if self.move_id.fiscal_position_id:
-            //     preferred_id = self.move_id.fiscal_position_id.l10n_gr_edi_preferred_classification_ids.filtered_domain(domain)[:1]
-            // # If nothing is found, try to get preferred classification from the line's product
-            // if not preferred_id and self.product_id:
-            //     preferred_id = self.product_id.product_tmpl_id.l10n_gr_edi_preferred_classification_ids.filtered_domain(domain)[:1]
-            // 
-            // # If by the end nothing is still found, set the default preferred classification as [ 1.1 inv-type | 1.2 category | E3_561_007 type ]
-            // if not preferred_id:
-            //     preferred_id = self.env.ref('l10n_gr_edi.default_preferred_classification', raise_if_not_found=False)
-            // if not preferred_id:
-            //     preferred_id = self.env['l10n_gr_edi.preferred_classification'].create([{
-            //         'l10n_gr_edi_inv_type': '1.1',
-            //         'l10n_gr_edi_cls_category': 'category1_2',
-            //         'l10n_gr_edi_cls_type': 'E3_561_007',
-            //     }])
-            //     # Save the newly made preferred cls so that we don't have to create a new one everytime.
-            //     self.env['ir.model.data'].create([{
-            //         'name': 'default_preferred_classification',
-            //         'module': 'l10n_gr_edi',
-            //         'model': 'l10n_gr_edi.preferred_classification',
-            //         'res_id': preferred_id.id,
-            //         'noupdate': True,
-            //     }])
-            // 
-            // return preferred_id
-            */
-            return default;
-        }
-
-        protected async Task<AccountMoveLine> L10nIdCoretaxBuildInvoiceLineValsInternalAsync(object vals)
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: l10n_id_efaktur_coretax, FILE: account_move_line.py) ---
-            // def _l10n_id_coretax_build_invoice_line_vals(self, vals):
-            // """ Fill in the vals['lines'] with some information regarding each invoice line"""
-            // self.ensure_one()
-            // idr = self.env.ref('base.IDR')
-            // 
-            // # initialize
-            // if not vals.get('lines'):
-            //     vals['lines'] = []
-            // 
-            // product = self.product_id
-            // 
-            // # Separate tax into the regular and luxury component
-            // ChartTemplate = self.env['account.chart.template'].with_company(self.company_id)
-            // luxury_tax_group = ChartTemplate.ref('l10n_id_tax_group_luxury_goods', raise_if_not_found=False)
-            // luxury_tax = self.tax_ids.filtered(lambda tax: tax.tax_group_id == luxury_tax_group)
-            // regular_tax = self.tax_ids - luxury_tax
-            // 
-            // # "Price" is unit price calculation excluding tax and discount
-            // # "TotalDiscount" is total of "Price" * quantity * discount
-            // tax_res = self.tax_ids.compute_all(self.price_unit, quantity=1, currency=self.currency_id, product=self.product_id, partner=self.partner_id, is_refund=self.is_refund)
-            // 
-            // line_val = {
-            //     "Opt": "B" if product.type == "service" else "A",  # A: goods, B: service
-            //     "Code": product.l10n_id_product_code.code or self.env.ref('l10n_id_efaktur_coretax.product_code_000000_goods').code,
-            //     "Name": product.name,
-            //     "Unit": self.product_uom_id.l10n_id_uom_code.code,
-            //     "Price": idr.round(tax_res['total_excluded']),
-            //     "Qty": self.quantity,
-            //     "TotalDiscount": idr.round(self.discount * tax_res['total_excluded'] * self.quantity / 100),
-            //     "TaxBase": idr.round(self.price_subtotal),  # DPP
-            //     "VATRate": 12,
-            //     "STLGRate": luxury_tax.amount if luxury_tax else 0.0,
-            // }
-            // 
-            // # Code 04 represents "Using other value as tax base". This code is now the norm
-            // # being used if user is selling non-luxury item where we have to multiply original price
-            // # by ratio of 11/12 and having VATRate of 12 resulting to effectively 11% tax.
-            // if self.move_id.l10n_id_kode_transaksi == "04":
-            //     line_val['VATRate'] = 12
-            //     line_val['OtherTaxBase'] = idr.round(self.price_subtotal * 11 / 12)
-            // # For all other code, OtherTaxBase will follow TaxBase and calculation of VAT should follow the amount of tax itself
-            // else:
-            //     line_val['VATRate'] = regular_tax.amount
-            //     line_val['OtherTaxBase'] = line_val['TaxBase']
-            // 
-            // line_val['VAT'] = idr.round(line_val['OtherTaxBase'] * line_val['VATRate'] / 100)
-            // line_val['STLG'] = idr.round(line_val['STLGRate'] * line_val['OtherTaxBase'] / 100)
-            // 
-            // # for numerical attributes in line_val, use float_repr to ensure proper formatting
-            // numerical_fields = ['Price', 'TotalDiscount', 'TaxBase', 'OtherTaxBase', 'VAT', 'STLG']
-            // for field in numerical_fields:
-            //     line_val[field] = float_repr(line_val[field], precision_digits=self.currency_id.decimal_places)
-            // 
-            // vals['lines'].append(line_val)
             */
             return default;
         }
@@ -5464,7 +4849,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> RegisterPaymentAsync(Guid id, object ctx)
+        public async Task<AccountMoveLine> RegisterPaymentAsync(Guid id, AccountMoveLineRegisterPaymentRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---
@@ -5876,7 +5261,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<AccountMoveLine> SearchFetchAsync(Guid id, object domain, object field_names, object offset, object limit, object order)
+        public async Task<AccountMoveLine> SearchFetchAsync(Guid id, AccountMoveLineSearchFetchRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_move_line.py) ---

@@ -1,6 +1,8 @@
+using Bamboo.Core.Application.Contracts.DTOs;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,10 +15,705 @@ namespace Bamboo.Core.Application.Services.Mixins
     [Module("mail", Depends = new[] { "base", "base_setup", "bus", "web_tour", "html_editor" })]
     public class MailTrackingDurationMixinAppService : ApplicationService, IMailTrackingDurationMixinAppService
     {
-
-        public MailTrackingDurationMixinAppService() 
+        private readonly IServiceProvider _serviceProvider;
+        public MailTrackingDurationMixinAppService(IServiceProvider serviceProvider) 
         {
+            _serviceProvider = serviceProvider;
+        }
 
+        public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_archive(self):
+            // child_tasks = self.child_ids.filtered(lambda child_task: not child_task.display_in_project)
+            // if child_tasks:
+            //     child_tasks.action_archive()
+            // self.filtered(lambda t: not t.display_in_project and t.parent_id).display_in_project = True
+            // return super().action_archive()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_convert_to_subtask(self):
+            // self.ensure_one()
+            // if self.project_id:
+            //     return {
+            //         'name': _('Convert to Task/Sub-Task'),
+            //         'type': 'ir.actions.act_window',
+            //         'res_model': 'project.task',
+            //         'res_id': self.id,
+            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
+            //         'target': 'new',
+            //     }
+            // return {
+            //     'type': 'ir.actions.client',
+            //     'tag': 'display_notification',
+            //     'params': {
+            //         'type': 'danger',
+            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionCreateMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_create_meeting(self):
+            // """ This opens Meeting's calendar view to schedule meeting on current applicant
+            //     @return: Dictionary value for created Meeting view
+            // """
+            // self.ensure_one()
+            // if not self.partner_id:
+            //     if not self.partner_name:
+            //         raise UserError(_('You must define a Contact Name for this applicant.'))
+            //     self.partner_id = self.env['res.partner'].create({
+            //         'is_company': False,
+            //         'name': self.partner_name,
+            //         'email': self.email_from,
+            //     })
+            // 
+            // partners = self.partner_id | self.department_id.manager_id.user_id.partner_id
+            // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
+            //     partners |= self.env.user.partner_id
+            // else:
+            //     partners |= self.user_id.partner_id
+            // 
+            // res = self.env['ir.actions.act_window']._for_xml_id('calendar.action_calendar_event')
+            // # As we are redirected from the hr.applicant, calendar checks rules on "hr.applicant",
+            // # in order to decide whether to allow creation of a meeting.
+            // # As interviewer does not have create right on the hr.applicant, in order to allow them
+            // # to create a meeting for an applicant, we pass 'create': True to the context.
+            // res['context'] = {
+            //     'create': True,
+            //     'default_applicant_id': self.id,
+            //     'default_candidate_id': self.candidate_id.id,
+            //     'default_partner_ids': partners.ids,
+            //     'default_user_id': self.env.uid,
+            //     'default_name': self.partner_name,
+            //     'attachment_ids': self.attachment_ids.ids
+            // }
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionDependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_dependent_tasks(self):
+            // self.ensure_one()
+            // return {
+            //     'res_model': 'project.task',
+            //     'type': 'ir.actions.act_window',
+            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
+            //     'domain': [('depend_on_ids', '=', self.id)],
+            //     'name': _('Dependent Tasks'),
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionGetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_get_list_view(self):
+            // self.ensure_one()
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'name': _("%(name)s's Milestones", name=self.name),
+            //     'domain': [('project_id', '=', self.id)],
+            //     'res_model': 'project.milestone',
+            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
+            //     'view_mode': 'list',
+            //     'help': _("""
+            //         <p class="o_view_nocontent_smiling_face">
+            //             No milestones found. Let's create one!
+            //         </p><p>
+            //             Track major progress points that must be reached to achieve success.
+            //         </p>
+            //     """),
+            //     'context': {
+            //         'default_project_id': self.id,
+            //         **self.env.context
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_attachments(self):
+            // return {
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'ir.attachment',
+            //     'name': _('Documents'),
+            //     'context': {
+            //         'default_res_model': 'hr.applicant',
+            //         'default_res_id': self.ids[0],
+            //         'show_partner_name': 1,
+            //     },
+            //     'view_mode': 'list,form',
+            //     'views': [
+            //         (self.env.ref('hr_recruitment.ir_attachment_hr_recruitment_list_view').id, 'list'),
+            //         (False, 'form'),
+            //     ],
+            //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
+            //     'domain': [('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids), ],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenEmployeeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_employee(self):
+            // self.ensure_one()
+            // return self.candidate_id.action_open_employee()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenOtherApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_open_other_applications(self):
+            // self.ensure_one()
+            // similar_candidates = (
+            //     self.env["hr.candidate"]
+            //     .with_context(active_test=False)
+            //     .search(self.candidate_id._get_similar_candidates_domain())
+            //     - self.candidate_id
+            // )
+            // return {
+            //     'name': _('Other Applications'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'hr.applicant',
+            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
+            //     'domain': [('id', 'in', (self.candidate_id.applicant_ids + similar_candidates.applicant_ids).ids)],
+            //     'context': {
+            //         'active_test': False,
+            //         'search_default_stage': 1,
+            //     },
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_parent_task(self):
+            // return {
+            //     'name': _('Parent Task'),
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.parent_id.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_ratings(self):
+            // self.ensure_one()
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
+            // if self.rating_count == 1:
+            //     action['view_mode'] = 'form'
+            //     action['res_id'] = self.rating_ids[0].id
+            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
+            //     return action
+            // else:
+            //     return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_open_share_project_wizard(self):
+            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
+            // 
+            // local_context = self.env.context | {
+            //     'default_template_id': template.id if template else False,
+            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
+            //     'active_id': self.id,
+            //     'active_model': 'project.project',
+            // }
+            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
+            // if self.env.context.get('default_access_mode'):
+            //     action['name'] = _("Share Project")
+            // action['context'] = local_context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_open_task(self):
+            // return {
+            //     'view_mode': 'form',
+            //     'res_model': 'project.task',
+            //     'res_id': self.id,
+            //     'type': 'ir.actions.act_window',
+            //     'context': self._context
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_profitability_items(self, section_name, domain=None, res_id=False):
+            // return {}
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_blocking(self):
+            // self.ensure_one()
+            // blockings = self.dependent_ids
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
+            // if len(blockings) == 1:
+            //     action['view_mode'] = 'form'
+            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //     action['res_id'] = blockings.id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_subtasks(self):
+            // self.ensure_one()
+            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
+            // if subtasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
+            //     if len(subtasks) == 1:
+            //         action['view_mode'] = 'form'
+            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
+            //         action['res_id'] = subtasks.id
+            //     return action
+            // return {
+            //     'name': 'Portal Sub-tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_open_task(self):
+            // action = self.action_open_task()
+            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_recurring_tasks(self):
+            // self.ensure_one()
+            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
+            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
+            // if recurrent_tasks.project_id == self.project_id:
+            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
+            //     action.update({
+            //         'context': {'default_project_id': self.project_id.id},
+            //         'domain': [
+            //             ('project_id', '=', self.project_id.id),
+            //             ('recurrence_id', 'in', self.recurrence_id.ids)
+            //         ]
+            //     })
+            //     return action
+            // # If at least one recurrent task belong to another project, open the portal page
+            // return {
+            //     'name': 'Portal Recurrent Tasks',
+            //     'type': 'ir.actions.act_url',
+            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_project_sharing_view_parent_task(self):
+            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
+            //     project = self.parent_id.project_id._filtered_access('read')
+            //     if project:
+            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
+            //         if project._check_project_sharing_access():
+            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
+            //         return {
+            //             "name": "Portal Parent Task",
+            //             "type": "ir.actions.act_url",
+            //             "url": url,
+            //         }
+            //     elif self.display_parent_task_button:
+            //         return self.parent_id.get_portal_url()
+            //     # The portal user has no access to the parent task, so normally the button should be invisible.
+            //     return {}
+            // action = self.with_context({
+            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
+            // }).action_open_parent_task()
+            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
+            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_project_task_burndown_chart_report(self):
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
+            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'stage_name_and_sequence_per_id': {
+            //         stage.id: {
+            //             'sequence': stage.sequence,
+            //             'name': stage.name
+            //         } for stage in self.type_ids
+            //     }
+            // })
+            // action['context'] = context
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_recurring_tasks(self):
+            // return {
+            //     'name': _('Tasks in Recurrence'),
+            //     'type': 'ir.actions.act_window',
+            //     'res_model': 'project.task',
+            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
+            //     'context': {'create': False},
+            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_redirect_to_project_task_form(self):
+            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
+            // return {
+            //     'type': 'ir.actions.act_url',
+            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
+            //     'target': 'new',
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionRescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_reschedule_meeting(self):
+            // self.ensure_one()
+            // action = self.action_schedule_meeting(smart_calendar=False)
+            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // if next_activity.calendar_event_id:
+            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_schedule_meeting(self, smart_calendar=True):
+            // """ Open meeting's calendar view to schedule meeting on current opportunity.
+            // 
+            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
+            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
+            //     :return dict: dictionary value for created Meeting view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
+            // partner_ids = self.env.user.partner_id.ids
+            // if self.partner_id:
+            //     partner_ids.append(self.partner_id.id)
+            // current_opportunity_id = self.id if self.type == 'opportunity' else False
+            // action['context'] = {
+            //     'search_default_opportunity_id': current_opportunity_id,
+            //     'default_opportunity_id': current_opportunity_id,
+            //     'default_partner_id': self.partner_id.id,
+            //     'default_partner_ids': partner_ids,
+            //     'default_team_id': self.team_id.id,
+            //     'default_name': self.name,
+            // }
+            // 
+            // # 'Smart' calendar view : get the most relevant time period to display to the user.
+            // if current_opportunity_id and smart_calendar:
+            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
+            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
+            // 
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
+            // def action_send_email(self):
+            // return {
+            //     'name': _('Send Email'),
+            //     'type': 'ir.actions.act_window',
+            //     'target': 'new',
+            //     'view_mode': 'form',
+            //     'res_model': 'applicant.send.mail',
+            //     'context': {
+            //         'default_applicant_ids': self.ids,
+            //     }
+            // }
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_automated_probability(self):
+            // self.write({'probability': self.automated_probability})
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_lost(self, **additional_values):
+            // """ Lost semantic: probability = 0 or active = False """
+            // res = self.action_archive()
+            // if additional_values:
+            //     self.write(dict(additional_values))
+            // return res
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won(self):
+            // """ Won semantic: probability = 100 (active untouched) """
+            // self.action_unarchive()
+            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
+            // leads_by_won_stage = {}
+            // for lead in self:
+            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
+            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
+            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
+            //     # sequence than any "won" stage. But while this is not the case, searching
+            //     # for the "won" stage while alterning the sequence order (see below) will correctly
+            //     # handle such a case :
+            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
+            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
+            //     #       not in [x (won)] nor [z (won)]
+            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
+            //     if not stage_id:
+            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
+            //     if stage_id in leads_by_won_stage:
+            //         leads_by_won_stage[stage_id] += lead
+            //     else:
+            //         leads_by_won_stage[stage_id] = lead
+            // for won_stage_id, leads in leads_by_won_stage.items():
+            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_set_won_rainbowman(self):
+            // self.ensure_one()
+            // self.action_set_won()
+            // 
+            // message = self._get_rainbowman_message()
+            // if message:
+            //     return {
+            //         'effect': {
+            //             'fadeout': 'slow',
+            //             'message': message,
+            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
+            //             'type': 'rainbow_man',
+            //         }
+            //     }
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_show_potential_duplicates(self):
+            // """ Open kanban view to display duplicate leads or opportunity.
+            //     :return dict: dictionary value for created kanban view
+            // """
+            // self.ensure_one()
+            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
+            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
+            // action['context'] = {
+            //     'active_test': False,
+            //     'create': False
+            // }
+            // return action
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionSnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
+            // def action_snooze(self):
+            // self.ensure_one()
+            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
+            // my_next_activity.action_snooze()
+            // return True
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionUnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
+            // def action_unlink_recurrence(self):
+            // self.recurrence_id.task_ids.recurring_task = False
+            // self.recurrence_id.unlink()
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_all_rating(self):
+            // """ return the action to see all the rating of the project and activate default filters"""
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
+            // action['display_name'] = _("%(name)s's Rating", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context.update(self._context)
+            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
+            // action_context.pop('group_by', None)
+            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
+            // if self.rating_count == 1:
+            //     action.update({
+            //         'view_mode': 'form',
+            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
+            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
+            //     })
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks_analysis(self):
+            // """ return the action to see the tasks analysis report of the project """
+            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
+            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
+            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
+            // action_context['search_default_project_id'] = self.id
+            // return dict(action, context=action_context)
+            */
+            return default;
+        }
+
+        public async Task<TEntity> ActionViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
+        {
+            /*
+            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
+            // def action_view_tasks(self):
+            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
+            // action['display_name'] = self.name
+            // context = action['context'].replace('active_id', str(self.id))
+            // context = ast.literal_eval(context)
+            // context.update({
+            //     'create': self.active,
+            //     'active_test': self.active
+            //     })
+            // action['context'] = context
+            // return action
+            */
+            return default;
         }
 
         public async Task<TEntity> AddCollaboratorsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners, object limited_access) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
@@ -95,20 +792,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'context': {'default_applicant_ids': self.ids, 'active_test': False},
             //     'views': [[False, 'form']]
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_archive(self):
-            // child_tasks = self.child_ids.filtered(lambda child_task: not child_task.display_in_project)
-            // if child_tasks:
-            //     child_tasks.action_archive()
-            // self.filtered(lambda t: not t.display_in_project and t.parent_id).display_in_project = True
-            // return super().action_archive()
             */
             return default;
         }
@@ -1825,33 +2508,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ConvertToSubtaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_convert_to_subtask(self):
-            // self.ensure_one()
-            // if self.project_id:
-            //     return {
-            //         'name': _('Convert to Task/Sub-Task'),
-            //         'type': 'ir.actions.act_window',
-            //         'res_model': 'project.task',
-            //         'res_id': self.id,
-            //         'views': [(self.env.ref('project.project_task_convert_to_subtask_view_form', False).id, 'form')],
-            //         'target': 'new',
-            //     }
-            // return {
-            //     'type': 'ir.actions.client',
-            //     'tag': 'display_notification',
-            //     'params': {
-            //         'type': 'danger',
-            //         'message': _('Private tasks cannot be converted into sub-tasks. Please set a project on the task to gain access to this feature.'),
-            //     }
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -2249,49 +2905,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CreateMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_create_meeting(self):
-            // """ This opens Meeting's calendar view to schedule meeting on current applicant
-            //     @return: Dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // if not self.partner_id:
-            //     if not self.partner_name:
-            //         raise UserError(_('You must define a Contact Name for this applicant.'))
-            //     self.partner_id = self.env['res.partner'].create({
-            //         'is_company': False,
-            //         'name': self.partner_name,
-            //         'email': self.email_from,
-            //     })
-            // 
-            // partners = self.partner_id | self.department_id.manager_id.user_id.partner_id
-            // if self.env.user.has_group('hr_recruitment.group_hr_recruitment_interviewer') and not self.env.user.has_group('hr_recruitment.group_hr_recruitment_user'):
-            //     partners |= self.env.user.partner_id
-            // else:
-            //     partners |= self.user_id.partner_id
-            // 
-            // res = self.env['ir.actions.act_window']._for_xml_id('calendar.action_calendar_event')
-            // # As we are redirected from the hr.applicant, calendar checks rules on "hr.applicant",
-            // # in order to decide whether to allow creation of a meeting.
-            // # As interviewer does not have create right on the hr.applicant, in order to allow them
-            // # to create a meeting for an applicant, we pass 'create': True to the context.
-            // res['context'] = {
-            //     'create': True,
-            //     'default_applicant_id': self.id,
-            //     'default_candidate_id': self.candidate_id.id,
-            //     'default_partner_ids': partners.ids,
-            //     'default_user_id': self.env.uid,
-            //     'default_name': self.partner_name,
-            //     'attachment_ids': self.attachment_ids.ids
-            // }
-            // return res
-            */
-            return default;
-        }
-
         public async Task<TEntity> CreateTaskMappingInternalAsync<TEntity>(IEnumerable<TEntity> entities, object copied_tasks) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -2453,24 +3066,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def _default_user_ids(self):
             // return self.env.context.keys() & {'default_personal_stage_type_ids', 'default_personal_stage_type_id'} and self.env.user
-            */
-            return default;
-        }
-
-        public async Task<TEntity> DependentTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_dependent_tasks(self):
-            // self.ensure_one()
-            // return {
-            //     'res_model': 'project.task',
-            //     'type': 'ir.actions.act_window',
-            //     'context': {**self._context, 'default_depend_on_ids': [Command.link(self.id)], 'show_project_update': False, 'search_default_open_tasks': True},
-            //     'domain': [('depend_on_ids', '=', self.id)],
-            //     'name': _('Dependent Tasks'),
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            // }
             */
             return default;
         }
@@ -3166,35 +3761,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     domain += ['&', ('active', '=', True), '|', ('stage_id', '=', False), ('stage_id.is_won', '=', False)]
             // 
             // return self.with_context(active_test=False).search(domain)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> GetListViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_get_list_view(self):
-            // self.ensure_one()
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'name': _("%(name)s's Milestones", name=self.name),
-            //     'domain': [('project_id', '=', self.id)],
-            //     'res_model': 'project.milestone',
-            //     'views': [(self.env.ref('project.project_milestone_view_tree').id, 'list')],
-            //     'view_mode': 'list',
-            //     'help': _("""
-            //         <p class="o_view_nocontent_smiling_face">
-            //             No milestones found. Let's create one!
-            //         </p><p>
-            //             Track major progress points that must be reached to achieve success.
-            //         </p>
-            //     """),
-            //     'context': {
-            //         'default_project_id': self.id,
-            //         **self.env.context
-            //     }
-            // }
             */
             return default;
         }
@@ -4192,16 +4758,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //         and waiting_subtype in res:
             //         res -= waiting_subtype
             // return res
-            */
-            return default;
-        }
-
-        public async Task<TEntity> MailGetPartnerFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object introspect_fields) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: test_mail, FILE: test_mail_models.py) ---
-            // def _mail_get_partner_fields(self, introspect_fields=False):
-            // return ['customer_id']
             */
             return default;
         }
@@ -5248,143 +5804,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> OpenAttachmentsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_attachments(self):
-            // return {
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'ir.attachment',
-            //     'name': _('Documents'),
-            //     'context': {
-            //         'default_res_model': 'hr.applicant',
-            //         'default_res_id': self.ids[0],
-            //         'show_partner_name': 1,
-            //     },
-            //     'view_mode': 'list,form',
-            //     'views': [
-            //         (self.env.ref('hr_recruitment.ir_attachment_hr_recruitment_list_view').id, 'list'),
-            //         (False, 'form'),
-            //     ],
-            //     'search_view_id': self.env.ref('hr_recruitment.ir_attachment_view_search_inherit_hr_recruitment').ids,
-            //     'domain': [('res_model', '=', 'hr.applicant'), ('res_id', 'in', self.ids), ],
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenEmployeeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_employee(self):
-            // self.ensure_one()
-            // return self.candidate_id.action_open_employee()
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenOtherApplicationsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_open_other_applications(self):
-            // self.ensure_one()
-            // similar_candidates = (
-            //     self.env["hr.candidate"]
-            //     .with_context(active_test=False)
-            //     .search(self.candidate_id._get_similar_candidates_domain())
-            //     - self.candidate_id
-            // )
-            // return {
-            //     'name': _('Other Applications'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.applicant',
-            //     'view_mode': 'list,kanban,form,pivot,graph,calendar,activity',
-            //     'domain': [('id', 'in', (self.candidate_id.applicant_ids + similar_candidates.applicant_ids).ids)],
-            //     'context': {
-            //         'active_test': False,
-            //         'search_default_stage': 1,
-            //     },
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_parent_task(self):
-            // return {
-            //     'name': _('Parent Task'),
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.parent_id.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenRatingsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_ratings(self):
-            // self.ensure_one()
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_task')
-            // if self.rating_count == 1:
-            //     action['view_mode'] = 'form'
-            //     action['res_id'] = self.rating_ids[0].id
-            //     action['views'] = [[self.env.ref('project.rating_rating_view_form_project').id, 'form']]
-            //     return action
-            // else:
-            //     return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenShareProjectWizardAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_open_share_project_wizard(self):
-            // template = self.env.ref('project.mail_template_project_sharing', raise_if_not_found=False)
-            // 
-            // local_context = self.env.context | {
-            //     'default_template_id': template.id if template else False,
-            //     'default_email_layout_xmlid': 'mail.mail_notification_light',
-            //     'active_id': self.id,
-            //     'active_model': 'project.project',
-            // }
-            // action = self.env["ir.actions.actions"]._for_xml_id("project.project_share_wizard_action")
-            // if self.env.context.get('default_access_mode'):
-            //     action['name'] = _("Share Project")
-            // action['context'] = local_context
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> OpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_open_task(self):
-            // return {
-            //     'view_mode': 'form',
-            //     'res_model': 'project.task',
-            //     'res_id': self.id,
-            //     'type': 'ir.actions.act_window',
-            //     'context': self._context
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> OrderFieldToSqlInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @alias, object field_name, object direction, object nulls, object query) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -6114,96 +6533,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ProfitabilityItemsAsync<TEntity>(IEnumerable<TEntity> entities, object section_name, object domain, Guid res_id) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_profitability_items(self, section_name, domain=None, res_id=False):
-            // return {}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenBlockingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_blocking(self):
-            // self.ensure_one()
-            // blockings = self.dependent_ids
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_blocking_tasks')
-            // if len(blockings) == 1:
-            //     action['view_mode'] = 'form'
-            //     action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //     action['res_id'] = blockings.id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenSubtasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_subtasks(self):
-            // self.ensure_one()
-            // subtasks = self.env['project.task'].search([('id', 'child_of', self.id), ('id', '!=', self.id)])
-            // if subtasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_action_sub_task')
-            //     if len(subtasks) == 1:
-            //         action['view_mode'] = 'form'
-            //         action['views'] = [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form']
-            //         action['res_id'] = subtasks.id
-            //     return action
-            // return {
-            //     'name': 'Portal Sub-tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url': f'/my/projects/{self.project_id.id}/task/{self.id}/subtasks' if len(subtasks) > 1 else subtasks.get_portal_url(query_string='project_sharing=1'),
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingOpenTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_open_task(self):
-            // action = self.action_open_task()
-            // action['views'] = [[self.env.ref('project.project_sharing_project_task_view_form').id, 'form']]
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingRecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_recurring_tasks(self):
-            // self.ensure_one()
-            // recurrent_tasks = self.env['project.task'].search([('recurrence_id', 'in', self.recurrence_id.ids)])
-            // # If all the recurrent tasks are in the same project, open the list view in sharing mode.
-            // if recurrent_tasks.project_id == self.project_id:
-            //     action = self.env['ir.actions.act_window']._for_xml_id('project.project_sharing_project_task_recurring_tasks_action')
-            //     action.update({
-            //         'context': {'default_project_id': self.project_id.id},
-            //         'domain': [
-            //             ('project_id', '=', self.project_id.id),
-            //             ('recurrence_id', 'in', self.recurrence_id.ids)
-            //         ]
-            //     })
-            //     return action
-            // # If at least one recurrent task belong to another project, open the portal page
-            // return {
-            //     'name': 'Portal Recurrent Tasks',
-            //     'type': 'ir.actions.act_url',
-            //     'url':  f'/my/projects/{self.project_id.id}/task/{self.id}/recurrent_tasks',
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> ProjectSharingToggleIsFollowerAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -6217,59 +6546,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // else:
             //     self.sudo().message_subscribe(self.env.user.partner_id.ids)
             // return not is_follower
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectSharingViewParentTaskAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_project_sharing_view_parent_task(self):
-            // if self.parent_id.project_id != self.project_id and self.env.user._is_portal():
-            //     project = self.parent_id.project_id._filtered_access('read')
-            //     if project:
-            //         url = f"/my/projects/{self.parent_id.project_id.id}/task/{self.parent_id.id}"
-            //         if project._check_project_sharing_access():
-            //             url = f"/my/projects/{self.parent_id.project_id.id}?task_id={self.parent_id.id}"
-            //         return {
-            //             "name": "Portal Parent Task",
-            //             "type": "ir.actions.act_url",
-            //             "url": url,
-            //         }
-            //     elif self.display_parent_task_button:
-            //         return self.parent_id.get_portal_url()
-            //     # The portal user has no access to the parent task, so normally the button should be invisible.
-            //     return {}
-            // action = self.with_context({
-            //     'search_view_ref': 'project.project_sharing_project_task_view_search',
-            // }).action_open_parent_task()
-            // action['views'] = [(self.env.ref('project.project_sharing_project_task_view_form').id, 'form')]
-            // action['search_view_id'] = self.env.ref("project.project_sharing_project_task_view_search").id
-            // return action
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ProjectTaskBurndownChartReportAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_project_task_burndown_chart_report(self):
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_burndown_chart_report')
-            // action['display_name'] = _("%(name)s's Burndown Chart", name=self.name)
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'stage_name_and_sequence_per_id': {
-            //         stage.id: {
-            //             'sequence': stage.sequence,
-            //             'name': stage.name
-            //         } for stage in self.type_ids
-            //     }
-            // })
-            // action['context'] = context
-            // return action
             */
             return default;
         }
@@ -6441,23 +6717,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> RecurringTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_recurring_tasks(self):
-            // return {
-            //     'name': _('Tasks in Recurrence'),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'project.task',
-            //     'view_mode': 'list,form,kanban,calendar,pivot,graph,activity',
-            //     'context': {'create': False},
-            //     'domain': [('recurrence_id', 'in', self.recurrence_id.ids)],
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> RedirectLeadOpportunityViewAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -6474,36 +6733,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     'type': 'ir.actions.act_window',
             //     'context': {'default_type': self.type}
             // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RedirectToProjectTaskFormAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_redirect_to_project_task_form(self):
-            // menu_id = self.env.ref('project.menu_project_management_all_tasks').id
-            // return {
-            //     'type': 'ir.actions.act_url',
-            //     'url': f"/odoo/1/action-project.act_project_project_2_project_task_all/{self.id}?menu_id={menu_id}",
-            //     'target': 'new',
-            // }
-            */
-            return default;
-        }
-
-        public async Task<TEntity> RescheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_reschedule_meeting(self):
-            // self.ensure_one()
-            // action = self.action_schedule_meeting(smart_calendar=False)
-            // next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // if next_activity.calendar_event_id:
-            //     action['context']['initial_date'] = next_activity.calendar_event_id.start
-            // return action
             */
             return default;
         }
@@ -6547,42 +6776,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
             // def SELF_WRITABLE_FIELDS(self):
             // return PROJECT_TASK_WRITABLE_FIELDS
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ScheduleMeetingAsync<TEntity>(IEnumerable<TEntity> entities, object smart_calendar) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_schedule_meeting(self, smart_calendar=True):
-            // """ Open meeting's calendar view to schedule meeting on current opportunity.
-            // 
-            //     :param smart_calendar: boolean, to set to False if the view should not try to choose relevant
-            //       mode and initial date for calendar view, see ``_get_opportunity_meeting_view_parameters``
-            //     :return dict: dictionary value for created Meeting view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("calendar.action_calendar_event")
-            // partner_ids = self.env.user.partner_id.ids
-            // if self.partner_id:
-            //     partner_ids.append(self.partner_id.id)
-            // current_opportunity_id = self.id if self.type == 'opportunity' else False
-            // action['context'] = {
-            //     'search_default_opportunity_id': current_opportunity_id,
-            //     'default_opportunity_id': current_opportunity_id,
-            //     'default_partner_id': self.partner_id.id,
-            //     'default_partner_ids': partner_ids,
-            //     'default_team_id': self.team_id.id,
-            //     'default_name': self.name,
-            // }
-            // 
-            // # 'Smart' calendar view : get the most relevant time period to display to the user.
-            // if current_opportunity_id and smart_calendar:
-            //     mode, initial_date = self._get_opportunity_meeting_view_parameters()
-            //     action['context'].update({'default_mode': mode, 'initial_date': initial_date})
-            // 
-            // return action
             */
             return default;
         }
@@ -6891,25 +7084,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SendEmailAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: hr_recruitment, FILE: hr_applicant.py) ---
-            // def action_send_email(self):
-            // return {
-            //     'name': _('Send Email'),
-            //     'type': 'ir.actions.act_window',
-            //     'target': 'new',
-            //     'view_mode': 'form',
-            //     'res_model': 'applicant.send.mail',
-            //     'context': {
-            //         'default_applicant_ids': self.ids,
-            //     }
-            // }
-            */
-            return default;
-        }
-
         public async Task<TEntity> SendEmailNotifyToCcInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partners_to_notify) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -6971,16 +7145,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetAutomatedProbabilityAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_automated_probability(self):
-            // self.write({'probability': self.automated_probability})
-            */
-            return default;
-        }
-
         public async Task<TEntity> SetFavoriteUserIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object is_favorite) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -6991,20 +7155,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             //     self_sudo.favorite_user_ids = [Command.link(self.env.uid)]
             // else:
             //     self_sudo.favorite_user_ids = [Command.unlink(self.env.uid)]
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetLostAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_lost(self, **additional_values):
-            // """ Lost semantic: probability = 0 or active = False """
-            // res = self.action_archive()
-            // if additional_values:
-            //     self.write(dict(additional_values))
-            // return res
             */
             return default;
         }
@@ -7025,82 +7175,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetWonAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won(self):
-            // """ Won semantic: probability = 100 (active untouched) """
-            // self.action_unarchive()
-            // # group the leads by team_id, in order to write once by values couple (each write leads to frequency increment)
-            // leads_by_won_stage = {}
-            // for lead in self:
-            //     won_stages = self._stage_find(domain=[('is_won', '=', True)], limit=None)
-            //     # ABD : We could have a mixed pipeline, with "won" stages being separated by "standard"
-            //     # stages. In the future, we may want to prevent any "standard" stage to have a higher
-            //     # sequence than any "won" stage. But while this is not the case, searching
-            //     # for the "won" stage while alterning the sequence order (see below) will correctly
-            //     # handle such a case :
-            //     #       stage sequence : [x] [x (won)] [y] [y (won)] [z] [z (won)]
-            //     #       when in stage [y] and marked as "won", should go to the stage [y (won)],
-            //     #       not in [x (won)] nor [z (won)]
-            //     stage_id = next((stage for stage in won_stages if stage.sequence > lead.stage_id.sequence), None)
-            //     if not stage_id:
-            //         stage_id = next((stage for stage in reversed(won_stages) if stage.sequence <= lead.stage_id.sequence), won_stages)
-            //     if stage_id in leads_by_won_stage:
-            //         leads_by_won_stage[stage_id] += lead
-            //     else:
-            //         leads_by_won_stage[stage_id] = lead
-            // for won_stage_id, leads in leads_by_won_stage.items():
-            //     leads.write({'stage_id': won_stage_id.id, 'probability': 100})
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SetWonRainbowmanAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_set_won_rainbowman(self):
-            // self.ensure_one()
-            // self.action_set_won()
-            // 
-            // message = self._get_rainbowman_message()
-            // if message:
-            //     return {
-            //         'effect': {
-            //             'fadeout': 'slow',
-            //             'message': message,
-            //             'img_url': '/web/image/%s/%s/image_1024' % (self.team_id.user_id._name, self.team_id.user_id.id) if self.team_id.user_id.image_1024 else '/web/static/img/smile.svg',
-            //             'type': 'rainbow_man',
-            //         }
-            //     }
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ShowPotentialDuplicatesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_show_potential_duplicates(self):
-            // """ Open kanban view to display duplicate leads or opportunity.
-            //     :return dict: dictionary value for created kanban view
-            // """
-            // self.ensure_one()
-            // action = self.env["ir.actions.actions"]._for_xml_id("crm.crm_lead_opportunities")
-            // action['domain'] = [('id', 'in', self.duplicate_lead_ids.ids)]
-            // action['context'] = {
-            //     'active_test': False,
-            //     'create': False
-            // }
-            // return action
-            */
-            return default;
-        }
-
         public async Task<TEntity> ShowProfitabilityHelperInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -7117,19 +7191,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
             // def _show_profitability(self):
             // self.ensure_one()
-            // return True
-            */
-            return default;
-        }
-
-        public async Task<TEntity> SnoozeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: crm, FILE: crm_lead.py) ---
-            // def action_snooze(self):
-            // self.ensure_one()
-            // my_next_activity = self.activity_ids.filtered(lambda activity: activity.user_id == self.env.user)[:1]
-            // my_next_activity.action_snooze()
             // return True
             */
             return default;
@@ -7463,17 +7524,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> UnlinkRecurrenceAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_task.py) ---
-            // def action_unlink_recurrence(self):
-            // self.recurrence_id.task_ids.recurring_task = False
-            // self.recurrence_id.unlink()
-            */
-            return default;
-        }
-
         public async Task<TEntity> UnsubscribePortalUsersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
         {
             /*
@@ -7578,64 +7628,6 @@ namespace Bamboo.Core.Application.Services.Mixins
             // if project_task_type.fold:
             //     return {'date_end': fields.Datetime.now()}
             // return {'date_end': False}
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewAllRatingAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_all_rating(self):
-            // """ return the action to see all the rating of the project and activate default filters"""
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.rating_rating_action_view_project_rating')
-            // action['display_name'] = _("%(name)s's Rating", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context.update(self._context)
-            // action_context['search_default_filter_write_date'] = 'custom_write_date_last_30_days'
-            // action_context.pop('group_by', None)
-            // action['domain'] = [('consumed', '=', True), ('parent_res_model', '=', 'project.project'), ('parent_res_id', '=', self.id)]
-            // if self.rating_count == 1:
-            //     action.update({
-            //         'view_mode': 'form',
-            //         'views': [(view_id, view_type) for view_id, view_type in action['views'] if view_type == 'form'],
-            //         'res_id': self.rating_ids[0].id, # [0] since rating_ids might be > then rating_count
-            //     })
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAnalysisAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks_analysis(self):
-            // """ return the action to see the tasks analysis report of the project """
-            // action = self.env['ir.actions.act_window']._for_xml_id('project.action_project_task_user_tree')
-            // action['display_name'] = _("%(name)s's Tasks Analysis", name=self.name)
-            // action_context = ast.literal_eval(action['context']) if action['context'] else {}
-            // action_context['search_default_project_id'] = self.id
-            // return dict(action, context=action_context)
-            */
-            return default;
-        }
-
-        public async Task<TEntity> ViewTasksAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMailTrackingDurationMixinable
-        {
-            /*
-            --- ODOO METHOD SOURCE (MODULE: project, FILE: project_project.py) ---
-            // def action_view_tasks(self):
-            // action = self.env['ir.actions.act_window'].with_context(active_id=self.id)._for_xml_id('project.act_project_project_2_project_task_all')
-            // action['display_name'] = self.name
-            // context = action['context'].replace('active_id', str(self.id))
-            // context = ast.literal_eval(context)
-            // context.update({
-            //     'create': self.active,
-            //     'active_test': self.active
-            //     })
-            // action['context'] = context
-            // return action
             */
             return default;
         }
