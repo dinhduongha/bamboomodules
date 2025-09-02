@@ -536,7 +536,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
     else:
         base_class = f"GenericApplicationService<{pascal_model}>"
         base_constructor_params_str = "repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache"
-        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "AuthorizationService authorizationService", "DomainParser domainParser", "IModelTypeRegistry modelTypeRegistry", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IMemoryCache memoryCache"]
+        constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "IAuthorizationService authorizationService", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IMemoryCache memoryCache"]
         base_call = f": base({base_constructor_params_str})"
         using_statements.extend([
             f"using Microsoft.Extensions.Caching.Memory;", f"using Volo.Abp.Domain.Repositories;", f"using Volo.Abp.ObjectMapping;", f"using Volo.Abp.Data;",
