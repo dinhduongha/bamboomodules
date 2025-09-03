@@ -251,6 +251,7 @@ paket-files/
 .idea/
 *.sln.iml
 appsettings.secrets.json
+appsettings.*.secrets.json
 # Bamboo
 src/Bamboo.Web/Logs/*
 src/Bamboo.Web.Host/Logs/*

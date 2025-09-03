@@ -34,6 +34,11 @@ using Volo.Abp.MultiTenancy;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.VirtualFileSystem;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
+using Volo.Abp.Auditing;
+using Volo.Abp.Json;
+using Volo.Abp.Json.SystemTextJson;
 
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
@@ -42,13 +47,10 @@ using Volo.Abp.TenantManagement.EntityFrameworkCore;
 
 using Bamboo.Core.EntityFrameworkCore;
 using Bamboo.MultiTenancy;
-using Volo.Abp.Auditing;
+
 using Npgsql;
 using Bamboo.Core.Application;
-using Volo.Abp.Json;
-using Volo.Abp.Json.SystemTextJson;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Volo.Abp.AspNetCore.Mvc;
 
 namespace Bamboo.Core;
 [DependsOn(
@@ -81,6 +83,11 @@ public class CoreHttpApiHostModule : AbpModule
             options.IsEnabled = false; // Tắt toàn bộ Audit Logging
         });
 
+        Configure<AbpAntiForgeryOptions>(options =>
+        {
+            options.AutoValidate = false; // Tắt toàn bộ antiforgery cho API
+        });
+        
         NpgsqlConnection.GlobalTypeMapper.EnableDynamicJson();
         Configure<AbpDbContextOptions>(options =>
         {

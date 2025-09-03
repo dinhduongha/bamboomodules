@@ -12,10 +12,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Bamboo.Admin.EntityFrameworkCore;
-using Bamboo.Admin.MultiTenancy;
-using StackExchange.Redis;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+
+using StackExchange.Redis;
+
 using Volo.Abp;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
@@ -30,7 +31,11 @@ using Volo.Abp.Modularity;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Swashbuckle;
 using Volo.Abp.VirtualFileSystem;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
+
+using Bamboo.Admin.EntityFrameworkCore;
+using Bamboo.Admin.MultiTenancy;
 using Bamboo.AdminExtensions;
 
 namespace Bamboo.Admin;
@@ -53,6 +58,10 @@ public class AdminHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+        Configure<AbpAntiForgeryOptions>(options =>
+        {
+            options.AutoValidate = false; // Tắt toàn bộ antiforgery cho API
+        });
 
         ConfigureConventionalControllers();
         ConfigureAuthentication(context, configuration);

@@ -7,7 +7,8 @@ public class HomeController : AbpController
 {
     public ActionResult Index()
     {
-        return Redirect("~/core/swagger");
+        return Redirect($"{Request.PathBase}/swagger");
+        //return Redirect("~/core/swagger");
         //return Redirect("~/api/v1/core");
     }
 }
