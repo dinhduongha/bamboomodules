@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Caching.Hybrid;
+//using Microsoft.Extensions.Caching.Hybrid;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.Modularity;
 using Volo.Abp.Application;
@@ -25,14 +25,14 @@ public class CoreApplicationModule : AbpModule
             options.AddMaps<CoreApplicationModule>(validate: true);
         });
 
-        context.Services.AddHybridCache(options =>
-        {
-            // TTL mặc định
-            options.DefaultEntryOptions = new HybridCacheEntryOptions
-            {
-                Expiration = TimeSpan.FromMinutes(30)
-            };
-        });
+        // context.Services.AddHybridCache(options =>
+        // {
+        //     // TTL mặc định
+        //     options.DefaultEntryOptions = new HybridCacheEntryOptions
+        //     {
+        //         Expiration = TimeSpan.FromMinutes(30)
+        //     };
+        // });
         
         context.Services.AddSingleton<IModelTypeRegistry>(provider =>
         {

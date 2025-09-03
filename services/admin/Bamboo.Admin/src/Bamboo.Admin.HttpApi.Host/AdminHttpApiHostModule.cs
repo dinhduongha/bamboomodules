@@ -235,6 +235,7 @@ public class AdminHttpApiHostModule : AbpModule
         {
             app.UseDeveloperExceptionPage();
         }
+        app.UsePathBase("/admin");
 
         app.UseAbpRequestLocalization();
         app.UseCorrelationId();
@@ -251,12 +252,12 @@ public class AdminHttpApiHostModule : AbpModule
         app.UseUnitOfWork();
         app.UseDynamicClaims();
         app.UseAuthorization();
-
         app.UseSwagger();
         app.UseAbpSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "Bamboo API");
-
+            options.SwaggerEndpoint("/admin/swagger/v1/swagger.json", "Bamboo API");
+            options.RoutePrefix = "swagger";
+            
             var configuration = context.GetConfiguration();
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
             options.OAuthScopes("Bamboo");

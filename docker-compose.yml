@@ -1,0 +1,174 @@
+version: "3.8"
+
+services:
+  app-nginx:
+    image: nginx:latest
+    container_name: bamboo-nginx-proxy
+    ports:
+      - "7109:80"
+    volumes:
+      - ./conf/nginx.bamboo.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      #- auth-server
+      #- app-admin
+      - app-core
+    networks:
+      - abp-network
+    restart: "always"
+
+  auth-server:
+    image: bamboo-auth-server:latest
+    container_name: bamboo-auth-server
+    build:
+      context: .
+      dockerfile: ./dockerfiles/AuthServer.Dockerfile
+    ports:
+      - "7103:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgresdb}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_APP_USER=${POSTGRES_APP_USER:-bamboo}
+      - POSTGRES_APP_PASSWORD=${POSTGRES_APP_PASSWORD:-postgres}
+      - POSTGRES_ADMIN_DB=${POSTGRES_ADMIN_DB:-bamboo_admin}
+      - ConnectionStrings__Default=Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};User=${POSTGRES_APP_USER};Password=${POSTGRES_APP_PASSWORD};Database=${POSTGRES_ADMIN_DB};
+      - Redis__Configuration=redis:6379
+      - Minio__Endpoint=${MINIO_ENDPOINT}
+      - Minio__AccessKey=${MINIO_ACCESS_KEY}
+      - Minio__SecretKey=${MINIO_SECRET_KEY}
+      - Minio__Secure=false
+    volumes:
+      - ./data/auth-log:/app/Logs
+      - ./bin/Bamboo.Admin:/app
+      - ./conf/appsettings.json:/app/appsettings.json:ro
+      - ./conf/appsettings.admin.secrets.json:/app/appsettings.secrets.json:ro
+    depends_on:
+      - postgresdb
+      - redis
+    restart: "unless-stopped"
+    networks:
+      - abp-network
+
+  app-admin:
+    image: bamboo-app-admin:latest
+    container_name: bamboo-admin
+    build:
+      context: .
+      dockerfile: ./dockerfiles/ApplicationAdmin.Dockerfile
+    ports:
+      - "7104:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgresdb}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_APP_USER=${POSTGRES_APP_USER:-bamboo}
+      - POSTGRES_APP_PASSWORD=${POSTGRES_APP_PASSWORD:-postgres}
+      - POSTGRES_ADMIN_DB=${POSTGRES_ADMIN_DB:-bamboo_core}
+      - ConnectionStrings__Default=Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};User=${POSTGRES_APP_USER};Password=${POSTGRES_APP_PASSWORD};Database=${POSTGRES_ADMIN_DB};
+      - Redis__Configuration=redis:6379
+      - Minio__Endpoint=${MINIO_ENDPOINT}
+      - Minio__AccessKey=${MINIO_ACCESS_KEY}
+      - Minio__SecretKey=${MINIO_SECRET_KEY}
+      - Minio__Secure=false
+      - AuthServer__Authority=${AUTHORITY_SERVER_URL}
+    volumes:
+      - ./data/app-log:/app/Logs
+      - ./bin/Bamboo.Admin:/app
+      - ./conf/appsettings.json:/app/appsettings.json:ro
+      - ./conf/appsettings.admin.secrets.json:/app/appsettings.secrets.json:ro
+    depends_on:
+      - postgresdb
+      - redis
+      #- auth-server
+    restart: "unless-stopped"
+    networks:
+      - abp-network
+
+  app-core:
+    image: bamboo-app-core:latest
+    container_name: bamboo-core
+    build:
+      context: .
+      dockerfile: ./dockerfiles/ApplicationCore.Dockerfile
+    ports:
+      - "7105:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgresdb}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_APP_USER=${POSTGRES_APP_USER:-bamboo}
+      - POSTGRES_APP_PASSWORD=${POSTGRES_APP_PASSWORD:-postgres}
+      - POSTGRES_CORE_DB=${POSTGRES_CORE_DB:-bamboo_core}
+      - ConnectionStrings__Default=Host=${POSTGRES_HOST};Port=${POSTGRES_PORT};User=${POSTGRES_APP_USER};Password=${POSTGRES_APP_PASSWORD};Database=${POSTGRES_CORE_DB};
+      - Redis__Configuration=redis:6379
+      - Minio__Endpoint=${MINIO_ENDPOINT}
+      - Minio__AccessKey=${MINIO_ACCESS_KEY}
+      - Minio__SecretKey=${MINIO_SECRET_KEY}
+      - Minio__Secure=false
+      - AuthServer__Authority=${AUTHORITY_SERVER_URL}
+    volumes:
+      - ./data/app-log:/app/Logs
+      - ./bin/Bamboo.Core:/app
+      - ./conf/appsettings.json:/app/appsettings.json:ro
+      - ./conf/appsettings.core.secrets.json:/app/appsettings.secrets.json:ro
+    depends_on:
+      - postgresdb
+      - redis
+      #- auth-server
+    restart: "unless-stopped"
+    networks:
+      - abp-network
+
+  postgresdb:
+    image: timescale/timescaledb-ha:pg16.9-ts2.21.3-all
+    container_name: bamboo-db
+    #user: "0:0"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      #- POSTGRES_DB=${POSTGRES_DB:-postgres}
+      #- POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5433:5432"
+    volumes:
+      #- ./data/timescaledb:/var/lib/postgresql/data
+      - ./data/timescaledb:/home/postgres/pgdata/data # PG 16
+      #- ./data/postgres-data:/home/postgres/pgdata/data # PG 16
+    restart: "unless-stopped"
+    networks:
+      - abp-network
+
+  redis:
+    image: redis:8
+    container_name: bamboo-redis
+    ports:
+      - "7179:6379"
+    volumes:
+      - ./data/redis-data:/data
+    restart: "always"
+    networks:
+      - abp-network
+
+  minio:
+    image: minio/minio
+    container_name: bamboo-minio
+    restart: always
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-RjG8X02sY5SSAH36}
+      - MINIO_BROWSER_REDIRECT_URL=${MINIO_BROWSER_REDIRECT_URL:-https://s3.itpro.vn/minio/ui/}
+      - MINIO_API_PORT=${MINIO_API_PORT:-7101}
+      - MINIO_CONSOLE_PORT=${MINIO_CONSOLE_PORT:-7102}
+    ports:
+      - "${MINIO_API_PORT}:9000" # MinIO API port
+      - "${MINIO_CONSOLE_PORT}:9001" # MinIO Console port
+    volumes:
+      - ./data/minio-data:/data # Persistent storage for MinIO data
+    command: server /data --console-address ":9001"
+volumes:
+  #postgres-data:
+  redis-data:
+
+networks:
+  abp-network:
+    driver: bridge

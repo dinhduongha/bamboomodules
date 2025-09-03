@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Caching.Hybrid;
+//using Microsoft.Extensions.Caching.Hybrid;
 using Volo.Abp;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
@@ -29,7 +29,6 @@ namespace Bamboo.Core.Application.Services.Commons
         private readonly IRepository<ResGroups, Guid> _resGroupRepository;
         private readonly IMemoryCache _memoryCache;
         private readonly IDomainParser _domainParser;
-        private readonly HybridCache _hybridCache;
 
         public AuthorizationService(
             IRepository<IrModel, Guid> modelRepository,
@@ -40,7 +39,6 @@ namespace Bamboo.Core.Application.Services.Commons
             IRepository<ResGroups, Guid> resGroupRepository,
             IRepository<ResUsers, Guid> resUserRepository,
             ICurrentUser currentUser,
-            HybridCache hybridCache,
             IMemoryCache memoryCache,
             IDomainParser domainParser)
         {
@@ -53,7 +51,6 @@ namespace Bamboo.Core.Application.Services.Commons
             _resUserRepository = resUserRepository;
             _currentUser = currentUser;
             _memoryCache = memoryCache;
-            _hybridCache = hybridCache;
             _domainParser = domainParser;
         }
 

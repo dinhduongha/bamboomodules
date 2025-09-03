@@ -208,7 +208,7 @@ public class CoreHttpApiHostModule : AbpModule
         {
             app.UseHsts();
         }
-
+        app.UsePathBase("/core");
         app.UseHttpsRedirection();
         app.UseCorrelationId();
         app.UseStaticFiles();
@@ -221,16 +221,16 @@ public class CoreHttpApiHostModule : AbpModule
         }
         app.UseAbpRequestLocalization();
         app.UseAuthorization();
-        app.UsePathBase("/core");
         app.UseSwagger(options =>
         {
-            //options.RouteTemplate = "api/v1/core/swagger/{documentName}/swagger.json";
+            //options.RouteTemplate = "/core/api/v1/swagger/{documentName}/swagger.json";
             
         });
         app.UseAbpSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/core/swagger/v1/swagger.json", "Support APP API");
-
+            //options.InjectJavascript("/core/swagger/ui/abp.swagger.js"); 
+            options.RoutePrefix = "swagger";
             //options.SwaggerEndpoint("/api/v1/core/swagger/v1/swagger.json", "Support APP API");
             //options.RoutePrefix = "api/v1/giftcard";
             //options.InjectJavascript("/swagger/ui/abp.js");
