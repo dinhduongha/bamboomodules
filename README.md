@@ -2,11 +2,11 @@
 
 **Bamboo** is a porting of **Odoo ERP** to C# using ABP Framework.
 
-# Features (2025-07-28)
+# Features
 
 - **ABP** version v8.3.4
 - **Microservices**.
-- **Scipts and config to migrate data from odoo to bamboo**.
+- **Scripts and config to migrate data from odoo to bamboo**.
 - **Odoo 18 porting**:
 
   - **Entities**: **> 500 entities** converted from Odoo database, with near full modules.
@@ -17,6 +17,26 @@
 - Use same model objects for entities and dtos. **All models/entities** were placed in folder **Bamboo.Core.Domain.Shared/Models**
 - **Basic Generic API**
 - **JsonRpc**
+
+# Generic API and JsonRpc
+
+**Generic APIs allow call Odoo-style APIs.**
+
+![Mô tả ảnh](docs/images/bamboo-generic-model-api.png)
+
+## Generic API in action
+
+![Generic API](docs/images/bamboo-generic-model-search-read.png)
+
+# Skeleton APIs
+
+**Skeleton API export only entries without implement bussiness logic.**
+
+![Base](docs/images/bamboo-models-with-specific-functions.png)
+
+![Accounting](docs/images/bamboo-modules-accounting.png)
+
+![Human Resources](docs/images/bamboo-human-resources.png)
 
 # No more support
 
@@ -31,6 +51,57 @@ I create a migration guide in [docs/migrate-odoo-uuid.md](docs/migrate-odoo-uuid
 
 # How to run
 
+## Docker compose
+
+- Build
+
+```
+./script/build.sh
+```
+
+This will build all relate project to `bin` directory.
+
+- Update config files and environments
+
+```
+vi .env
+```
+
+- Run
+
+```
+docker compose up -d
+```
+
+- Create databases
+
+```
+./scripts/db-create-admin-db.sh
+./scripts/db-create-core-db.sh
+```
+
+- Init admin database
+
+```
+docker exec -it bamboo-admin dotnet /app/Bamboo.Admin.DbMigrator.dll
+```
+
+- Init core database
+
+```
+dotnet ef migrations add Initial --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
+
+dotnet ef database update --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
+```
+
+- Migrate data from odoo-18 to bamboo
+
+```
+./scripts/pgloader/run-data-odoo18.sh
+```
+
+## Run with VS Studio
+
 1. Open **Bamboo.Admin.sln** then build and run **Bamboo.Admin.HttpApi.Host** for login / account management
 2. Open **Bamboo.Core.sln** then build and run **Bamboo.Core.HttpApi.Host** for CRUD services
 3. Open **Bamboo.Web.MVC.sln** for UI
@@ -43,6 +114,12 @@ I create a migration guide in [docs/migrate-odoo-uuid.md](docs/migrate-odoo-uuid
 - **Localization**
 - **Web UI App** (MVC or Blazor / Angular)
 - **Mobile App**
+
+# Contribute
+
+Please fork, create your own branch, update code then make pull request.
+
+Thanks.
 
 # Other
 

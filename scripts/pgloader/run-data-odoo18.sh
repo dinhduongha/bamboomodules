@@ -5,6 +5,6 @@
 
 # Replace your host/db/username/password in file conf/pgloader-odoo18-data-full-uuid.conf
 
-pgloader --verbose --dynamic-space-size 4096 conf/pgloader-odoo18-data-full-uuid.conf > log18-data.txt
+pgloader --verbose --dynamic-space-size 4096 pgloader/conf/pgloader-odoo18-data-full-uuid.conf > log18-data.txt
 
 
