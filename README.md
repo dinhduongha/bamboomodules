@@ -56,6 +56,8 @@ I create a migration guide in [docs/migrate-odoo-uuid.md](docs/migrate-odoo-uuid
 - Build
 
 ```
+dotnet ef migrations add Initial --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
+
 ./script/build.sh
 ```
 
@@ -89,8 +91,6 @@ docker exec -it bamboo-admin dotnet /app/Bamboo.Admin.DbMigrator.dll
 - Init core database
 
 ```
-dotnet ef migrations add Initial --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
-
 dotnet ef database update --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
 ```
 
