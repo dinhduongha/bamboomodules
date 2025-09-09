@@ -1,14 +1,17 @@
-using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Domain.Shared.Interfaces;
-using Bamboo.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using Volo.Abp.Application.Services;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
@@ -4677,21 +4680,57 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IMailThreadPhoneable
+        public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object default_fields) where TEntity : IEntity<Guid>, IMailThreadPhoneable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
+            --- ODOO METHOD SOURCE (MODULE: crm, FILE: res_partner.py) ---
+            // def default_get(self, fields):
+            // rec = super(Partner, self).default_get(fields)
+            // active_model = self.env.context.get('active_model')
+            // if active_model == 'crm.lead' and len(self.env.context.get('active_ids', [])) <= 1:
+            //     lead = self.env[active_model].browse(self.env.context.get('active_id')).exists()
+            //     if lead:
+            //         rec.update(
+            //             phone=lead.phone,
+            //             mobile=lead.mobile,
+            //             function=lead.function,
+            //             title=lead.title.id,
+            //             website=lead.website,
+            //             street=lead.street,
+            //             street2=lead.street2,
+            //             city=lead.city,
+            //             state_id=lead.state_id.id,
+            //             country_id=lead.country_id.id,
+            //             zip=lead.zip,
+            //         )
+            // return rec
+            --- ODOO METHOD SOURCE (MODULE: website_crm_partner_assign, FILE: res_partner.py) ---
             // def default_get(self, fields_list):
-            // """ When coming from a mailing list we may have a default_list_ids context
-            // key. We should use it to create subscription_ids default value that
-            // are displayed to the user as list_ids is not displayed on form view. """
-            // res = super(MassMailingContact, self).default_get(fields_list)
-            // if 'subscription_ids' in fields_list and not res.get('subscription_ids'):
-            //     list_ids = self.env.context.get('default_list_ids')
-            //     if 'default_list_ids' not in res and list_ids and isinstance(list_ids, (list, tuple)):
-            //         res['subscription_ids'] = [
-            //             (0, 0, {'list_id': list_id}) for list_id in list_ids]
-            // return res
+            // default_vals = super().default_get(fields_list)
+            // if self.env.context.get('partner_set_default_grade_activation'):
+            //     # sets the lowest grade and activation if no default values given, mainly useful while
+            //     # creating assigned partner on the fly (to make it visible in same m2o again)
+            //     if 'grade_id' in fields_list and not default_vals.get('grade_id'):
+            //         default_vals['grade_id'] = self.env['res.partner.grade'].search([], order='sequence', limit=1).id
+            //     if 'activation' in fields_list and not default_vals.get('activation'):
+            //         default_vals['activation'] = self.env['res.partner.activation'].search([], order='sequence', limit=1).id
+            // return default_vals
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            // def default_get(self, default_fields):
+            // """Add the company of the parent as default if we are creating a child partner.
+            // Also take the parent lang by default if any, otherwise, fallback to default DB lang."""
+            // values = super().default_get(default_fields)
+            // parent = self.env["res.partner"]
+            // if 'parent_id' in default_fields and values.get('parent_id'):
+            //     parent = self.browse(values.get('parent_id'))
+            //     values['company_id'] = parent.company_id.id
+            // if 'lang' in default_fields:
+            //     values['lang'] = values.get('lang') or parent.lang or self.env.lang
+            // # protection for `default_type` values leaking from menu action context (e.g. for crm's email)
+            // if 'type' in default_fields and values.get('type'):
+            //     if values['type'] not in self._fields['type'].get_values(self.env):
+            //         values['type'] = None
+            // return values
             */
             return default;
         }
@@ -8170,11 +8209,28 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> NameCreateAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IMailThreadPhoneable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mass_mailing, FILE: mailing_contact.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def name_create(self, name):
-            // name, email = tools.parse_contact_from_email(name)
-            // contact = self.create({'name': name, 'email': email})
-            // return contact.id, contact.display_name
+            // """ Override of orm's name_create method for partners. The purpose is
+            //     to handle some basic formats to create partners using the
+            //     name_create.
+            //     If only an email address is received and that the regex cannot find
+            //     a name, the name will have the email value.
+            //     If 'force_email' key in context: must find the email address. """
+            // default_type = self._context.get('default_type')
+            // if default_type and default_type not in self._fields['type'].get_values(self.env):
+            //     context = dict(self._context)
+            //     context.pop('default_type')
+            //     self = self.with_context(context)
+            // name, email_normalized = tools.parse_contact_from_email(name)
+            // if self._context.get('force_email') and not email_normalized:
+            //     raise ValidationError(_("Couldn't create contact without email address!"))
+            // 
+            // create_values = {self._rec_name: name or email_normalized}
+            // if email_normalized:  # keep default_email in context
+            //     create_values['email'] = email_normalized
+            // partner = self.create(create_values)
+            // return partner.id, partner.display_name
             */
             return default;
         }

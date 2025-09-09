@@ -1,0 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Models;
+using Bamboo.Core.Application.Contracts;
+using Bamboo.Core.Application.Contracts.DTOs;
+namespace Bamboo.Core.Application.Contracts.Interfaces
+{
+    public interface ILoyaltyCardAppService : IGenericApplicationService<LoyaltyCard>
+    {
+        Task<LoyaltyCard> CouponSendAsync(Guid id);
+        Task<LoyaltyCard> CouponShareAsync(Guid id);
+        Task<LoyaltyCard> LoyaltyUpdateBalanceAsync(Guid id);
+    }
+}

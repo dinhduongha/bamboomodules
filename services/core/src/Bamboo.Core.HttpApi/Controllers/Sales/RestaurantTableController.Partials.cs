@@ -1,0 +1,20 @@
+using System;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+namespace Bamboo.Core.HttpApi.Controllers.PosRestaurant
+{
+    public partial class RestaurantTableController
+    {
+        
+        [HttpPost]
+        [Route("{id}/are-orders-still-in-draft")]
+        public async Task<IActionResult> AreOrdersStillInDraftAsync(Guid id)
+        {
+            var result = await _appService.AreOrdersStillInDraftAsync(id);
+            return Ok(result);
+        }
+    }
+}

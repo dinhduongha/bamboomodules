@@ -143,7 +143,7 @@ def create_model_entity_content(project_name, module_name, model_name, model_dat
     inheritance = f": {base_class}{', ' + ', '.join(final_interfaces) if final_interfaces else ''}"
     
     content = f"""
-    {'\n'.join(list(using_statements))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
     namespace {namespace}
     {{
         {'\n        '.join(attributes)}
@@ -413,8 +413,8 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     
     if is_mixin:
         base_interface = "IMixinAppService"
-        using_statements.extend([f"using {project_base_name}.Domain.Shared.Interfaces;", "using Volo.Abp.Domain.Entities;"])
-        using_statements.append(f"using {contracts_namespace}.Mixins;")
+        using_statements.extend(["using Volo.Abp.Domain.Entities;", f"using {project_base_name}.Domain.Shared.Interfaces;", f"using {contracts_namespace}.Mixins;"])
+        #using_statements.append(f"using {contracts_namespace}.Mixins;")
     elif not is_auto:
         base_interface = "IApplicationService"
         using_statements.append(f"using {entity_namespace};")
@@ -424,7 +424,7 @@ def create_service_interface_content(project_base_name, module_name, model_name,
         using_statements.extend([f"using {entity_namespace};", f"using {project_base_name}.Application.Contracts;", f"using {dto_namespace};"])
     
     content = f"""
-    {'\n'.join(list(set(using_statements)))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
     namespace {interface_namespace}
     {{
         public interface {interface_name} : {base_interface}
@@ -513,14 +513,18 @@ def create_service_implementation_content(project_base_name, module_name, model_
     interface_namespace = contracts_namespace + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_service_ns else ""))
     service_namespace = f"{project_base_name}.Application.Services" + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_service_ns else ""))
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};", f"using {dto_namespace};"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Linq;", "using System.Threading.Tasks;", 
+                         f"using Volo.Abp.Data;", f"using Volo.Abp.Domain.Repositories;", f"using Volo.Abp.ObjectMapping;",
+                        "using Volo.Abp.Domain.Entities;", "using Volo.Abp.Application.Services;", 
+                        f"using {project_base_name}.Domain.Shared.Attributes;", f"using {interface_namespace};",
+                        f"using {dto_namespace};"]
     
     private_fields, constructor_assignments, constructor_params = [], [], []
     entity_namespace = f"{project_base_name}.Models" if flat_model_dir else f"{project_base_name}.Domain.Entities.{pascal_module}"
 
     if is_mixin:
         base_class, constructor_params, base_call = "ApplicationService", ["IServiceProvider serviceProvider"], ""
-        using_statements.extend(["using Volo.Abp.Application.Services;", "using Volo.Abp.Domain.Entities;", f"using {entity_namespace};", f"using {project_base_name}.Domain.Shared.Interfaces;"])
+        using_statements.extend([f"using {entity_namespace};", f"using {project_base_name}.Domain.Shared.Interfaces;"])
         private_fields.append(f"private readonly IServiceProvider _serviceProvider;")
         constructor_assignments.append(f"_serviceProvider = serviceProvider;")
 
@@ -539,7 +543,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
         constructor_params = [f"IRepository<{pascal_model}, Guid> repository", "IServiceProvider serviceProvider", "IAuthorizationService authorizationService", "IDomainParser domainParser", "IModelTypeRegistry modelTypeRegistry", "IDataFilter dataFilter", "IObjectMapper objectMapper", "IMemoryCache memoryCache"]
         base_call = f": base({base_constructor_params_str})"
         using_statements.extend([
-            f"using Microsoft.Extensions.Caching.Memory;", f"using Volo.Abp.Domain.Repositories;", f"using Volo.Abp.ObjectMapping;", f"using Volo.Abp.Data;",
+            f"using Microsoft.Extensions.Caching.Memory;", 
             f"using {project_base_name}.Application.Services.Commons;", f"using {entity_namespace};"
         ])
     
@@ -557,7 +561,7 @@ def create_service_implementation_content(project_base_name, module_name, model_
                 constructor_assignments.append(f"_{mixin_var_name_camel} = {mixin_var_name_camel};")
     
     content_parts = [
-        f"{'\n'.join(sorted(list(set(using_statements))))}",
+        f"{'\n'.join(list(dict.fromkeys(using_statements)))}",
         f"\nnamespace {service_namespace}", f"{{",
         f"    [Module(\"{module_name}\"{(', ' + depends_str) if depends_str else ''})]",
         f"    public class {service_name} : {base_class}, {interface_name}", f"    {{",
@@ -736,7 +740,7 @@ def create_dtos_content(project_base_name, module_name, model_name, methods, fla
 
     content = f"""
     // Auto-generated by Odoo C# Code Generator
-    {'\n'.join(list(using_statements))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
 
     namespace {namespace}
     {{
@@ -769,20 +773,21 @@ def create_controller_content(project_base_name, module_name, module_category, m
     route_parts.append(pascal_model)
     route = f'[Route("{'/'.join(route_parts)}")]'
     
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"]
+    
     if add_common_actions and is_auto:
         base_class = f"GenericController<{pascal_model}, {interface_name}>"
-        using_statements = {f"using {project_base_name}.HttpApi.Controllers.Commons;"}
+        using_statements.extend([{f"using {project_base_name}.HttpApi.Controllers.Commons;"}])
         constructor_body = f"public {controller_name}({interface_name} service) : base(service) {{ }}"
     else:
-        base_class = "AbpControllerBase"
-        using_statements = set()
+        base_class = "AbpController"
         constructor_body = f"private readonly {interface_name} _appService;\n        public {controller_name}({interface_name} appService) {{ _appService = appService; }}"
     
-    using_statements.update(["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"])
+    #using_statements.update(["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"])
     
     #{'\n'.join(sorted(list(using_statements)))}
     main_content = f"""
-    {'\n'.join(list(using_statements))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
     namespace {controller_namespace}
     {{
         {route}
@@ -913,7 +918,7 @@ def create_mixin_data_interface_content(project_name, mixin_name, model_data, al
 
     content = f"""
     // Auto-generated Data Interface from Odoo Mixin {mixin_name}
-    {'\n'.join(sorted(list(using_statements)))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
 
     namespace {namespace}
     {{
@@ -1055,7 +1060,7 @@ def create_fluent_api_configuration_content(project_base_name, model_name, model
     }
 
     content = f"""
-    {'\n'.join(sorted(list(using_statements)))}
+    {'\n'.join(list(dict.fromkeys(using_statements)))}
 
     namespace {project_base_name}.EntityFrameworkCore
     {{
@@ -1660,6 +1665,17 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         module_category = module_infos.get(base_module, {}).get('category', '')
         pascal_model = to_pascal_case(model_name)
         
+        # --- LOGIC XÁC ĐỊNH THƯ MỤC CON ---
+        if args.flat_by_cat:
+            category = module_infos.get(base_module, {}).get('category', 'Uncategorized')
+            grouping_key_raw = category.split('/')[0].strip() if '/' in category else category.strip()
+            if not grouping_key_raw or grouping_key_raw.lower() == 'hidden':
+                grouping_key_pascal = "Base"
+            else:
+                grouping_key_pascal = to_pascal_case(grouping_key_raw)
+        else:
+            grouping_key_pascal = module_namespace_map.get(base_module, to_pascal_case(base_module))
+
         if model_name in final_exclude_set:
             logging.info(f"Generating dedicated service and interfaces for mixin model: '{model_name}'")
             all_methods = data.get('all_methods', {})
@@ -1679,12 +1695,21 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         app_path = output_path / f"src/{project_base_name}.Application"
         http_api_path = output_path / f"src/{project_base_name}.HttpApi"
         
-        entity_dir = (domain_path / 'Models') if flat_model_dir else (domain_path / 'Entities' / pascal_module_for_ns)
-        enum_dir = (domain_path / 'Models' / 'Enums') if flat_model_dir else (domain_path / 'Enums' / pascal_module_for_ns)
-        interface_dir = (app_contracts_path / 'Interfaces') if flat_service_dir else (app_contracts_path / 'Interfaces' / pascal_module_for_ns)
-        service_dir = (app_path / 'Services') if flat_service_dir else (app_path / 'Services' / pascal_module_for_ns)
-        controller_dir = (http_api_path / 'Controllers') if flat_controller_dir else (http_api_path / 'Controllers' / pascal_module_for_ns)
-        
+        # entity_dir = (domain_path / 'Models') if flat_model_dir else (domain_path / 'Entities' / pascal_module_for_ns)
+        # enum_dir = (domain_path / 'Models' / 'Enums') if flat_model_dir else (domain_path / 'Enums' / pascal_module_for_ns)
+        # interface_dir = (app_contracts_path / 'Interfaces') if flat_service_dir else (app_contracts_path / 'Interfaces' / pascal_module_for_ns)
+        # service_dir = (app_path / 'Services') if flat_service_dir else (app_path / 'Services' / pascal_module_for_ns)
+        # controller_dir = (http_api_path / 'Controllers') if flat_controller_dir else (http_api_path / 'Controllers' / pascal_module_for_ns)
+        #dtos_dir = app_contracts_path / 'DTOs' / ('' if flat_service_dir else pascal_module_for_ns)
+
+        # Thiết lập thư mục
+        entity_dir = (domain_path / 'Models') if flat_model_dir else (domain_path / 'Entities' / grouping_key_pascal)
+        enum_dir = (domain_path / 'Models' / 'Enums') if flat_model_dir else (domain_path / 'Enums' / grouping_key_pascal)
+        interface_dir = (app_contracts_path / 'Interfaces') if flat_service_dir else (app_contracts_path / 'Interfaces' / grouping_key_pascal)
+        service_dir = (app_path / 'Services') if flat_service_dir else (app_path / 'Services' / grouping_key_pascal)
+        controller_dir = (http_api_path / 'Controllers') if flat_controller_dir else (http_api_path / 'Controllers' / grouping_key_pascal)
+        dtos_dir = app_contracts_path / 'DTOs' / ('' if flat_service_dir else grouping_key_pascal)
+               
         for d in [enum_dir, entity_dir, interface_dir, service_dir, controller_dir]:
             d.mkdir(parents=True, exist_ok=True)
         
@@ -1730,7 +1755,6 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             logging.info(f"  -> Generating Controller for '{model_name}'.")
 
             # TẠO THƯ MỤC DTO
-            dtos_dir = app_contracts_path / 'DTOs' / ('' if flat_service_dir else pascal_module_for_ns)
             dtos_dir.mkdir(parents=True, exist_ok=True)
 
             # TẠO FILE DTO
@@ -1868,5 +1892,9 @@ if __name__ == '__main__':
     
     parser.add_argument('--generate-fluent-api', action='store_true',
                         help="Generate fluent api for models.")    
+
+    parser.add_argument('--flat-by-cat', action='store_true',
+                        help="Flatten directory by category for specified layers.")    
+
     args = parser.parse_args()
     main(args)

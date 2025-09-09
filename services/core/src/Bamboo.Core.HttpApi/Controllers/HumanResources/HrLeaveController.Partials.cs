@@ -1,0 +1,124 @@
+using System;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+namespace Bamboo.Core.HttpApi.Controllers.HrHolidays
+{
+    public partial class HrLeaveController
+    {
+        
+        [HttpPost]
+        [Route("{id}/action-approve")]
+        public async Task<IActionResult> ActionApproveAsync(Guid id, [FromBody] HrLeaveApproveRequestDto input)
+        {
+            var result = await _appService.ApproveAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-cancel")]
+        public async Task<IActionResult> ActionCancelAsync(Guid id)
+        {
+            var result = await _appService.CancelAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-confirm")]
+        public async Task<IActionResult> ActionConfirmAsync(Guid id)
+        {
+            var result = await _appService.ConfirmAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-documents")]
+        public async Task<IActionResult> ActionDocumentsAsync(Guid id)
+        {
+            var result = await _appService.DocumentsAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-open-records")]
+        public async Task<IActionResult> ActionOpenRecordsAsync(Guid id, [FromBody] HrLeaveOpenRecordsRequestDto input)
+        {
+            var result = await _appService.OpenRecordsAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-refuse")]
+        public async Task<IActionResult> ActionRefuseAsync(Guid id)
+        {
+            var result = await _appService.RefuseAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-reset-confirm")]
+        public async Task<IActionResult> ActionResetConfirmAsync(Guid id)
+        {
+            var result = await _appService.ResetConfirmAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/action-validate")]
+        public async Task<IActionResult> ActionValidateAsync(Guid id, [FromBody] HrLeaveValidateRequestDto input)
+        {
+            var result = await _appService.ValidateAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/activity-update")]
+        public async Task<IActionResult> ActivityUpdateAsync(Guid id)
+        {
+            var result = await _appService.ActivityUpdateAsync(id);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/add-follower")]
+        public async Task<IActionResult> AddFollowerAsync(Guid id, [FromBody] HrLeaveAddFollowerRequestDto input)
+        {
+            var result = await _appService.AddFollowerAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/copy-data")]
+        public async Task<IActionResult> CopyDataAsync(Guid id, [FromBody] HrLeaveCopyDataRequestDto input)
+        {
+            var result = await _appService.CopyDataAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/get-unusual-days")]
+        public async Task<IActionResult> GetUnusualDaysAsync(Guid id, [FromBody] HrLeaveGetUnusualDaysRequestDto input)
+        {
+            var result = await _appService.GetUnusualDaysAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/message-subscribe")]
+        public async Task<IActionResult> MessageSubscribeAsync(Guid id, [FromBody] HrLeaveMessageSubscribeRequestDto input)
+        {
+            var result = await _appService.MessageSubscribeAsync(id, input);
+            return Ok(result);
+        }
+        
+        [HttpPost]
+        [Route("{id}/open-pending-requests")]
+        public async Task<IActionResult> OpenPendingRequestsAsync(Guid id)
+        {
+            var result = await _appService.OpenPendingRequestsAsync(id);
+            return Ok(result);
+        }
+    }
+}

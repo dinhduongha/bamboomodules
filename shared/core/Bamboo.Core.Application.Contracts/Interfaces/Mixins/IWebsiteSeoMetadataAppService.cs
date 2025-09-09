@@ -1,11 +1,11 @@
-using Volo.Abp.Application.Services;
-using System.Linq;
-using Volo.Abp.Domain.Entities;
-using System.Collections.Generic;
-using Bamboo.Core.Domain.Shared.Interfaces;
 using System;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
+using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IWebsiteSeoMetadataAppService : IMixinAppService
@@ -497,7 +497,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> DefaultDescriptionInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
         Task<TEntity> DefaultDisplayInvoiceTemplatePdfReportIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
         Task<TEntity> DefaultEventMailIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
-        Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
+        Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object default_fields) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
         Task<TEntity> DefaultQuestionIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
         Task<TEntity> DefaultSequenceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;
         Task<TEntity> DefaultViewAsync<TEntity>(IEnumerable<TEntity> entities, object model, object view_type) where TEntity : IEntity<Guid>, IWebsiteSeoMetadataable;

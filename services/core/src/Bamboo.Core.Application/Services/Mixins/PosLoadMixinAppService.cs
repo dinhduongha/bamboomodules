@@ -1,14 +1,17 @@
-using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Domain.Shared.Interfaces;
-using Bamboo.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using Volo.Abp.Application.Services;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
@@ -294,23 +297,19 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionArchiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mrp, FILE: product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: product_pricelist.py) ---
             // def action_archive(self):
-            // filtered_products = self.env['mrp.bom.line'].search([('product_id', 'in', self.ids), ('bom_id.active', '=', True)]).product_id.mapped('display_name')
-            // res = super().action_archive()
-            // if filtered_products:
-            //     return {
-            //         'type': 'ir.actions.client',
-            //         'tag': 'display_notification',
-            //         'params': {
-            //         'title': _("Note that product(s): '%s' is/are still linked to active Bill of Materials, "
-            //                     "which means that the product can still be used on it/them.", filtered_products),
-            //         'type': 'warning',
-            //         'sticky': True,  #True/False will display for few seconds if false
-            //         'next': {'type': 'ir.actions.act_window_close'},
-            //         },
-            //     }
-            // return res
+            // loyalty_programs = self.env['loyalty.program'].search([
+            //     ('active', '=', True),
+            //     ('pricelist_ids', 'in', self.ids)
+            // ])
+            // if loyalty_programs:
+            //     raise UserError(_(
+            //         "This pricelist may not be archived. "
+            //         "It is being used for active promotion programs: %s",
+            //         ', '.join(loyalty_programs.mapped('name'))
+            //     ))
+            // return super().action_archive()
             */
             return default;
         }
@@ -943,16 +942,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenBusinessDocAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def action_open_business_doc(self):
-            // self.ensure_one()
-            // return {
-            //     'name': _("Order"),
-            //     'type': 'ir.actions.act_window',
-            //     'res_model': 'sale.order',
-            //     'res_id': self.id,
-            //     'views': [(False, 'form')],
-            // }
+            // return self._get_records_action()
             */
             return default;
         }
@@ -4105,21 +4097,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> AutoInitInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_service, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_ui_view.py) ---
             // def _auto_init(self):
-            // """
-            // Create column to stop ORM from computing it himself (too slow)
-            // """
-            // if not column_exists(self.env.cr, 'sale_order_line', 'is_service'):
-            //     create_column(self.env.cr, 'sale_order_line', 'is_service', 'bool')
-            //     self.env.cr.execute("""
-            //         UPDATE sale_order_line line
-            //         SET is_service = (pt.type = 'service')
-            //         FROM product_product pp
-            //         LEFT JOIN product_template pt ON pt.id = pp.product_tmpl_id
-            //         WHERE pp.id = line.product_id
-            //     """)
-            // return super()._auto_init()
+            // res = super(View, self)._auto_init()
+            // tools.create_index(self._cr, 'ir_ui_view_model_type_inherit_id',
+            //                    self._table, ['model', 'inherit_id'])
+            // return res
             */
             return default;
         }
@@ -8271,17 +8254,18 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> ComputeAmountInternalAsync<TEntity>(IEnumerable<TEntity> entities, object currency_to) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_amount(self):
-            // for line in self:
-            //     base_line = line._prepare_base_line_for_taxes_computation()
-            //     self.env['account.tax']._add_tax_details_in_base_line(base_line, line.company_id)
-            //     line.price_subtotal = base_line['tax_details']['raw_total_excluded_currency']
-            //     line.price_total = base_line['tax_details']['raw_total_included_currency']
-            //     line.price_tax = line.price_total - line.price_subtotal
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_rule.py) ---
+            // def _compute_amount(self, currency_to):
+            // self.ensure_one()
+            // return self.currency_id._convert(
+            //     self.minimum_amount,
+            //     currency_to,
+            //     self.company_id or self.env.company,
+            //     fields.Date.today()
+            // )
             */
             return default;
         }
@@ -8767,20 +8751,41 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputeBasePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> ComputeBasePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object quantity, object uom, object date, object currency) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_combo.py) ---
-            // def _compute_base_price(self):
-            // for combo in self:
-            //     combo.base_price = min(combo.combo_item_ids.mapped(
-            //         lambda item: item.currency_id._convert(
-            //             from_amount=item.lst_price,
-            //             to_currency=combo.currency_id,
-            //             company=combo.company_id or self.env.company,
-            //             date=self.env.cr.now(),
-            //         )
-            //     )) if combo.combo_item_ids else 0
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist_item.py) ---
+            // def _compute_base_price(self, product, quantity, uom, date, currency):
+            // """ Compute the base price for a given rule
+            // 
+            // :param product: recordset of product (product.product/product.template)
+            // :param float qty: quantity of products requested (in given uom)
+            // :param uom: unit of measure (uom.uom record)
+            // :param datetime date: date to use for price computation and currency conversions
+            // :param currency: currency in which the returned price must be expressed
+            // 
+            // :returns: base price, expressed in provided pricelist currency
+            // :rtype: float
+            // """
+            // currency.ensure_one()
+            // 
+            // rule_base = self.base or 'list_price'
+            // if rule_base == 'pricelist' and self.base_pricelist_id:
+            //     price = self.base_pricelist_id._get_product_price(
+            //         product, quantity, currency=self.base_pricelist_id.currency_id, uom=uom, date=date
+            //     )
+            //     src_currency = self.base_pricelist_id.currency_id
+            // elif rule_base == "standard_price":
+            //     src_currency = product.cost_currency_id
+            //     price = product._price_compute(rule_base, uom=uom, date=date)[product.id]
+            // else: # list_price
+            //     src_currency = product.currency_id
+            //     price = product._price_compute(rule_base, uom=uom, date=date)[product.id]
+            // 
+            // if src_currency != currency:
+            //     price = src_currency._convert(price, currency, self.env.company, date, round=False)
+            // 
+            // return price
             */
             return default;
         }
@@ -9095,13 +9100,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeColorInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
             // def _compute_color(self):
-            // for uom in self:
-            //     if uom.uom_type == 'reference':
-            //         uom.color = 7
-            //     else:
-            //         uom.color = 0
+            // for company in self:
+            //     company.color = company.root_id.partner_id.color or (company.root_id._origin.id % 12)
             */
             return default;
         }
@@ -9442,8 +9444,8 @@ namespace Bamboo.Core.Application.Services.Mixins
             /*
             --- ODOO METHOD SOURCE (MODULE: account, FILE: account_tax.py) ---
             // def _compute_country_id(self):
-            // for tax in self:
-            //     tax.country_id = tax.company_id.account_fiscal_country_id or tax.company_id.country_id or tax.country_id
+            // for group in self:
+            //     group.country_id = group.company_id.account_fiscal_country_id or group.company_id.country_id
             */
             return default;
         }
@@ -9516,13 +9518,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeCurrencyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_combo.py) ---
+            --- ODOO METHOD SOURCE (MODULE: loyalty, FILE: loyalty_program.py) ---
             // def _compute_currency_id(self):
-            // main_company = self.env['res.company']._get_main_company()
-            // for combo in self:
-            //     combo.currency_id = (
-            //         combo.company_id.sudo().currency_id or main_company.currency_id
-            //     )
+            // for program in self:
+            //     program.currency_id = program.company_id.currency_id or program.currency_id
             */
             return default;
         }
@@ -10126,15 +10125,38 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeEmailFormattedInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_email_formatted(self):
-            // for company in self:
-            //     if company.partner_id.email_formatted:
-            //         company.email_formatted = company.partner_id.email_formatted
-            //     elif company.catchall_formatted:
-            //         company.email_formatted = company.catchall_formatted
-            //     else:
-            //         company.email_formatted = ''
+            // """ Compute formatted email for partner, using formataddr. Be defensive
+            // in computation, notably
+            // 
+            //   * double format: if email already holds a formatted email like
+            //     'Name' <email@domain.com> we should not use it as it to compute
+            //     email formatted like "Name <'Name' <email@domain.com>>";
+            //   * multi emails: sometimes this field is used to hold several addresses
+            //     like email1@domain.com, email2@domain.com. We currently let this value
+            //     untouched, but remove any formatting from multi emails;
+            //   * invalid email: if something is wrong, keep it in email_formatted as
+            //     this eases management and understanding of failures at mail.mail,
+            //     mail.notification and mailing.trace level;
+            //   * void email: email_formatted is False, as we cannot do anything with
+            //     it;
+            // """
+            // self.email_formatted = False
+            // for partner in self:
+            //     emails_normalized = tools.email_normalize_all(partner.email)
+            //     if emails_normalized:
+            //         # note: multi-email input leads to invalid email like "Name" <email1, email2>
+            //         # but this is current behavior in Odoo 14+ and some servers allow it
+            //         partner.email_formatted = tools.formataddr((
+            //             partner.name or u"False",
+            //             ','.join(emails_normalized)
+            //         ))
+            //     elif partner.email:
+            //         partner.email_formatted = tools.formataddr((
+            //             partner.name or u"False",
+            //             partner.email
+            //         ))
             */
             return default;
         }
@@ -10233,15 +10255,17 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeEventBoothCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event_booth, FILE: event_event.py) ---
             // def _compute_event_booth_count(self):
-            // slot_data = self.env['event.booth']._read_group(
-            //     [('sale_order_id', 'in', self.ids)],
-            //     ['sale_order_id'], ['__count'],
-            // )
-            // slot_mapped = {sale_order.id: count for sale_order, count in slot_data}
-            // for so in self:
-            //     so.event_booth_count = slot_mapped.get(so.id, 0)
+            // if self.ids and all(bool(event.id) for event in self):  # no new/onchange mode -> optimized
+            //     booths_available_count, booths_total_count = self._get_booth_stat_count()
+            //     for event in self:
+            //         event.event_booth_count_available = booths_available_count.get(event.id, 0)
+            //         event.event_booth_count = booths_total_count.get(event.id, 0)
+            // else:
+            //     for event in self:
+            //         event.event_booth_count = len(event.event_booth_ids)
+            //         event.event_booth_count_available = len(event.event_booth_ids.filtered(lambda booth: booth.is_available))
             */
             return default;
         }
@@ -10633,10 +10657,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeFiscalCountryCodesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: uom_uom.py) ---
+            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
             // def _compute_fiscal_country_codes(self):
             // for record in self:
-            //     record.fiscal_country_codes = ",".join(self.env.companies.mapped("account_fiscal_country_id.code"))
+            //     allowed_companies = record.company_id or self.env.companies
+            //     record.fiscal_country_codes = ",".join(allowed_companies.mapped('account_fiscal_country_id.code'))
             */
             return default;
         }
@@ -12190,54 +12215,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeNameInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: event_booth_sale, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def _compute_name(self):
-            // """Override to add the compute dependency.
-            // 
-            // The custom name logic can be found below in _get_sale_order_line_multiline_description_sale.
-            // """
-            // super()._compute_name()
-            --- ODOO METHOD SOURCE (MODULE: event_sale, FILE: sale_order_line.py) ---
-            // def _compute_name(self):
-            // """Override to add the compute dependency.
-            // 
-            // The custom name logic can be found below in _get_sale_order_line_multiline_description_sale.
-            // """
-            // super()._compute_name()
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order_line.py) ---
-            // def _compute_name(self):
-            // for line in self:
-            //     if not line.product_id and not line.is_downpayment:
-            //         continue
-            // 
-            //     lang = line.order_id._get_lang()
-            //     if lang != self.env.lang:
-            //         line = line.with_context(lang=lang)
-            // 
-            //     if line.product_id:
-            //         line.name = line._get_sale_order_line_multiline_description_sale()
-            //         continue
-            // 
-            //     if line.is_downpayment:
-            //         line.name = line._get_downpayment_description()
-            --- ODOO METHOD SOURCE (MODULE: sale_loyalty, FILE: sale_order_line.py) ---
-            // def _compute_name(self):
-            // # Avoid computing the name for reward lines
-            // reward = self.filtered('reward_id')
-            // super(SaleOrderLine, self - reward)._compute_name()
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order_line.py) ---
-            // def _compute_name(self):
-            // # Take the description on the order template if the product is present in it
-            // super()._compute_name()
-            // for line in self:
-            //     if line.product_id and line.order_id.sale_order_template_id and line._use_template_name():
-            //         for template_line in line.order_id.sale_order_template_id.sale_order_template_line_ids:
-            //             if line.product_id == template_line.product_id and template_line.name:
-            //                 # If a specific description was set on the template, use it
-            //                 # Otherwise the description is handled by the super call
-            //                 lang = line.order_id.partner_id.lang
-            //                 line.name = template_line.with_context(lang=lang).name + line.with_context(lang=lang)._get_sale_order_line_multiline_description_variants()
-            //                 break
+            // for registration in self:
+            //     if not registration.name and registration.partner_id:
+            //         registration.name = registration._synchronize_partner_values(
+            //             registration.partner_id,
+            //             fnames={'name'},
+            //         ).get('name') or False
             */
             return default;
         }
@@ -12339,28 +12324,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeNoteInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def _compute_note(self):
-            // use_invoice_terms = self.env['ir.config_parameter'].sudo().get_param('account.use_invoice_terms')
-            // if not use_invoice_terms:
-            //     return
-            // for order in self:
-            //     order = order.with_company(order.company_id)
-            //     if order.terms_type == 'html' and self.env.company.invoice_terms_html:
-            //         baseurl = html_keep_url(order._get_note_url() + '/terms')
-            //         context = {'lang': order.partner_id.lang or self.env.user.lang}
-            //         order.note = _('Terms & Conditions: %s', baseurl)
-            //         del context
-            //     elif not is_html_empty(self.env.company.invoice_terms):
-            //         if order.partner_id.lang:
-            //             order = order.with_context(lang=order.partner_id.lang)
-            //         order.note = order.env.company.invoice_terms
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
-            // def _compute_note(self):
-            // super()._compute_note()
-            // for order in self.filtered('sale_order_template_id'):
-            //     template = order.sale_order_template_id.with_context(lang=order.partner_id.lang)
-            //     order.note = template.note if not is_html_empty(template.note) else order.note
+            // for event in self:
+            //     if event.event_type_id and not is_html_empty(event.event_type_id.note):
+            //         event.note = event.event_type_id.note
             */
             return default;
         }
@@ -12858,17 +12826,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePickingIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: mrp_subcontracting, FILE: res_partner.py) ---
             // def _compute_picking_ids(self):
-            // for order in self:
-            //     order.delivery_count = len(order.picking_ids)
-            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: sale.py) ---
-            // def _compute_picking_ids(self):
-            // super()._compute_picking_ids()
-            // for order in self:
-            //     dropship_count = len(order.picking_ids.filtered(lambda p: p.is_dropship))
-            //     order.delivery_count -= dropship_count
-            //     order.dropship_picking_count = dropship_count
+            // results = self.env['stock.picking']._read_group([('partner_id.commercial_partner_id', 'in', self.commercial_partner_id.ids)], ['partner_id'], ['id:array_agg'])
+            // for partner in self:
+            //     picking_ids = []
+            //     for partner_rg, ids in results:
+            //         if partner_rg.id == partner.id or partner_rg.id in partner.child_ids.ids:
+            //             picking_ids += ids
+            //     partner.picking_ids = picking_ids
             */
             return default;
         }
@@ -13055,20 +13021,66 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> ComputePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object price, object to_unit) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> ComputePriceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object product, object quantity, object uom, object date, object currency) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: uom, FILE: uom_uom.py) ---
-            // def _compute_price(self, price, to_unit):
-            // self.ensure_one()
-            // if not self or not price or not to_unit or self == to_unit:
-            //     return price
-            // if self.category_id.id != to_unit.category_id.id:
-            //     return price
-            // amount = price * self.factor
-            // if to_unit:
-            //     amount = amount / to_unit.factor
-            // return amount
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_pricelist_item.py) ---
+            // def _compute_price(self, product, quantity, uom, date, currency=None):
+            // """Compute the unit price of a product in the context of a pricelist application.
+            // 
+            // Note: self and self.ensure_one()
+            // 
+            // :param product: recordset of product (product.product/product.template)
+            // :param float qty: quantity of products requested (in given uom)
+            // :param uom: unit of measure (uom.uom record)
+            // :param datetime date: date to use for price computation and currency conversions
+            // :param currency: currency (for the case where self is empty)
+            // 
+            // :returns: price according to pricelist rule or the product price, expressed in the param
+            //           currency, the pricelist currency or the company currency
+            // :rtype: float
+            // """
+            // self and self.ensure_one()  # self is at most one record
+            // product.ensure_one()
+            // uom.ensure_one()
+            // 
+            // currency = currency or self.currency_id or self.env.company.currency_id
+            // currency.ensure_one()
+            // 
+            // # Pricelist specific values are specified according to product UoM
+            // # and must be multiplied according to the factor between uoms
+            // product_uom = product.uom_id
+            // if product_uom != uom:
+            //     convert = lambda p: product_uom._compute_price(p, uom)
+            // else:
+            //     convert = lambda p: p
+            // 
+            // if self.compute_price == 'fixed':
+            //     price = convert(self.fixed_price)
+            // elif self.compute_price == 'percentage':
+            //     base_price = self._compute_base_price(product, quantity, uom, date, currency)
+            //     price = (base_price - (base_price * (self.percent_price / 100))) or 0.0
+            // elif self.compute_price == 'formula':
+            //     base_price = self._compute_base_price(product, quantity, uom, date, currency)
+            //     # complete formula
+            //     price_limit = base_price
+            //     discount = self.price_discount if self.base != 'standard_price' else -self.price_markup
+            //     price = base_price - (base_price * (discount / 100))
+            //     if self.price_round:
+            //         price = tools.float_round(price, precision_rounding=self.price_round)
+            // 
+            //     if self.price_surcharge:
+            //         price += convert(self.price_surcharge)
+            // 
+            //     if self.price_min_margin:
+            //         price = max(price, price_limit + convert(self.price_min_margin))
+            // 
+            //     if self.price_max_margin:
+            //         price = min(price, price_limit + convert(self.price_max_margin))
+            // else:  # empty self, or extended pricelist price computation logic
+            //     price = self._compute_base_price(product, quantity, uom, date, currency)
+            // 
+            // return price
             */
             return default;
         }
@@ -13928,13 +13940,28 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputePurchaseOrderCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_purchase, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: purchase, FILE: res_partner.py) ---
             // def _compute_purchase_order_count(self):
-            // for order in self:
-            //     order.purchase_order_count = len(order._get_purchase_orders())
-            --- ODOO METHOD SOURCE (MODULE: sale_purchase_stock, FILE: sale_order.py) ---
-            // def _compute_purchase_order_count(self):
-            // super()._compute_purchase_order_count()
+            // self.purchase_order_count = 0
+            // if not self.env.user._has_group('purchase.group_purchase_user'):
+            //     return
+            // 
+            // # retrieve all children partners and prefetch 'parent_id' on them
+            // all_partners = self.with_context(active_test=False).search_fetch(
+            //     [('id', 'child_of', self.ids)],
+            //     ['parent_id'],
+            // )
+            // purchase_order_groups = self.env['purchase.order']._read_group(
+            //     domain=[('partner_id', 'in', all_partners.ids)],
+            //     groupby=['partner_id'], aggregates=['__count'],
+            // )
+            // self_ids = set(self._ids)
+            // 
+            // for partner, count in purchase_order_groups:
+            //     while partner:
+            //         if partner.id in self_ids:
+            //             partner.purchase_order_count += count
+            //         partner = partner.parent_id
             */
             return default;
         }
@@ -16199,35 +16226,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeUserIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _compute_user_id(self):
-            // for order in self:
-            //     if order.partner_id and not (order._origin.id and order.user_id):
-            //         # Recompute the salesman on partner change
-            //         #   * if partner is set (is required anyway, so it will be set sooner or later)
-            //         #   * if the order is not saved or has no salesman already
-            //         order.user_id = (
-            //             order.partner_id.user_id
-            //             or order.partner_id.commercial_partner_id.user_id
-            //             or (self.env.user.has_group('sales_team.group_sale_salesman') and self.env.user)
-            //         )
-            --- ODOO METHOD SOURCE (MODULE: website_sale, FILE: sale_order.py) ---
-            // def _compute_user_id(self):
-            // """ Do not assign self.env.user as salesman for e-commerce orders.
-            // 
-            // Leave salesman empty if no salesman is specified on partner or website.
-            // 
-            // c/p of the logic in Website._prepare_sale_order_values
-            // """
-            // website_orders = self.filtered('website_id')
-            // super(SaleOrder, self - website_orders)._compute_user_id()
-            // for order in website_orders:
-            //     if not order.user_id:
-            //         order.user_id = (
-            //             order.website_id.salesperson_id
-            //             or order.partner_id.user_id.id
-            //             or order.partner_id.parent_id.user_id.id
-            //         )
+            // """ Synchronize sales rep with parent if partner is a person """
+            // for partner in self.filtered(lambda partner: not partner.user_id and partner.company_type == 'person' and partner.parent_id.user_id):
+            //     partner.user_id = partner.parent_id.user_id
             */
             return default;
         }
@@ -16544,27 +16547,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWarehouseIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_stock, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: stock, FILE: stock_picking.py) ---
             // def _compute_warehouse_id(self):
-            // for line in self:
-            //     line.warehouse_id = line.order_id.warehouse_id
-            //     if line.route_id:
-            //         domain = [
-            //             ('location_dest_id', '=', line.order_id.partner_shipping_id.property_stock_customer.id),
-            //             ('action', '!=', 'push'),
-            //         ]
-            //         # prefer rules on the route itself even if they pull from a different warehouse than the SO's
-            //         rules = sorted(
-            //             self.env['stock.rule'].search(
-            //                 domain=expression.AND([[('route_id', '=', line.route_id.id)], domain]),
-            //                 order='route_sequence, sequence'
-            //             ),
-            //             # if there are multiple rules on the route, prefer those that pull from the SO's warehouse
-            //             # or those that are not warehouse specific
-            //             key=lambda rule: 0 if rule.location_src_id.warehouse_id in (False, line.order_id.warehouse_id) else 1
-            //         )
-            //         if rules:
-            //             line.warehouse_id = rules[0].location_src_id.warehouse_id
+            // for picking_type in self:
+            //     if picking_type.warehouse_id:
+            //         continue
+            //     if picking_type.company_id:
+            //         warehouse = self.env['stock.warehouse'].search([('company_id', '=', picking_type.company_id.id)], limit=1)
+            //         picking_type.warehouse_id = warehouse
+            --- ODOO METHOD SOURCE (MODULE: stock_dropshipping, FILE: stock.py) ---
+            // def _compute_warehouse_id(self):
+            // super()._compute_warehouse_id()
+            // for picking_type in self:
+            //     if picking_type.code == 'dropship':
+            //         picking_type.warehouse_id = False
             */
             return default;
         }
@@ -16727,11 +16723,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeWebsiteUrlInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_partner, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _compute_website_url(self):
-            // super(WebsiteResPartner, self)._compute_website_url()
-            // for partner in self:
-            //     partner.website_url = "/partners/%s" % self.env['ir.http']._slug(partner)
+            // super(Event, self)._compute_website_url()
+            // for event in self:
+            //     if event.id:  # avoid to perform a slug on a not yet saved record in case of an onchange.
+            //         event.website_url = '/event/%s' % self.env['ir.http']._slug(event)
             */
             return default;
         }
@@ -20125,52 +20122,18 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale_project, FILE: sale_order_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def default_get(self, fields):
-            // res = super().default_get(fields)
-            // if self.env.context.get('form_view_ref') == 'sale_project.sale_order_line_view_form_editable':
-            //     default_values = dict()
-            //     # If we can't add order lines to the default order, discard it
-            //     if 'order_id' in res:
-            //         try:
-            //             self.env['sale.order'].browse(res['order_id']).check_access('write')
-            //         except AccessError:
-            //             del res['order_id']
-            // 
-            //     if 'order_id' in fields and not res.get('order_id'):
-            //         assert (partner_id := self.env.context.get('default_partner_id'))
-            //         project_id = self.env.context.get('link_to_project')
-            //         sale_order = None
-            //         so_create_values = {
-            //             'partner_id': partner_id,
-            //             'company_id': self.env.context.get('default_company_id') or self.env.company.id,
-            //         }
-            //         if project_id:
-            //             try:
-            //                 project_so = self.env['project.project'].browse(project_id).sale_order_id
-            //                 project_so.check_access('write')
-            //                 sale_order = project_so
-            //             except AccessError:
-            //                 pass
-            //             if not sale_order:
-            //                 so_create_values['project_ids'] = [Command.link(project_id)]
-            // 
-            //         if not sale_order:
-            //             sale_order = self.env['sale.order'].create(so_create_values)
-            //         default_values['order_id'] = sale_order.id
-            //     if product_name := self.env.context.get('sol_product_name') or self.env.context.get('default_name'):
-            //         product = self.env['product.product'].search(self._get_product_from_sol_name_domain(product_name), limit=1)
-            //         if product:
-            //             default_values['product_id'] = product.id
-            //             # We need to remove the name from the defaults so that the
-            //             # name of the SOL is based on the full name of the product
-            //             # and not overwritten by what was typed in the field.
-            //             if "name" in res:
-            //                 del res["name"]
-            //     else:
-            //         default_values['name'] = _("New Sales Order Item")
-            //     return {**res, **default_values}
-            // return res
+            // ret_vals = super().default_get(fields)
+            // utm_mixin_fields = ("campaign_id", "medium_id", "source_id")
+            // utm_fields = ("utm_campaign_id", "utm_medium_id", "utm_source_id")
+            // if not any(field in utm_fields for field in fields):
+            //     return ret_vals
+            // utm_mixin_defaults = self.env['utm.mixin'].default_get(utm_mixin_fields)
+            // for (mixin_field, field) in zip(utm_mixin_fields, utm_fields):
+            //     if field in fields and utm_mixin_defaults.get(mixin_field):
+            //         ret_vals[field] = utm_mixin_defaults[mixin_field]
+            // return ret_vals
             */
             return default;
         }
@@ -22492,36 +22455,20 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<string> FormatAsync<TEntity>(IEnumerable<TEntity> entities, string percent, object @value, bool grouping) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> FormatAsync<TEntity>(IEnumerable<TEntity> entities, object amount) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
-            // def format(self, percent: str, value, grouping: bool = False) -> str:
-            // """ Format() will return the language-specific output for float values"""
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
+            // def format(self, amount):
+            // """Return ``amount`` formatted according to ``self``'s rounding rules, symbols and positions.
+            // 
+            //    Also take care of removing the minus sign when 0.0 is negative
+            // 
+            //    :param float amount: the amount to round
+            //    :return: formatted str
+            // """
             // self.ensure_one()
-            // if percent[0] != '%':
-            //     raise ValueError(_("format() must be given exactly one %char format specifier"))
-            // 
-            // formatted = percent % value
-            // 
-            // # floats and decimal ints need special action!
-            // if grouping:
-            //     data = self._get_data(id=self.id)
-            //     if not data:
-            //         raise UserError(_("The language %s is not installed.", self.name))
-            //     lang_grouping, thousands_sep, decimal_point = data.grouping, data.thousands_sep or '', data.decimal_point
-            //     eval_lang_grouping = ast.literal_eval(lang_grouping)
-            // 
-            //     if percent[-1] in 'eEfFgG':
-            //         parts = formatted.split('.')
-            //         parts[0] = intersperse(parts[0], eval_lang_grouping, thousands_sep)[0]
-            // 
-            //         formatted = decimal_point.join(parts)
-            // 
-            //     elif percent[-1] in 'diu':
-            //         formatted = intersperse(formatted, eval_lang_grouping, thousands_sep)[0]
-            // 
-            // return formatted
+            // return tools.format_amount(self.env, amount + 0.0, self)
             */
             return default;
         }
@@ -23615,9 +23562,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetBackendMenuIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website_customer, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def get_backend_menu_id(self):
-            // return self.env.ref('contacts.menu_contacts').id
+            // return self.env.ref('event.event_main_menu').id
             */
             return default;
         }
@@ -32388,11 +32335,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetViewCacheKeyInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: mail, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def _get_view_cache_key(self, view_id=None, view_type='form', **options):
-            // """Add context variable force_email in the key as _get_view depends on it."""
+            // """The override of _get_view changing the rate field labels according to the company currency
+            // makes the view cache dependent on the company currency"""
             // key = super()._get_view_cache_key(view_id, view_type, **options)
-            // return key + (self._context.get('force_email'),)
+            // return key + ((self.env['res.company'].browse(self._context.get('company_id')) or self.env.company).currency_id.name,)
             */
             return default;
         }
@@ -32510,22 +32458,20 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetViewInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid view_id, object view_type) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: partner_autocomplete, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_currency.py) ---
             // def _get_view(self, view_id=None, view_type='form', **options):
             // arch, view = super()._get_view(view_id, view_type, **options)
-            // 
-            // if view_type == 'form':
-            //     for i, node in enumerate(arch.xpath("//field[@name='name' or @name='vat']")):
-            //         node.set('widget', 'field_partner_autocomplete')
-            // 
-            // return arch, view
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
-            // def _get_view(self, view_id=None, view_type='form', **options):
-            // delegated_fnames = set(self._get_company_root_delegated_field_names())
-            // arch, view = super()._get_view(view_id, view_type, **options)
-            // for f in arch.iter("field"):
-            //     if f.get('name') in delegated_fnames:
-            //         f.set('readonly', "parent_id != False")
+            // if view_type in ('list', 'form'):
+            //     currency_name = (self.env['res.company'].browse(self._context.get('company_id')) or self.env.company).currency_id.name
+            //     fields_maps = [
+            //         [['company_rate', 'rate'], _('Unit per %s', currency_name)],
+            //         [['inverse_company_rate', 'inverse_rate'], _('%s per Unit', currency_name)],
+            //     ]
+            //     for fnames, label in fields_maps:
+            //         xpath_expression = '//list//field[' + " or ".join(f"@name='{f}'" for f in fnames) + "][1]"
+            //         node = arch.xpath(xpath_expression)
+            //         if node:
+            //             node[0].set('string', label)
             // return arch, view
             */
             return default;
@@ -32772,10 +32718,19 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GoogleMapImgAsync<TEntity>(IEnumerable<TEntity> entities, object zoom, object width, object height) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_partner.py) ---
             // def google_map_img(self, zoom=8, width=298, height=298):
-            // partner = self.sudo().partner_id
-            // return partner and partner.google_map_img(zoom, width, height) or None
+            // google_maps_api_key = self.env['website'].get_current_website().google_maps_api_key
+            // if not google_maps_api_key:
+            //     return False
+            // params = {
+            //     'center': '%s, %s %s, %s' % (self.street or '', self.city or '', self.zip or '', self.country_id and self.country_id.display_name or ''),
+            //     'size': "%sx%s" % (width, height),
+            //     'zoom': zoom,
+            //     'sensor': 'false',
+            //     'key': google_maps_api_key,
+            // }
+            // return '//maps.googleapis.com/maps/api/staticmap?' + werkzeug.urls.url_encode(params)
             */
             return default;
         }
@@ -32783,10 +32738,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GoogleMapLinkAsync<TEntity>(IEnumerable<TEntity> entities, object zoom) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def google_map_link(self, zoom=8):
-            // partner = self.sudo().partner_id
-            // return partner and partner.google_map_link(zoom) or None
+            // """ Temporary method for stable """
+            // return self._google_map_link(zoom=zoom)
             */
             return default;
         }
@@ -34543,13 +34498,12 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities, string code) where TEntity : IEntity<Guid>, IPosLoadMixinable
+        public async Task<TEntity> LangGetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_lang.py) ---
-            // def _lang_get(self, code: str):
-            // """ Return the language using this code if it is active """
-            // return self.browse(self._get_data(code=code).id)
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
+            // def _lang_get(self):
+            // return self.env['res.lang'].get_installed()
             */
             return default;
         }
@@ -35987,49 +35941,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> NameSearchAsync<TEntity>(IEnumerable<TEntity> entities, object name, object args, object @operator, object limit) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
             // def name_search(self, name='', args=None, operator='ilike', limit=100):
-            // if not name:
-            //     return super().name_search(name, args, operator, limit)
-            // # search progressively by the most specific attributes
-            // positive_operators = ['=', 'ilike', '=ilike', 'like', '=like']
-            // is_positive = operator not in expression.NEGATIVE_TERM_OPERATORS
-            // products = self.browse()
+            // result = []
             // domain = args or []
-            // if operator in positive_operators:
-            //     products = self.search_fetch(expression.AND([domain, [('default_code', '=', name)]]), ['display_name'], limit=limit) \
-            //         or self.search_fetch(expression.AND([domain, [('barcode', '=', name)]]), ['display_name'], limit=limit)
-            // if not products:
-            //     if is_positive:
-            //         # Do not merge the 2 next lines into one single search, SQL search performance would be abysmal
-            //         # on a database with thousands of matching products, due to the huge merge+unique needed for the
-            //         # OR operator (and given the fact that the 'name' lookup results come from the ir.translation table
-            //         # Performing a quick memory merge of ids in Python will give much better performance
-            //         products = self.search_fetch(expression.AND([domain, [('default_code', operator, name)]]), ['display_name'], limit=limit)
-            //         limit_rest = limit and limit - len(products)
-            //         if limit_rest is None or limit_rest > 0:
-            //             products_query = self._search(expression.AND([domain, [('default_code', operator, name)]]), limit=limit)
-            //             products |= self.search_fetch(expression.AND([domain, [('id', 'not in', products_query)], [('name', operator, name)]]), ['display_name'], limit=limit_rest)
-            //     else:
-            //         domain_neg = [
-            //             ('name', operator, name),
-            //             '|', ('default_code', operator, name), ('default_code', '=', False),
-            //         ]
-            //         products = self.search_fetch(expression.AND([domain, domain_neg]), ['display_name'], limit=limit)
-            // if not products and operator in positive_operators and (m := re.search(r'(\[(.*?)\])', name)):
-            //     match_domain = [('default_code', '=', m.group(2))]
-            //     products = self.search_fetch(expression.AND([domain, match_domain]), ['display_name'], limit=limit)
-            // if not products and (partner_id := self.env.context.get('partner_id')):
-            //     # still no results, partner in context: search on supplier info as last hope to find something
-            //     supplier_domain = [
-            //         ('partner_id', '=', partner_id),
-            //         '|',
-            //         ('product_code', operator, name),
-            //         ('product_name', operator, name),
-            //     ]
-            //     match_domain = [('product_tmpl_id.seller_ids', 'any', supplier_domain)]
-            //     products = self.search_fetch(expression.AND([domain, match_domain]), ['display_name'], limit=limit)
-            // return [(product.id, product.display_name) for product in products.sudo()]
+            // # first search by code (with =ilike)
+            // if operator not in expression.NEGATIVE_TERM_OPERATORS and name:
+            //     states = self.search_fetch(expression.AND([domain, [('code', '=like', name)]]), ['display_name'], limit=limit)
+            //     result.extend((state.id, state.display_name) for state in states.sudo())
+            //     domain = expression.AND([domain, [('id', 'not in', states.ids)]])
+            //     if limit is not None:
+            //         limit -= len(states)
+            //         if limit <= 0:
+            //             return result
+            // # normal search
+            // result.extend(super().name_search(name, domain, operator, limit))
+            // return result
             */
             return default;
         }
@@ -36393,20 +36320,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeCompanyIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _onchange_company_id(self):
-            // for order in self:
-            //     # This can't be caught by a python constraint as it is only triggered at save
-            //     # and a compute methodd needs this data to be set correctly before saving
-            //     if not order.company_id:
-            //         raise ValidationError(_("The company is required, please select one before making any other changes to the sale order."))
-            --- ODOO METHOD SOURCE (MODULE: sale_management, FILE: sale_order.py) ---
-            // def _onchange_company_id(self):
-            // """Trigger quotation template recomputation on unsaved records company change"""
-            // super()._onchange_company_id()
-            // if self._origin.id:
-            //     return
-            // self._compute_sale_order_template_id()
+            // if self.parent_id:
+            //     self.company_id = self.parent_id.company_id.id
             */
             return default;
         }
@@ -36481,12 +36398,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeCountryIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: account, FILE: partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _onchange_country_id(self):
-            // if self.country_id:
-            //     self.zip_from = self.zip_to = False
-            //     self.state_ids = [(5,)]
-            //     self.states_count = len(self.country_id.state_ids)
+            // if self.country_id and self.country_id != self.state_id.country_id:
+            //     self.state_id = False
             */
             return default;
         }
@@ -37389,9 +37304,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeStateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_company.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def _onchange_state(self):
-            // if self.state_id.country_id:
+            // if self.state_id.country_id and self.country_id != self.state_id.country_id:
             //     self.country_id = self.state_id.country_id
             */
             return default;
@@ -43323,28 +43238,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> SearchDisplayNameInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @operator, object @value) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_country.py) ---
             // def _search_display_name(self, operator, value):
-            // is_positive = operator not in expression.NEGATIVE_TERM_OPERATORS
-            // combine = expression.OR if is_positive else expression.AND
-            // domains = [
-            //     [('name', operator, value)],
-            //     [('default_code', operator, value)],
-            // ]
-            // if operator in ('=', 'in') or (operator.endswith('like') and is_positive):
-            //     barcode_values = [value] if operator != 'in' else value
-            //     domains.append([('barcode', 'in', barcode_values)])
-            // if operator == '=' and isinstance(value, str) and (m := re.search(r'(\[(.*?)\])', value)):
-            //     domains.append([('default_code', '=', m.group(2))])
-            // if partner_id := self.env.context.get('partner_id'):
-            //     supplier_domain = [
-            //         ('partner_id', '=', partner_id),
-            //         '|',
-            //         ('product_code', operator, value),
-            //         ('product_name', operator, value),
-            //     ]
-            //     domains.append([('product_tmpl_id.seller_ids', 'any', supplier_domain)])
-            // return combine(domains)
+            // domain = super()._search_display_name(operator, value)
+            // if value and operator not in expression.NEGATIVE_TERM_OPERATORS:
+            //     if operator in ('ilike', '='):
+            //         domain = expression.OR([
+            //             domain, self._get_name_search_domain(value, operator),
+            //         ])
+            //     elif operator == 'in':
+            //         domain = expression.OR([
+            //             domain,
+            //             *(self._get_name_search_domain(name, '=') for name in value),
+            //         ])
+            // if country_id := self.env.context.get('country_id'):
+            //     domain = expression.AND([domain, [('country_id', '=', country_id)]])
+            // return domain
             */
             return default;
         }
@@ -46029,19 +45938,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ToggleActiveAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_product.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_registration.py) ---
             // def toggle_active(self):
-            // """ Archiving related product.template if there is not any more active product.product
-            // (and vice versa, unarchiving the related product template if there is now an active product.product) """
-            // result = super().toggle_active()
-            // # We deactivate product templates which are active with no active variants.
-            // tmpl_to_deactivate = self.filtered(lambda product: (product.product_tmpl_id.active
-            //                                                     and not product.product_tmpl_id.product_variant_ids)).mapped('product_tmpl_id')
-            // # We activate product templates which are inactive with active variants.
-            // tmpl_to_activate = self.filtered(lambda product: (not product.product_tmpl_id.active
-            //                                                   and product.product_tmpl_id.product_variant_ids)).mapped('product_tmpl_id')
-            // (tmpl_to_deactivate + tmpl_to_activate).toggle_active()
-            // return result
+            // pre_inactive = self - self.filtered(self._active_name)
+            // super().toggle_active()
+            // # Necessary triggers as changing registration states cannot be used as triggers for the
+            // # Event(Ticket) models constraints.
+            // if pre_inactive:
+            //     pre_inactive.event_id._check_seats_availability()
+            //     pre_inactive.event_ticket_id._check_seats_availability()
             */
             return default;
         }
@@ -46134,14 +46039,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> TrackSubtypeInternalAsync<TEntity>(IEnumerable<TEntity> entities, object init_values) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: sale, FILE: sale_order.py) ---
+            --- ODOO METHOD SOURCE (MODULE: website_event, FILE: event_event.py) ---
             // def _track_subtype(self, init_values):
             // self.ensure_one()
-            // if 'state' in init_values and self.state == 'sale':
-            //     return self.env.ref('sale.mt_order_confirmed')
-            // elif 'state' in init_values and self.state == 'sent':
-            //     return self.env.ref('sale.mt_order_sent')
-            // return super()._track_subtype(init_values)
+            // if init_values.keys() & {'is_published', 'website_published'}:
+            //     if self.is_published:
+            //         return self.env.ref('website_event.mt_event_published', raise_if_not_found=False)
+            //     return self.env.ref('website_event.mt_event_unpublished', raise_if_not_found=False)
+            // return super(Event, self)._track_subtype(init_values)
             */
             return default;
         }
@@ -49387,9 +49292,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> WithoutNoVariantAttributesInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IPosLoadMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template_attribute_line.py) ---
+            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_attribute.py) ---
             // def _without_no_variant_attributes(self):
-            // return self.filtered(lambda ptal: ptal.attribute_id.create_variant != 'no_variant')
+            // return self.filtered(lambda pa: pa.create_variant != 'no_variant')
             */
             return default;
         }

@@ -1,0 +1,76 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Models;
+using Bamboo.Core.Application.Contracts;
+using Bamboo.Core.Application.Contracts.DTOs;
+namespace Bamboo.Core.Application.Contracts.Interfaces
+{
+    public interface IResUsersAppService : IGenericApplicationService<ResUsers>
+    {
+        Task<ResUsers> ApiKeyWizardAsync(Guid id);
+        Task<ResUsers> ArchiveAsync(Guid id);
+        Task<ResUsers> AuthOauthAsync(Guid id, ResUsersAuthOauthRequestDto input);
+        Task<ResUsers> AuthenticateAsync(Guid id, ResUsersAuthenticateRequestDto input);
+        Task<ResUsers> ChangePasswordAsync(Guid id, ResUsersChangePasswordRequestDto input);
+        Task<ResUsers> CheckAsync(Guid id, ResUsersCheckRequestDto input);
+        Task<ResUsers> CheckCalendarCredentialsAsync(Guid id);
+        Task<ResUsers> CheckSynchronizationStatusAsync(Guid id);
+        Task<ResUsers> ContextGetAsync(Guid id);
+        Task<ResUsers> CopyDataAsync(Guid id, ResUsersCopyDataRequestDto input);
+        Task<ResUsers> CreateEmployeeAsync(Guid id);
+        Task<ResUsers> CreatePasskeyAsync(Guid id);
+        Task<ResUsers> GetAsync(Guid id);
+        Task<ResUsers> GetCompanyCurrencyIdAsync(Guid id);
+        Task<ResUsers> GetGamificationRedirectionDataAsync(Guid id);
+        Task<ResUsers> GetPasswordPolicyAsync(Guid id);
+        Task<ResUsers> GetSelectedCalendarsPartnerIdsAsync(Guid id, ResUsersGetSelectedCalendarsPartnerIdsRequestDto input);
+        Task<ResUsers> GetTotpInviteUrlAsync(Guid id);
+        Task<ResUsers> GetViewAsync(Guid id, ResUsersGetViewRequestDto input);
+        Task<ResUsers> GetViewsAsync(Guid id, ResUsersGetViewsRequestDto input);
+        Task<bool> HasGroupAsync(Guid id, ResUsersHasGroupRequestDto input);
+        Task<bool> HasGroupsAsync(Guid id, ResUsersHasGroupsRequestDto input);
+        Task<ResUsers> InitAsync(Guid id);
+        Task<ResUsers> IsGoogleCalendarSyncedAsync(Guid id);
+        Task<ResUsers> KarmaReportAsync(Guid id);
+        Task<ResUsers> NewAsync(Guid id, ResUsersNewRequestDto input);
+        Task<ResUsers> OnChangeLoginAsync(Guid id);
+        Task<ResUsers> OnchangeParentIdAsync(Guid id);
+        Task<ResUsers> OpenEmployeeCarsAsync(Guid id);
+        Task<ResUsers> OpenEmployeesAsync(Guid id);
+        Task<ResUsers> OpenLastMonthAttendancesAsync(Guid id);
+        Task<ResUsers> OpenLastMonthOvertimeAsync(Guid id);
+        Task<ResUsers> OpenMyAccountSettingsAsync(Guid id);
+        Task<ResUsers> OpenWebsiteUrlAsync(Guid id);
+        Task<ResUsers> PauseGoogleSynchronizationAsync(Guid id);
+        Task<ResUsers> PauseMicrosoftSynchronizationAsync(Guid id);
+        Task<ResUsers> PreferenceChangePasswordAsync(Guid id);
+        Task<ResUsers> PreferenceSaveAsync(Guid id);
+        Task<ResUsers> ResetPasswordAsync(Guid id, ResUsersResetPasswordRequestDto input);
+        Task<ResUsers> ResetPasswordAsync(Guid id);
+        Task<ResUsers> RestartGoogleSynchronizationAsync(Guid id);
+        Task<ResUsers> RestartMicrosoftSynchronizationAsync(Guid id);
+        Task<ResUsers> RevokeAllDevicesAsync(Guid id);
+        Task<ResUsers> ActionRevokeAllDevicesAsync(Guid id);
+        Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id);
+        Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid id);
+        Task<ResUsers> SendUnregisteredUserReminderAsync(Guid id);
+        Task<ResUsers> ShowAccessesAsync(Guid id);
+        Task<ResUsers> ShowGroupsAsync(Guid id);
+        Task<ResUsers> ShowRulesAsync(Guid id);
+        Task<ResUsers> SignupAsync(Guid id, ResUsersSignupRequestDto input);
+        Task<ResUsers> StopGoogleSynchronizationAsync(Guid id);
+        Task<ResUsers> StopMicrosoftSynchronizationAsync(Guid id);
+        Task<ResUsers> SwitchTourEnabledAsync(Guid id, ResUsersSwitchTourEnabledRequestDto input);
+        Task<ResUsers> ToggleActiveAsync(Guid id);
+        Task<ResUsers> TotpDisableAsync(Guid id);
+        Task<ResUsers> TotpEnableWizardAsync(Guid id);
+        Task<ResUsers> TotpInviteAsync(Guid id);
+        Task<ResUsers> UnpauseGoogleSynchronizationAsync(Guid id);
+        Task<ResUsers> UnpauseMicrosoftSynchronizationAsync(Guid id);
+        Task<ResUsers> WebCreateUsersAsync(Guid id, ResUsersWebCreateUsersRequestDto input);
+        Task<ResUsers> WebsitePublishButtonAsync(Guid id);
+    }
+}

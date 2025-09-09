@@ -1,11 +1,11 @@
-using Volo.Abp.Application.Services;
-using System.Linq;
-using Volo.Abp.Domain.Entities;
-using System.Collections.Generic;
-using Bamboo.Core.Domain.Shared.Interfaces;
 using System;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
+using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IGoogleGmailMixinAppService : IMixinAppService
@@ -21,7 +21,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ComputeIsMicrosoftOutlookConfiguredInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> ComputeServerTypeInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> ComputeSmtpAuthenticationInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
-        Task<TEntity> ConnectAsync<TEntity>(IEnumerable<TEntity> entities, object host, object port, object user, object password, object encryption, object smtp_from, object ssl_certificate, object ssl_private_key, object smtp_debug, Guid mail_server_id, object allow_archived) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
+        Task<TEntity> ConnectAsync<TEntity>(IEnumerable<TEntity> entities, object allow_archived) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> CreateAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> FetchGmailAccessTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object refresh_token) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> FetchGmailRefreshTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object authorization_code) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
@@ -54,6 +54,6 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> TestSmtpConnectionAsync<TEntity>(IEnumerable<TEntity> entities, object autodetect_max_email_size) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> UnlinkAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
         Task<TEntity> UpdateCronInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
-        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object vals) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
+        Task<TEntity> WriteAsync<TEntity>(IEnumerable<TEntity> entities, object values) where TEntity : IEntity<Guid>, IGoogleGmailMixinable;
     }
 }

@@ -1,14 +1,17 @@
-using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Domain.Shared.Interfaces;
-using Bamboo.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using Volo.Abp.Application.Services;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
@@ -130,9 +133,14 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionGetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def action_get(self):
-            // return self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
+            // if self.env.user.employee_id:
+            //     return self.env['ir.actions.act_window']._for_xml_id('hr.res_users_action_my')
+            // return super(User, self).action_get()
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def action_get(self):
+            // return self.sudo().env.ref('base.action_res_users_my').read()[0]
             */
             return default;
         }
@@ -2499,56 +2507,24 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> CheckAsync<TEntity>(IEnumerable<TEntity> entities, object mode, object values) where TEntity : IEntity<Guid>, IBusListenerMixinable
+        public async Task<object> CheckAsync(object db, object uid, object passwd)
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
-            // def check(self, mode, values=None):
-            // """ Restricts the access to an ir.attachment, according to referred mode """
-            // if self.env.is_superuser():
-            //     return True
-            // # Always require an internal user (aka, employee) to access to a attachment
-            // if not (self.env.is_admin() or self.env.user._is_internal()):
-            //     raise AccessError(_("Sorry, you are not allowed to access this document."))
-            // # collect the records to check (by model)
-            // model_ids = defaultdict(set)            # {model_name: set(ids)}
-            // if self:
-            //     # DLE P173: `test_01_portal_attachment`
-            //     self.env['ir.attachment'].flush_model(['res_model', 'res_id', 'create_uid', 'public', 'res_field'])
-            //     self._cr.execute('SELECT res_model, res_id, create_uid, public, res_field FROM ir_attachment WHERE id IN %s', [tuple(self.ids)])
-            //     for res_model, res_id, create_uid, public, res_field in self._cr.fetchall():
-            //         if public and mode == 'read':
-            //             continue
-            //         if not self.env.is_system():
-            //             if not res_id and create_uid != self.env.uid:
-            //                 raise AccessError(_("Sorry, you are not allowed to access this document."))
-            //             if res_field:
-            //                 field = self.env[res_model]._fields[res_field]
-            //                 if not field.is_accessible(self.env):
-            //                     raise AccessError(_("Sorry, you are not allowed to access this document."))
-            //         if not (res_model and res_id):
-            //             continue
-            //         model_ids[res_model].add(res_id)
-            // if values and values.get('res_model') and values.get('res_id'):
-            //     model_ids[values['res_model']].add(values['res_id'])
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
+            // def check(cls, db, uid, passwd):
+            // """Verifies that the given (uid, password) is authorized for the database ``db`` and
+            //    raise an exception if it is not."""
+            // if not passwd:
+            //     # empty passwords disallowed for obvious security reasons
+            //     raise AccessDenied()
             // 
-            // # check access rights on the records
-            // for res_model, res_ids in model_ids.items():
-            //     # ignore attachments that are not attached to a resource anymore
-            //     # when checking access rights (resource was deleted but attachment
-            //     # was not)
-            //     if res_model not in self.env:
-            //         continue
-            //     if res_model == 'res.users' and len(res_ids) == 1 and self.env.uid == list(res_ids)[0]:
-            //         # by default a user cannot write on itself, despite the list of writeable fields
-            //         # e.g. in the case of a user inserting an image into his image signature
-            //         # we need to bypass this check which would needlessly throw us away
-            //         continue
-            //     records = self.env[res_model].browse(res_ids).exists()
-            //     # For related models, check if we can write to the model, as unlinking
-            //     # and creating attachments can be seen as an update to the model
-            //     access_mode = 'write' if mode in ('create', 'unlink') else mode
-            //     records.check_access(access_mode)
+            // with contextlib.closing(cls.pool.cursor()) as cr:
+            //     self = api.Environment(cr, uid, {})[cls._name]
+            //     with self._assert_can_auth(user=uid):
+            //         if not self.env.user.active:
+            //             raise AccessDenied()
+            //         credential = {'login': self.env.user.login, 'password': passwd, 'type': 'password'}
+            //         self._check_credentials(credential, {'interactive': False})
             */
             return default;
         }
@@ -2935,9 +2911,23 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CheckOneUserTypeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
+            --- ODOO METHOD SOURCE (MODULE: website, FILE: res_users.py) ---
+            // def _check_one_user_type(self):
+            // super()._check_one_user_type()
+            // internal_users = self.env.ref('base.group_user').users & self
+            // if any(user.website_id for user in internal_users):
+            //     raise ValidationError(_("Remove website on related partner before they become internal user."))
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _check_one_user_type(self):
-            // self.users._check_one_user_type()
+            // """We check that no users are both portal and users (same with public).
+            //    This could typically happen because of implied groups.
+            // """
+            // user_types_category = self.env.ref('base.module_category_user_type', raise_if_not_found=False)
+            // user_types_groups = self.env['res.groups'].search(
+            //     [('category_id', '=', user_types_category.id)]) if user_types_category else False
+            // if user_types_groups:  # needed at install
+            //     if self._has_multiple_groups(user_types_groups.ids):
+            //         raise ValidationError(_('The user cannot have more than one user types.'))
             */
             return default;
         }
@@ -6287,10 +6277,11 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
+            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
             // def copy(self, default=None):
-            // for attachment in self:
-            //     index_content_cache[attachment.checksum] = attachment.index_content
+            // if not default or not default.get('email'):
+            //     # avoid sending email to the user we are duplicating
+            //     self = self.with_context(no_reset_password=True)
             // return super().copy(default=default)
             */
             return default;
@@ -6299,15 +6290,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
             // def copy_data(self, default=None):
             // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
-            // for attachment, vals in zip(self, vals_list):
-            //     if not default.keys() & {'datas', 'db_datas', 'raw'}:
-            //         # ensure the content is kept and recomputes checksum/store_fname
-            //         vals['raw'] = attachment.raw
-            // return vals_list
+            // if default.get('name'):
+            //     return vals_list
+            // return [dict(vals, name=self.env._("%s (copy)", partner.name)) for partner, vals in zip(self, vals_list)]
             */
             return default;
         }

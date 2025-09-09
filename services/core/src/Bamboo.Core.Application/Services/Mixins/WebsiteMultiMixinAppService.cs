@@ -1,14 +1,17 @@
-using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Domain.Shared.Interfaces;
-using Bamboo.Core.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System;
-using Volo.Abp.Application.Services;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Repositories;
+using Volo.Abp.ObjectMapping;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
@@ -1010,9 +1013,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
+            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
             // def _load_pos_data_fields(self, config_id):
-            // return ['name']
+            // return [
+            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
+            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
+            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
+            // ]
             */
             return default;
         }

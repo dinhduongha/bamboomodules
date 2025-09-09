@@ -1,11 +1,11 @@
-using Volo.Abp.Application.Services;
-using System.Linq;
-using Volo.Abp.Domain.Entities;
-using System.Collections.Generic;
-using Bamboo.Core.Domain.Shared.Interfaces;
 using System;
-using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Volo.Abp.Application.Services;
+using Volo.Abp.Domain.Entities;
+using Bamboo.Core.Domain.Shared.Interfaces;
+using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
 {
     public interface IBusListenerMixinAppService : IMixinAppService
@@ -105,7 +105,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ChannelSetCustomNameAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, string operation) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckActionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
-        Task<TEntity> CheckAsync<TEntity>(IEnumerable<TEntity> entities, object mode, object values) where TEntity : IEntity<Guid>, IBusListenerMixinable;
+        Task<object> CheckAsync(object db, object uid, object passwd);
         Task<TEntity> CheckAttachmentsAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachment_tokens) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckBarcodeUnicityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckCalendarCredentialsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
