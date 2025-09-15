@@ -773,7 +773,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
     route_parts.append(pascal_model)
     route = f'[Route("{'/'.join(route_parts)}")]'
     
-    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", f"using {interface_namespace};", f"using {entity_namespace};"]
+    using_statements = ["using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Volo.Abp.AspNetCore.Mvc;", "using Microsoft.AspNetCore.Authorization;", f"using {interface_namespace};", f"using {entity_namespace};"]
     
     if add_common_actions and is_auto:
         base_class = f"GenericController<{pascal_model}, {interface_name}>"
@@ -790,6 +790,8 @@ def create_controller_content(project_base_name, module_name, module_category, m
     {'\n'.join(list(dict.fromkeys(using_statements)))}
     namespace {controller_namespace}
     {{
+        // Category: {module_category}, Module: {module_name}
+        [Authorize]
         {route}
         public partial class {controller_name} : {base_class}
         {{
@@ -802,7 +804,7 @@ def create_controller_content(project_base_name, module_name, module_category, m
     specific_actions = {name: impl for name, impl in methods.items() if not name.startswith('_') and name.lower() not in ODOO_COMMON_API_METHODS}
     
     if specific_actions:
-        partial_using = { "using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", f"using {entity_namespace};", f"using {dto_namespace};" }
+        partial_using = { "using System;", "using System.Collections.Generic;", "using System.Threading.Tasks;", "using Microsoft.AspNetCore.Mvc;", "using Microsoft.AspNetCore.Authorization;", f"using {entity_namespace};", f"using {dto_namespace};" }
         partial_content_action_result = f"""
         {'\n'.join(list(partial_using))}
         namespace {controller_namespace}

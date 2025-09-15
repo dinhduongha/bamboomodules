@@ -253,6 +253,9 @@ paket-files/
 appsettings.secrets.json
 appsettings.*.secrets.json
 # Bamboo
+Logs/*
+www/libs/*
+wwwroot/libs/*
 src/Bamboo.Web/Logs/*
 src/Bamboo.Web.Host/Logs/*
 src/Bamboo.IdentityServer/Logs/*
