@@ -91,7 +91,7 @@ docker exec -it bamboo-admin dotnet /app/Bamboo.Admin.DbMigrator.dll
 - Init core database
 
 ```
-dotnet ef database update --startup-project services/core/host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj --project services/core/src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj --context CoreDbContext
+docker exec -it bamboo-core dotnet /app/Bamboo.Core.DbMigrator.dll
 ```
 
 - Migrate data from odoo-18 to bamboo
