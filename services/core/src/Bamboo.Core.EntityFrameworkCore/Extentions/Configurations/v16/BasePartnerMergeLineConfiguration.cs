@@ -17,7 +17,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.ToTable("base_partner_merge_line");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.AggrIds).HasColumnName("aggr_ids");
                         entity.Property(e => e.CreationTime)

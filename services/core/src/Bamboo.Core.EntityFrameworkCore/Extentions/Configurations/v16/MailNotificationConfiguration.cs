@@ -45,7 +45,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasFilter("(res_partner_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

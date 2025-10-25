@@ -23,7 +23,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.UserId, e.Index }, "auth_totp_device_user_id_index_idx");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

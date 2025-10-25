@@ -23,7 +23,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.CandidateId, e.SkillId }, "hr_candidate_skill__unique_skill").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

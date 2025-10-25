@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("ParentId", Name = "forum_post__parent_id_index")]
 //[Index("WriteDate", Name = "forum_post__write_date_index")]
 //[Index("WriteUid", Name = "forum_post__write_uid_index")]
-public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ForumPost : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("forum_id")]
     public Guid? ForumId { get; set; }
@@ -98,6 +98,9 @@ public partial class ForumPost: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
 
     [Column("plain_content")]
     public string? PlainContent { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

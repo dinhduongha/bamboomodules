@@ -17,7 +17,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.ToTable("base_language_import");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Code).HasColumnName("code");
                         entity.Property(e => e.CreationTime)

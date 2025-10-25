@@ -26,7 +26,7 @@ namespace Bamboo.Admin;
     typeof(AbpOpenIddictDomainSharedModule),
     typeof(AbpPermissionManagementDomainSharedModule),
     typeof(AbpSettingManagementDomainSharedModule),
-    typeof(AbpTenantManagementDomainSharedModule)    
+    typeof(AbpTenantManagementDomainSharedModule)
     )]
 public class AdminDomainSharedModule : AbpModule
 {
@@ -42,7 +42,7 @@ public class AdminDomainSharedModule : AbpModule
         {
             options.DefaultSequentialGuidType = SequentialGuidType.SequentialAsString;
         });
-        context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, MySequentialGuidGenerator>());
+        context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, UuidV7Generator>());
 
         Configure<AbpVirtualFileSystemOptions>(options =>
         {

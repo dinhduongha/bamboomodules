@@ -19,7 +19,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.IsPublished, "res_partner_grade__is_published_index");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.CreationTime)

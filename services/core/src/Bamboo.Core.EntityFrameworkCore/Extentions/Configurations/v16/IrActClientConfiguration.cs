@@ -19,7 +19,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.Path, "ir_act_client_path_unique").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.BindingModelId).HasColumnName("binding_model_id");
                         entity.Property(e => e.BindingType).HasColumnName("binding_type");

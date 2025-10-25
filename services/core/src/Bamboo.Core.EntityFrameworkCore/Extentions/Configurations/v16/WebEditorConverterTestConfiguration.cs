@@ -17,7 +17,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.ToTable("web_editor_converter_test");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Binary).HasColumnName("binary");
                         entity.Property(e => e.Char).HasColumnName("char");

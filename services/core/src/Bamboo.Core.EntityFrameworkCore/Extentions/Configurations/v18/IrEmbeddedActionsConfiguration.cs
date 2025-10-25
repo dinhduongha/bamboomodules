@@ -17,7 +17,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.ToTable("ir_embedded_actions");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.ActionId).HasColumnName("action_id");
                         entity.Property(e => e.Context).HasColumnName("context");

@@ -23,7 +23,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.Number, "phone_blacklist_unique_number").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

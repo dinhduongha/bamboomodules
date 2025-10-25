@@ -25,7 +25,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.UserId, "res_device_log__user_id_index");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Browser).HasColumnName("browser");
                         entity.Property(e => e.City).HasColumnName("city");

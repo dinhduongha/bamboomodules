@@ -27,7 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.ChannelId, e.PartnerId }, "slide_channel_partner_channel_partner_uniq").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

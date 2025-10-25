@@ -23,7 +23,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.UserId, e.RefId }, "ir_ui_view_custom_user_id_ref_id");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Arch).HasColumnName("arch");
                         entity.Property(e => e.CreationTime)

@@ -9,19 +9,19 @@ using Volo.Abp.Threading;
 /// Implements <see cref="IGuidGenerator"/> by creating sequential Guids.
 /// This code is taken from https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs
 /// </summary>
-public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
+public class UuidV7Generator : IGuidGenerator, ITransientDependency
 {
     /// <summary>
     /// Gets the singleton <see cref="SequentialGuidGenerator"/> instance.
     /// </summary>
-    //public static MySequentialGuidGenerator Instance { get; } = new MySequentialGuidGenerator();
+    //public static UuidV7Generator Instance { get; } = new UuidV7Generator();
 
     private static readonly RandomNumberGenerator Rng = RandomNumberGenerator.Create();
     private const long UNIXEPOCHMICROSECONDS = 62135596800000000;
     public AbpSequentialGuidGeneratorOptions Options { get; }
     public SequentialGuidDatabaseType DatabaseType { get; set; }
 
-    public MySequentialGuidGenerator()
+    public UuidV7Generator()
     {
         DatabaseType = SequentialGuidDatabaseType.PostgreSql;
     }
@@ -29,7 +29,7 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
     /// Prevents a default instance of the <see cref="SequentialGuidGenerator"/> class from being created.
     /// Use <see cref="Instance"/>.
     /// </summary>
-    private MySequentialGuidGenerator(IOptions<AbpSequentialGuidGeneratorOptions> options)
+    private UuidV7Generator(IOptions<AbpSequentialGuidGeneratorOptions> options)
     {
         Options = options.Value;
         DatabaseType = SequentialGuidDatabaseType.PostgreSql;
@@ -88,14 +88,15 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
 
         // Then get the bytes
         byte[] timestampBytes = BitConverter.GetBytes(timestamp / 1000);
-        byte[] microsecBytes = BitConverter.GetBytes(timestamp % 1000);
+        byte[] microsecBytes = { 0x00, 0x70 }; // UUIDv7
+        //byte[] microsecBytes = BitConverter.GetBytes(timestamp % 1000);
         // Since we're converting from an Int64, we have to reverse on
         // little-endian systems.
         if (BitConverter.IsLittleEndian)
         {
             Array.Reverse(timestampBytes);
             Array.Reverse(microsecBytes);
-        }           
+        }
 
         byte[] guidBytes = new byte[16];
 
@@ -106,9 +107,9 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
 
                 // For string and byte-array version, we copy the timestamp first, followed
                 // by the random data.
-                    
+
                 Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
-                Buffer.BlockCopy(microsecBytes, 6, guidBytes, 6, 2);
+                Buffer.BlockCopy(microsecBytes, 0, guidBytes, 6, 2);
                 Buffer.BlockCopy(randomBytes, 0, guidBytes, 8, 8);
 
                 // If formatting as a string, we have to compensate for the fact
@@ -179,6 +180,6 @@ public class MySequentialGuidGenerator : IGuidGenerator, ITransientDependency
     {
         options.DefaultSequentialGuidType = SequentialGuidType.SequentialAsString;
     });
-    //context.Services.AddTransient<IGuidGenerator, MySequentialGuidGenerator>();
-    context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, MySequentialGuidGenerator>());
+    //context.Services.AddTransient<IGuidGenerator, UuidV7Generator>();
+    context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, UuidV7Generator>());
 */

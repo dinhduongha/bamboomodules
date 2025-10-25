@@ -17,7 +17,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.ToTable("res_users_identitycheck");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.AuthMethod).HasColumnName("auth_method");
                         entity.Property(e => e.CreationTime)

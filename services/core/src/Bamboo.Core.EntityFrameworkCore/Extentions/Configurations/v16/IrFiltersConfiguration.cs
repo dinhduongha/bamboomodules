@@ -19,7 +19,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.ModelId, e.UserId, e.ActionId, e.EmbeddedActionId, e.EmbeddedParentResId, e.Name }, "ir_filters_name_model_uid_unique").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.ActionId).HasColumnName("action_id");
                         entity.Property(e => e.Active).HasColumnName("active");

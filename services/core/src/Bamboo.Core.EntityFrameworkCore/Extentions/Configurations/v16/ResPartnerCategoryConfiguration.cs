@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.ParentPath, "res_partner_category__parent_path_index");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.Color).HasColumnName("color");

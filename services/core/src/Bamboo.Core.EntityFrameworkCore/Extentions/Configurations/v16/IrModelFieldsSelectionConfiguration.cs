@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.FieldId, e.Value }, "ir_model_fields_selection_selection_field_uniq").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")

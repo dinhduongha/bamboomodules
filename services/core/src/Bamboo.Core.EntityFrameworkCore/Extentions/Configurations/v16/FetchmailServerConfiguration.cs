@@ -25,7 +25,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.State, "fetchmail_server__state_index");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

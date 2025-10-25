@@ -31,7 +31,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.Id, e.TenantId, e.ProductId, e.LotId, e.LocationId, e.OwnerId, e.PackageId }, "stock_move_line_free_reservation_index").HasFilter("(((state IS NULL) OR (state <> ALL (ARRAY[('cancel'::character varying)::text, ('done'::character varying)::text]))) AND (quantity_product_uom > (0)::numeric) AND (NOT picked))");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

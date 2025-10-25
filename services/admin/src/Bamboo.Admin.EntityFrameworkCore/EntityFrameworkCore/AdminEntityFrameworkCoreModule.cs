@@ -45,18 +45,18 @@ public class AdminEntityFrameworkCoreModule : AbpModule
         {
             options.DefaultSequentialGuidType = SequentialGuidType.SequentialAsString;
         });
-        context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, MySequentialGuidGenerator>());
+        context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, UuidV7Generator>());
         context.Services.AddAbpDbContext<AdminDbContext>(options =>
         {
-                /* Remove "includeAllEntities: true" to create
-                 * default repositories only for aggregate roots */
+            /* Remove "includeAllEntities: true" to create
+             * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
         });
 
         Configure<AbpDbContextOptions>(options =>
         {
-                /* The main point to change your DBMS.
-                 * See also AdminMigrationsDbContextFactory for EF Core tooling. */
+            /* The main point to change your DBMS.
+             * See also AdminMigrationsDbContextFactory for EF Core tooling. */
             options.UseNpgsql();
         });
 

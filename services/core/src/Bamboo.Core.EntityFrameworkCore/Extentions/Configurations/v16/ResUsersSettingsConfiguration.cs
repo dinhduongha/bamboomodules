@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.UserId, "res_users_settings_unique_user_id").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.CalendarDefaultPrivacy).HasColumnName("calendar_default_privacy");
                         entity.Property(e => e.ChannelNotifications).HasColumnName("channel_notifications");

@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "slide_channel__is_published_index")]
 //[Index("WebsiteId", Name = "slide_channel__website_id_index")]
 //[Index("ForumId", Name = "slide_channel_forum_uniq", IsUnique = true)]
-public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideChannel : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -161,6 +161,9 @@ public partial class SlideChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
 
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("total_time")]
     public decimal? TotalTime { get; set; }

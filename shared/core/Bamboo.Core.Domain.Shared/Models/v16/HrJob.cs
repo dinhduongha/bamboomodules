@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "hr_job__is_published_index")]
 //[Index("WebsiteId", Name = "hr_job__website_id_index")]
 //[Index("Name", "CompanyId", "DepartmentId", Name = "hr_job_name_company_uniq", IsUnique = true)]
-public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrJob : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -141,6 +141,9 @@ public partial class HrJob: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IM
     [JsonField] // JobDetails
     [Column("job_details", TypeName = "jsonb")]
     public JsonElement? JobDetails { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }

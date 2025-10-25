@@ -31,7 +31,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.Model, e.Name }, "ir_model_fields_name_unique").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.Column1).HasColumnName("column1");
                         entity.Property(e => e.Column2).HasColumnName("column2");

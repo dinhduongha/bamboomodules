@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.CronId, "ir_cron_trigger__cron_id_index");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.CallAt)
                             .HasColumnType("timestamp without time zone")

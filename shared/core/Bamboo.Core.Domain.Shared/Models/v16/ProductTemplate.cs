@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "product_template__is_published_index")]
 //[Index("WebsiteId", Name = "product_template__website_id_index")]
 //[Index("WebsiteSequence", Name = "product_template__website_sequence_index")]
-public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplate : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }
@@ -278,6 +278,9 @@ public partial class ProductTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto
 
     [Column("compare_list_price")]
     public decimal? CompareListPrice { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }

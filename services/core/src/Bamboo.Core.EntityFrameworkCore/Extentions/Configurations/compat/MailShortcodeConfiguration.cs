@@ -25,7 +25,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasOperators(new[] { "gin_trgm_ops" });
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

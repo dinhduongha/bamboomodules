@@ -27,7 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.MailMessageId, e.OldValueInteger }, "mail_tracking_value_mail_message_id_old_value_integer_task_stag").HasFilter("(field_id = '00000000-0000-0000-0000-00000000264b'::uuid)");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

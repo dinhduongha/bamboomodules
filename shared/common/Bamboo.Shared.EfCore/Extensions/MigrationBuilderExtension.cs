@@ -22,10 +22,10 @@ public static class MigrationBuilderExtension
     /// https://github.com/iCyberon/pg_ulid
     /// https://github.com/dinhduongha/next-uuid
     /// EXPLAIN ANALYZE
-    /// SELECT next_uuid() FROM generate_series(1,100000);
+    /// SELECT uuidv7() FROM generate_series(1,100000);
     /// </summary>
     /// <param name="migrationBuilder"></param>
-    public static string NextUUID = @"CREATE OR REPLACE FUNCTION next_uuid(OUT result uuid) AS $$
+    public static string NextUUID = @"CREATE OR REPLACE FUNCTION uuidv7(OUT result uuid) AS $$
                     DECLARE
                         now_micros bigint;
                         second_rand bigint;
@@ -42,7 +42,7 @@ public static class MigrationBuilderExtension
                         result := CAST(hex_value AS UUID);
 	                    -- TEST PERFOMANCE
 	                    -- EXPLAIN ANALYZE
-                        -- SELECT next_uuid() FROM generate_series(1,100000);
+                        -- SELECT uuidv7() FROM generate_series(1,100000);
                     END;
                     $$ LANGUAGE PLPGSQL;
             ";

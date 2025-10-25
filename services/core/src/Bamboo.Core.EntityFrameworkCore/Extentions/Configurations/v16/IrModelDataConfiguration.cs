@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.Module, e.Name }, "ir_model_data_module_name_uniq_index").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("(now() AT TIME ZONE 'UTC'::text)")

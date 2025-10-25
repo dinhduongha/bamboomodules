@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("blog_blog")]
 //[Index("WebsiteId", Name = "blog_blog__website_id_index")]
-public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BlogBlog : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -70,6 +70,9 @@ public partial class BlogBlog: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
 
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

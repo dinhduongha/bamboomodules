@@ -24,7 +24,7 @@ namespace Bamboo.Core.Models;
 //[Index("Ref", Name = "res_partner__ref_index")]
 //[Index("Vat", Name = "res_partner__vat_index")]
 //[Index("WebsiteId", Name = "res_partner__website_id_index")]
-public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartner : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
@@ -356,6 +356,9 @@ public partial class ResPartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [JsonField(IsSparse = false)] // WebsiteShortDescription
     [Column("website_short_description", TypeName = "jsonb")]
     public StringDictionary? WebsiteShortDescription { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("associate_member")]
     public Guid? AssociateMember { get; set; }

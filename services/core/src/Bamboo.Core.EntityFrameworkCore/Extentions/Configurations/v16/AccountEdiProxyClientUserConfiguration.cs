@@ -31,7 +31,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.IdClient, "account_edi_proxy_client_user_unique_id_client").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

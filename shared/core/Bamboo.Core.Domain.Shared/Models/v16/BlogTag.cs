@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("blog_tag")]
 //[Index("CategoryId", Name = "blog_tag__category_id_index")]
 //[Index("Name", Name = "blog_tag_name_uniq", IsUnique = true)]
-public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class BlogTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("category_id")]
     public Guid? CategoryId { get; set; }
@@ -63,6 +63,9 @@ public partial class BlogTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     [JsonField(IsSparse = false)] // Name
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

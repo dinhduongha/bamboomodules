@@ -79,4 +79,34 @@ public class StringDictionary : Dictionary<string, string?>, IComparable<StringD
         // All keys and values are equal
         return 0;
     }
+
+    // Phương thức helper để lấy tên đã được dịch
+    public string GetName(string currentLanguage, string fallbackLanguage = "en-US")
+    {
+        // Nếu Dictionary rỗng, trả về chuỗi mặc định
+        if (this.Count == 0)
+        {
+            return "[No Name]";
+        }
+
+        // 1. Thử lấy theo ngôn ngữ hiện tại
+        if (!string.IsNullOrEmpty(currentLanguage) &&
+            this.TryGetValue(currentLanguage, out var translatedName) &&
+            !string.IsNullOrEmpty(translatedName))
+        {
+            return translatedName;
+        }
+
+        // 2. Nếu không được, thử lấy theo ngôn ngữ dự phòng
+        if (!string.IsNullOrEmpty(fallbackLanguage) &&
+            this.TryGetValue(fallbackLanguage, out var fallbackName) &&
+            !string.IsNullOrEmpty(fallbackName))
+        {
+            return fallbackName;
+        }
+
+        // 3. Nếu vẫn không được, lấy giá trị đầu tiên tìm thấy mà không rỗng
+        return this.Values.FirstOrDefault(val => !string.IsNullOrEmpty(val)) ?? "[Unnamed]";
+    }
+
 }

@@ -11,7 +11,7 @@ namespace Bamboo.Shared.Common
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             var configuration = context.Services.GetConfiguration();
-            context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, MySequentialGuidGenerator>());
+            context.Services.Replace(ServiceDescriptor.Transient<IGuidGenerator, UuidV7Generator>());
         }
     }
 }

@@ -4,7 +4,7 @@
 
 For compatible with ABP, and use GUID for primary key, we need:
 
-- Convert all primary key to GUID. Default value is `next_uuid()`
+- Convert all primary key to GUID. Default value is `uuidv7()`
 - Map all `company_id` column to TenantId
 - Map all `create_uid` to CreatorId
 - Map all `write_uid` to LastModifierId
@@ -18,7 +18,7 @@ For compatible with ABP, and use GUID for primary key, we need:
 - PostgreSQL 17
 - `pgloader` with [small patch](https://github.com/piconnectdev/pgloader) (has `int-to-uuid` function)
 - Customer file `pgloader-odoo18-data-full-uuid.conf`
-- File `create-*-generic.sql` to create databases with custom function `next_uuid()`
+- File `create-*-generic.sql` to create databases with custom function `uuidv7()`
 
 ## A. Prepare
 
@@ -54,7 +54,7 @@ To migrate from odoo, at database source, we must ensure:
 -Create CoreDB:
 `psql -p 5432 -h 127.0.0.1 -U postgres -f create-db-core-generic.sql`
 
-After this step, these databases with custom `next_uuid` created.
+After this step, these databases with custom `uuidv7` created.
 
 ### 2. Create migrations and update database Bamboo.Admin project (Optional)
 

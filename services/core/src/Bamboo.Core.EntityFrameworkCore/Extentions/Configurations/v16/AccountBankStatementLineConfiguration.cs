@@ -29,7 +29,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_unreconciled_idx").HasFilter("((NOT is_reconciled) OR (is_reconciled IS NULL))");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

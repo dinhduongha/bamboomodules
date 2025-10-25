@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.Path, "ir_act_server_path_unique").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.ActivityDateDeadlineRange).HasColumnName("activity_date_deadline_range");
                         entity.Property(e => e.ActivityDateDeadlineRangeType).HasColumnName("activity_date_deadline_range_type");

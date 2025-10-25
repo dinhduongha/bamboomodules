@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("ParentPath", Name = "product_public_category__parent_path_index")]
 //[Index("Sequence", Name = "product_public_category__sequence_index")]
 //[Index("WebsiteId", Name = "product_public_category__website_id_index")]
-public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductPublicCategory : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -79,6 +79,9 @@ public partial class ProductPublicCategory: FullAuditedAggregateRoot<Guid>, IEnt
     [JsonField] // WebsiteFooter
     [Column("website_footer", TypeName = "jsonb")]
     public JsonElement? WebsiteFooter { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }

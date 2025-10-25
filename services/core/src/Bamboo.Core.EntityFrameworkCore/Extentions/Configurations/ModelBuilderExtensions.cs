@@ -43,7 +43,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 {
                     b.Property(nameof(IHasConcurrencyStamp.ConcurrencyStamp))
                         .IsRequired(false)
-                        .HasDefaultValueSql("next_uuid()::text");;
+                        .HasDefaultValueSql("uuidv7()::text");;
                 });
             }
 

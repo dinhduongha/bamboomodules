@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("InheritId", Name = "ir_ui_view__inherit_id_index")]
 //[Index("Model", Name = "ir_ui_view__model_index")]
 //[Index("Model", "InheritId", Name = "ir_ui_view_model_type_inherit_id")]
-public partial class IrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
+public partial class IrUiView : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -106,6 +106,9 @@ public partial class IrUiView: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [JsonField(IsSparse = false)] // SeoName
     [Column("seo_name", TypeName = "jsonb")]
     public StringDictionary? SeoName { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("track")]
     public bool? Track { get; set; }

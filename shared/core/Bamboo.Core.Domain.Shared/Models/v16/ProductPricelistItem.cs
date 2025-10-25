@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("product_pricelist_item")]
 //[Index("ComputePrice", Name = "product_pricelist_item__compute_price_index")]
 //[Index("PricelistId", Name = "product_pricelist_item__pricelist_id_index")]
-public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductPricelistItem : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("pricelist_id")]
     public Guid? PricelistId { get; set; }
@@ -102,7 +102,7 @@ public partial class ProductPricelistItem: FullAuditedEntity<Guid>, IEntityDto<G
     public override DateTime? LastModificationTime { get; set; }
 
     [Column("percent_price")]
-    public double? PercentPrice { get; set; }
+    public decimal? PercentPrice { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

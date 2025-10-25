@@ -19,7 +19,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.ActWindowId, e.ViewMode }, "act_window_view_unique_mode_per_action").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.ActWindowId).HasColumnName("act_window_id");
                         entity.Property(e => e.CreationTime)

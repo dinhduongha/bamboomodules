@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("forum_forum")]
 //[Index("WebsiteId", Name = "forum_forum__website_id_index")]
-public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ForumForum : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }
@@ -191,6 +191,9 @@ public partial class ForumForum: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("teaser")]
     public string? Teaser { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("active")]
     public bool? Active { get; set; }

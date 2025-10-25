@@ -33,7 +33,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasFilter("(active IS TRUE)");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");

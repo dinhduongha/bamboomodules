@@ -21,7 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => new { e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
                         entity.Property(e => e.ApiKeyDuration).HasColumnName("api_key_duration");
                         entity.Property(e => e.CategoryId).HasColumnName("category_id");

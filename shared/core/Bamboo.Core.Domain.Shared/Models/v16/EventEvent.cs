@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("event_event")]
 //[Index("IsPublished", Name = "event_event__is_published_index")]
 //[Index("WebsiteId", Name = "event_event__website_id_index")]
-public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventEvent : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }
@@ -142,6 +142,9 @@ public partial class EventEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
 
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
+
+    [Column("slug")]
+    public string? Slug { get; set; }
 
     [Column("is_published")]
     public bool? IsPublished { get; set; }

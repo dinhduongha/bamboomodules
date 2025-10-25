@@ -148,7 +148,7 @@ public static partial class ModelBuilderExtensions
                     }
                     else if (fieldInfo.FieldType == typeof(System.Guid) && fieldInfo.Name == "id")
                     {
-                        //property.SetDefaultValueSql("next_uuid()");
+                        //property.SetDefaultValueSql("uuidv7()");
                     }
                 }
                 if (property.GetColumnType() == "jsonb")

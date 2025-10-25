@@ -29,7 +29,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.FullReconcileId, "account_partial_reconcile__full_reconcile_id_index").HasFilter("(full_reconcile_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
-                            .HasDefaultValueSql("next_uuid()")
+                            .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
