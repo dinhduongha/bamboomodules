@@ -1,0 +1,8 @@
+# Sử dụng hình ảnh cơ sở ASP.NET Core runtime cho .NET 10
+# docker build -t bamboo-base:latest -f ./dockerfiles/Dockerfile.base .
+# docker save -o bamboo-base.tar bamboo-base:latest
+# scp bamboo-base.tar user@host:/path/to/destination
+# docker load -i bamboo-base.tar
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
+WORKDIR /app
+EXPOSE 80

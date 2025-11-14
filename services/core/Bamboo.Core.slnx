@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/host/">
+    <Project Path="host/Bamboo.Core.DbMigrator/Bamboo.Core.DbMigrator.csproj" />
+    <Project Path="host/Bamboo.Core.Host.Shared/Bamboo.Core.Host.Shared.csproj" />
+    <Project Path="host/Bamboo.Core.HttpApi.Host/Bamboo.Core.HttpApi.Host.csproj" />
+  </Folder>
+  <Folder Name="/shared/">
+    <Project Path="../../shared/common/Bamboo.Shared.Common/Bamboo.Shared.Common.csproj" />
+    <Project Path="../../shared/common/Bamboo.Shared.EfCore/Bamboo.Shared.EfCore.csproj" />
+    <Project Path="../../shared/common/Bamboo.Shared.Hosting/Bamboo.Shared.Hosting.csproj" />
+    <Project Path="../../shared/common/Bamboo.Shared.Localization/Bamboo.Shared.Localization.csproj" />
+    <Project Path="../../shared/common/Bamboo.Shared.Microservices/Bamboo.Shared.Microservices.csproj" />
+    <Project Path="../../shared/core/Bamboo.Core.Application.Contracts/Bamboo.Core.Application.Contracts.csproj" />
+    <Project Path="../../shared/core/Bamboo.Core.Domain.Shared/Bamboo.Core.Domain.Shared.csproj" />
+    <Project Path="../../shared/core/Bamboo.Core.HttpApi.Client/Bamboo.Core.HttpApi.Client.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Bamboo.Core.Application/Bamboo.Core.Application.csproj" />
+    <Project Path="src/Bamboo.Core.Domain/Bamboo.Core.Domain.csproj" />
+    <Project Path="src/Bamboo.Core.EntityFrameworkCore/Bamboo.Core.EntityFrameworkCore.csproj" />
+    <Project Path="src/Bamboo.Core.HttpApi/Bamboo.Core.HttpApi.csproj" />
+    <Project Path="src/Bamboo.Core.MongoDB/Bamboo.Core.MongoDB.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Bamboo.Core.Application.Tests/Bamboo.Core.Application.Tests.csproj" />
+    <Project Path="test/Bamboo.Core.Domain.Tests/Bamboo.Core.Domain.Tests.csproj" />
+    <Project Path="test/Bamboo.Core.EntityFrameworkCore.Tests/Bamboo.Core.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/Bamboo.Core.HttpApi.Client.ConsoleTestApp/Bamboo.Core.HttpApi.Client.ConsoleTestApp.csproj" />
+    <Project Path="test/Bamboo.Core.TestBase/Bamboo.Core.TestBase.csproj" />
+  </Folder>
+</Solution>

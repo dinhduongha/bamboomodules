@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/shared/">
+    <Project Path="../../shared/admin/Bamboo.Admin.Application.Contracts/Bamboo.Admin.Application.Contracts.csproj" />
+    <Project Path="../../shared/admin/Bamboo.Admin.Domain.Shared/Bamboo.Admin.Domain.Shared.csproj" />
+    <Project Path="../../shared/admin/Bamboo.Admin.HttpApi.Client/Bamboo.Admin.HttpApi.Client.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Bamboo.Admin.Application/Bamboo.Admin.Application.csproj" />
+    <Project Path="src/Bamboo.Admin.AuthServer/Bamboo.Admin.AuthServer.csproj" />
+    <Project Path="src/Bamboo.Admin.DbMigrator/Bamboo.Admin.DbMigrator.csproj" />
+    <Project Path="src/Bamboo.Admin.Domain/Bamboo.Admin.Domain.csproj" />
+    <Project Path="src/Bamboo.Admin.EntityFrameworkCore/Bamboo.Admin.EntityFrameworkCore.csproj" />
+    <Project Path="src/Bamboo.Admin.HttpApi.Host.Bundle/Bamboo.Admin.HttpApi.Host.Bundle.csproj" />
+    <Project Path="src/Bamboo.Admin.HttpApi.Host/Bamboo.Admin.HttpApi.Host.csproj" />
+    <Project Path="src/Bamboo.Admin.HttpApi/Bamboo.Admin.HttpApi.csproj" />
+    <Project Path="src/Bamboo.AdminExtensions/Bamboo.AdminExtensions.csproj" />
+    <Project Path="src/Bamboo.LoginUi.Web/Bamboo.LoginUi.Web.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Bamboo.Admin.Application.Tests/Bamboo.Admin.Application.Tests.csproj" />
+    <Project Path="test/Bamboo.Admin.Domain.Tests/Bamboo.Admin.Domain.Tests.csproj" />
+    <Project Path="test/Bamboo.Admin.EntityFrameworkCore.Tests/Bamboo.Admin.EntityFrameworkCore.Tests.csproj" />
+    <Project Path="test/Bamboo.Admin.HttpApi.Client.ConsoleTestApp/Bamboo.Admin.HttpApi.Client.ConsoleTestApp.csproj" />
+    <Project Path="test/Bamboo.Admin.TestBase/Bamboo.Admin.TestBase.csproj" />
+  </Folder>
+  <Properties Name="MonoDevelopProperties">
+    <Property Name="$0.DotNetNamingPolicy" Value="$1" />
+    <Property Name="$1.DirectoryNamespaceAssociation" Value="PrefixedHierarchical" />
+    <Property Name="Policies" Value="$0" />
+  </Properties>
+</Solution>
