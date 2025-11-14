@@ -3,7 +3,7 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Bamboo.Admin</RootNamespace>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
@@ -40,29 +40,31 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
-    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />
+    <PackageReference Include="DistributedLock.Redis" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="3.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0-rc.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Account.Application" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0-rc.3" />
     <ProjectReference Include="..\Bamboo.Admin.EntityFrameworkCore\Bamboo.Admin.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Bamboo.LoginUi.Web\Bamboo.LoginUi.Web.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.0" PrivateAssets="All" />
+  </ItemGroup>
 </Project>

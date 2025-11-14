@@ -3,7 +3,7 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <IsPackable>true</IsPackable>
     <OutputType>Library</OutputType>
@@ -17,36 +17,37 @@
 
   <ItemGroup>
 
-    <PackageReference Include="FirebaseAdmin" Version="2.4.0" />
-    <PackageReference Include="Twilio.AspNet.Core" Version="8.0.0" />
-    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
-    <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.*" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
-    <PackageReference Include="AspNet.Security.OAuth.Apple" Version="8.0.*" />
-    <PackageReference Include="AspNet.Security.OAuth.Instagram" Version="8.0.*" />
-    <PackageReference Include="AspNet.Security.OAuth.Line" Version="8.0.*" />
-    <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="8.0.*" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Sms" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.3.4" />
+    <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="8.1.2" />
     <PackageReference Include="Telegram.Bot.Extensions.LoginWidget" Version="1.2.0" />
-    <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="8.0.0" />
-    <PackageReference Include="AspNet.Security.OAuth.Keycloak" Version="8.0.0" />
+    <!-- <PackageReference Include="Telegram.Bot" Version="22.7.5" /> -->
+    <PackageReference Include="DistributedLock.Redis" Version="1.1.1" />
+    <PackageReference Include="DistributedLock.FileSystem" Version="1.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OAuth" Version="2.2.0" />
+    <PackageReference Include="AspNet.Security.OAuth.Apple" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.Instagram" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.Line" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="10.0.0" />
+    <PackageReference Include="AspNet.Security.OAuth.Keycloak" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Sms" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0-rc.3" />
   </ItemGroup>
 
   <ItemGroup>

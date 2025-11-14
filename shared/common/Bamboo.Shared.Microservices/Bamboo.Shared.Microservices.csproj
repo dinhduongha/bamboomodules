@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -11,34 +11,34 @@
     <PackageReference Include="DistributedLock.FileSystem" Version="1.0.2" />
     <PackageReference Include="Hangfire.LiteDB" Version="0.4.1" />
     <PackageReference Include="IdentityModel" Version="6.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.*" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0-rc.1.25451.107" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0-rc.1.25451.107" />
+    <!-- <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" /> -->
     <PackageReference Include="Rebus.ServiceProvider" Version="10.5.0" />
     <PackageReference Include="Rebus.Redis" Version="0.0.1" />
     <PackageReference Include="Rebus.PostgreSql" Version="9.1.1" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.BackgroundJobs.RabbitMQ" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.BlobStoring" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Data" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EntityFrameworkCore.PostgreSql" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EventBus.Azure" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EventBus.Kafka" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Identity.Application" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Localization" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.MongoDB" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.MultiTenancy" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.JwtBearer" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.MultiTenancy" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.HangFire" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.BackgroundJobs.RabbitMQ" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.BlobStoring" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Data" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EntityFrameworkCore.PostgreSql" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EventBus.Azure" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EventBus.Kafka" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EventBus.RabbitMQ" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Localization" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.MongoDB" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.MultiTenancy" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0-rc.1" />
   </ItemGroup>
 
   <ItemGroup>

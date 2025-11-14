@@ -3,7 +3,7 @@
   <Import Project="..\..\common.props" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <RootNamespace>Bamboo.Web</RootNamespace>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
@@ -17,28 +17,28 @@
 
   <ItemGroup>
     <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="10.0.0-rc.1.25451.107" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="3.2.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0-rc.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Http.Client.Web" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Web" Version="8.3.4" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Web" Version="8.3.4" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Http.Client.Web" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Web" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Web" Version="10.0.0-rc.2" />
   </ItemGroup>
 
   <ItemGroup>
