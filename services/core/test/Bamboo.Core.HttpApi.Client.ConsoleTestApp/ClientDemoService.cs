@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using IdentityModel.Client;
+using Duende.IdentityModel.Client;
+
+//using IdentityModel.Client;
 using Microsoft.Extensions.Configuration;
 //using Bamboo.Core.Samples;
 using Volo.Abp.DependencyInjection;
