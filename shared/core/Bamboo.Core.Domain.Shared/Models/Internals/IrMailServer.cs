@@ -43,15 +43,18 @@ public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("smtp_host")]
     public string? SmtpHost { get; set; }
 
+    [JsonIgnore]
     [Column("smtp_authentication")]
     public string? SmtpAuthentication { get; set; }
 
     [Column("smtp_user")]
     public string? SmtpUser { get; set; }
 
+    [JsonIgnore]
     [Column("smtp_pass")]
     public string? SmtpPass { get; set; }
 
+    [JsonIgnore]
     [Column("smtp_encryption")]
     public string? SmtpEncryption { get; set; }
 
@@ -80,12 +83,14 @@ public partial class IrMailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     [Column("google_gmail_access_token_expiration")]
     public long? GoogleGmailAccessTokenExpiration { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_authorization_code")]
     public string? GoogleGmailAuthorizationCode { get; set; }
 
     [Column("google_gmail_refresh_token")]
     public string? GoogleGmailRefreshToken { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_access_token")]
     public string? GoogleGmailAccessToken { get; set; }
 

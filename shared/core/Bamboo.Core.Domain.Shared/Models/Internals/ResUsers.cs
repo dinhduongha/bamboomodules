@@ -117,12 +117,15 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     [Column("oauth_uid")]
     public string? OauthUid { get; set; }
 
+    [JsonIgnore]
     [Column("oauth_access_token")]
     public string? OauthAccessToken { get; set; }
 
+    [JsonIgnore]
     [Column("microsoft_calendar_rtoken")]
     public string? MicrosoftCalendarRtoken { get; set; }
 
+    [JsonIgnore]
     [Column("microsoft_calendar_token")]
     public string? MicrosoftCalendarToken { get; set; }
 

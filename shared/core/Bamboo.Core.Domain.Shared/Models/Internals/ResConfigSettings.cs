@@ -112,6 +112,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("twilio_account_sid")]
     public string? TwilioAccountSid { get; set; }
 
+    [JsonIgnore]
     [Column("twilio_account_token")]
     public string? TwilioAccountToken { get; set; }
 
@@ -163,6 +164,7 @@ public partial class ResConfigSettings: FullAuditedEntity<Guid>, IEntityDto<Guid
     [Column("google_gmail_client_identifier")]
     public string? GoogleGmailClientIdentifier { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_client_secret")]
     public string? GoogleGmailClientSecret { get; set; }
 
