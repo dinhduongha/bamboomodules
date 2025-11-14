@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Http.Client" Version="10.0.0-rc.1" />
+    <PackageReference Include="Volo.Abp.Http.Client" Version="10.0.0-rc.3" />
     <ProjectReference Include="..\Bamboo.Core.Application.Contracts\Bamboo.Core.Application.Contracts.csproj" />
   </ItemGroup>
 
