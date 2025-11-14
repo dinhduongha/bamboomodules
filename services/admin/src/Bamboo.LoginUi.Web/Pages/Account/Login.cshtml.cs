@@ -47,7 +47,8 @@ using static Volo.Abp.UI.Navigation.DefaultMenuNames.Application;
 
 //using IdentityModel;
 using Telegram.Bot.Extensions.LoginWidget;
-
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account;
 
 public class LoginUiLoginModel : LoginModel
@@ -60,8 +61,8 @@ public class LoginUiLoginModel : LoginModel
         IAuthenticationSchemeProvider schemeProvider,
         IOptions<AbpAccountOptions> accountOptions,
         IOptions<IdentityOptions> identityOptions,
-        IdentityDynamicClaimsPrincipalContributorCache cache)
-        : base(schemeProvider, accountOptions, identityOptions, cache)
+        IdentityDynamicClaimsPrincipalContributorCache cache, IWebHostEnvironment webHostEnvironment)
+        : base(schemeProvider, accountOptions, identityOptions, cache, webHostEnvironment)
     {
         var section = config.GetSection("Telegram");
         WidgetEmbedCodeGenerator.LoginWidgetJsVersion = 22;
@@ -73,11 +74,11 @@ public class LoginUiLoginModel : LoginModel
             var useLargeButton = section.GetValue<bool>("Large", false);
             TelegramWidget = WidgetEmbedCodeGenerator.GenerateRedirectEmbedCode(
             botName,
-            LoginCallback,            
-            useLargeButton?ButtonStyle.Large: ButtonStyle.Medium,
+            LoginCallback,
+            useLargeButton ? ButtonStyle.Large : ButtonStyle.Medium,
             true,
             true);
-        }        
+        }
     }
 
     public override async Task<IActionResult> OnPostExternalLogin(string provider)
@@ -197,41 +198,41 @@ public class LoginUiLoginModel : LoginModel
 
         return await RedirectSafelyAsync(returnUrl, returnUrlHash);
     }
-        //protected override async Task<IdentityUser> CreateExternalUserAsync(ExternalLoginInfo info)
-        //{
-        //    //ClaimsPrincipal principal;
-        //    var emailAddress = info.Principal.FindFirstValue(AbpClaimTypes.Email);
-        //    var userId = GuidGenerator.Create();
-        //    var user = new IdentityUser(userId, emailAddress, emailAddress, CurrentTenant.Id)
-        //    {
-        //        // This claim will be null if using AzureAD v2.0 endpoint
-        //        Name = info.Principal.FindFirstValue(JwtClaimTypes.GivenName),
-        //        // This claim will be null if using AzureAD v2.0 endpoint
-        //        Surname = info.Principal.FindFirstValue(JwtClaimTypes.FamilyName),
-        //        IsExternal = true
-        //    };
+    //protected override async Task<IdentityUser> CreateExternalUserAsync(ExternalLoginInfo info)
+    //{
+    //    //ClaimsPrincipal principal;
+    //    var emailAddress = info.Principal.FindFirstValue(AbpClaimTypes.Email);
+    //    var userId = GuidGenerator.Create();
+    //    var user = new IdentityUser(userId, emailAddress, emailAddress, CurrentTenant.Id)
+    //    {
+    //        // This claim will be null if using AzureAD v2.0 endpoint
+    //        Name = info.Principal.FindFirstValue(JwtClaimTypes.GivenName),
+    //        // This claim will be null if using AzureAD v2.0 endpoint
+    //        Surname = info.Principal.FindFirstValue(JwtClaimTypes.FamilyName),
+    //        IsExternal = true
+    //    };
 
-        //    //Optional: Add claims to user claims
-        //    if (!string.IsNullOrEmpty(info.Principal.FindFirstValue(JwtClaimTypes.GivenName)))
-        //    {
-        //        user.Claims.Add(new Volo.Abp.Identity.IdentityUserClaim(GuidGenerator.Create(), userId,
-        //            JwtClaimTypes.GivenName, info.Principal.FindFirstValue(JwtClaimTypes.GivenName), CurrentTenant.Id));
-        //    }
+    //    //Optional: Add claims to user claims
+    //    if (!string.IsNullOrEmpty(info.Principal.FindFirstValue(JwtClaimTypes.GivenName)))
+    //    {
+    //        user.Claims.Add(new Volo.Abp.Identity.IdentityUserClaim(GuidGenerator.Create(), userId,
+    //            JwtClaimTypes.GivenName, info.Principal.FindFirstValue(JwtClaimTypes.GivenName), CurrentTenant.Id));
+    //    }
 
-        //    if (!string.IsNullOrEmpty(info.Principal.FindFirstValue(JwtClaimTypes.FamilyName)))
-        //    {
-        //        user.Claims.Add(new Volo.Abp.Identity.IdentityUserClaim(GuidGenerator.Create(), userId,
-        //            JwtClaimTypes.FamilyName, info.Principal.FindFirstValue(JwtClaimTypes.FamilyName),
-        //            CurrentTenant.Id));
-        //    }
+    //    if (!string.IsNullOrEmpty(info.Principal.FindFirstValue(JwtClaimTypes.FamilyName)))
+    //    {
+    //        user.Claims.Add(new Volo.Abp.Identity.IdentityUserClaim(GuidGenerator.Create(), userId,
+    //            JwtClaimTypes.FamilyName, info.Principal.FindFirstValue(JwtClaimTypes.FamilyName),
+    //            CurrentTenant.Id));
+    //    }
 
-        //    CheckIdentityErrors(await UserManager.CreateAsync(user));
-        //    CheckIdentityErrors(await UserManager.SetEmailAsync(user, emailAddress));
-        //    CheckIdentityErrors(await UserManager.AddLoginAsync(user, info));
+    //    CheckIdentityErrors(await UserManager.CreateAsync(user));
+    //    CheckIdentityErrors(await UserManager.SetEmailAsync(user, emailAddress));
+    //    CheckIdentityErrors(await UserManager.AddLoginAsync(user, info));
 
-        //    return user;
-        //}
-    }
+    //    return user;
+    //}
+}
 
 //[ExposeServices(typeof(LoginModel))]
 //public class LoginUiLoginModel : OpenIddictSupportedLoginModel

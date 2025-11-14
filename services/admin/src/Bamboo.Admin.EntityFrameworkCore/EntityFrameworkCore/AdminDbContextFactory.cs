@@ -29,7 +29,8 @@ public class AdminDbContextFactory : IDesignTimeDbContextFactory<AdminDbContext>
     {
         var builder = new ConfigurationBuilder()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Bamboo.Admin.DbMigrator/"))
-            .AddJsonFile("appsettings.json", optional: false);
+            .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile("appsettings.secrets.json", optional: true);
 
         return builder.Build();
     }
