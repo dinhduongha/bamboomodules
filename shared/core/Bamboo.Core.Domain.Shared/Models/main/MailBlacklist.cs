@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_blacklist")]
 //[Index("Email", Name = "mail_blacklist_unique_email", IsUnique = true)]
-public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailBlacklist : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailBlacklist: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

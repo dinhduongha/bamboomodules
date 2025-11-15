@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("pos_note")]
 //[Index("Name", Name = "pos_note_name_unique", IsUnique = true)]
-public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosNote : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class PosNote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

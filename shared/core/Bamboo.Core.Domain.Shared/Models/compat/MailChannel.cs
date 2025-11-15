@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_channel")]
 //[Index("Uuid", Name = "mail_channel_uuid_unique", IsUnique = true)]
-public partial class MailChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailChannel : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }

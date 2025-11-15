@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crossovered_budget_lines")]
 //[Index("CrossoveredBudgetId", Name = "crossovered_budget_lines__crossovered_budget_id_index")]
-public partial class CrossoveredBudgetLines: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrossoveredBudgetLines : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CrossoveredBudgetLines: FullAuditedEntity<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("crossovered_budget_id")]
     public Guid? CrossoveredBudgetId { get; set; }

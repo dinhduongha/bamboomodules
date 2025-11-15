@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("onboarding_onboarding")]
 //[Index("RouteName", Name = "onboarding_onboarding_route_name_uniq", IsUnique = true)]
-public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class OnboardingOnboarding : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class OnboardingOnboarding: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

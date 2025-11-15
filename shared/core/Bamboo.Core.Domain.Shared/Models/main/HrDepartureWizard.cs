@@ -15,7 +15,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("hr_departure_wizard")]
-public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrDepartureWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +25,7 @@ public partial class HrDepartureWizard: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("departure_reason_id")]
     public Guid? DepartureReasonId { get; set; }

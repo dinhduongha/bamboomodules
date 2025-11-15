@@ -134,9 +134,6 @@ public partial class SlideSlide : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("html_content", TypeName = "jsonb")]
     public JsonElement? HtmlContent { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("completion_time")]
     public decimal? CompletionTime { get; set; }
 

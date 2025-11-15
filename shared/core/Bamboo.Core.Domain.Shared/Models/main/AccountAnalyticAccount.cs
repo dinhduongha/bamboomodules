@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_analytic_account")]
 //[Index("Code", Name = "account_analytic_account__code_index")]
-public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticAccount : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountAnalyticAccount: FullAuditedAggregateRoot<Guid>, IEn
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("plan_id")]
     public Guid? PlanId { get; set; }

@@ -15,7 +15,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("pos_close_session_wizard")]
-public partial class PosCloseSessionWizard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosCloseSessionWizard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +25,7 @@ public partial class PosCloseSessionWizard: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

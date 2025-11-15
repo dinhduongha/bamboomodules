@@ -15,7 +15,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("slide_answer")]
-public partial class SlideAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideAnswer : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +25,7 @@ public partial class SlideAnswer: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

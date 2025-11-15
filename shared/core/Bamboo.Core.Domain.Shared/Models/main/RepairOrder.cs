@@ -26,7 +26,7 @@ namespace Bamboo.Core.Models;
 //[Index("RecycleLocationId", Name = "repair_order__recycle_location_id_index")]
 //[Index("ScheduleDate", Name = "repair_order__schedule_date_index")]
 //[Index("State", Name = "repair_order__state_index")]
-public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairOrder : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class RepairOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

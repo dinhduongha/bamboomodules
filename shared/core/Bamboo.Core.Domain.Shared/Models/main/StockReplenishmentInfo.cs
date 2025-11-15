@@ -15,7 +15,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("stock_replenishment_info")]
-public partial class StockReplenishmentInfo: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockReplenishmentInfo : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -25,7 +25,7 @@ public partial class StockReplenishmentInfo: FullAuditedAggregateRoot<Guid>, IEn
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("orderpoint_id")]
     public Guid? OrderpointId { get; set; }

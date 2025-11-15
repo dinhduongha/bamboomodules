@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_template")]
 //[Index("Model", Name = "sms_template__model_index")]
-public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsTemplate : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SmsTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("model_id")]
     public Guid? ModelId { get; set; }

@@ -80,9 +80,6 @@ public partial class ProductPublicCategory : FullAuditedAggregateRoot<Guid>, IEn
     [Column("website_footer", TypeName = "jsonb")]
     public JsonElement? WebsiteFooter { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

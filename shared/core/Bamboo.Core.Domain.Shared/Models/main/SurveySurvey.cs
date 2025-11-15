@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccessToken", Name = "survey_survey_access_token_unique", IsUnique = true)]
 //[Index("CertificationBadgeId", Name = "survey_survey_badge_uniq", IsUnique = true)]
 //[Index("SessionCode", Name = "survey_survey_session_code_unique", IsUnique = true)]
-public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SurveySurvey : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class SurveySurvey: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

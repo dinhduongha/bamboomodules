@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("product_wishlist")]
 //[Index("ProductId", "PartnerId", Name = "product_wishlist_product_unique_partner_id", IsUnique = true)]
-public partial class ProductWishlist: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductWishlist : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ProductWishlist: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

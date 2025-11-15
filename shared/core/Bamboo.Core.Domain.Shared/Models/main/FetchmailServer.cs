@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("fetchmail_server")]
 //[Index("ServerType", Name = "fetchmail_server__server_type_index")]
 //[Index("State", Name = "fetchmail_server__state_index")]
-public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FetchmailServer : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("port")]
     public long? Port { get; set; }
@@ -59,6 +59,7 @@ public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("user")]
     public string? User { get; set; }
 
+    [JsonIgnore]
     [Column("password")]
     public string? Password { get; set; }
 
@@ -92,12 +93,15 @@ public partial class FetchmailServer: FullAuditedAggregateRoot<Guid>, IEntityDto
     [Column("google_gmail_access_token_expiration")]
     public long? GoogleGmailAccessTokenExpiration { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_authorization_code")]
     public string? GoogleGmailAuthorizationCode { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_refresh_token")]
     public string? GoogleGmailRefreshToken { get; set; }
 
+    [JsonIgnore]
     [Column("google_gmail_access_token")]
     public string? GoogleGmailAccessToken { get; set; }
 

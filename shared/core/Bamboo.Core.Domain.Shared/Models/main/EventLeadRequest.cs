@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("event_lead_request")]
 //[Index("EventId", Name = "event_lead_request_uniq_event", IsUnique = true)]
-public partial class EventLeadRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventLeadRequest : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class EventLeadRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("event_id")]
     public Guid? EventId { get; set; }

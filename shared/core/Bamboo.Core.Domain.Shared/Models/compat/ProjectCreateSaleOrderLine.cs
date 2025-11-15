@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_create_sale_order_line")]
 //[Index("WizardId", "EmployeeId", Name = "project_create_sale_order_line_unique_employee_per_wizard", IsUnique = true)]
-public partial class ProjectCreateSaleOrderLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectCreateSaleOrderLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ProjectCreateSaleOrderLine: FullAuditedEntity<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("wizard_id")]
     public Guid? WizardId { get; set; }

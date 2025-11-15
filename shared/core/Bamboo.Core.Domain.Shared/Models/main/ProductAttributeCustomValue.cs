@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("product_attribute_custom_value")]
 //[Index("CustomProductTemplateAttributeValueId", "SaleOrderLineId", Name = "product_attribute_custom_value_sol_custom_value_unique", IsUnique = true)]
-public partial class ProductAttributeCustomValue: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttributeCustomValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ProductAttributeCustomValue: FullAuditedEntity<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("custom_product_template_attribute_value_id")]
     public Guid? CustomProductTemplateAttributeValueId { get; set; }

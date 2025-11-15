@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("res_partner_bank")]
 //[Index("PartnerId", Name = "res_partner_bank__partner_id_index")]
 //[Index("SanitizedAccNumber", "PartnerId", Name = "res_partner_bank_unique_number", IsUnique = true)]
-public partial class ResPartnerBank: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResPartnerBank : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ResPartnerBank: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

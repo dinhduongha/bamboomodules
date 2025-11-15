@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("gamification_goal")]
 //[Index("ChallengeId", Name = "gamification_goal__challenge_id_index")]
-public partial class GamificationGoal: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationGoal : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class GamificationGoal: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("definition_id")]
     public Guid? DefinitionId { get; set; }

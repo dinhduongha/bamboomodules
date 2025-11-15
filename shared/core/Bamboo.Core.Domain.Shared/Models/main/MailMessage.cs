@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("SubtypeId", Name = "mail_message__subtype_id_index")]
 //[Index("Model", "ResId", "Id", Name = "mail_message_model_res_id_id_idx")]
 //[Index("Model", "ResId", Name = "mail_message_model_res_id_idx")]
-public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailMessage : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class MailMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("parent_id")]
     public Guid? ParentId { get; set; }

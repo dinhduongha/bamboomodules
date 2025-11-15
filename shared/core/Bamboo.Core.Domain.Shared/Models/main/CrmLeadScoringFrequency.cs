@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_lead_scoring_frequency")]
 //[Index("Variable", Name = "crm_lead_scoring_frequency__variable_index")]
-public partial class CrmLeadScoringFrequency: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmLeadScoringFrequency : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CrmLeadScoringFrequency: FullAuditedEntity<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("team_id")]
     public Guid? TeamId { get; set; }

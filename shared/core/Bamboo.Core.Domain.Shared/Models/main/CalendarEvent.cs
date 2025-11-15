@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("MicrosoftId", Name = "calendar_event__microsoft_id_index")]
 //[Index("MsUniversalEventId", Name = "calendar_event__ms_universal_event_id_index")]
 //[Index("OpportunityId", Name = "calendar_event__opportunity_id_index")]
-public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarEvent : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class CalendarEvent: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

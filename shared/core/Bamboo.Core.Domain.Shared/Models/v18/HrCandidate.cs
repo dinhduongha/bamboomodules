@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_candidate")]
 //[Index("Active", Name = "hr_candidate__active_index")]
 //[Index("EmailNormalized", "PartnerPhoneSanitized", Name = "hr_candidate_email_partner_phone_mobile")]
-public partial class HrCandidate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrCandidate : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class HrCandidate: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_bounce")]
     public long? MessageBounce { get; set; }

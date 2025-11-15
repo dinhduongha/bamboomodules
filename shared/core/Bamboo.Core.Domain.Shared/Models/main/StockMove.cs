@@ -29,7 +29,7 @@ namespace Bamboo.Core.Models;
 //[Index("RepairLineType", Name = "stock_move__repair_line_type_index")]
 //[Index("State", Name = "stock_move__state_index")]
 //[Index("ProductId", "LocationId", "LocationDestId", "CompanyId", "State", Name = "stock_move_product_location_index")]
-public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockMove : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -39,7 +39,7 @@ public partial class StockMove: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

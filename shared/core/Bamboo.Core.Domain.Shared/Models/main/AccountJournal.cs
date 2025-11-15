@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_journal")]
 //[Index("CompanyId", Name = "account_journal__company_id_index")]
 //[Index("CompanyId", "Code", Name = "account_journal_code_company_uniq", IsUnique = true)]
-public partial class AccountJournal: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountJournal : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountJournal: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("alias_id")]
     public Guid? AliasId { get; set; }

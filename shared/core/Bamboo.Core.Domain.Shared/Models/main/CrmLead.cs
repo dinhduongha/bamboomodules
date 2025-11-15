@@ -26,7 +26,7 @@ namespace Bamboo.Core.Models;
 //[Index("UserId", Name = "crm_lead__user_id_index")]
 //[Index("CreateDate", "TeamId", Name = "crm_lead_create_date_team_id_idx")]
 //[Index("UserId", "TeamId", "Type", Name = "crm_lead_user_id_team_id_type_index")]
-public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmLead : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -36,7 +36,7 @@ public partial class CrmLead: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }

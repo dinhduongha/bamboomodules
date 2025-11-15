@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("ChannelId", Name = "slide_channel_partner__channel_id_index")]
 //[Index("PartnerId", Name = "slide_channel_partner__partner_id_index")]
 //[Index("ChannelId", "PartnerId", Name = "slide_channel_partner_channel_partner_uniq", IsUnique = true)]
-public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideChannelPartner : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class SlideChannelPartner: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("channel_id")]
     public Guid? ChannelId { get; set; }

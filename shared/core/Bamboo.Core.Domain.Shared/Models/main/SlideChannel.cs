@@ -162,9 +162,6 @@ public partial class SlideChannel : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("total_time")]
     public decimal? TotalTime { get; set; }
 

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("theme_website_menu")]
 //[Index("ParentId", Name = "theme_website_menu__parent_id_index")]
-public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ThemeWebsiteMenu : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ThemeWebsiteMenu: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("page_id")]
     public Guid? PageId { get; set; }

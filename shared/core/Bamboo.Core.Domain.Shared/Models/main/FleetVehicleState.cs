@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("fleet_vehicle_state")]
 //[Index("Name", Name = "fleet_vehicle_state_fleet_state_name_unique", IsUnique = true)]
-public partial class FleetVehicleState: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FleetVehicleState : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class FleetVehicleState: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

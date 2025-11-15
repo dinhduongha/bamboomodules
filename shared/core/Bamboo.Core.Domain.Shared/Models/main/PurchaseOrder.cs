@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("Priority", Name = "purchase_order__priority_index")]
 //[Index("State", Name = "purchase_order__state_index")]
 //[Index("UserId", Name = "purchase_order__user_id_index")]
-public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PurchaseOrder : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,7 +32,7 @@ public partial class PurchaseOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

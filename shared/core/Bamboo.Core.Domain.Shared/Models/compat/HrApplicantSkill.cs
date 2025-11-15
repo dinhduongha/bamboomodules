@@ -14,9 +14,9 @@ using Bamboo.Core.Domain.Shared.Attributes;
 
 namespace Bamboo.Core.Models;
 
-[Table("hr_applicant_skill")]
+[Table("hr_applicant_skill_16")]
 //[Index("ApplicantId", "SkillId", Name = "hr_applicant_skill__unique_skill", IsUnique = true)]
-public partial class HrApplicantSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrApplicantSkill16 : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrApplicantSkill: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("applicant_id")]
     public Guid? ApplicantId { get; set; }

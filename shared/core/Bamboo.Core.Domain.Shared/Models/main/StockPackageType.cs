@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_package_type")]
 //[Index("CompanyId", Name = "stock_package_type__company_id_index")]
 //[Index("Barcode", Name = "stock_package_type_barcode_uniq", IsUnique = true)]
-public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPackageType : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class StockPackageType: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

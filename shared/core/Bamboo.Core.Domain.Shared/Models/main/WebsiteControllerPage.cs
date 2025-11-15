@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("IsPublished", Name = "website_controller_page__is_published_index")]
 //[Index("WebsiteId", Name = "website_controller_page__website_id_index")]
 //[Index("NameSlugified", Name = "website_controller_page_unique_name_slugified", IsUnique = true)]
-public partial class WebsiteControllerPage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteControllerPage : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class WebsiteControllerPage: FullAuditedAggregateRoot<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

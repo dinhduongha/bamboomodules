@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_employee_location")]
 //[Index("EmployeeId", "Date", Name = "hr_employee_location_uniq_exceptional_per_day", IsUnique = true)]
-public partial class HrEmployeeLocation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrEmployeeLocation : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrEmployeeLocation: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("work_location_id")]
     public Guid? WorkLocationId { get; set; }

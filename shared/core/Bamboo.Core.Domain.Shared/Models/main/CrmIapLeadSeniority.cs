@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_seniority")]
 //[Index("Name", Name = "crm_iap_lead_seniority_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadSeniority: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadSeniority : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CrmIapLeadSeniority: FullAuditedAggregateRoot<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

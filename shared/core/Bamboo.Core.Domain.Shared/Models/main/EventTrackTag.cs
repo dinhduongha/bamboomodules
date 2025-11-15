@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("event_track_tag")]
 //[Index("Name", Name = "event_track_tag_name_uniq", IsUnique = true)]
-public partial class EventTrackTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventTrackTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class EventTrackTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

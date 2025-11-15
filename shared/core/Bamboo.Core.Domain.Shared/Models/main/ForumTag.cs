@@ -66,9 +66,6 @@ public partial class ForumTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("seo_name", TypeName = "jsonb")]
     public StringDictionary? SeoName { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

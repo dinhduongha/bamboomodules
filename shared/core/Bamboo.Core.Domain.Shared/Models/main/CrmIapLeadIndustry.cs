@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_iap_lead_industry")]
 //[Index("Name", Name = "crm_iap_lead_industry_name_uniq", IsUnique = true)]
-public partial class CrmIapLeadIndustry: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmIapLeadIndustry : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CrmIapLeadIndustry: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

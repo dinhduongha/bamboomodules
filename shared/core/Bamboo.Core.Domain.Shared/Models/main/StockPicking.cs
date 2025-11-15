@@ -23,7 +23,7 @@ namespace Bamboo.Core.Models;
 //[Index("ScheduledDate", Name = "stock_picking__scheduled_date_index")]
 //[Index("State", Name = "stock_picking__state_index")]
 //[Index("Name", "CompanyId", Name = "stock_picking_name_uniq", IsUnique = true)]
-public partial class StockPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPicking : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -33,7 +33,7 @@ public partial class StockPicking: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("backorder_id")]
     public Guid? BackorderId { get; set; }

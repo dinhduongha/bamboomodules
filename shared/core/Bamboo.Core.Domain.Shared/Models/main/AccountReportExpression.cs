@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_report_expression")]
 //[Index("ReportLineId", "Label", Name = "account_report_expression_line_label_uniq", IsUnique = true)]
-public partial class AccountReportExpression: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReportExpression : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountReportExpression: FullAuditedAggregateRoot<Guid>, IE
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("report_line_id")]
     public Guid? ReportLineId { get; set; }

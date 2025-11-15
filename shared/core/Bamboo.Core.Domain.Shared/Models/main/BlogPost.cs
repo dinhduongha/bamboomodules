@@ -88,9 +88,6 @@ public partial class BlogPost : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 

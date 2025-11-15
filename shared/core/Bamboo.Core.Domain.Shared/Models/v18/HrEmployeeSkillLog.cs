@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_employee_skill_log")]
 //[Index("EmployeeId", "DepartmentId", "SkillId", "Date", Name = "hr_employee_skill_log__unique_skill_log", IsUnique = true)]
-public partial class HrEmployeeSkillLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrEmployeeSkillLog : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrEmployeeSkillLog: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("employee_id")]
     public Guid? EmployeeId { get; set; }

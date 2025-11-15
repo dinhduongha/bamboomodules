@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_category")]
 //[Index("Name", Name = "account_asset_category__name_index")]
 //[Index("Type", Name = "account_asset_category__type_index")]
-public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetCategory : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountAssetCategory: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("account_analytic_id")]
     public Guid? AccountAnalyticId { get; set; }

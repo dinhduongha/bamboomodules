@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_workcenter_capacity")]
 //[Index("WorkcenterId", "ProductId", Name = "mrp_workcenter_capacity_unique_product", IsUnique = true)]
-public partial class MrpWorkcenterCapacity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpWorkcenterCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MrpWorkcenterCapacity: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }

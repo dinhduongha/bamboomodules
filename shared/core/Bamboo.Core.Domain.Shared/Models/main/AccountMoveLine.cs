@@ -24,7 +24,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccountId", "Date", Name = "account_move_line_account_id_date_idx")]
 //[Index("Date", "MoveName", "Id", Name = "account_move_line_date_name_id_idx", IsDescending = new[] { true, true, false })]
 //[Index("PartnerId", "Ref", Name = "account_move_line_partner_id_ref_idx")]
-public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountMoveLine : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -34,7 +34,7 @@ public partial class AccountMoveLine: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }

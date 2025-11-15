@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_group_moderation")]
 //[Index("MailGroupId", "Email", Name = "mail_group_moderation_mail_group_email_uniq", IsUnique = true)]
-public partial class MailGroupModeration: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailGroupModeration : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailGroupModeration: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("mail_group_id")]
     public Guid? MailGroupId { get; set; }

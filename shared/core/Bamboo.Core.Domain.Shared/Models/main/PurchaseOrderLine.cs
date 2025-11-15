@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("purchase_order_line")]
 //[Index("DatePlanned", Name = "purchase_order_line__date_planned_index")]
 //[Index("OrderId", Name = "purchase_order_line__order_id_index")]
-public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PurchaseOrderLine : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class PurchaseOrderLine: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

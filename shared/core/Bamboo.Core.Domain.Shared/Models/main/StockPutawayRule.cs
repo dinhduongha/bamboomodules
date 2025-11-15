@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_putaway_rule")]
 //[Index("CompanyId", Name = "stock_putaway_rule__company_id_index")]
 //[Index("LocationInId", Name = "stock_putaway_rule__location_in_id_index")]
-public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPutawayRule : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class StockPutawayRule: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

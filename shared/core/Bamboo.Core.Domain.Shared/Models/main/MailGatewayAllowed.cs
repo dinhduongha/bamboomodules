@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_gateway_allowed")]
 //[Index("EmailNormalized", Name = "mail_gateway_allowed__email_normalized_index")]
-public partial class MailGatewayAllowed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailGatewayAllowed : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailGatewayAllowed: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

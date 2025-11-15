@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("link_tracker_click")]
 //[Index("LinkId", Name = "link_tracker_click__link_id_index")]
-public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LinkTrackerClick : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class LinkTrackerClick: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }

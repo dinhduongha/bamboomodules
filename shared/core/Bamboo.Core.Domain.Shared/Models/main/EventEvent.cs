@@ -143,9 +143,6 @@ public partial class EventEvent : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 

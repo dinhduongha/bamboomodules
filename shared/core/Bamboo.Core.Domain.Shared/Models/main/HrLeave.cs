@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("EmployeeId", Name = "hr_leave__employee_id_index")]
 //[Index("UserId", Name = "hr_leave__user_id_index")]
 //[Index("DateTo", "DateFrom", Name = "hr_leave_date_to_date_from_index")]
-public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrLeave : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class HrLeave: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }

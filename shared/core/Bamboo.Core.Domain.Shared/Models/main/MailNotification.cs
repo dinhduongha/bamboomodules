@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("NotificationType", Name = "mail_notification__notification_type_index")]
 //[Index("ResPartnerId", Name = "mail_notification__res_partner_id_index")]
 //[Index("ResPartnerId", "IsRead", "NotificationStatus", "MailMessageId", Name = "mail_notification_res_partner_id_is_read_notification_status_ma")]
-public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailNotification : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,7 +32,7 @@ public partial class MailNotification: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("author_id")]
     public Guid? AuthorId { get; set; }

@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("LocationSrcId", Name = "stock_rule__location_src_id_index")]
 //[Index("RouteId", Name = "stock_rule__route_id_index")]
 //[Index("WarehouseId", Name = "stock_rule__warehouse_id_index")]
-public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockRule : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class StockRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("group_id")]
     public Guid? GroupId { get; set; }

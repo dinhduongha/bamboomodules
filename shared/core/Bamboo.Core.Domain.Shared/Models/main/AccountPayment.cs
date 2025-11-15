@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_payment")]
 //[Index("MoveId", Name = "account_payment__move_id_index")]
 //[Index("JournalId", "CompanyId", Name = "account_payment_journal_id_company_id_idx")]
-public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPayment : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountPayment: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }

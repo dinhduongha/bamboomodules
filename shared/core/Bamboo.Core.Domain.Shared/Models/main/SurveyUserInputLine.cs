@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("survey_user_input_line")]
 //[Index("QuestionId", Name = "survey_user_input_line__question_id_index")]
 //[Index("UserInputId", Name = "survey_user_input_line__user_input_id_index")]
-public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SurveyUserInputLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class SurveyUserInputLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_input_id")]
     public Guid? UserInputId { get; set; }

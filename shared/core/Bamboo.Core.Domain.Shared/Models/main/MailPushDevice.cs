@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_push_device")]
 //[Index("PartnerId", Name = "mail_push_device__partner_id_index")]
 //[Index("Endpoint", Name = "mail_push_device_endpoint_unique", IsUnique = true)]
-public partial class MailPushDevice: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailPushDevice : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MailPushDevice: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

@@ -64,9 +64,6 @@ public partial class BlogTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     [Column("name", TypeName = "jsonb")]
     public StringDictionary? Name { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("create_date", TypeName = "timestamp without time zone")]
     public DateTime CreationTime { get => base.CreationTime; set => base.CreationTime = value; }
 

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("utm_source")]
 //[Index("Name", Name = "utm_source_unique_name", IsUnique = true)]
-public partial class UtmSource: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class UtmSource : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class UtmSource: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

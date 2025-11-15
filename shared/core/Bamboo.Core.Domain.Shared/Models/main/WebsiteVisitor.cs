@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("website_visitor")]
 //[Index("AccessToken", Name = "website_visitor_access_token_unique", IsUnique = true)]
-public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteVisitor : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class WebsiteVisitor: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

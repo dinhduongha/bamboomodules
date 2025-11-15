@@ -279,9 +279,6 @@ public partial class ProductTemplate : FullAuditedAggregateRoot<Guid>, IEntityDt
     [Column("compare_list_price")]
     public decimal? CompareListPrice { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 
@@ -489,26 +486,29 @@ public partial class ProductTemplate : FullAuditedAggregateRoot<Guid>, IEntityDt
     // [InverseProperty("ProductTemplate")] // Many2many // Normal
     public virtual ICollection<AccountAccountTag> AccountAccountTag { get; set; }
 
+    //CONFLICK-V19
     // [Many2many] // Normal
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
-    // [ForeignKey("SrcId")] // Many2many // Normal
-    // [InverseProperty("Src")] // Many2many // Normal
-    public virtual ICollection<ProductProduct> Dest { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Peer relationship (ProductProduct) is commented out
+    // // [ForeignKey("SrcId")] // Many2many // Normal
+    // // [InverseProperty("Src")] // Many2many // Normal
+    // public virtual ICollection<ProductProduct> Dest { get; set; }
 
+    //CONFLICK-V19
     // [Many2many] // Normal
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [NotMapped] // Many2many // Normal
-    // [ForeignKey("SrcId")] // Many2many // Normal
-    // [InverseProperty("SrcNavigation")] // Many2many // Normal
-    public virtual ICollection<ProductTemplate> Dest1 { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [NotMapped] // Many2many // Normal
+    // // [ForeignKey("SrcId")] // Many2many // Normal
+    // // [InverseProperty("SrcNavigation")] // Many2many // Normal
+    // public virtual ICollection<ProductTemplate> Dest1 { get; set; }
 
+    //CONFLICK-V19
     // [Many2many] // Normal
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [NotMapped] // Many2many // Normal
-    // [ForeignKey("SrcId")] // Many2many // Normal
-    // [InverseProperty("Src")] // Many2many // Normal
-    public virtual ICollection<ProductTemplate> DestNavigation { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [NotMapped] // Many2many // Normal
+    // // [ForeignKey("SrcId")] // Many2many // Normal
+    // // [InverseProperty("Src")] // Many2many // Normal
+    // public virtual ICollection<ProductTemplate> DestNavigation { get; set; }
 
     // [Many2many] // Normal
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

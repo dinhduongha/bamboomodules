@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", Name = "slide_slide_partner__partner_id_index")]
 //[Index("SlideId", Name = "slide_slide_partner__slide_id_index")]
 //[Index("SlideId", "PartnerId", Name = "slide_slide_partner_slide_partner_uniq", IsUnique = true)]
-public partial class SlideSlidePartner: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideSlidePartner : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class SlideSlidePartner: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }

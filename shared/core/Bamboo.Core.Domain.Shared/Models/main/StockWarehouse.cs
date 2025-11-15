@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_warehouse")]
 //[Index("Code", "CompanyId", Name = "stock_warehouse_warehouse_code_uniq", IsUnique = true)]
 //[Index("Name", "CompanyId", Name = "stock_warehouse_warehouse_name_uniq", IsUnique = true)]
-public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockWarehouse : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class StockWarehouse: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("gamification_badge")]
 //[Index("IsPublished", Name = "gamification_badge__is_published_index")]
-public partial class GamificationBadge: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationBadge : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class GamificationBadge: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("rule_max_number")]
     public long? RuleMaxNumber { get; set; }

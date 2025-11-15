@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("slide_tag")]
 //[Index("Name", Name = "slide_tag_slide_tag_unique", IsUnique = true)]
-public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SlideTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("create_uid")]
     public Guid? CreatorId { get => base.CreatorId; set => base.CreatorId = value; }

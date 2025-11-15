@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_payslip")]
 //[Index("State", Name = "hr_payslip__state_index")]
-public partial class HrPayslip: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPayslip : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrPayslip: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("struct_id")]
     public Guid? StructId { get; set; }

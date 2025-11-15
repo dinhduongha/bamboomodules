@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("auth_totp_rate_limit_log")]
 //[Index("UserId", "LimitType", "CreateDate", Name = "auth_totp_rate_limit_log_user_id_limit_type_create_date_idx")]
-public partial class AuthTotpRateLimitLog: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AuthTotpRateLimitLog : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AuthTotpRateLimitLog: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

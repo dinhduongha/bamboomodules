@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("stock_lot")]
 //[Index("CompanyId", Name = "stock_lot__company_id_index")]
 //[Index("ProductId", Name = "stock_lot__product_id_index")]
-public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockLot : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class StockLot: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

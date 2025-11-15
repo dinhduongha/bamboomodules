@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("crm_team_member")]
 //[Index("CrmTeamId", Name = "crm_team_member__crm_team_id_index")]
 //[Index("UserId", Name = "crm_team_member__user_id_index")]
-public partial class CrmTeamMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmTeamMember : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class CrmTeamMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("crm_team_id")]
     public Guid? CrmTeamId { get; set; }

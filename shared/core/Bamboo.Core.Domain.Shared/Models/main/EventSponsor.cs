@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("event_sponsor")]
 //[Index("IsPublished", Name = "event_sponsor__is_published_index")]
-public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventSponsor : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class EventSponsor: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("chat_room_id")]
     public Guid? ChatRoomId { get; set; }

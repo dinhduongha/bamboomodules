@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sms_tracker")]
 //[Index("SmsUuid", Name = "sms_tracker_sms_uuid_unique", IsUnique = true)]
-public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SmsTracker : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SmsTracker: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("mail_notification_id")]
     public Guid? MailNotificationId { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("note_tag")]
 //[Index("Name", Name = "note_tag_name_uniq", IsUnique = true)]
-public partial class NoteTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class NoteTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class NoteTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiT
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

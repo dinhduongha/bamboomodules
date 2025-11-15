@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("OrderId", Name = "account_analytic_line__order_id_index")]
 //[Index("ProjectId", Name = "account_analytic_line__project_id_index")]
 //[Index("UserId", Name = "account_analytic_line__user_id_index")]
-public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAnalyticLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,7 +32,7 @@ public partial class AccountAnalyticLine: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

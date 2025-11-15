@@ -142,9 +142,6 @@ public partial class HrJob : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, I
     [Column("job_details", TypeName = "jsonb")]
     public JsonElement? JobDetails { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 

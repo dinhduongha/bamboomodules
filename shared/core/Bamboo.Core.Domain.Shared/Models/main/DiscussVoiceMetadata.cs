@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("discuss_voice_metadata")]
 //[Index("AttachmentId", Name = "discuss_voice_metadata__attachment_id_index")]
-public partial class DiscussVoiceMetadata: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DiscussVoiceMetadata : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class DiscussVoiceMetadata: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("attachment_id")]
     public Guid? AttachmentId { get; set; }

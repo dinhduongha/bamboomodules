@@ -122,9 +122,6 @@ public partial class EventTrack : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("partner_biography")]
     public string? PartnerBiography { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("is_published")]
     public bool? IsPublished { get; set; }
 

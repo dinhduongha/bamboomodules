@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("State", Name = "pos_session__state_index")]
 //[Index("UserId", Name = "pos_session__user_id_index")]
 //[Index("Name", Name = "pos_session_uniq_name", IsUnique = true)]
-public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosSession : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class PosSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("config_id")]
     public Guid? ConfigId { get; set; }

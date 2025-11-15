@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("MoveId", Name = "stock_move_line__move_id_index")]
 //[Index("PickingId", Name = "stock_move_line__picking_id_index")]
 //[Index("ProductId", Name = "stock_move_line__product_id_index")]
-public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockMoveLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class StockMoveLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("picking_id")]
     public Guid? PickingId { get; set; }

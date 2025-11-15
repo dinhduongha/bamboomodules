@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("calendar_recurrence")]
 //[Index("MicrosoftId", Name = "calendar_recurrence__microsoft_id_index")]
 //[Index("MsUniversalEventId", Name = "calendar_recurrence__ms_universal_event_id_index")]
-public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarRecurrence : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class CalendarRecurrence: FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("base_event_id")]
     public Guid? BaseEventId { get; set; }

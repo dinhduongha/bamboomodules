@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("EmployeeId", Name = "pos_payment__employee_id_index")]
 //[Index("PosOrderId", Name = "pos_payment__pos_order_id_index")]
 //[Index("SessionId", Name = "pos_payment__session_id_index")]
-public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosPayment : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class PosPayment: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("pos_order_id")]
     public Guid? PosOrderId { get; set; }

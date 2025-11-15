@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("followup_line")]
 //[Index("FollowupId", "Delay", Name = "followup_line_days_uniq", IsUnique = true)]
-public partial class FollowupLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class FollowupLine : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class FollowupLine: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("followup_id")]
     public Guid? FollowupId { get; set; }

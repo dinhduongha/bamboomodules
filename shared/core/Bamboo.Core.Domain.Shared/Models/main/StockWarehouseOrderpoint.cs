@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("CompanyId", Name = "stock_warehouse_orderpoint__company_id_index")]
 //[Index("LocationId", Name = "stock_warehouse_orderpoint__location_id_index")]
 //[Index("ProductId", "LocationId", "CompanyId", Name = "stock_warehouse_orderpoint_product_location_check", IsUnique = true)]
-public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockWarehouseOrderpoint : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class StockWarehouseOrderpoint: FullAuditedAggregateRoot<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("warehouse_id")]
     public Guid? WarehouseId { get; set; }

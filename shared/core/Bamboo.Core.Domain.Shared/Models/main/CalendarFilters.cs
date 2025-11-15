@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", Name = "calendar_filters__partner_id_index")]
 //[Index("UserId", Name = "calendar_filters__user_id_index")]
 //[Index("UserId", "PartnerId", Name = "calendar_filters_user_id_partner_id_unique", IsUnique = true)]
-public partial class CalendarFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CalendarFilters : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class CalendarFilters: FullAuditedEntity<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

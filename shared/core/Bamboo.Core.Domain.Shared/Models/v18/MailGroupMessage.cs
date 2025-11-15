@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_group_message")]
 //[Index("MailMessageId", Name = "mail_group_message__mail_message_id_index")]
 //[Index("ModerationStatus", Name = "mail_group_message__moderation_status_index")]
-public partial class MailGroupMessage: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailGroupMessage : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MailGroupMessage: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("mail_group_id")]
     public Guid? MailGroupId { get; set; }

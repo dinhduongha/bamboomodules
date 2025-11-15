@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("ContractId", Name = "hr_payslip_line__contract_id_index")]
 //[Index("ParentRuleId", Name = "hr_payslip_line__parent_rule_id_index")]
 //[Index("Sequence", Name = "hr_payslip_line__sequence_index")]
-public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrPayslipLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class HrPayslipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

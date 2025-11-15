@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_message_translation")]
 //[Index("CreateDate", Name = "mail_message_translation__create_date_index")]
 //[Index("MessageId", "TargetLang", Name = "mail_message_translation_unique", IsUnique = true)]
-public partial class MailMessageTranslation: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailMessageTranslation : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MailMessageTranslation: FullAuditedEntity<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_id")]
     public Guid? MessageId { get; set; }

@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateLastStageUpdate", Name = "hr_applicant__date_last_stage_update_index")]
 //[Index("JobId", Name = "hr_applicant__job_id_index")]
 //[Index("StageId", Name = "hr_applicant__stage_id_index")]
-public partial class HrApplicant
+public partial class HrApplicant16
 {
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

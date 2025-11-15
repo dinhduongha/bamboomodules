@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_payment_term_line")]
 //[Index("PaymentId", Name = "account_payment_term_line__payment_id_index")]
-public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPaymentTermLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountPaymentTermLine: FullAuditedEntity<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("nb_days")]
     public long? NbDays { get; set; }

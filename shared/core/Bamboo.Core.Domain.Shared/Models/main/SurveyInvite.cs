@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("survey_invite")]
 //[Index("AuthorId", Name = "survey_invite__author_id_index")]
-public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SurveyInvite : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SurveyInvite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("template_id")]
     public Guid? TemplateId { get; set; }

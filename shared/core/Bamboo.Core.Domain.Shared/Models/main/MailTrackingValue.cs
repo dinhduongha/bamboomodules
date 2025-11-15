@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_tracking_value")]
 //[Index("FieldId", Name = "mail_tracking_value__field_id_index")]
 //[Index("MailMessageId", Name = "mail_tracking_value__mail_message_id_index")]
-public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailTrackingValue : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MailTrackingValue: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }

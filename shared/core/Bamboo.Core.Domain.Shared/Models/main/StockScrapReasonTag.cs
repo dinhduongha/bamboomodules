@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("stock_scrap_reason_tag")]
 //[Index("Name", Name = "stock_scrap_reason_tag_name_uniq", IsUnique = true)]
-public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockScrapReasonTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class StockScrapReasonTag: FullAuditedEntity<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

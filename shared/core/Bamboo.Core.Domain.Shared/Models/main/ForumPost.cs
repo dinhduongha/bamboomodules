@@ -99,9 +99,6 @@ public partial class ForumPost : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("plain_content")]
     public string? PlainContent { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 

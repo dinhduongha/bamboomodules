@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("PageId", Name = "website_track__page_id_index")]
 //[Index("Url", Name = "website_track__url_index")]
 //[Index("VisitorId", Name = "website_track__visitor_id_index")]
-public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteTrack : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class WebsiteTrack: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("visitor_id")]
     public Guid? VisitorId { get; set; }

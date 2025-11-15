@@ -1,0 +1,43 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Volo.Abp.Application.Dtos;
+using Volo.Abp.Auditing;
+using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
+using Volo.Abp.MultiTenancy;
+
+using Bamboo.Core.Domain.Shared.Attributes;
+
+namespace Bamboo.Core.Models;
+
+public partial class StockRoute
+{
+    [Column("package_type_selectable")]
+    public bool? PackageTypeSelectable { get; set; }
+
+    // // [Many2many] // Normal
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [NotMapped] // Many2many // Normal
+    // // [ForeignKey("RouteId")] // Many2many // Normal
+    // // [InverseProperty("Route")] // Many2many // Normal
+    // public virtual ICollection<ProductTemplate> Product { get; set; }
+
+    // // [Many2many] // Hidden
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] //Many2many // Hidden
+    // // [ForeignKey("StockRouteId")] //Many2many // Hidden
+    // // [InverseProperty("StockRoute")] //Many2many // Hidden
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+
+    // [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("StockRouteId")] //Many2many // Hidden
+    // [InverseProperty("StockRoute")] //Many2many // Hidden
+    public virtual ICollection<StockPackageType> StockPackageType { get; set; }
+
+}

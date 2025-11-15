@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("AmountSelect", Name = "hr_salary_rule__amount_select_index")]
 //[Index("ParentRuleId", Name = "hr_salary_rule__parent_rule_id_index")]
 //[Index("Sequence", Name = "hr_salary_rule__sequence_index")]
-public partial class HrSalaryRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrSalaryRule : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class HrSalaryRule: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

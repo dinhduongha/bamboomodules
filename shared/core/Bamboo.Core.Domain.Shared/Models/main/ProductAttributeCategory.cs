@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("product_attribute_category")]
 //[Index("Sequence", Name = "product_attribute_category__sequence_index")]
-public partial class ProductAttributeCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductAttributeCategory : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ProductAttributeCategory: FullAuditedAggregateRoot<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

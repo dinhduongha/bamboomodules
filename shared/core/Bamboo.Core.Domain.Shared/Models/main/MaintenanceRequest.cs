@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("maintenance_request")]
 //[Index("EquipmentId", Name = "maintenance_request__equipment_id_index")]
-public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MaintenanceRequest : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MaintenanceRequest: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("owner_user_id")]
     public Guid? OwnerUserId { get; set; }

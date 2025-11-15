@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("DateLastStageUpdate", Name = "hr_applicant__date_last_stage_update_index")]
 //[Index("JobId", Name = "hr_applicant__job_id_index")]
 //[Index("StageId", Name = "hr_applicant__stage_id_index")]
-public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrApplicant : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class HrApplicant: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }

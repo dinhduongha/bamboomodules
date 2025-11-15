@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("Operation", Name = "payment_transaction__operation_index")]
 //[Index("State", Name = "payment_transaction__state_index")]
 //[Index("Reference", Name = "payment_transaction_reference_uniq", IsUnique = true)]
-public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PaymentTransaction : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class PaymentTransaction: FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("provider_id")]
     public Guid? ProviderId { get; set; }

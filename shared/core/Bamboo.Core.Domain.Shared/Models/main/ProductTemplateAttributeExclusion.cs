@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("product_template_attribute_exclusion")]
 //[Index("ProductTemplateAttributeValueId", Name = "product_template_attribute_exclusion__product_template_5b2f8938")]
 //[Index("ProductTmplId", Name = "product_template_attribute_exclusion__product_tmpl_id_index")]
-public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeExclusion : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ProductTemplateAttributeExclusion: FullAuditedEntity<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_template_attribute_value_id")]
     public Guid? ProductTemplateAttributeValueId { get; set; }

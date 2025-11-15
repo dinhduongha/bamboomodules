@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("product_image")]
 //[Index("ProductTmplId", Name = "product_image__product_tmpl_id_index")]
 //[Index("ProductVariantId", Name = "product_image__product_variant_id_index")]
-public partial class ProductImage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductImage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ProductImage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

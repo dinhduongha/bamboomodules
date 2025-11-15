@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_partial_reconcile")]
 //[Index("CreditMoveId", Name = "account_partial_reconcile__credit_move_id_index")]
 //[Index("DebitMoveId", Name = "account_partial_reconcile__debit_move_id_index")]
-public partial class AccountPartialReconcile: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountPartialReconcile : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountPartialReconcile: FullAuditedAggregateRoot<Guid>, IE
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("debit_move_id")]
     public Guid? DebitMoveId { get; set; }

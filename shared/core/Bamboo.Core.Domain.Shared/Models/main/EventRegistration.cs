@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("UtmMediumId", Name = "event_registration__utm_medium_id_index")]
 //[Index("UtmSourceId", Name = "event_registration__utm_source_id_index")]
 //[Index("Barcode", Name = "event_registration_barcode_event_uniq", IsUnique = true)]
-public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventRegistration : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class EventRegistration: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("event_id")]
     public Guid? EventId { get; set; }

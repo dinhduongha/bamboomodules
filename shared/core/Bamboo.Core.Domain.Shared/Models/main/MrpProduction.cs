@@ -21,7 +21,7 @@ namespace Bamboo.Core.Models;
 //[Index("ReservationState", Name = "mrp_production__reservation_state_index")]
 //[Index("State", Name = "mrp_production__state_index")]
 //[Index("Name", "CompanyId", Name = "mrp_production_name_uniq", IsUnique = true)]
-public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpProduction : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -31,7 +31,7 @@ public partial class MrpProduction: FullAuditedAggregateRoot<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("backorder_sequence")]
     public long? BackorderSequence { get; set; }

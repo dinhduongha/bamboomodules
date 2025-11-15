@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mrp_workorder")]
 //[Index("ProductionId", Name = "mrp_workorder__production_id_index")]
 //[Index("State", Name = "mrp_workorder__state_index")]
-public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpWorkorder : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MrpWorkorder: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

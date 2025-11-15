@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_employee_category")]
 //[Index("Name", Name = "hr_employee_category_name_uniq", IsUnique = true)]
-public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrEmployeeCategory : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrEmployeeCategory: FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("hr_user_work_entry_employee")]
 //[Index("UserId", "EmployeeId", Name = "hr_user_work_entry_employee_user_id_employee_id_unique", IsUnique = true)]
-public partial class HrUserWorkEntryEmployee: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrUserWorkEntryEmployee : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class HrUserWorkEntryEmployee: FullAuditedEntity<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

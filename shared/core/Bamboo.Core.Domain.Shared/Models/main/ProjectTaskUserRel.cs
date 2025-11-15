@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("TaskId", Name = "project_task_user_rel__task_id_index")]
 //[Index("UserId", Name = "project_task_user_rel__user_id_index")]
 //[Index("TaskId", "UserId", Name = "project_task_user_rel_project_personal_stage_unique", IsUnique = true)]
-public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectTaskUserRel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class ProjectTaskUserRel: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("task_id")]
     public Guid? TaskId { get; set; }

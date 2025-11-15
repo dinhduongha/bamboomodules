@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("hr_expense")]
 //[Index("SheetId", Name = "hr_expense__sheet_id_index")]
 //[Index("State", Name = "hr_expense__state_index")]
-public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrExpense : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class HrExpense: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("message_main_attachment_id")]
     public Guid? MessageMainAttachmentId { get; set; }

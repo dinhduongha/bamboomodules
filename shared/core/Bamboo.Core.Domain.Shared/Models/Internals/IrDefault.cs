@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("CompanyId", Name = "ir_default__company_id_index")]
 //[Index("FieldId", Name = "ir_default__field_id_index")]
 //[Index("UserId", Name = "ir_default__user_id_index")]
-public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrDefault : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class IrDefault: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMult
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("field_id")]
     public Guid? FieldId { get; set; }

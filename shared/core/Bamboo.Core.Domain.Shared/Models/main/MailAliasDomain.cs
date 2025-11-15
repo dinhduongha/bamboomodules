@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mail_alias_domain")]
 //[Index("BounceAlias", "Name", Name = "mail_alias_domain_bounce_email_uniques", IsUnique = true)]
 //[Index("CatchallAlias", "Name", Name = "mail_alias_domain_catchall_email_uniques", IsUnique = true)]
-public partial class MailAliasDomain: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailAliasDomain : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MailAliasDomain: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_account_tag")]
 //[Index("Name", "Applicability", "CountryId", Name = "account_account_tag_name_uniq", IsUnique = true)]
-public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAccountTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountAccountTag: FullAuditedEntity<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

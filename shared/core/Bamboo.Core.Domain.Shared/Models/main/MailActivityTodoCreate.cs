@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mail_activity_todo_create")]
 //[Index("DateDeadline", Name = "mail_activity_todo_create__date_deadline_index")]
-public partial class MailActivityTodoCreate: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailActivityTodoCreate : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailActivityTodoCreate: FullAuditedEntity<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

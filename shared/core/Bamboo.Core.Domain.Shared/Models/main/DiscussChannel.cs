@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("ParentChannelId", Name = "discuss_channel__parent_channel_id_index")]
 //[Index("FromMessageId", Name = "discuss_channel_from_message_id_unique", IsUnique = true)]
 //[Index("Uuid", Name = "discuss_channel_uuid_unique", IsUnique = true)]
-public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DiscussChannel : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class DiscussChannel: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("parent_channel_id")]
     public Guid? ParentChannelId { get; set; }

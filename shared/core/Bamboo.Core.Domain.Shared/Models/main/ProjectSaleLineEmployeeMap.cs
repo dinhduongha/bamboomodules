@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("project_sale_line_employee_map")]
 //[Index("ProjectId", "EmployeeId", Name = "project_sale_line_employee_map_uniqueness_employee", IsUnique = true)]
-public partial class ProjectSaleLineEmployeeMap: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectSaleLineEmployeeMap : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ProjectSaleLineEmployeeMap: FullAuditedEntity<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("project_id")]
     public Guid? ProjectId { get; set; }

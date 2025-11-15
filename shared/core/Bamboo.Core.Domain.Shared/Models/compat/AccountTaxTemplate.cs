@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_tax_template")]
 //[Index("Name", "TypeTaxUse", "TaxScope", "ChartTemplateId", Name = "account_tax_template_name_company_uniq", IsUnique = true)]
-public partial class AccountTaxTemplate: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountTaxTemplate : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountTaxTemplate: FullAuditedAggregateRoot<Guid>, IEntity
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("chart_template_id")]
     public Guid? ChartTemplateId { get; set; }

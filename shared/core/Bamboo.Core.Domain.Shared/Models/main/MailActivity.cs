@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("ResModelId", Name = "mail_activity__res_model_id_index")]
 //[Index("ResModel", Name = "mail_activity__res_model_index")]
 //[Index("UserId", Name = "mail_activity__user_id_index")]
-public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailActivity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class MailActivity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }

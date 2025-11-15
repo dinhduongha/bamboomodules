@@ -192,9 +192,6 @@ public partial class ForumForum : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("teaser")]
     public string? Teaser { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 

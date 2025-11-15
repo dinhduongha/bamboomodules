@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("website_rewrite")]
 //[Index("UrlFrom", Name = "website_rewrite__url_from_index")]
 //[Index("WebsiteId", Name = "website_rewrite__website_id_index")]
-public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class WebsiteRewrite : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class WebsiteRewrite: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("website_id")]
     public Guid? WebsiteId { get; set; }

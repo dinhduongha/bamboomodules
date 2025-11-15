@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("chatbot_message")]
 //[Index("MailMessageId", Name = "chatbot_message__unique_mail_message_id", IsUnique = true)]
-public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ChatbotMessage : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class ChatbotMessage: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("mail_message_id")]
     public Guid? MailMessageId { get; set; }

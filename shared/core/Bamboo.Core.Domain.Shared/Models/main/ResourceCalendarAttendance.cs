@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("resource_calendar_attendance")]
 //[Index("Dayofweek", Name = "resource_calendar_attendance__dayofweek_index")]
 //[Index("HourFrom", Name = "resource_calendar_attendance__hour_from_index")]
-public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResourceCalendarAttendance : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ResourceCalendarAttendance: FullAuditedEntity<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("calendar_id")]
     public Guid? CalendarId { get; set; }

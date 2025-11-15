@@ -107,9 +107,6 @@ public partial class IrUiView : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("seo_name", TypeName = "jsonb")]
     public StringDictionary? SeoName { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("track")]
     public bool? Track { get; set; }
 

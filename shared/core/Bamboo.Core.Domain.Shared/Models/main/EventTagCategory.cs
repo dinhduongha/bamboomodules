@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("event_tag_category")]
 //[Index("IsPublished", Name = "event_tag_category__is_published_index")]
 //[Index("WebsiteId", Name = "event_tag_category__website_id_index")]
-public partial class EventTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventTagCategory : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class EventTagCategory: FullAuditedAggregateRoot<Guid>, IEntityDt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

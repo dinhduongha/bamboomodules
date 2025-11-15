@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", Name = "discuss_channel_member__partner_id_index")]
 //[Index("UnpinDt", Name = "discuss_channel_member__unpin_dt_index")]
 //[Index("ChannelId", "PartnerId", "SeenMessageId", Name = "discuss_channel_member_seen_message_id_idx")]
-public partial class DiscussChannelMember: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DiscussChannelMember : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class DiscussChannelMember: FullAuditedEntity<Guid>, IEntityDto<G
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("EmployeeId", Name = "hr_contract__employee_id_index")]
 //[Index("ResourceCalendarId", Name = "hr_contract__resource_calendar_id_index")]
 //[Index("SchedulePay", Name = "hr_contract__schedule_pay_index")]
-public partial class HrContract: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class HrContract : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class HrContract: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("structure_type_id")]
     public Guid? StructureTypeId { get; set; }

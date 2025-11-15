@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("Date", Name = "account_bank_statement__date_index")]
 //[Index("JournalId", "FirstLineIndex", Name = "account_bank_statement_first_line_index_idx")]
 //[Index("JournalId", "Date", "Id", Name = "account_bank_statement_journal_id_date_desc_id_desc_idx", IsDescending = new[] { false, true, true })]
-public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountBankStatement : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class AccountBankStatement: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("journal_id")]
     public Guid? JournalId { get; set; }

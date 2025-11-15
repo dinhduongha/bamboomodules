@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mailing_mailing")]
 //[Index("CampaignId", Name = "mailing_mailing__campaign_id_index")]
-public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailingMailing : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailingMailing: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("source_id")]
     public Guid? SourceId { get; set; }

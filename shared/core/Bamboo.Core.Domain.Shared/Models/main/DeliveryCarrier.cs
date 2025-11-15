@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("delivery_carrier")]
 //[Index("IsPublished", Name = "delivery_carrier__is_published_index")]
 //[Index("WebsiteId", Name = "delivery_carrier__website_id_index")]
-public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DeliveryCarrier : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class DeliveryCarrier: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

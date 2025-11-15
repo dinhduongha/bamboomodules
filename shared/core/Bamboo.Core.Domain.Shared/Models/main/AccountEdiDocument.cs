@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_edi_document")]
 //[Index("MoveId", Name = "account_edi_document__move_id_index")]
 //[Index("EdiFormatId", "MoveId", Name = "account_edi_document_unique_edi_document_by_move_by_format", IsUnique = true)]
-public partial class AccountEdiDocument: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiDocument : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountEdiDocument: FullAuditedEntity<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("move_id")]
     public Guid? MoveId { get; set; }

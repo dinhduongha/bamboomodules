@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("event_meeting_room")]
 //[Index("IsPublished", Name = "event_meeting_room__is_published_index")]
-public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventMeetingRoom : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class EventMeetingRoom: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("chat_room_id")]
     public Guid? ChatRoomId { get; set; }

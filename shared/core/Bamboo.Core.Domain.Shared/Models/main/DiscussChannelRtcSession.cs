@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("discuss_channel_rtc_session")]
 //[Index("WriteDate", Name = "discuss_channel_rtc_session__write_date_index")]
 //[Index("ChannelMemberId", Name = "discuss_channel_rtc_session_channel_member_unique", IsUnique = true)]
-public partial class DiscussChannelRtcSession: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DiscussChannelRtcSession : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class DiscussChannelRtcSession: FullAuditedAggregateRoot<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("channel_member_id")]
     public Guid? ChannelMemberId { get; set; }

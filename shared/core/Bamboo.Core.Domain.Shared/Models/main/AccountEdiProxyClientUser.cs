@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_edi_proxy_client_user")]
 //[Index("IdClient", Name = "account_edi_proxy_client_user_unique_id_client", IsUnique = true)]
-public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountEdiProxyClientUser : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountEdiProxyClientUser: FullAuditedAggregateRoot<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("private_key_id")]
     public Guid? PrivateKeyId { get; set; }

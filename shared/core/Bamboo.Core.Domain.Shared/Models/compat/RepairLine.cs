@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("LocationDestId", Name = "repair_line_location_dest_id_index")]
 //[Index("LocationId", Name = "repair_line_location_id_index")]
 //[Index("RepairId", Name = "repair_line_repair_id_index")]
-public partial class RepairLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RepairLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class RepairLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("repair_id")]
     public Guid? RepairId { get; set; }

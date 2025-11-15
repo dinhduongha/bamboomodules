@@ -357,9 +357,6 @@ public partial class ResPartner : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [Column("website_short_description", TypeName = "jsonb")]
     public StringDictionary? WebsiteShortDescription { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("associate_member")]
     public Guid? AssociateMember { get; set; }
 

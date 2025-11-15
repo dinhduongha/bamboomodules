@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("maintenance_equipment")]
 //[Index("SerialNo", Name = "maintenance_equipment_serial_no", IsUnique = true)]
-public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MaintenanceEquipment : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MaintenanceEquipment: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("maintenance_team_id")]
     public Guid? MaintenanceTeamId { get; set; }

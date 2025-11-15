@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("sale_order_coupon_points")]
 //[Index("OrderId", "CouponId", Name = "sale_order_coupon_points_order_coupon_unique", IsUnique = true)]
-public partial class SaleOrderCouponPoints: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderCouponPoints : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SaleOrderCouponPoints: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("order_id")]
     public Guid? OrderId { get; set; }

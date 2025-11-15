@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("auth_passkey_key")]
 //[Index("CredentialIdentifier", Name = "auth_passkey_key_unique_identifier", IsUnique = true)]
-public partial class AuthPasskeyKey: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AuthPasskeyKey : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AuthPasskeyKey: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sign_count")]
     public long? SignCount { get; set; }

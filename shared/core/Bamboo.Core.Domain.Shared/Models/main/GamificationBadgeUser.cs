@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("BadgeId", Name = "gamification_badge_user__badge_id_index")]
 //[Index("EmployeeId", Name = "gamification_badge_user__employee_id_index")]
 //[Index("UserId", Name = "gamification_badge_user__user_id_index")]
-public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class GamificationBadgeUser : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class GamificationBadgeUser: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

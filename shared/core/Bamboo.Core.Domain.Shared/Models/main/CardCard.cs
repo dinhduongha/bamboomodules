@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("card_card")]
 //[Index("CampaignId", "ResId", Name = "card_card_campaign_record_unique", IsUnique = true)]
-public partial class CardCard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CardCard : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CardCard: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMulti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("campaign_id")]
     public Guid? CampaignId { get; set; }

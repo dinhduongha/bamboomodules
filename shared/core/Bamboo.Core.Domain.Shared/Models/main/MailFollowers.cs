@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("ResId", Name = "mail_followers__res_id_index")]
 //[Index("ResModel", Name = "mail_followers__res_model_index")]
 //[Index("ResModel", "ResId", "PartnerId", Name = "mail_followers_mail_followers_res_partner_res_model_id_uniq", IsUnique = true)]
-public partial class MailFollowers: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailFollowers : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class MailFollowers: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("res_id")]
     public Guid? ResId { get; set; }

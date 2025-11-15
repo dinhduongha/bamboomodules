@@ -71,9 +71,6 @@ public partial class BlogBlog : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     [Column("cover_properties")]
     public string? CoverProperties { get; set; }
 
-    [Column("slug")]
-    public string? Slug { get; set; }
-
     [Column("active")]
     public bool? Active { get; set; }
 

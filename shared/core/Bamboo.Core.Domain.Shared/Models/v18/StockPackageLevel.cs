@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("stock_package_level")]
 //[Index("CompanyId", Name = "stock_package_level__company_id_index")]
-public partial class StockPackageLevel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockPackageLevel : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class StockPackageLevel: FullAuditedAggregateRoot<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("package_id")]
     public Guid? PackageId { get; set; }

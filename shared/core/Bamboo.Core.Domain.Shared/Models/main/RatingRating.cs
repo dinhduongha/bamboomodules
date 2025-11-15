@@ -22,7 +22,7 @@ namespace Bamboo.Core.Models;
 //[Index("ResId", Name = "rating_rating__res_id_index")]
 //[Index("ResModelId", Name = "rating_rating__res_model_id_index")]
 //[Index("ResModel", Name = "rating_rating__res_model_index")]
-public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class RatingRating : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -32,7 +32,7 @@ public partial class RatingRating: FullAuditedEntity<Guid>, IEntityDto<Guid>, IM
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("res_model_id")]
     public Guid? ResModelId { get; set; }

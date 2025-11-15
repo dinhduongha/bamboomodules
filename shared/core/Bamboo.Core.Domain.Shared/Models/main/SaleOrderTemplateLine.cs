@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("sale_order_template_line")]
 //[Index("CompanyId", Name = "sale_order_template_line__company_id_index")]
 //[Index("SaleOrderTemplateId", Name = "sale_order_template_line__sale_order_template_id_index")]
-public partial class SaleOrderTemplateLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SaleOrderTemplateLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class SaleOrderTemplateLine: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sale_order_template_id")]
     public Guid? SaleOrderTemplateId { get; set; }

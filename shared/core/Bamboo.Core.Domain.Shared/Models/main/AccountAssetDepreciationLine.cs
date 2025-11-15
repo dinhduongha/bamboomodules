@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("account_asset_depreciation_line")]
 //[Index("DepreciationDate", Name = "account_asset_depreciation_line__depreciation_date_index")]
 //[Index("Name", Name = "account_asset_depreciation_line__name_index")]
-public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountAssetDepreciationLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class AccountAssetDepreciationLine: FullAuditedEntity<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("StorageCategoryId", Name = "stock_storage_category_capacity__storage_category_id_index")]
 //[Index("PackageTypeId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_package_type", IsUnique = true)]
 //[Index("ProductId", "StorageCategoryId", Name = "stock_storage_category_capacity_unique_product", IsUnique = true)]
-public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockStorageCategoryCapacity : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class StockStorageCategoryCapacity: FullAuditedEntity<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("storage_category_id")]
     public Guid? StorageCategoryId { get; set; }

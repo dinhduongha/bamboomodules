@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("forum_post_vote")]
 //[Index("CreateDate", Name = "forum_post_vote__create_date_index")]
 //[Index("PostId", "UserId", Name = "forum_post_vote_vote_uniq", IsUnique = true)]
-public partial class ForumPostVote: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ForumPostVote : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class ForumPostVote: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("post_id")]
     public Guid? PostId { get; set; }

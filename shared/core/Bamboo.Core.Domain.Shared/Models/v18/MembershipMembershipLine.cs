@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("membership_membership_line")]
 //[Index("Partner", Name = "membership_membership_line__partner_index")]
-public partial class MembershipMembershipLine: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MembershipMembershipLine : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MembershipMembershipLine: FullAuditedEntity<Guid>, IEntityD
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner")]
     public Guid? Partner { get; set; }

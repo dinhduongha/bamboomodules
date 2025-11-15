@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("crm_tag")]
 //[Index("Name", Name = "crm_tag_name_uniq", IsUnique = true)]
-public partial class CrmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmTag : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class CrmTag: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTe
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("color")]
     public long? Color { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("event_booth_registration")]
 //[Index("SaleOrderLineId", "EventBoothId", Name = "event_booth_registration_unique_registration", IsUnique = true)]
-public partial class EventBoothRegistration: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventBoothRegistration : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class EventBoothRegistration: FullAuditedEntity<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sale_order_line_id")]
     public Guid? SaleOrderLineId { get; set; }

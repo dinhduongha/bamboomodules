@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("StockMoveId", Name = "stock_valuation_layer__stock_move_id_index")]
 //[Index("StockValuationLayerId", Name = "stock_valuation_layer__stock_valuation_layer_id_index")]
 //[Index("ProductId", "RemainingQty", "StockMoveId", "CompanyId", "CreateDate", Name = "stock_valuation_layer_index")]
-public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockValuationLayer : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class StockValuationLayer: FullAuditedAggregateRoot<Guid>, IEntit
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

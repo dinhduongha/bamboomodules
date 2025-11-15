@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("decimal_precision")]
 //[Index("Name", Name = "decimal_precision_name_uniq", IsUnique = true)]
-public partial class DecimalPrecision: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class DecimalPrecision : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class DecimalPrecision: FullAuditedEntity<Guid>, IEntityDto<Guid>
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("digits")]
     public long? Digits { get; set; }

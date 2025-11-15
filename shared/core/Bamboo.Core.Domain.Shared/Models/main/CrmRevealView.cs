@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("RevealState", Name = "crm_reveal_view__reveal_state_index")]
 //[Index("RevealRuleId", "RevealIp", Name = "crm_reveal_view_ip_rule_id", IsUnique = true)]
 //[Index("RevealState", "CreateDate", Name = "crm_reveal_view_state_create_date")]
-public partial class CrmRevealView: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class CrmRevealView : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class CrmRevealView: FullAuditedEntity<Guid>, IEntityDto<Guid>, I
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("reveal_rule_id")]
     public Guid? RevealRuleId { get; set; }

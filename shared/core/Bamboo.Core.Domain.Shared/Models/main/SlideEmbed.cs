@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("slide_embed")]
 //[Index("SlideId", Name = "slide_embed__slide_id_index")]
-public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideEmbed : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class SlideEmbed: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("slide_id")]
     public Guid? SlideId { get; set; }

@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mrp_routing_workcenter")]
 //[Index("BomId", Name = "mrp_routing_workcenter__bom_id_index")]
-public partial class MrpRoutingWorkcenter: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpRoutingWorkcenter : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MrpRoutingWorkcenter: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("workcenter_id")]
     public Guid? WorkcenterId { get; set; }

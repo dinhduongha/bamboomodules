@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("PartnerId", Name = "res_users__partner_id_index")]
 //[Index("Login", "WebsiteId", Name = "res_users_login_key", IsUnique = true)]
 //[Index("OauthProviderId", "OauthUid", Name = "res_users_uniq_users_oauth_provider_oauth_uid", IsUnique = true)]
-public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ResUsers : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class ResUsers: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("partner_id")]
     public Guid? PartnerId { get; set; }

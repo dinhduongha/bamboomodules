@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("mrp_bom_byproduct")]
 //[Index("BomId", Name = "mrp_bom_byproduct__bom_id_index")]
 //[Index("CompanyId", Name = "mrp_bom_byproduct__company_id_index")]
-public partial class MrpBomByproduct: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MrpBomByproduct : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class MrpBomByproduct: FullAuditedAggregateRoot<Guid>, IEntityDto
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }

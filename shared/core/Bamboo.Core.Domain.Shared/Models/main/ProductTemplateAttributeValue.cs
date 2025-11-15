@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("ProductAttributeValueId", Name = "product_template_attribute_value__product_attribute_va_63041d9e")]
 //[Index("ProductTmplId", Name = "product_template_attribute_value__product_tmpl_id_index")]
 //[Index("AttributeLineId", "ProductAttributeValueId", Name = "product_template_attribute_value_attribute_value_unique", IsUnique = true)]
-public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProductTemplateAttributeValue : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class ProductTemplateAttributeValue: FullAuditedAggregateRoot<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_attribute_value_id")]
     public Guid? ProductAttributeValueId { get; set; }

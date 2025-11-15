@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("slide_channel_tag_group")]
 //[Index("IsPublished", Name = "slide_channel_tag_group__is_published_index")]
 //[Index("Sequence", Name = "slide_channel_tag_group__sequence_index")]
-public partial class SlideChannelTagGroup: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class SlideChannelTagGroup : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class SlideChannelTagGroup: FullAuditedAggregateRoot<Guid>, IEnti
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

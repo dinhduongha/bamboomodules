@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("account_reconcile_model")]
 //[Index("Name", "CompanyId", Name = "account_reconcile_model_name_unique", IsUnique = true)]
-public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AccountReconcileModel : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AccountReconcileModel: FullAuditedAggregateRoot<Guid>, IEnt
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("sequence")]
     public long? Sequence { get; set; }

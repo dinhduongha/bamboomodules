@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("auth_totp_device")]
 //[Index("UserId", "Index", Name = "auth_totp_device_user_id_index_idx")]
-public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class AuthTotpDevice : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class AuthTotpDevice: FullAuditedEntity<Guid>, IEntityDto<Guid>, 
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("name")]
     public string? Name { get; set; }

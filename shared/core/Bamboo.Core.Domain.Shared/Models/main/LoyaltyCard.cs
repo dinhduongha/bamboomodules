@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("loyalty_card")]
 //[Index("PartnerId", Name = "loyalty_card__partner_id_index")]
 //[Index("Code", Name = "loyalty_card_card_code_unique", IsUnique = true)]
-public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class LoyaltyCard : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class LoyaltyCard: FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("program_id")]
     public Guid? ProgramId { get; set; }

@@ -19,7 +19,7 @@ namespace Bamboo.Core.Models;
 //[Index("LotId", Name = "stock_quant__lot_id_index")]
 //[Index("PackageId", Name = "stock_quant__package_id_index")]
 //[Index("ProductId", Name = "stock_quant__product_id_index")]
-public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class StockQuant : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -29,7 +29,7 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -119,10 +119,11 @@ public partial class StockQuant: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMul
     [ForeignKey("OwnerId")]
     public virtual ResPartner? Owner { get; set; }
 
+    //CONFLICK-V19
     // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("PackageId")]
-    public virtual StockQuantPackage? Package { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("PackageId")]
+    // public virtual StockQuantPackage? Package { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

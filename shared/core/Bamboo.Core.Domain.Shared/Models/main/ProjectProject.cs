@@ -18,7 +18,7 @@ namespace Bamboo.Core.Models;
 //[Index("AccountId", Name = "project_project__account_id_index")]
 //[Index("Date", Name = "project_project__date_index")]
 //[Index("StageId", Name = "project_project__stage_id_index")]
-public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class ProjectProject : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -28,7 +28,7 @@ public partial class ProjectProject: FullAuditedAggregateRoot<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("account_id")]
     public Guid? AccountId { get; set; }

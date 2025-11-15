@@ -20,7 +20,7 @@ namespace Bamboo.Core.Models;
 //[Index("PosReference", Name = "pos_order__pos_reference_index")]
 //[Index("SessionId", Name = "pos_order__session_id_index")]
 //[Index("State", Name = "pos_order__state_index")]
-public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class PosOrder : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -30,7 +30,7 @@ public partial class PosOrder: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>,
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("user_id")]
     public Guid? UserId { get; set; }

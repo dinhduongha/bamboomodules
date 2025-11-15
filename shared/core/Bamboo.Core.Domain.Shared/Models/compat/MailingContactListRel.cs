@@ -16,7 +16,7 @@ namespace Bamboo.Core.Models;
 
 [Table("mailing_contact_list_rel")]
 //[Index("ContactId", "ListId", Name = "mailing_contact_list_rel_unique_contact_list", IsUnique = true)]
-public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class MailingContactListRel : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -26,7 +26,7 @@ public partial class MailingContactListRel: FullAuditedEntity<Guid>, IEntityDto<
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("contact_id")]
     public Guid? ContactId { get; set; }

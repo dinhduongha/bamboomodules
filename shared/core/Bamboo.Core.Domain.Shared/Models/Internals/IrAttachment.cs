@@ -17,7 +17,7 @@ namespace Bamboo.Core.Models;
 [Table("ir_attachment")]
 //[Index("StoreFname", Name = "ir_attachment__store_fname_index")]
 //[Index("ResModel", "ResId", Name = "ir_attachment_res_idx")]
-public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class IrAttachment : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -27,7 +27,7 @@ public partial class IrAttachment: FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }
+    public Guid? OrganizationUnitId { get; set; }
 
     [Column("res_id")]
     public Guid? ResId { get; set; }
