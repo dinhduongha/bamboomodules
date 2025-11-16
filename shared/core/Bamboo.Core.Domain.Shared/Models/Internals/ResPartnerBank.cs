@@ -141,12 +141,13 @@ public partial class ResPartnerBank : FullAuditedAggregateRoot<Guid>, IEntityDto
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
-    // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("BankAccountId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("BankAccount")] // One2many
-    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+    // CONFLICK-V9
+    // // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("BankAccountId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("BankAccount")] // One2many
+    // public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

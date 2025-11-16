@@ -256,12 +256,13 @@ public partial class EventEvent : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     // [InverseProperty("Event")] // One2many
     public virtual ICollection<EventMeetingRoom> EventMeetingRoom { get; set; }
 
-    // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("EventId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("Event")] // One2many
-    public virtual ICollection<EventQuestion> EventQuestion { get; set; }
+    // CONFLICK-v19. use M2M
+    // // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("EventId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("Event")] // One2many
+    // public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

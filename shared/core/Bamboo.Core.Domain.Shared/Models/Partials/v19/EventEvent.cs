@@ -59,12 +59,12 @@ public partial class EventEvent
     // [InverseProperty("Event")] // One2many
     public virtual ICollection<HrResumeLine> HrResumeLine { get; set; }
 
-    // // [Many2many] // Normal
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [NotMapped] // Many2many // Normal
-    // // [ForeignKey("EventEventId")] // Many2many // Normal
-    // // [InverseProperty("EventEvent")] // Many2many // Normal
-    // public virtual ICollection<EventQuestion> EventQuestion { get; set; }
+    // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventEventId")] // Many2many // Normal
+    // [InverseProperty("EventEvent")] // Many2many // Normal
+    public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
 
 }

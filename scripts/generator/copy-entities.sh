@@ -17,6 +17,9 @@ echo "PROCESS entities in $BASE_PATH"
 echo "Move internal entities"
 # Internal entities
 # IrActions.cs  IrEmbeddedActions.cs  IrExports.cs  IrModelData.cs  IrModelFields.cs
+mv $BASE_PATH/AuthPasskeyKey.cs $DST_ENTITIES_INTERNALS_DIR 
+mv $BASE_PATH/AuthPasskeyKeyCreate.cs $DST_ENTITIES_INTERNALS_DIR
+mv $BASE_PATH/AuthTotpRateLimitLog.cs $DST_ENTITIES_INTERNALS_DIR 
 mv $BASE_PATH/AuthTotpDevice.cs $DST_ENTITIES_INTERNALS_DIR 
 mv $BASE_PATH/AuthTotpWizard.cs $DST_ENTITIES_INTERNALS_DIR 
 mv $BASE_PATH/BaseAutomation.cs $DST_ENTITIES_INTERNALS_DIR 
@@ -213,15 +216,32 @@ mv $BASE_PATH/WebsiteCheckoutStep.cs $DST_ENTITIES_V19_DIR
 
 echo "Move v18 entities"
 # v18-vs-v19
+
 mv $BASE_PATH/AccountFiscalPositionTax.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/AccountPeppolServiceWizard.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/AccountReconcileModelPartnerMapping.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/CandidateSendMail.cs $DST_ENTITIES_V18_DIR 
 mv $BASE_PATH/ChatRoom.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/ChooseDeliveryPackage.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/EventMeetingRoom.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/HrAttendanceOvertime.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/HrCandidate.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrCandidateSkill.cs $DST_ENTITIES_V18_DIR 
 mv $BASE_PATH/HrContract.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/HrContractAdvantageTemplate.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrContributionRegister.cs $DST_ENTITIES_V18_DIR 
 mv $BASE_PATH/HrEmployeeSkillLog.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/HrExpenseSheet.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/HrPayrollStructure.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslip.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslipEmployees.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslipInput.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslipLine.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslipRun.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrPayslipWorkedDays.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/HrRuleInput.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrSalaryRule.cs $DST_ENTITIES_V18_DIR 
+mv $BASE_PATH/HrSalaryRuleCategory.cs $DST_ENTITIES_V18_DIR 
 mv $BASE_PATH/MailGroup.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/MailGroupMember.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/MailGroupMessage.cs $DST_ENTITIES_V18_DIR
@@ -232,7 +252,9 @@ mv $BASE_PATH/MailResendPartner.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/MailWizardInvite.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/MembershipInvoice.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/MembershipMembershipLine.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/MrpBatchProduce.cs $DST_ENTITIES_V18_DIR 
 mv $BASE_PATH/PaymentProviderOnboardingWizard.cs $DST_ENTITIES_V18_DIR
+mv $BASE_PATH/PayslipLinesContributionRegister.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/ProcurementGroup.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/ProductFetchImageWizard.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/ProductPackaging.cs $DST_ENTITIES_V18_DIR
@@ -253,25 +275,6 @@ mv $BASE_PATH/StockTrackLine.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/StockValuationLayer.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/StockValuationLayerRevaluation.cs $DST_ENTITIES_V18_DIR
 mv $BASE_PATH/UomCategory.cs $DST_ENTITIES_V18_DIR
-
-mv $BASE_PATH/AccountPeppolServiceWizard.cs $DST_ENTITIES_V18_DIR
-mv $BASE_PATH/CandidateSendMail.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrCandidate.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrCandidateSkill.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrContractAdvantageTemplate.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrContributionRegister.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayrollStructure.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslip.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslipEmployees.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslipInput.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslipLine.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslipRun.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrPayslipWorkedDays.cs $DST_ENTITIES_V18_DIR
-mv $BASE_PATH/HrRuleInput.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrSalaryRuleCategory.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/HrSalaryRule.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/MrpBatchProduce.cs $DST_ENTITIES_V18_DIR 
-mv $BASE_PATH/PayslipLinesContributionRegister.cs $DST_ENTITIES_V18_DIR
 
 #mv $BASE_PATH/AccountMoveSendWizard.cs $DST_ENTITIES_V18_DIR 
 #mv $BASE_PATH/AccountPeppolService.cs $DST_ENTITIES_V18_DIR 
@@ -341,7 +344,8 @@ mv $BASE_PATH/PayslipLinesContributionRegister.cs $DST_ENTITIES_V18_DIR
 # mv $BASE_PATH/HrEmployeeLocation.cs $DST_ENTITIES_V18_DIR 
 # mv $BASE_PATH/HrJobPlatform.cs $DST_ENTITIES_V18_DIR 
 # mv $BASE_PATH/HrLeaveAllocationGenerateMultiWizard.cs $DST_ENTITIES_V18_DIR 
-# mv $BASE_PATH/HrLeaveGenerateMultiWizard.cs $DST_ENTITIES_V18_DIR 
+# mv $BASE_PATH/HrLeaveGenerateMultiWizard.cs $DST_ENTITIES_V18_DIR
+ 
 # mv $BASE_PATH/HrPayrollStructure.cs $DST_ENTITIES_V18_DIR 
 # mv $BASE_PATH/HrPayslip.cs $DST_ENTITIES_V18_DIR 
 # mv $BASE_PATH/HrPayslipEmployees.cs $DST_ENTITIES_V18_DIR 

@@ -16,12 +16,12 @@ namespace Bamboo.Core.Models;
 
 public partial class MailTemplate
 {
-    // // [One2many]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [One2many] [ForeignKey("TemplateId")]
-    // // [NotMapped] // One2many // Normal
-    // // [InverseProperty("Template")] // One2many
-    // public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
+    // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [One2many] [ForeignKey("TemplateId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("Template")] // One2many
+    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -122,12 +122,13 @@ public partial class AccountFiscalPosition : FullAuditedAggregateRoot<Guid>, IEn
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
-    // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("DefaultFiscalPositionId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("DefaultFiscalPosition")] // One2many
-    public virtual ICollection<PosConfig> PosConfigDefaultFiscalPosition { get; set; }
+    // CONFLICK-V19
+    // // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("DefaultFiscalPositionId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("DefaultFiscalPosition")] // One2many
+    // public virtual ICollection<PosConfig> PosConfigDefaultFiscalPosition { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

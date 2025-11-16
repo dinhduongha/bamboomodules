@@ -107,12 +107,13 @@ public partial class MailTemplate : FullAuditedAggregateRoot<Guid>, IEntityDto<G
     [Column("write_date", TypeName = "timestamp without time zone")]
     public override DateTime? LastModificationTime { get; set; }
 
-    // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("MailTemplateId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("MailTemplate")] // One2many
-    public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
+    // CONFLICK-V19
+    // // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("MailTemplateId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("MailTemplate")] // One2many
+    // public virtual ICollection<AccountMoveSendWizard> AccountMoveSendWizard { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

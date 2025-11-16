@@ -877,14 +877,14 @@ def refactor_entity_file(content, schema_map):
     # Xác định lại kế thừa dựa trên kết quả xử lý quan hệ
     if one2many_found_in_file[0]:
         if should_add_multitenancy:
-            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1 : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
         else:
-            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1 : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
     else:
         if should_add_multitenancy:
-            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1 : FullAuditedEntity<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject', content, count=1)
         else:
-            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1: FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
+            content = re.sub(r'(public\s+partial\s+class\s+\w+)(:.*)?', r'\1 : FullAuditedEntity<Guid>, IEntityDto<Guid>, IAuditedObject', content, count=1)
 
 #using System;
 #using System.Collections.Generic;
@@ -922,7 +922,7 @@ using Bamboo.Core.Domain.Shared.Attributes;"""
     public Guid? TenantId { get; set; }
 
     [Column("organization_unit_id")]
-    public Guid? OrganizationUnitId  { get; set; }"""
+    public Guid? OrganizationUnitId { get; set; }"""
     else:
         id_replacement = r"public Guid Id { get => base.Id; set => base.Id = value; }"
     content = re.sub(r'public\s+Guid\s+Id\s*{\s*get;\s*set;\s*}', id_replacement, content)

@@ -47,7 +47,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 });
             }
 
-            modelBuilder.ApplyAllCoreConfigurations();
+            modelBuilder.ApplyAllConfigurations();
             modelBuilder.ApplyV18Configurations();
             modelBuilder.ConfigureV18Compat();
             modelBuilder.ApplyV16Configurations();

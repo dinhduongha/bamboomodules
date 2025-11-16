@@ -71,10 +71,11 @@ public partial class AccountMoveSendWizard : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("MailTemplateId")]
-    public virtual MailTemplate? MailTemplate { get; set; }
+    // CONFLICK-V19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("MailTemplateId")]
+    // public virtual MailTemplate? MailTemplate { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

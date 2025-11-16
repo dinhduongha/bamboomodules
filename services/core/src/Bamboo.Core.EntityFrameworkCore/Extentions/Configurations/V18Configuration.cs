@@ -123,10 +123,12 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                 entity.HasIndex(e => e.ExchangeMoveId, "account_full_reconcile__exchange_move_id_index").HasFilter("(exchange_move_id IS NOT NULL)");
                 entity.Property(e => e.ExchangeMoveId).HasColumnName("exchange_move_id");
-                // entity.HasOne(d => d.ExchangeMove).WithMany(p => p.AccountFullReconcile)
-                //     .HasForeignKey(d => d.ExchangeMoveId)
-                //     .OnDelete(DeleteBehavior.SetNull)
-                //     .HasConstraintName("account_full_reconcile_exchange_move_id_fkey");
+
+                //entity.HasOne(d => d.ExchangeMove).WithMany(p => p.AccountFullReconcile)
+                entity.HasOne(d => d.ExchangeMove).WithMany()
+                    .HasForeignKey(d => d.ExchangeMoveId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("account_full_reconcile_exchange_move_id_fkey");
 
             });
             modelBuilder.Entity<AccountJournal>(entity =>
@@ -172,16 +174,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.ExpenseSheetId).HasColumnName("expense_sheet_id");
                 entity.Property(e => e.IsStorno).HasColumnName("is_storno");
                 entity.Property(e => e.StockMoveId).HasColumnName("stock_move_id");
-                entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMove)
-                            .HasForeignKey(d => d.ExpenseSheetId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_move_expense_sheet_id_fkey");
+                // CONFLICK-V19
+                //entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMove)
+                // entity.HasOne(d => d.ExpenseSheet).WithMany()
+                //     .HasForeignKey(d => d.ExpenseSheetId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("account_move_expense_sheet_id_fkey");
 
                 // CONFLICK-V19
-                // entity.HasOne(d => d.StockMove).WithMany(p => p.AccountMove)
-                //             .HasForeignKey(d => d.StockMoveId)
-                //             .OnDelete(DeleteBehavior.SetNull)
-                //             .HasConstraintName("account_move_stock_move_id_fkey");
+                //entity.HasOne(d => d.StockMove).WithMany(p => p.AccountMove)
+                // entity.HasOne(d => d.StockMove).WithMany()
+                //     .HasForeignKey(d => d.StockMoveId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("account_move_stock_move_id_fkey");
 
                 // entity.HasMany(d => d.MrpProduction).WithMany(p => p.AccountMove)
                 entity.HasMany(d => d.MrpProduction).WithMany(p => p.AccountMove)
@@ -215,15 +220,22 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.MailBody).HasColumnName("mail_body");
                 entity.Property(e => e.MailSubject).HasColumnName("mail_subject");
                 entity.Property(e => e.MailTemplateId).HasColumnName("mail_template_id");
-                entity.HasOne(d => d.MailTemplate).WithMany(p => p.AccountMoveSendWizard)
-                            .HasForeignKey(d => d.MailTemplateId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_move_send_wizard_mail_template_id_fkey");
+
+                // CONFLICK-V19, Replace with TemplateId
+                //entity.HasOne(d => d.MailTemplate).WithMany(p => p.AccountMoveSendWizard)
+                // entity.HasOne(d => d.MailTemplate).WithMany()
+                //     .HasForeignKey(d => d.MailTemplateId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("account_move_send_wizard_mail_template_id_fkey");
 
             });
             modelBuilder.Entity<AccountPaymentRegister>(entity =>
             {
-                // entity.HasOne(d => d.WriteoffAccount).WithMany(p => p.AccountPaymentRegister) .HasForeignKey(d => d.WriteoffAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
+                //entity.HasOne(d => d.WriteoffAccount).WithMany(p => p.AccountPaymentRegister)
+                entity.HasOne(d => d.WriteoffAccount).WithMany()
+                    .HasForeignKey(d => d.WriteoffAccountId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
 
             });
             modelBuilder.Entity<AccountReconcileModel>(entity =>
@@ -271,8 +283,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             j.IndexerProperty<Guid>("ResPartnerCategoryId").HasColumnName("res_partner_category_id");
                         });
 
-
-
             });
             modelBuilder.Entity<AccountReconcileModelLine>(entity =>
             {
@@ -294,11 +304,11 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<AccountReportExternalValue>(entity =>
             {
                 entity.Property(e => e.ForeignVatFiscalPositionId).HasColumnName("foreign_vat_fiscal_position_id");
-                entity.HasOne(d => d.ForeignVatFiscalPosition).WithMany(p => p.AccountReportExternalValue)
-                            .HasForeignKey(d => d.ForeignVatFiscalPositionId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_report_external_value_foreign_vat_fiscal_position__fkey");
-
+                //entity.HasOne(d => d.ForeignVatFiscalPosition).WithMany(p => p.AccountReportExternalValue)
+                entity.HasOne(d => d.ForeignVatFiscalPosition).WithMany()
+                    .HasForeignKey(d => d.ForeignVatFiscalPositionId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("account_report_external_value_foreign_vat_fiscal_position__fkey");
 
             });
             modelBuilder.Entity<AccountSetupBankManualConfig>(entity =>
@@ -325,11 +335,12 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<BaseModuleUninstall>(entity =>
             {
                 entity.Property(e => e.ModuleId).HasColumnName("module_id");
-                entity.HasOne(d => d.Module).WithMany(p => p.BaseModuleUninstall)
-                            .HasForeignKey(d => d.ModuleId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("base_module_uninstall_module_id_fkey");
-
+                // CONFLICK-V19
+                //entity.HasOne(d => d.Module).WithMany(p => p.BaseModuleUninstall)
+                // entity.HasOne(d => d.Module).WithMany()
+                //     .HasForeignKey(d => d.ModuleId)
+                //     .OnDelete(DeleteBehavior.Cascade)
+                //     .HasConstraintName("base_module_uninstall_module_id_fkey");
 
             });
             modelBuilder.Entity<CalendarAlarm>(entity =>
@@ -343,7 +354,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                 entity.Property(e => e.CandidateId).HasColumnName("candidate_id");
 
-                entity.HasOne(d => d.Candidate).WithMany(p => p.CalendarEvent)
+                //entity.HasOne(d => d.Candidate).WithMany(p => p.CalendarEvent)
+                entity.HasOne(d => d.Candidate).WithMany()
                     .HasForeignKey(d => d.CandidateId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("calendar_event_candidate_id_fkey");
@@ -352,12 +364,11 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<CalendarPopoverDeleteWizard>(entity =>
             {
                 entity.Property(e => e.Record).HasColumnName("record");
-                entity.HasOne(d => d.RecordNavigation).WithMany(p => p.CalendarPopoverDeleteWizard)
-                    .HasForeignKey(d => d.Record)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("calendar_popover_delete_wizard_record_fkey");
-
-
+                // CONFLICK-V19
+                // entity.HasOne(d => d.RecordNavigation).WithMany(p => p.CalendarPopoverDeleteWizard)
+                //     .HasForeignKey(d => d.Record)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("calendar_popover_delete_wizard_record_fkey");
 
             });
             modelBuilder.Entity<CardTemplate>(entity =>
@@ -385,21 +396,23 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.Mobile).HasColumnName("mobile");
                 entity.Property(e => e.Title).HasColumnName("title");
-                entity.HasOne(d => d.TitleNavigation).WithMany(p => p.CrmLead)
+                //entity.HasOne(d => d.TitleNavigation).WithMany(p => p.CrmLead)
+                entity.HasOne(d => d.TitleNavigation).WithMany()
                             .HasForeignKey(d => d.Title)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("crm_lead_title_fkey");
-
 
             });
             modelBuilder.Entity<CrmStage>(entity =>
             {
                 entity.Property(e => e.TeamId).HasColumnName("team_id");
 
-                entity.HasOne(d => d.Team).WithMany(p => p.CrmStage)
-                            .HasForeignKey(d => d.TeamId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("crm_stage_team_id_fkey");
+                // CONFLICK-V19
+                //entity.HasOne(d => d.Team).WithMany(p => p.CrmStage)
+                entity.HasOne(d => d.Team).WithMany()
+                    .HasForeignKey(d => d.TeamId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("crm_stage_team_id_fkey");
 
 
             });
@@ -431,12 +444,16 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.EventId).HasColumnName("event_id");
                 entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
-                entity.HasOne(d => d.Event).WithMany(p => p.EventQuestion)
-                            .HasForeignKey(d => d.EventId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("event_question_event_id_fkey");
+
+                //entity.HasOne(d => d.Event).WithMany(p => p.EventQuestion)
+                entity.HasOne(d => d.Event).WithMany()
+                    .HasForeignKey(d => d.EventId)
+                    .OnDelete(DeleteBehavior.Cascade)
+                    .HasConstraintName("event_question_event_id_fkey");
+
                 // CONFLICK-V19
-                // entity.HasOne(d => d.EventType).WithMany(p => p.EventQuestion)
+                //entity.HasOne(d => d.EventType).WithMany(p => p.EventQuestion)
+                // entity.HasOne(d => d.EventType).WithMany()
                 //     .HasForeignKey(d => d.EventTypeId)
                 //     .OnDelete(DeleteBehavior.Cascade)
                 //     .HasConstraintName("event_question_event_type_id_fkey");
@@ -445,10 +462,11 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.ChatRoomId).HasColumnName("chat_room_id");
                 entity.Property(e => e.Mobile).HasColumnName("mobile");
-                entity.HasOne(d => d.ChatRoom).WithMany(p => p.EventSponsor)
-                            .HasForeignKey(d => d.ChatRoomId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("event_sponsor_chat_room_id_fkey");
+                //entity.HasOne(d => d.ChatRoom).WithMany(p => p.EventSponsor)
+                entity.HasOne(d => d.ChatRoom).WithMany()
+                    .HasForeignKey(d => d.ChatRoomId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("event_sponsor_chat_room_id_fkey");
 
             });
             modelBuilder.Entity<EventStage>(entity =>
@@ -489,10 +507,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.HasIndex(e => e.TenantId, "followup_followup_company_uniq").IsUnique();
                 // entity.HasOne(d => d.Company).WithOne(p => p.FollowupFollowup) .HasForeignKey<FollowupFollowup>(d => d.TenantId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("followup_followup_company_id_fkey");
                 // CONFLICK-KEY
-                // entity.HasOne(d => d.Company).WithOne(p => p.FollowupFollowup)
-                //     .HasForeignKey<FollowupFollowup>(d => d.TenantId)
-                //     .OnDelete(DeleteBehavior.Restrict)
-                //     .HasConstraintName("followup_followup_company_id_fkey");
+                //entity.HasOne(d => d.Company).WithOne(p => p.FollowupFollowup)
+                entity.HasOne(d => d.Company).WithOne()
+                    .HasForeignKey<FollowupFollowup>(d => d.TenantId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("followup_followup_company_id_fkey");
 
             });
             modelBuilder.Entity<FollowupLine>(entity =>
@@ -509,7 +528,8 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.HasIndex(e => e.CandidateId, "hr_applicant__candidate_id_index");
                 entity.Property(e => e.CandidateId).HasColumnName("candidate_id");
-                entity.HasOne(d => d.Candidate).WithMany(p => p.HrApplicant)
+                //entity.HasOne(d => d.Candidate).WithMany(p => p.HrApplicant)
+                entity.HasOne(d => d.Candidate).WithMany()
                     .HasForeignKey(d => d.CandidateId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("hr_applicant_candidate_id_fkey");
@@ -522,7 +542,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.InCountryName).HasColumnName("in_country_name");
                 entity.Property(e => e.OutCity).HasColumnName("out_city");
                 entity.Property(e => e.OutCountryName).HasColumnName("out_country_name");
-
 
             });
             modelBuilder.Entity<HrDepartment>(entity =>
@@ -538,7 +557,8 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<HrDepartureWizard>(entity =>
             {
                 entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
-                entity.HasOne(d => d.Employee).WithMany(p => p.HrDepartureWizard)
+                //entity.HasOne(d => d.Employee).WithMany(p => p.HrDepartureWizard)
+                entity.HasOne(d => d.Employee).WithMany()
                     .HasForeignKey(d => d.EmployeeId)
                     .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("hr_departure_wizard_employee_id_fkey");
@@ -588,61 +608,65 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.WorkLocationId).HasColumnName("work_location_id");
 
                 // entity.HasOne(d => d.Address).WithMany(p => p.HrEmployeeAddress) .HasForeignKey(d => d.AddressId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_employee_address_id_fkey");
-                entity.HasOne(d => d.Address).WithMany()
-                    .HasForeignKey(d => d.AddressId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_address_id_fkey");
+                // entity.HasOne(d => d.Address).WithMany()
+                //     .HasForeignKey(d => d.AddressId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_address_id_fkey");
 
                 // CONFLICK-V19
                 // entity.HasOne(d => d.BankAccount).WithMany(p => p.HrEmployee)
+                // //entity.HasOne(d => d.BankAccount).WithMany()
                 //     .HasForeignKey(d => d.BankAccountId)
                 //     .OnDelete(DeleteBehavior.SetNull)
                 //     .HasConstraintName("hr_employee_bank_account_id_fkey");
 
-                entity.HasOne(d => d.Contract).WithMany(p => p.HrEmployee)
-                    .HasForeignKey(d => d.ContractId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_contract_id_fkey");
+                // entity.HasOne(d => d.Contract).WithMany(p => p.HrEmployee)
+                //     .HasForeignKey(d => d.ContractId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_contract_id_fkey");
 
                 // entity.HasOne(d => d.Country).WithMany(p => p.HrEmployeeCountry) .HasForeignKey(d => d.CountryId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_employee_country_id_fkey");
-                entity.HasOne(d => d.Country).WithMany()
-                    .HasForeignKey(d => d.CountryId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_country_id_fkey");
-                entity.HasOne(d => d.Department).WithMany(p => p.HrEmployee)
-                        .HasForeignKey(d => d.DepartmentId)
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("hr_employee_department_id_fkey");
-                entity.HasOne(d => d.DepartureReason).WithMany(p => p.HrEmployee)
-                    .HasForeignKey(d => d.DepartureReasonId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("hr_employee_departure_reason_id_fkey");
-                entity.HasOne(d => d.Job).WithMany(p => p.HrEmployee)
-                        .HasForeignKey(d => d.JobId)
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("hr_employee_job_id_fkey");
+                // entity.HasOne(d => d.Country).WithMany()
+                //     .HasForeignKey(d => d.CountryId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_country_id_fkey");
+
+                // entity.HasOne(d => d.Department).WithMany(p => p.HrEmployee)
+                //     .HasForeignKey(d => d.DepartmentId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_department_id_fkey");
+
+                // entity.HasOne(d => d.DepartureReason).WithMany(p => p.HrEmployee)
+                //     .HasForeignKey(d => d.DepartureReasonId)
+                //     .OnDelete(DeleteBehavior.Restrict)
+                //     .HasConstraintName("hr_employee_departure_reason_id_fkey");
+
+                // entity.HasOne(d => d.Job).WithMany(p => p.HrEmployee)
+                //     .HasForeignKey(d => d.JobId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_job_id_fkey");
+
                 // entity.HasOne(d => d.PrivateCountry).WithMany(p => p.HrEmployeePrivateCountry) .HasForeignKey(d => d.PrivateCountryId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_employee_private_country_id_fkey");
-                entity.HasOne(d => d.PrivateCountry).WithMany()
-                    .HasForeignKey(d => d.PrivateCountryId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_private_country_id_fkey");
+                // entity.HasOne(d => d.PrivateCountry).WithMany()
+                //     .HasForeignKey(d => d.PrivateCountryId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_private_country_id_fkey");
 
                 // entity.HasOne(d => d.PrivateState).WithMany(p => p.HrEmployee) .HasForeignKey(d => d.PrivateStateId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_employee_private_state_id_fkey");
-                entity.HasOne(d => d.PrivateState).WithMany()
-                    .HasForeignKey(d => d.PrivateStateId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_private_state_id_fkey");
+                // entity.HasOne(d => d.PrivateState).WithMany()
+                //     .HasForeignKey(d => d.PrivateStateId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_private_state_id_fkey");
 
-                entity.HasOne(d => d.ResourceCalendar).WithMany(p => p.HrEmployee)
-                    .HasForeignKey(d => d.ResourceCalendarId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_employee_resource_calendar_id_fkey");
-                entity.HasOne(d => d.WorkLocation).WithMany(p => p.HrEmployeeWorkLocation)
-                        .HasForeignKey(d => d.WorkLocationId)
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("hr_employee_work_location_id_fkey");
+                // entity.HasOne(d => d.ResourceCalendar).WithMany(p => p.HrEmployee)
+                //     .HasForeignKey(d => d.ResourceCalendarId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_resource_calendar_id_fkey");
 
-
+                // entity.HasOne(d => d.WorkLocation).WithMany(p => p.HrEmployeeWorkLocation)
+                //     .HasForeignKey(d => d.WorkLocationId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_employee_work_location_id_fkey");
 
             });
             modelBuilder.Entity<HrEmployeeSkill>(entity =>
@@ -677,11 +701,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.AccountingDate).HasColumnName("accounting_date");
                 entity.Property(e => e.SheetId).HasColumnName("sheet_id");
 
-                entity.HasOne(d => d.Sheet).WithMany(p => p.HrExpense)
+                //entity.HasOne(d => d.Sheet).WithMany(p => p.HrExpense)
+                entity.HasOne(d => d.Sheet).WithMany()
                     .HasForeignKey(d => d.SheetId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("hr_expense_sheet_id_fkey");
-
 
             });
             modelBuilder.Entity<HrExpenseRefuseWizard>(entity =>
@@ -717,31 +741,32 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.FrequencyHourlySource).HasColumnName("frequency_hourly_source");
 
-
             });
             modelBuilder.Entity<HrLeaveAllocation>(entity =>
             {
                 entity.Property(e => e.OvertimeId).HasColumnName("overtime_id");
-                entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeaveAllocation)
-                    .HasForeignKey(d => d.OvertimeId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("hr_leave_allocation_overtime_id_fkey");
-
-
+                // entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeaveAllocation)
+                //     .HasForeignKey(d => d.OvertimeId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("hr_leave_allocation_overtime_id_fkey");
 
             });
             modelBuilder.Entity<HrLeave>(entity =>
             {
                 entity.Property(e => e.ManagerId).HasColumnName("manager_id");
                 entity.Property(e => e.OvertimeId).HasColumnName("overtime_id");
-                entity.HasOne(d => d.Manager).WithMany(p => p.HrLeaveManager)
-                            .HasForeignKey(d => d.ManagerId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_manager_id_fkey");
-                entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeave)
-                            .HasForeignKey(d => d.OvertimeId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_overtime_id_fkey");
+
+                //entity.HasOne(d => d.Manager).WithMany(p => p.HrLeaveManager)
+                entity.HasOne(d => d.Manager).WithMany()
+                    .HasForeignKey(d => d.ManagerId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_leave_manager_id_fkey");
+
+                //entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeave)
+                entity.HasOne(d => d.Overtime).WithMany()
+                    .HasForeignKey(d => d.OvertimeId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("hr_leave_overtime_id_fkey");
 
             });
             modelBuilder.Entity<HrLeaveType>(entity =>
@@ -751,16 +776,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.TimesheetGenerate).HasColumnName("timesheet_generate");
                 entity.Property(e => e.TimesheetProjectId).HasColumnName("timesheet_project_id");
                 entity.Property(e => e.TimesheetTaskId).HasColumnName("timesheet_task_id");
-                entity.HasOne(d => d.TimesheetProject).WithMany(p => p.HrLeaveType)
+
+                //entity.HasOne(d => d.TimesheetProject).WithMany(p => p.HrLeaveType)
+                entity.HasOne(d => d.TimesheetProject).WithMany()
                     .HasForeignKey(d => d.TimesheetProjectId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("hr_leave_type_timesheet_project_id_fkey");
 
-                entity.HasOne(d => d.TimesheetTask).WithMany(p => p.HrLeaveType)
+                //entity.HasOne(d => d.TimesheetTask).WithMany(p => p.HrLeaveType)
+                entity.HasOne(d => d.TimesheetTask).WithMany()
                     .HasForeignKey(d => d.TimesheetTaskId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("hr_leave_type_timesheet_task_id_fkey");
-
 
             });
             modelBuilder.Entity<HrResumeLine>(entity =>
@@ -770,7 +797,7 @@ namespace Bamboo.Core.EntityFrameworkCore
             });
             modelBuilder.Entity<HrWorkEntry>(entity =>
             {
-                entity.HasIndex(e => new { e.ContractId, e.DateStart, e.DateStop }, "hr_work_entry_contract_date_start_stop_idx").HasFilter("(state = ANY (ARRAY[('draft'::character varying)::text, ('validated'::character varying)::text]))");
+                //entity.HasIndex(e => new { e.ContractId, e.DateStart, e.DateStop }, "hr_work_entry_contract_date_start_stop_idx").HasFilter("(state = ANY (ARRAY[('draft'::character varying)::text, ('validated'::character varying)::text]))");
 
                 entity.HasIndex(e => new { e.DateStart, e.DateStop }, "hr_work_entry_date_start_date_stop_index");
                 entity.Property(e => e.ContractId).HasColumnName("contract_id");
@@ -780,11 +807,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.DateStop)
                     .HasColumnType("timestamp without time zone")
                     .HasColumnName("date_stop");
-                entity.HasOne(d => d.Contract).WithMany(p => p.HrWorkEntry)
-                        .HasForeignKey(d => d.ContractId)
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("hr_work_entry_contract_id_fkey");
 
+                //entity.HasOne(d => d.Contract).WithMany(p => p.HrWorkEntry)
+                entity.HasOne(d => d.Contract).WithMany()
+                    .HasForeignKey(d => d.ContractId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("hr_work_entry_contract_id_fkey");
 
             });
             modelBuilder.Entity<ImLivechatChannel>(entity =>
@@ -875,10 +903,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.HasIndex(e => new { e.ModelId, e.UserId, e.ActionId, e.EmbeddedActionId, e.EmbeddedParentResId, e.Name }, "ir_filters_name_model_uid_unique").IsUnique();
                 entity.Property(e => e.UserId).HasColumnName("user_id");
                 // entity.HasOne(d => d.User).WithMany(p => p.IrFiltersUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("ir_filters_user_id_fkey");
-                entity.HasOne(d => d.User).WithMany()
-                    .HasForeignKey(d => d.UserId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("ir_filters_user_id_fkey");
+                // entity.HasOne(d => d.User).WithMany()
+                //     .HasForeignKey(d => d.UserId)
+                //     .OnDelete(DeleteBehavior.Cascade)
+                //     .HasConstraintName("ir_filters_user_id_fkey");
 
             });
             modelBuilder.Entity<IrMailServer>(entity =>
@@ -969,10 +997,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.HasIndex(e => e.MessageId, "mail_link_preview__message_id_index");
                 entity.Property(e => e.IsHidden).HasColumnName("is_hidden");
                 entity.Property(e => e.MessageId).HasColumnName("message_id");
-                entity.HasOne(d => d.Message).WithMany(p => p.MailLinkPreview)
-                    .HasForeignKey(d => d.MessageId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("mail_link_preview_message_id_fkey");
+
+                // entity.HasOne(d => d.Message).WithMany(p => p.MailLinkPreview)
+                //     .HasForeignKey(d => d.MessageId)
+                //     .OnDelete(DeleteBehavior.Cascade)
+                //     .HasConstraintName("mail_link_preview_message_id_fkey");
 
             });
             modelBuilder.Entity<MailMessage>(entity =>
@@ -992,24 +1021,26 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<MailingContact>(entity =>
             {
                 entity.Property(e => e.TitleId).HasColumnName("title_id");
-                entity.HasOne(d => d.Title).WithMany(p => p.MailingContact)
-                    .HasForeignKey(d => d.TitleId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("mailing_contact_title_id_fkey");
+
+                // entity.HasOne(d => d.Title).WithMany(p => p.MailingContact)
+                //     .HasForeignKey(d => d.TitleId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("mailing_contact_title_id_fkey");
 
             });
             modelBuilder.Entity<MaintenanceEquipmentCategory>(entity =>
             {
                 entity.Property(e => e.AliasId).HasColumnName("alias_id");
-                entity.HasOne(d => d.Alias).WithMany(p => p.MaintenanceEquipmentCategory)
-                    .HasForeignKey(d => d.AliasId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("maintenance_equipment_category_alias_id_fkey");
+
+                // entity.HasOne(d => d.Alias).WithMany(p => p.MaintenanceEquipmentCategory)
+                //     .HasForeignKey(d => d.AliasId)
+                //     .OnDelete(DeleteBehavior.Restrict)
+                //     .HasConstraintName("maintenance_equipment_category_alias_id_fkey");
 
             });
             modelBuilder.Entity<MaintenanceEquipment>(entity =>
             {
-                entity.Property(e => e.Location).HasColumnName("location");
+                //entity.Property(e => e.Location).HasColumnName("location");
 
             });
             modelBuilder.Entity<MrpBomLine>(entity =>
@@ -1021,14 +1052,18 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.LotProducingId).HasColumnName("lot_producing_id");
                 entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
-                entity.HasOne(d => d.LotProducing).WithMany(p => p.MrpProduction)
+
+                //entity.HasOne(d => d.LotProducing).WithMany(p => p.MrpProduction)
+                entity.HasOne(d => d.LotProducing).WithMany()
                     .HasForeignKey(d => d.LotProducingId)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("mrp_production_lot_producing_id_fkey");
-                entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.MrpProduction)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("mrp_production_procurement_group_id_fkey");
+
+                //entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.MrpProduction)
+                entity.HasOne(d => d.ProcurementGroup).WithMany()
+                    .HasForeignKey(d => d.ProcurementGroupId)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("mrp_production_procurement_group_id_fkey");
 
             });
             modelBuilder.Entity<MrpProductionSplit>(entity =>
@@ -1075,16 +1110,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.ProductId).HasColumnName("product_id");
                 entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                 // entity.HasOne(d => d.Product).WithMany(p => p.MrpWorkorder) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("mrp_workorder_product_id_fkey");
-                entity.HasOne(d => d.Product).WithMany()
-                    .HasForeignKey(d => d.ProductId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("mrp_workorder_product_id_fkey");
+                // entity.HasOne(d => d.Product).WithMany()
+                //     .HasForeignKey(d => d.ProductId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("mrp_workorder_product_id_fkey");
 
                 // entity.HasOne(d => d.ProductUom).WithMany(p => p.MrpWorkorder) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("mrp_workorder_product_uom_id_fkey");
-                entity.HasOne(d => d.ProductUom).WithMany()
-                    .HasForeignKey(d => d.ProductUomId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("mrp_workorder_product_uom_id_fkey");
+                // entity.HasOne(d => d.ProductUom).WithMany()
+                //     .HasForeignKey(d => d.ProductUomId)
+                //     .OnDelete(DeleteBehavior.Restrict)
+                //     .HasConstraintName("mrp_workorder_product_uom_id_fkey");
 
             });
             modelBuilder.Entity<PaymentProvider>(entity =>
@@ -1122,15 +1157,21 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.Takeaway).HasColumnName("takeaway");
                 entity.Property(e => e.TakeawayFpId).HasColumnName("takeaway_fp_id");
 
-                entity.HasOne(d => d.Sequence).WithMany(p => p.PosConfigSequence)
-                            .HasForeignKey(d => d.SequenceId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("pos_config_sequence_id_fkey");
+                // CONFLICK-V19
+                // entity.HasOne(d => d.DefaultFiscalPosition).WithMany(p => p.PosConfigDefaultFiscalPosition)
+                //     .HasForeignKey(d => d.DefaultFiscalPositionId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("pos_config_default_fiscal_position_id_fkey");
 
-                entity.HasOne(d => d.SequenceLine).WithMany(p => p.PosConfigSequenceLine)
-                    .HasForeignKey(d => d.SequenceLineId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("pos_config_sequence_line_id_fkey");
+                entity.HasOne(d => d.Sequence).WithMany(p => p.PosConfigSequence)
+                    .HasForeignKey(d => d.SequenceId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("pos_config_sequence_id_fkey");
+
+                // entity.HasOne(d => d.SequenceLine).WithMany(p => p.PosConfigSequenceLine)
+                //     .HasForeignKey(d => d.SequenceLineId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("pos_config_sequence_line_id_fkey");
 
                 entity.HasOne(d => d.TakeawayFp).WithMany(p => p.PosConfigTakeawayFp)
                     .HasForeignKey(d => d.TakeawayFpId)
@@ -1163,16 +1204,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
                 entity.Property(e => e.Takeaway).HasColumnName("takeaway");
 
-                entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.PosOrder)
-                    .HasForeignKey(d => d.ProcurementGroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("pos_order_procurement_group_id_fkey");
+                // entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.PosOrder)
+                //     .HasForeignKey(d => d.ProcurementGroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("pos_order_procurement_group_id_fkey");
 
                 // entity.HasOne(d => d.Table).WithMany(p => p.PosOrder)
-                //             .HasForeignKey(d => d.TableId)
-                //             .OnDelete(DeleteBehavior.SetNull)
-                //             .HasConstraintName("pos_order_table_id_fkey");
-
+                //     .HasForeignKey(d => d.TableId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("pos_order_table_id_fkey");
 
             });
             modelBuilder.Entity<PosOrderLine>(entity =>
@@ -1236,10 +1276,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 //     .HasConstraintName("product_template_uom_id_fkey");
 
                 // entity.HasOne(d => d.UomPo).WithMany(p => p.ProductTemplateUomPo) .HasForeignKey(d => d.UomPoId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_template_uom_po_id_fkey");
-                entity.HasOne(d => d.UomPo).WithMany()
-                    .HasForeignKey(d => d.UomPoId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .HasConstraintName("product_template_uom_po_id_fkey");
+                // entity.HasOne(d => d.UomPo).WithMany()
+                //     .HasForeignKey(d => d.UomPoId)
+                //     .OnDelete(DeleteBehavior.Restrict)
+                //     .HasConstraintName("product_template_uom_po_id_fkey");
 
                 // // entity.HasMany(d => d.Dest).WithMany(p => p.Src)
                 // entity.HasMany(d => d.Dest).WithMany()
@@ -1338,10 +1378,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.MailReminderConfirmed).HasColumnName("mail_reminder_confirmed");
                 entity.Property(e => e.Notes).HasColumnName("notes");
 
-                entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrder)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_group_id_fkey");
+                // entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrder)
+                //     .HasForeignKey(d => d.GroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("purchase_order_group_id_fkey");
 
             });
             modelBuilder.Entity<PurchaseOrderLine>(entity =>
@@ -1355,19 +1395,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.State).HasColumnName("state");
 
                 // entity.HasOne(d => d.Currency).WithMany(p => p.PurchaseOrderLine) .HasForeignKey(d => d.CurrencyId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_currency_id_fkey");
-                entity.HasOne(d => d.Currency).WithMany()
-                    .HasForeignKey(d => d.CurrencyId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("purchase_order_line_currency_id_fkey");
+                // entity.HasOne(d => d.Currency).WithMany()
+                //     .HasForeignKey(d => d.CurrencyId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("purchase_order_line_currency_id_fkey");
 
-                entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrderLine)
-                    .HasForeignKey(d => d.GroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("purchase_order_line_group_id_fkey");
-                entity.HasOne(d => d.ProductPackaging).WithMany(p => p.PurchaseOrderLine)
-                    .HasForeignKey(d => d.ProductPackagingId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("purchase_order_line_product_packaging_id_fkey");
+                // entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrderLine)
+                //     .HasForeignKey(d => d.GroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("purchase_order_line_group_id_fkey");
+                // entity.HasOne(d => d.ProductPackaging).WithMany(p => p.PurchaseOrderLine)
+                //     .HasForeignKey(d => d.ProductPackagingId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("purchase_order_line_product_packaging_id_fkey");
 
                 // CONFLICK-V19
                 // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.PurchaseOrderLine) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_product_uom_fkey");
@@ -1376,10 +1416,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 //     .OnDelete(DeleteBehavior.SetNull)
                 //     .HasConstraintName("purchase_order_line_product_uom_fkey");
 
-                entity.HasOne(d => d.SaleOrder).WithMany(p => p.PurchaseOrderLine)
-                        .HasForeignKey(d => d.SaleOrderId)
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("purchase_order_line_sale_order_id_fkey");
+                // entity.HasOne(d => d.SaleOrder).WithMany(p => p.PurchaseOrderLine)
+                //         .HasForeignKey(d => d.SaleOrderId)
+                //         .OnDelete(DeleteBehavior.SetNull)
+                //         .HasConstraintName("purchase_order_line_sale_order_id_fkey");
 
                 // // entity.HasMany(d => d.ProductTemplateAttributeValue).WithMany(p => p.PurchaseOrderLine)
                 // entity.HasMany(d => d.ProductTemplateAttributeValue).WithMany(p => p.PurchaseOrderLine)
@@ -1417,10 +1457,10 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<RepairOrder>(entity =>
             {
                 entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
-                entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.RepairOrder)
-                    .HasForeignKey(d => d.ProcurementGroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("repair_order_procurement_group_id_fkey");
+                // entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.RepairOrder)
+                //     .HasForeignKey(d => d.ProcurementGroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("repair_order_procurement_group_id_fkey");
 
             });
             modelBuilder.Entity<ResCompany>(entity =>
@@ -1507,14 +1547,14 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.HasIndex(e => e.CategoryId, "res_groups__category_id_index");
 
-                entity.HasIndex(e => new { e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
+                //entity.HasIndex(e => new { e.CategoryId, e.Name }, "res_groups_name_uniq").IsUnique();
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
                 entity.Property(e => e.Color).HasColumnName("color");
 
-                entity.HasOne(d => d.Category).WithMany(p => p.ResGroups)
-                    .HasForeignKey(d => d.CategoryId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("res_groups_category_id_fkey");
+                // entity.HasOne(d => d.Category).WithMany(p => p.ResGroups)
+                //     .HasForeignKey(d => d.CategoryId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("res_groups_category_id_fkey");
 
             });
             modelBuilder.Entity<ResLang>(entity =>
@@ -1550,15 +1590,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.Title).HasColumnName("title");
 
                 // entity.HasOne(d => d.AssociateMemberNavigation).WithMany(p => p.InverseAssociateMemberNavigation) .HasForeignKey(d => d.AssociateMember) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("res_partner_associate_member_fkey");
-                entity.HasOne(d => d.AssociateMemberNavigation).WithMany()
-                    .HasForeignKey(d => d.AssociateMember)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("res_partner_associate_member_fkey");
-                entity.HasOne(d => d.TitleNavigation).WithMany(p => p.ResPartner)
-                    .HasForeignKey(d => d.Title)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("res_partner_title_fkey");
-
+                // entity.HasOne(d => d.AssociateMemberNavigation).WithMany()
+                //     .HasForeignKey(d => d.AssociateMember)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("res_partner_associate_member_fkey");
+                // entity.HasOne(d => d.TitleNavigation).WithMany(p => p.ResPartner)
+                //     .HasForeignKey(d => d.Title)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("res_partner_title_fkey");
 
             });
             modelBuilder.Entity<ResUsers>(entity =>
@@ -1587,19 +1626,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.DateTo).HasColumnName("date_to");
                 entity.Property(e => e.ResourceId).HasColumnName("resource_id");
 
-                entity.HasOne(d => d.Resource).WithMany(p => p.ResourceCalendarAttendance)
-                    .HasForeignKey(d => d.ResourceId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("resource_calendar_attendance_resource_id_fkey");
+                // entity.HasOne(d => d.Resource).WithMany(p => p.ResourceCalendarAttendance)
+                //     .HasForeignKey(d => d.ResourceId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("resource_calendar_attendance_resource_id_fkey");
 
             });
             modelBuilder.Entity<SaleOrder>(entity =>
             {
                 entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
-                entity.HasOne(d => d.ProcurementGroupNavigation).WithMany(p => p.SaleOrder)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("sale_order_procurement_group_id_fkey");
+                // entity.HasOne(d => d.ProcurementGroupNavigation).WithMany(p => p.SaleOrder)
+                //             .HasForeignKey(d => d.ProcurementGroupId)
+                //             .OnDelete(DeleteBehavior.SetNull)
+                //             .HasConstraintName("sale_order_procurement_group_id_fkey");
 
             });
             modelBuilder.Entity<SaleOrderDiscount>(entity =>
@@ -1628,7 +1667,7 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.ProductPackagingId).HasColumnName("product_packaging_id");
                 entity.Property(e => e.ProductPackagingQty).HasColumnName("product_packaging_qty");
-                entity.Property(e => e.ProductUom).HasColumnName("product_uom");
+                //entity.Property(e => e.ProductUom).HasColumnName("product_uom");
                 entity.Property(e => e.RouteId).HasColumnName("route_id");
 
                 // entity.HasOne(d => d.Expense).WithMany(p => p.SaleOrderLine)
@@ -1636,10 +1675,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 //             .OnDelete(DeleteBehavior.SetNull)
                 //             .HasConstraintName("sale_order_line_expense_id_fkey");
 
-                entity.HasOne(d => d.ProductPackaging).WithMany(p => p.SaleOrderLine)
-                    .HasForeignKey(d => d.ProductPackagingId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("sale_order_line_product_packaging_id_fkey");
+                // entity.HasOne(d => d.ProductPackaging).WithMany(p => p.SaleOrderLine)
+                //     .HasForeignKey(d => d.ProductPackagingId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("sale_order_line_product_packaging_id_fkey");
 
                 // // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.SaleOrderLine) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("sale_order_line_product_uom_fkey");
                 // entity.HasOne(d => d.ProductUomNavigation).WithMany()
@@ -1647,7 +1686,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                 //     .OnDelete(DeleteBehavior.Restrict)
                 //     .HasConstraintName("sale_order_line_product_uom_fkey");
 
-                entity.HasOne(d => d.Route).WithMany(p => p.SaleOrderLine)
+                //entity.HasOne(d => d.Route).WithMany(p => p.SaleOrderLine)
+                entity.HasOne(d => d.Route).WithMany()
                     .HasForeignKey(d => d.RouteId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("sale_order_line_route_id_fkey");
@@ -1682,10 +1722,10 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<SpreadsheetDashboard>(entity =>
             {
                 // entity.HasOne(d => d.Company).WithMany(p => p.SpreadsheetDashboard) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("spreadsheet_dashboard_company_id_fkey");
-                entity.HasOne(d => d.Company).WithMany()
-                    .HasForeignKey(d => d.TenantId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("spreadsheet_dashboard_company_id_fkey");
+                // entity.HasOne(d => d.Company).WithMany()
+                //     .HasForeignKey(d => d.TenantId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("spreadsheet_dashboard_company_id_fkey");
             });
             modelBuilder.Entity<StockLocation>(entity =>
             {
@@ -1701,16 +1741,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.ValuationOutAccountId).HasColumnName("valuation_out_account_id");
 
                 // entity.HasOne(d => d.ValuationInAccount).WithMany(p => p.StockLocationValuationInAccount) .HasForeignKey(d => d.ValuationInAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_location_valuation_in_account_id_fkey");
-                entity.HasOne(d => d.ValuationInAccount).WithMany()
-                    .HasForeignKey(d => d.ValuationInAccountId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_location_valuation_in_account_id_fkey");
+                // entity.HasOne(d => d.ValuationInAccount).WithMany()
+                //     .HasForeignKey(d => d.ValuationInAccountId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_location_valuation_in_account_id_fkey");
 
                 // entity.HasOne(d => d.ValuationOutAccount).WithMany(p => p.StockLocationValuationOutAccount) .HasForeignKey(d => d.ValuationOutAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_location_valuation_out_account_id_fkey");
-                entity.HasOne(d => d.ValuationOutAccount).WithMany()
-                    .HasForeignKey(d => d.ValuationOutAccountId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_location_valuation_out_account_id_fkey");
+                // entity.HasOne(d => d.ValuationOutAccount).WithMany()
+                //     .HasForeignKey(d => d.ValuationOutAccountId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_location_valuation_out_account_id_fkey");
 
 
             });
@@ -1718,10 +1758,10 @@ namespace Bamboo.Core.EntityFrameworkCore
             {
                 entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                 // entity.HasOne(d => d.ProductUom).WithMany(p => p.StockLot) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_lot_product_uom_id_fkey");
-                entity.HasOne(d => d.ProductUom).WithMany()
-                    .HasForeignKey(d => d.ProductUomId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_lot_product_uom_id_fkey");
+                // entity.HasOne(d => d.ProductUom).WithMany()
+                //     .HasForeignKey(d => d.ProductUomId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_lot_product_uom_id_fkey");
 
             });
             modelBuilder.Entity<StockMove>(entity =>
@@ -1739,25 +1779,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.Scrapped).HasColumnName("scrapped");
                 entity.Property(e => e.UnitFactor).HasColumnName("unit_factor");
 
-                entity.HasOne(d => d.Group).WithMany(p => p.StockMove)
-                    .HasForeignKey(d => d.GroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_group_id_fkey");
+                // entity.HasOne(d => d.Group).WithMany(p => p.StockMove)
+                //     .HasForeignKey(d => d.GroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_group_id_fkey");
 
-                entity.HasOne(d => d.OrderFinishedLot).WithMany(p => p.StockMove)
-                    .HasForeignKey(d => d.OrderFinishedLotId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_order_finished_lot_id_fkey");
+                // entity.HasOne(d => d.OrderFinishedLot).WithMany(p => p.StockMove)
+                //     .HasForeignKey(d => d.OrderFinishedLotId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_order_finished_lot_id_fkey");
 
-                entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMove)
-                    .HasForeignKey(d => d.PackageLevelId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_package_level_id_fkey");
+                // entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMove)
+                //     .HasForeignKey(d => d.PackageLevelId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_package_level_id_fkey");
 
-                entity.HasOne(d => d.ProductPackaging).WithMany(p => p.StockMove)
-                    .HasForeignKey(d => d.ProductPackagingId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_product_packaging_id_fkey");
+                // entity.HasOne(d => d.ProductPackaging).WithMany(p => p.StockMove)
+                //     .HasForeignKey(d => d.ProductPackagingId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_product_packaging_id_fkey");
 
             });
             modelBuilder.Entity<StockMoveLine>(entity =>
@@ -1769,29 +1809,29 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.PackageLevelId).HasColumnName("package_level_id");
                 entity.Property(e => e.Reference).HasColumnName("reference");
 
-                entity.HasOne(d => d.Batch).WithMany(p => p.StockMoveLine)
-                    .HasForeignKey(d => d.BatchId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_line_batch_id_fkey");
+                // entity.HasOne(d => d.Batch).WithMany(p => p.StockMoveLine)
+                //     .HasForeignKey(d => d.BatchId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_line_batch_id_fkey");
 
-                entity.HasOne(d => d.Carrier).WithMany(p => p.StockMoveLine)
-                    .HasForeignKey(d => d.CarrierId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_line_carrier_id_fkey");
+                // entity.HasOne(d => d.Carrier).WithMany(p => p.StockMoveLine)
+                //     .HasForeignKey(d => d.CarrierId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_line_carrier_id_fkey");
 
-                entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMoveLine)
-                    .HasForeignKey(d => d.PackageLevelId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_move_line_package_level_id_fkey");
+                // entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMoveLine)
+                //     .HasForeignKey(d => d.PackageLevelId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_move_line_package_level_id_fkey");
 
             });
             modelBuilder.Entity<StockPackageDestination>(entity =>
             {
                 entity.Property(e => e.PickingId).HasColumnName("picking_id");
-                entity.HasOne(d => d.Picking).WithMany(p => p.StockPackageDestination)
-                    .HasForeignKey(d => d.PickingId)
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .HasConstraintName("stock_package_destination_picking_id_fkey");
+                // entity.HasOne(d => d.Picking).WithMany(p => p.StockPackageDestination)
+                //     .HasForeignKey(d => d.PickingId)
+                //     .OnDelete(DeleteBehavior.Cascade)
+                //     .HasConstraintName("stock_package_destination_picking_id_fkey");
 
             });
             modelBuilder.Entity<StockPickingBatch>(entity =>
@@ -1804,25 +1844,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.VehicleCategoryId).HasColumnName("vehicle_category_id");
                 entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
 
-                entity.HasOne(d => d.Dock).WithMany(p => p.StockPickingBatch)
-                    .HasForeignKey(d => d.DockId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_picking_batch_dock_id_fkey");
+                // entity.HasOne(d => d.Dock).WithMany(p => p.StockPickingBatch)
+                //     .HasForeignKey(d => d.DockId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_picking_batch_dock_id_fkey");
 
-                // entity.HasOne(d => d.Driver).WithMany(p => p.StockPickingBatch) .HasForeignKey(d => d.DriverId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_picking_batch_driver_id_fkey");
-                entity.HasOne(d => d.Driver).WithMany()
-                    .HasForeignKey(d => d.DriverId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_picking_batch_driver_id_fkey");
-                entity.HasOne(d => d.VehicleCategory).WithMany(p => p.StockPickingBatch)
-                        .HasForeignKey(d => d.VehicleCategoryId)
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("stock_picking_batch_vehicle_category_id_fkey");
+                // // entity.HasOne(d => d.Driver).WithMany(p => p.StockPickingBatch) .HasForeignKey(d => d.DriverId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_picking_batch_driver_id_fkey");
+                // entity.HasOne(d => d.Driver).WithMany()
+                //     .HasForeignKey(d => d.DriverId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_picking_batch_driver_id_fkey");
+                // entity.HasOne(d => d.VehicleCategory).WithMany(p => p.StockPickingBatch)
+                //         .HasForeignKey(d => d.VehicleCategoryId)
+                //         .OnDelete(DeleteBehavior.SetNull)
+                //         .HasConstraintName("stock_picking_batch_vehicle_category_id_fkey");
 
-                entity.HasOne(d => d.Vehicle).WithMany(p => p.StockPickingBatch)
-                    .HasForeignKey(d => d.VehicleId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_picking_batch_vehicle_id_fkey");
+                // entity.HasOne(d => d.Vehicle).WithMany(p => p.StockPickingBatch)
+                //     .HasForeignKey(d => d.VehicleId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_picking_batch_vehicle_id_fkey");
 
             });
             modelBuilder.Entity<StockPicking>(entity =>
@@ -1832,10 +1872,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                     .HasColumnName("date");
                 entity.Property(e => e.GroupId).HasColumnName("group_id");
 
-                entity.HasOne(d => d.Group).WithMany(p => p.StockPicking)
-                    .HasForeignKey(d => d.GroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_picking_group_id_fkey");
+                // entity.HasOne(d => d.Group).WithMany(p => p.StockPicking)
+                //     .HasForeignKey(d => d.GroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_picking_group_id_fkey");
 
             });
             modelBuilder.Entity<StockPickingType>(entity =>
@@ -1846,10 +1886,10 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.Entity<StockQuant>(entity =>
             {
                 entity.Property(e => e.StorageCategoryId).HasColumnName("storage_category_id");
-                entity.HasOne(d => d.StorageCategory).WithMany(p => p.StockQuant)
-                    .HasForeignKey(d => d.StorageCategoryId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_quant_storage_category_id_fkey");
+                // entity.HasOne(d => d.StorageCategory).WithMany(p => p.StockQuant)
+                //     .HasForeignKey(d => d.StorageCategoryId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_quant_storage_category_id_fkey");
 
             });
             modelBuilder.Entity<StockRequestCount>(entity =>
@@ -1887,6 +1927,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.GroupId).HasColumnName("group_id");
                 entity.Property(e => e.GroupPropagationOption).HasColumnName("group_propagation_option");
                 entity.Property(e => e.PropagateWarehouseId).HasColumnName("propagate_warehouse_id");
+
                 entity.HasOne(d => d.Group).WithMany(p => p.StockRule)
                     .HasForeignKey(d => d.GroupId)
                     .OnDelete(DeleteBehavior.SetNull)
@@ -1927,14 +1968,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.QtyMultiple).HasColumnName("qty_multiple");
                 entity.Property(e => e.VendorId).HasColumnName("vendor_id");
 
-                entity.HasOne(d => d.Group).WithMany(p => p.StockWarehouseOrderpoint)
-                    .HasForeignKey(d => d.GroupId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_warehouse_orderpoint_group_id_fkey");
-                entity.HasOne(d => d.ProductCategory).WithMany(p => p.StockWarehouseOrderpoint)
-                    .HasForeignKey(d => d.ProductCategoryId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_warehouse_orderpoint_product_category_id_fkey");
+                // entity.HasOne(d => d.Group).WithMany(p => p.StockWarehouseOrderpoint)
+                //     .HasForeignKey(d => d.GroupId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_warehouse_orderpoint_group_id_fkey");
+                // entity.HasOne(d => d.ProductCategory).WithMany(p => p.StockWarehouseOrderpoint)
+                //     .HasForeignKey(d => d.ProductCategoryId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_warehouse_orderpoint_product_category_id_fkey");
 
                 // entity.HasOne(d => d.ProductSupplier).WithMany(p => p.StockWarehouseOrderpointProductSupplier) .HasForeignKey(d => d.ProductSupplierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_warehouse_orderpoint_product_supplier_id_fkey");
                 // entity.HasOne(d => d.ProductSupplier).WithMany()
@@ -1943,10 +1984,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                 //     .HasConstraintName("stock_warehouse_orderpoint_product_supplier_id_fkey");
 
                 // entity.HasOne(d => d.Vendor).WithMany(p => p.StockWarehouseOrderpointVendor) .HasForeignKey(d => d.VendorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_warehouse_orderpoint_vendor_id_fkey");
-                entity.HasOne(d => d.Vendor).WithMany()
-                    .HasForeignKey(d => d.VendorId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("stock_warehouse_orderpoint_vendor_id_fkey");
+                // entity.HasOne(d => d.Vendor).WithMany()
+                //     .HasForeignKey(d => d.VendorId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("stock_warehouse_orderpoint_vendor_id_fkey");
 
             });
             modelBuilder.Entity<UomUom>(entity =>
@@ -1954,10 +1995,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                 entity.Property(e => e.CategoryId).HasColumnName("category_id");
                 entity.Property(e => e.Rounding).HasColumnName("rounding");
                 entity.Property(e => e.UomType).HasColumnName("uom_type");
-                entity.HasOne(d => d.Category).WithMany(p => p.UomUom)
-                            .HasForeignKey(d => d.CategoryId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("uom_uom_category_id_fkey");
+
+                // entity.HasOne(d => d.Category).WithMany(p => p.UomUom)
+                //             .HasForeignKey(d => d.CategoryId)
+                //             .OnDelete(DeleteBehavior.Restrict)
+                //             .HasConstraintName("uom_uom_category_id_fkey");
 
             });
             modelBuilder.Entity<Website>(entity =>
@@ -1967,10 +2009,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("prevent_zero_price_sale_text");
 
-                entity.HasOne(d => d.CartRecoveryMailTemplate).WithMany(p => p.Website)
-                    .HasForeignKey(d => d.CartRecoveryMailTemplateId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("website_cart_recovery_mail_template_id_fkey");
+                // entity.HasOne(d => d.CartRecoveryMailTemplate).WithMany(p => p.Website)
+                //     .HasForeignKey(d => d.CartRecoveryMailTemplateId)
+                //     .OnDelete(DeleteBehavior.SetNull)
+                //     .HasConstraintName("website_cart_recovery_mail_template_id_fkey");
 
             });
 

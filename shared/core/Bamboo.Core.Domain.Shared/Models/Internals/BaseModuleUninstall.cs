@@ -50,10 +50,11 @@ public partial class BaseModuleUninstall : FullAuditedEntity<Guid>, IEntityDto<G
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
+    // CONFLICK-V19
     // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("ModuleId")]
-    public virtual IrModuleModule? Module { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("ModuleId")]
+    // public virtual IrModuleModule? Module { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
