@@ -16,6 +16,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("res_company");
 
+                        entity.HasIndex(e => e.TenantId);
+
+                        entity.HasIndex(e => e.OrganizationUnitId);
+
                         entity.HasIndex(e => e.ParentId, "res_company__parent_id_index");
 
                         entity.HasIndex(e => e.ParentPath, "res_company__parent_path_index");
@@ -26,6 +30,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
 
+                        entity.Property(e => e.TenantId).HasColumnName("company_id");
+
+                        entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.AbsenceManagement).HasColumnName("absence_management");
                         entity.Property(e => e.AccountCashBasisBaseAccountId).HasColumnName("account_cash_basis_base_account_id");
                         entity.Property(e => e.AccountDefaultPosReceivableAccountId).HasColumnName("account_default_pos_receivable_account_id");
