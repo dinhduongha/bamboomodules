@@ -33,6 +33,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Date).HasColumnName("date");
+                        entity.Property(e => e.DriverId).HasColumnName("driver_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Value).HasColumnName("value");
                         entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
@@ -46,6 +47,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("fleet_vehicle_odometer_create_uid_fkey");
+
+                        // entity.HasOne(d => d.Driver).WithMany(p => p.FleetVehicleOdometer) .HasForeignKey(d => d.DriverId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("fleet_vehicle_odometer_driver_id_fkey");
+                        entity.HasOne(d => d.Driver).WithMany()
+                            .HasForeignKey(d => d.DriverId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("fleet_vehicle_odometer_driver_id_fkey");
 
                         entity.HasOne(d => d.Vehicle).WithMany(p => p.FleetVehicleOdometer)
                             .HasForeignKey(d => d.VehicleId)

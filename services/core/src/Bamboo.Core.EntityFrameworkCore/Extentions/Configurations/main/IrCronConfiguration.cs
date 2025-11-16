@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_cron");
 
+                        entity.HasIndex(e => e.IrActionsServerId, "ir_cron__ir_actions_server_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

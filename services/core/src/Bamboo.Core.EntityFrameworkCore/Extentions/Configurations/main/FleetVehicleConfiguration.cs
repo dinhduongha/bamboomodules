@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.DriverEmployeeId, "fleet_vehicle__driver_employee_id_index").HasFilter("(driver_employee_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -33,9 +35,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CarValue).HasColumnName("car_value");
                         entity.Property(e => e.CategoryId).HasColumnName("category_id");
                         entity.Property(e => e.Co2).HasColumnName("co2");
+                        entity.Property(e => e.Co2EmissionUnit).HasColumnName("co2_emission_unit");
                         entity.Property(e => e.Co2Standard).HasColumnName("co2_standard");
                         entity.Property(e => e.Color).HasColumnName("color");
 
+                        entity.Property(e => e.ContractDateStart).HasColumnName("contract_date_start");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -46,7 +50,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DriverEmployeeId).HasColumnName("driver_employee_id");
                         entity.Property(e => e.DriverId).HasColumnName("driver_id");
                         entity.Property(e => e.ElectricAssistance).HasColumnName("electric_assistance");
-                        entity.Property(e => e.FirstContractDate).HasColumnName("first_contract_date");
                         entity.Property(e => e.FrameSize).HasColumnName("frame_size");
                         entity.Property(e => e.FrameType).HasColumnName("frame_type");
                         entity.Property(e => e.FuelType).HasColumnName("fuel_type");
@@ -69,6 +72,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PlanToChangeCar).HasColumnName("plan_to_change_car");
                         entity.Property(e => e.Power).HasColumnName("power");
                         entity.Property(e => e.PowerUnit).HasColumnName("power_unit");
+                        entity.Property(e => e.RangeUnit).HasColumnName("range_unit");
                         entity.Property(e => e.ResidualValue).HasColumnName("residual_value");
                         entity.Property(e => e.Seats).HasColumnName("seats");
                         entity.Property(e => e.StateId).HasColumnName("state_id");

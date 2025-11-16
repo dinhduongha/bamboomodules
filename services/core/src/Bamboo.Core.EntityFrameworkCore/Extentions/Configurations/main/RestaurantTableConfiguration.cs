@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("restaurant_table");
 
+                        entity.HasIndex(e => e.FloorId, "restaurant_table__floor_id_index").HasFilter("(floor_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

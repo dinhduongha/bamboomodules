@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.BoothCategoryId, "event_type_booth__booth_category_id_index");
+
+                        entity.HasIndex(e => e.EventTypeId, "event_type_booth__event_type_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

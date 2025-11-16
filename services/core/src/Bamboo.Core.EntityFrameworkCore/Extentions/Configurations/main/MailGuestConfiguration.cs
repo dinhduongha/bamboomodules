@@ -34,6 +34,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.Email).HasColumnName("email");
                         entity.Property(e => e.Lang).HasColumnName("lang");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Timezone).HasColumnName("timezone");

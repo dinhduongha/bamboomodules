@@ -49,10 +49,10 @@ public partial class SaleOrderLine
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
     // CONFLICK
-    // // [Many2one]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [ForeignKey("ProductUomId")]
-    // public virtual UomUom? ProductUom { get; set; }
+    // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("ProductUomId")]
+    public virtual UomUom? ProductUom { get; set; }
 
     // [Many2many] // Normal
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

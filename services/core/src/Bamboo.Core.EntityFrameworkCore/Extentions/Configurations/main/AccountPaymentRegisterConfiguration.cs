@@ -51,9 +51,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PaymentMethodLineId).HasColumnName("payment_method_line_id");
                         entity.Property(e => e.PaymentTokenId).HasColumnName("payment_token_id");
                         entity.Property(e => e.PaymentType).HasColumnName("payment_type");
+                        entity.Property(e => e.ShouldWithholdTax).HasColumnName("should_withhold_tax");
                         entity.Property(e => e.SourceAmount).HasColumnName("source_amount");
                         entity.Property(e => e.SourceAmountCurrency).HasColumnName("source_amount_currency");
                         entity.Property(e => e.SourceCurrencyId).HasColumnName("source_currency_id");
+                        entity.Property(e => e.WithholdingNetAmount).HasColumnName("withholding_net_amount");
+                        entity.Property(e => e.WithholdingOutstandingAccountId).HasColumnName("withholding_outstanding_account_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -118,17 +121,42 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_payment_register_source_currency_id_fkey");
 
+                        // entity.HasOne(d => d.WithholdingOutstandingAccount).WithMany(p => p.AccountPaymentRegisterWithholdingOutstandingAccount) .HasForeignKey(d => d.WithholdingOutstandingAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_payment_register_withholding_outstanding_account_i_fkey");
+                        entity.HasOne(d => d.WithholdingOutstandingAccount).WithMany()
+                            .HasForeignKey(d => d.WithholdingOutstandingAccountId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_payment_register_withholding_outstanding_account_i_fkey");
+
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountPaymentRegisterWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_payment_register_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_payment_register_write_uid_fkey");
 
-                        // entity.HasOne(d => d.WriteoffAccount).WithMany(p => p.AccountPaymentRegister) .HasForeignKey(d => d.WriteoffAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
+                        // entity.HasOne(d => d.WriteoffAccount).WithMany(p => p.AccountPaymentRegisterWriteoffAccount) .HasForeignKey(d => d.WriteoffAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
                         entity.HasOne(d => d.WriteoffAccount).WithMany()
                             .HasForeignKey(d => d.WriteoffAccountId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_payment_register_writeoff_account_id_fkey");
+
+                        // entity.HasMany(d => d.L10nLatamCheck).WithMany(p => p.AccountPaymentRegister)
+                        entity.HasMany(d => d.L10nLatamCheck).WithMany(p => p.AccountPaymentRegister)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "AccountPaymentRegisterL10nLatamCheckRel",
+                                r => r.HasOne<L10nLatamCheck>().WithMany()
+                                    .HasForeignKey("L10nLatamCheckId")
+                                    .HasConstraintName("account_payment_register_l10n_latam_ch_l10n_latam_check_id_fkey"),
+                                l => l.HasOne<AccountPaymentRegister>().WithMany()
+                                    .HasForeignKey("AccountPaymentRegisterId")
+                                    .HasConstraintName("account_payment_register_l10n__account_payment_register_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("AccountPaymentRegisterId", "L10nLatamCheckId").HasName("account_payment_register_l10n_latam_check_rel_pkey");
+                                    j.ToTable("account_payment_register_l10n_latam_check_rel");
+                                    j.HasIndex(new[] { "L10nLatamCheckId", "AccountPaymentRegisterId" }, "account_payment_register_l10n_l10n_latam_check_id_account_p_idx");
+                                    j.IndexerProperty<Guid>("AccountPaymentRegisterId").HasColumnName("account_payment_register_id");
+                                    j.IndexerProperty<Guid>("L10nLatamCheckId").HasColumnName("l10n_latam_check_id");
+                                });
 
                         // entity.HasMany(d => d.Line).WithMany(p => p.Wizard)
                         entity.HasMany(d => d.Line).WithMany(p => p.Wizard)

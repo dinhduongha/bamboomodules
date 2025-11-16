@@ -36,15 +36,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("description");
                         entity.Property(e => e.Fold).HasColumnName("fold");
-                        entity.Property(e => e.LegendBlocked)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("legend_blocked");
-                        entity.Property(e => e.LegendDone)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("legend_done");
-                        entity.Property(e => e.LegendNormal)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("legend_normal");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");

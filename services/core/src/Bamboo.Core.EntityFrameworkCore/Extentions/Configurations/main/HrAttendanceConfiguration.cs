@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CheckIn, "hr_attendance__check_in_index");
+
+                        entity.HasIndex(e => e.Date, "hr_attendance__date_index");
+
                         entity.HasIndex(e => e.EmployeeId, "hr_attendance__employee_id_index");
 
                         entity.Property(e => e.Id)
@@ -40,20 +44,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.ExpectedHours).HasColumnName("expected_hours");
                         entity.Property(e => e.InBrowser).HasColumnName("in_browser");
-                        entity.Property(e => e.InCity).HasColumnName("in_city");
-                        entity.Property(e => e.InCountryName).HasColumnName("in_country_name");
                         entity.Property(e => e.InIpAddress).HasColumnName("in_ip_address");
                         entity.Property(e => e.InLatitude).HasColumnName("in_latitude");
+                        entity.Property(e => e.InLocation).HasColumnName("in_location");
                         entity.Property(e => e.InLongitude).HasColumnName("in_longitude");
                         entity.Property(e => e.InMode).HasColumnName("in_mode");
                         entity.Property(e => e.OutBrowser).HasColumnName("out_browser");
-                        entity.Property(e => e.OutCity).HasColumnName("out_city");
-                        entity.Property(e => e.OutCountryName).HasColumnName("out_country_name");
                         entity.Property(e => e.OutIpAddress).HasColumnName("out_ip_address");
                         entity.Property(e => e.OutLatitude).HasColumnName("out_latitude");
+                        entity.Property(e => e.OutLocation).HasColumnName("out_location");
                         entity.Property(e => e.OutLongitude).HasColumnName("out_longitude");
                         entity.Property(e => e.OutMode).HasColumnName("out_mode");
                         entity.Property(e => e.OvertimeHours).HasColumnName("overtime_hours");

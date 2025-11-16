@@ -41,12 +41,12 @@ public partial class AccountMove
     public virtual L10nLatamDocumentType? L10nLatamDocumentType { get; set; }
 
     //CONFLICK
-    // // [One2many]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [One2many] [ForeignKey("AccountMoveId")]
-    // // [NotMapped] // One2many // Normal
-    // // [InverseProperty("AccountMove")] // One2many
-    // public virtual ICollection<StockMove> StockMove { get; set; }
+    // [One2many]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [One2many] [ForeignKey("AccountMoveId")]
+    // [NotMapped] // One2many // Normal
+    // [InverseProperty("AccountMove")] // One2many
+    public virtual ICollection<StockMove> StockMove { get; set; }
 
     // [Many2many] // Normal
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

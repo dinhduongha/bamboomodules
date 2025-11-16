@@ -41,6 +41,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+                        entity.Property(e => e.ZplTemplate).HasColumnName("zpl_template");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.ProductLabelLayoutCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("product_label_layout_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

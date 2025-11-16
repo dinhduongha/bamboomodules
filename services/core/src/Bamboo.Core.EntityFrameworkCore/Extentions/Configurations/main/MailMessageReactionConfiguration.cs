@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.MessageId, "mail_message_reaction__message_id_index");
+
                         entity.HasIndex(e => new { e.MessageId, e.Content, e.GuestId }, "mail_message_reaction_guest_unique")
                             .IsUnique()
                             .HasFilter("(guest_id IS NOT NULL)");

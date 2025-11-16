@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.OrderId, "sale_order_coupon_points__order_id_index");
+
                         entity.HasIndex(e => new { e.OrderId, e.CouponId }, "sale_order_coupon_points_order_coupon_unique").IsUnique();
 
                         entity.Property(e => e.Id)

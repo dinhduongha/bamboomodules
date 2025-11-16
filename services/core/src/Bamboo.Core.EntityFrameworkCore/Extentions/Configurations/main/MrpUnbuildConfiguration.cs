@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.MoId, "mrp_unbuild__mo_id_index").HasFilter("(mo_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

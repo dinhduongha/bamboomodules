@@ -33,7 +33,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.Name)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("name");
                         entity.Property(e => e.PrimaryColor).HasColumnName("primary_color");
                         entity.Property(e => e.PrimaryTextColor).HasColumnName("primary_text_color");
                         entity.Property(e => e.SecondaryColor).HasColumnName("secondary_color");

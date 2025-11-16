@@ -20,7 +20,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.DepartmentId, "hr_job__department_id_index").HasFilter("(department_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.IsPublished, "hr_job__is_published_index");
+
+                        entity.HasIndex(e => e.SurveyId, "hr_job__survey_id_index").HasFilter("(survey_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.WebsiteId, "hr_job__website_id_index");
 
@@ -47,15 +51,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.DateFrom).HasColumnName("date_from");
-                        entity.Property(e => e.DateTo).HasColumnName("date_to");
                         entity.Property(e => e.DepartmentId).HasColumnName("department_id");
                         entity.Property(e => e.Description)
                             .HasColumnType("jsonb")
                             .HasColumnName("description");
-                        entity.Property(e => e.ExpectedEmployees).HasColumnName("expected_employees");
+                        entity.Property(e => e.ExpectedDegree).HasColumnName("expected_degree");
                         entity.Property(e => e.IndustryId).HasColumnName("industry_id");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.JobDetails)
                             .HasColumnType("jsonb")
                             .HasColumnName("job_details");
@@ -66,7 +69,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
-                        entity.Property(e => e.NoOfEmployee).HasColumnName("no_of_employee");
                         entity.Property(e => e.NoOfHiredEmployee).HasColumnName("no_of_hired_employee");
                         entity.Property(e => e.NoOfRecruitment).HasColumnName("no_of_recruitment");
                         entity.Property(e => e.PublishedDate).HasColumnName("published_date");
@@ -128,6 +130,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.DepartmentId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_job_department_id_fkey");
+
+                        entity.HasOne(d => d.ExpectedDegreeNavigation).WithMany(p => p.HrJob)
+                            .HasForeignKey(d => d.ExpectedDegree)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_job_expected_degree_fkey");
 
                         entity.HasOne(d => d.Industry).WithMany(p => p.HrJob)
                             .HasForeignKey(d => d.IndustryId)

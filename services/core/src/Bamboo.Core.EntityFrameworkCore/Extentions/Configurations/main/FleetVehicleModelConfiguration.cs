@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.BrandId, "fleet_vehicle_model__brand_id_index").HasFilter("(brand_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -40,6 +42,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DefaultCo2).HasColumnName("default_co2");
                         entity.Property(e => e.DefaultFuelType).HasColumnName("default_fuel_type");
                         entity.Property(e => e.Doors).HasColumnName("doors");
+                        entity.Property(e => e.DriveType).HasColumnName("drive_type");
                         entity.Property(e => e.ElectricAssistance).HasColumnName("electric_assistance");
                         entity.Property(e => e.Horsepower).HasColumnName("horsepower");
                         entity.Property(e => e.HorsepowerTax).HasColumnName("horsepower_tax");
@@ -47,6 +50,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Power).HasColumnName("power");
                         entity.Property(e => e.PowerUnit).HasColumnName("power_unit");
+                        entity.Property(e => e.RangeUnit).HasColumnName("range_unit");
                         entity.Property(e => e.Seats).HasColumnName("seats");
                         entity.Property(e => e.TrailerHook).HasColumnName("trailer_hook");
                         entity.Property(e => e.Transmission).HasColumnName("transmission");

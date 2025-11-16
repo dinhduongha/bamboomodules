@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CampaignId, "card_card__campaign_id_index");
+
                         entity.HasIndex(e => new { e.CampaignId, e.ResId }, "card_card_campaign_record_unique").IsUnique();
 
                         entity.Property(e => e.Id)

@@ -20,9 +20,18 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.OriginalId, "ir_attachment__original_id_index").HasFilter("(original_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.StoreFname, "ir_attachment__store_fname_index");
 
+                        entity.HasIndex(e => e.ThemeTemplateId, "ir_attachment__theme_template_id_index").HasFilter("(theme_template_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Url, "ir_attachment__url_index").HasFilter("(url IS NOT NULL)");
+
+                        entity.HasIndex(e => e.IndexContent, "ir_attachment_index_content_applicant_trgm_idx")
+                            .HasFilter("(res_model = 'hr.applicant'::text)")
+                            .HasMethod("gin")
+                            .HasOperators(new[] { "gin_trgm_ops" });
 
                         entity.HasIndex(e => new { e.ResModel, e.ResId }, "ir_attachment_res_idx");
 

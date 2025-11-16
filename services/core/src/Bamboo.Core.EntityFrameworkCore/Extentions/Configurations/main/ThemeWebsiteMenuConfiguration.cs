@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PageId, "theme_website_menu__page_id_index").HasFilter("(page_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ParentId, "theme_website_menu__parent_id_index");
 
                         entity.Property(e => e.Id)

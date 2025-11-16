@@ -42,6 +42,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("open_installments");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+                        entity.Property(e => e.PrepaymentAmount).HasColumnName("prepayment_amount");
                         entity.Property(e => e.ResId).HasColumnName("res_id");
                         entity.Property(e => e.ResModel).HasColumnName("res_model");
                         entity.Property(e => e.LastModificationTime)

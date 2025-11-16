@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CategoryId, "event_tag__category_id_index");
+
                         entity.HasIndex(e => e.IsPublished, "event_tag__is_published_index");
 
                         entity.HasIndex(e => e.WebsiteId, "event_tag__website_id_index");

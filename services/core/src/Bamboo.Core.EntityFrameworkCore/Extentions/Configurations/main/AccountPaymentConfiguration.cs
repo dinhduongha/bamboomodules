@@ -28,11 +28,15 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PairedInternalTransferPaymentId, "account_payment__paired_internal_transfer_payment_id_index").HasFilter("(paired_internal_transfer_payment_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.PaymentMethodLineId, "account_payment__payment_method_line_id_index");
+
+                        entity.HasIndex(e => e.PosSessionId, "account_payment__pos_session_id_index").HasFilter("(pos_session_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.SourcePaymentId, "account_payment__source_payment_id_index").HasFilter("(source_payment_id IS NOT NULL)");
 
                         entity.HasIndex(e => new { e.JournalId, e.TenantId }, "account_payment_journal_id_company_id_idx");
 
-                        entity.HasIndex(e => new { e.JournalId, e.TenantId }, "account_payment_unmatched_idx").HasFilter("((NOT is_matched) OR (is_matched IS NULL))");
+                        entity.HasIndex(e => new { e.JournalId, e.TenantId }, "account_payment_unmatched_idx").HasFilter("(is_matched IS NOT TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -43,6 +47,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Amount).HasColumnName("amount");
                         entity.Property(e => e.AmountCompanyCurrencySigned).HasColumnName("amount_company_currency_signed");
+                        entity.Property(e => e.CheckAmountInWords).HasColumnName("check_amount_in_words");
+                        entity.Property(e => e.CheckNumber).HasColumnName("check_number");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -75,6 +81,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PosOrderId).HasColumnName("pos_order_id");
                         entity.Property(e => e.PosPaymentMethodId).HasColumnName("pos_payment_method_id");
                         entity.Property(e => e.PosSessionId).HasColumnName("pos_session_id");
+                        entity.Property(e => e.ShouldWithholdTax).HasColumnName("should_withhold_tax");
                         entity.Property(e => e.SourcePaymentId).HasColumnName("source_payment_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.LastModificationTime)
@@ -196,6 +203,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_payment_write_uid_fkey");
+
+                        // entity.HasMany(d => d.Check).WithMany(p => p.PaymentNavigation)
+                        entity.HasMany(d => d.Check).WithMany(p => p.PaymentNavigation)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "L10nLatamCheckAccountPaymentRel",
+                                r => r.HasOne<L10nLatamCheck>().WithMany()
+                                    .HasForeignKey("CheckId")
+                                    .HasConstraintName("l10n_latam_check_account_payment_rel_check_id_fkey"),
+                                l => l.HasOne<AccountPayment>().WithMany()
+                                    .HasForeignKey("PaymentId")
+                                    .HasConstraintName("l10n_latam_check_account_payment_rel_payment_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PaymentId", "CheckId").HasName("l10n_latam_check_account_payment_rel_pkey");
+                                    j.ToTable("l10n_latam_check_account_payment_rel");
+                                    j.HasIndex(new[] { "CheckId", "PaymentId" }, "l10n_latam_check_account_payment_rel_check_id_payment_id_idx");
+                                    j.IndexerProperty<Guid>("PaymentId").HasColumnName("payment_id");
+                                    j.IndexerProperty<Guid>("CheckId").HasColumnName("check_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

@@ -38,7 +38,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Grouping).HasColumnName("grouping");
                         entity.Property(e => e.IsoCode).HasColumnName("iso_code");
                         entity.Property(e => e.Name).HasColumnName("name");
-                        entity.Property(e => e.ShortTimeFormat).HasColumnName("short_time_format");
                         entity.Property(e => e.ThousandsSep).HasColumnName("thousands_sep");
                         entity.Property(e => e.TimeFormat).HasColumnName("time_format");
                         entity.Property(e => e.UrlCode).HasColumnName("url_code");

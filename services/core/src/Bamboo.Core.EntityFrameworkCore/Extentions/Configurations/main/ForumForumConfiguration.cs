@@ -44,6 +44,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Faq)
                             .HasColumnType("jsonb")
                             .HasColumnName("faq");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.KarmaAnswer).HasColumnName("karma_answer");
                         entity.Property(e => e.KarmaAnswerAcceptAll).HasColumnName("karma_answer_accept_all");
                         entity.Property(e => e.KarmaAnswerAcceptOwn).HasColumnName("karma_answer_accept_own");
@@ -90,7 +91,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("seo_name");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.SlideChannelId).HasColumnName("slide_channel_id");
-                        entity.Property(e => e.Teaser).HasColumnName("teaser");
                         entity.Property(e => e.WebsiteId).HasColumnName("website_id");
                         entity.Property(e => e.WebsiteMetaDescription)
                             .HasColumnType("jsonb")

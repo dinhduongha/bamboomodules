@@ -28,6 +28,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.SessionId, "pos_payment__session_id_index");
 
+                        entity.HasIndex(e => e.Uuid, "pos_payment_unique_uuid").IsUnique();
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

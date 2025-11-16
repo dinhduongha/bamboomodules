@@ -16,8 +16,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_model_fields");
 
-                        entity.HasIndex(e => e.CompleteName, "ir_model_fields__complete_name_index");
-
                         entity.HasIndex(e => e.ModelId, "ir_model_fields__model_id_index");
 
                         entity.HasIndex(e => e.Model, "ir_model_fields__model_index");
@@ -36,7 +34,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Column1).HasColumnName("column1");
                         entity.Property(e => e.Column2).HasColumnName("column2");
                         entity.Property(e => e.CompanyDependent).HasColumnName("company_dependent");
-                        entity.Property(e => e.CompleteName).HasColumnName("complete_name");
                         entity.Property(e => e.Compute).HasColumnName("compute");
                         entity.Property(e => e.Copied).HasColumnName("copied");
                         entity.Property(e => e.CreationTime)

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ModelId, "account_reconcile_model_line__model_id_index").HasFilter("(model_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -40,12 +42,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.ForceTaxIncluded).HasColumnName("force_tax_included");
-                        entity.Property(e => e.JournalId).HasColumnName("journal_id");
                         entity.Property(e => e.Label)
                             .HasColumnType("jsonb")
                             .HasColumnName("label");
                         entity.Property(e => e.ModelId).HasColumnName("model_id");
+                        entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -70,16 +71,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_reconcile_model_line_create_uid_fkey");
 
-                        // entity.HasOne(d => d.Journal).WithMany(p => p.AccountReconcileModelLine) .HasForeignKey(d => d.JournalId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("account_reconcile_model_line_journal_id_fkey");
-                        entity.HasOne(d => d.Journal).WithMany()
-                            .HasForeignKey(d => d.JournalId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("account_reconcile_model_line_journal_id_fkey");
-
                         entity.HasOne(d => d.Model).WithMany(p => p.AccountReconcileModelLine)
                             .HasForeignKey(d => d.ModelId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("account_reconcile_model_line_model_id_fkey");
+
+                        // entity.HasOne(d => d.Partner).WithMany(p => p.AccountReconcileModelLine) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_reconcile_model_line_partner_id_fkey");
+                        entity.HasOne(d => d.Partner).WithMany()
+                            .HasForeignKey(d => d.PartnerId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_reconcile_model_line_partner_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountReconcileModelLineWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_reconcile_model_line_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

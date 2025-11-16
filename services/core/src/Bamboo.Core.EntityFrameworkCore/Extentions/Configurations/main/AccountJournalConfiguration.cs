@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("account_journal");
 
+                        entity.HasIndex(e => e.BankAccountId, "account_journal__bank_account_id_index").HasFilter("(bank_account_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.TenantId, "account_journal__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
@@ -32,9 +34,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AccessToken).HasColumnName("access_token");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AliasId).HasColumnName("alias_id");
-                        entity.Property(e => e.AutocheckOnPost).HasColumnName("autocheck_on_post");
                         entity.Property(e => e.BankAccountId).HasColumnName("bank_account_id");
+                        entity.Property(e => e.BankCheckPrintingLayout).HasColumnName("bank_check_printing_layout");
                         entity.Property(e => e.BankStatementsSource).HasColumnName("bank_statements_source");
+                        entity.Property(e => e.CheckManualSequencing).HasColumnName("check_manual_sequencing");
+                        entity.Property(e => e.CheckSequenceId).HasColumnName("check_sequence_id");
                         entity.Property(e => e.Code).HasColumnName("code");
                         entity.Property(e => e.Color).HasColumnName("color");
 
@@ -46,13 +50,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.DebitSequence).HasColumnName("debit_sequence");
                         entity.Property(e => e.DefaultAccountId).HasColumnName("default_account_id");
+                        entity.Property(e => e.IncomingEinvoiceNotificationEmail).HasColumnName("incoming_einvoice_notification_email");
                         entity.Property(e => e.InvoiceReferenceModel).HasColumnName("invoice_reference_model");
                         entity.Property(e => e.InvoiceReferenceType).HasColumnName("invoice_reference_type");
+                        entity.Property(e => e.InvoiceTemplatePdfReportId).HasColumnName("invoice_template_pdf_report_id");
                         entity.Property(e => e.IsPeppolJournal).HasColumnName("is_peppol_journal");
+                        entity.Property(e => e.IsSelfBilling).HasColumnName("is_self_billing");
+                        entity.Property(e => e.L10nLatamUseDocuments).HasColumnName("l10n_latam_use_documents");
                         entity.Property(e => e.LossAccountId).HasColumnName("loss_account_id");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.NonDeductibleAccountId).HasColumnName("non_deductible_account_id");
                         entity.Property(e => e.PaymentSequence).HasColumnName("payment_sequence");
                         entity.Property(e => e.ProfitAccountId).HasColumnName("profit_account_id");
                         entity.Property(e => e.RefundSequence).HasColumnName("refund_sequence");
@@ -76,6 +85,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.BankAccountId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_journal_bank_account_id_fkey");
+
+                        entity.HasOne(d => d.CheckSequence).WithMany(p => p.AccountJournal)
+                            .HasForeignKey(d => d.CheckSequenceId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_journal_check_sequence_id_fkey");
 
                         // entity.HasOne(d => d.Company).WithMany(p => p.AccountJournal) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("account_journal_company_id_fkey");
                         entity.HasOne(d => d.Company).WithMany()
@@ -101,11 +115,22 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_journal_default_account_id_fkey");
 
+                        entity.HasOne(d => d.InvoiceTemplatePdfReport).WithMany(p => p.AccountJournal)
+                            .HasForeignKey(d => d.InvoiceTemplatePdfReportId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_journal_invoice_template_pdf_report_id_fkey");
+
                         // entity.HasOne(d => d.LossAccount).WithMany(p => p.AccountJournalLossAccount) .HasForeignKey(d => d.LossAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_journal_loss_account_id_fkey");
                         entity.HasOne(d => d.LossAccount).WithMany()
                             .HasForeignKey(d => d.LossAccountId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_journal_loss_account_id_fkey");
+
+                        // entity.HasOne(d => d.NonDeductibleAccount).WithMany(p => p.AccountJournalNonDeductibleAccount) .HasForeignKey(d => d.NonDeductibleAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_journal_non_deductible_account_id_fkey");
+                        entity.HasOne(d => d.NonDeductibleAccount).WithMany()
+                            .HasForeignKey(d => d.NonDeductibleAccountId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_journal_non_deductible_account_id_fkey");
 
                         // entity.HasOne(d => d.ProfitAccount).WithMany(p => p.AccountJournalProfitAccount) .HasForeignKey(d => d.ProfitAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_journal_profit_account_id_fkey");
                         entity.HasOne(d => d.ProfitAccount).WithMany()
@@ -124,25 +149,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_journal_write_uid_fkey");
-
-                        // entity.HasMany(d => d.Account1).WithMany(p => p.Journal)
-                        entity.HasMany(d => d.Account1).WithMany()
-                            .UsingEntity<Dictionary<string, object>>(
-                                "JournalAccountControlRel",
-                                r => r.HasOne<AccountAccount>().WithMany()
-                                    .HasForeignKey("AccountId")
-                                    .HasConstraintName("journal_account_control_rel_account_id_fkey"),
-                                l => l.HasOne<AccountJournal>().WithMany()
-                                    .HasForeignKey("JournalId")
-                                    .HasConstraintName("journal_account_control_rel_journal_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("JournalId", "AccountId").HasName("journal_account_control_rel_pkey");
-                                    j.ToTable("journal_account_control_rel");
-                                    j.HasIndex(new[] { "AccountId", "JournalId" }, "journal_account_control_rel_account_id_journal_id_idx");
-                                    j.IndexerProperty<Guid>("JournalId").HasColumnName("journal_id");
-                                    j.IndexerProperty<Guid>("AccountId").HasColumnName("account_id");
-                                });
 
                         // entity.HasMany(d => d.AccountEdiFormat).WithMany(p => p.AccountJournal)
                         entity.HasMany(d => d.AccountEdiFormat).WithMany(p => p.AccountJournal)

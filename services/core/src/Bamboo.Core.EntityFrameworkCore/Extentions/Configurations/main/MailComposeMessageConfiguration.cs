@@ -32,6 +32,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AutoDeleteKeepLog).HasColumnName("auto_delete_keep_log");
                         entity.Property(e => e.Body).HasColumnName("body");
                         entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
+                        entity.Property(e => e.CompositionCommentOption).HasColumnName("composition_comment_option");
                         entity.Property(e => e.CompositionMode).HasColumnName("composition_mode");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -49,10 +50,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.MassMailingName).HasColumnName("mass_mailing_name");
                         entity.Property(e => e.MessageType).HasColumnName("message_type");
                         entity.Property(e => e.Model).HasColumnName("model");
+                        entity.Property(e => e.NotifyAuthor).HasColumnName("notify_author");
+                        entity.Property(e => e.NotifyAuthorMention).HasColumnName("notify_author_mention");
+                        entity.Property(e => e.NotifySkipFollowers).HasColumnName("notify_skip_followers");
                         entity.Property(e => e.ParentId).HasColumnName("parent_id");
                         entity.Property(e => e.RecordAliasDomainId).HasColumnName("record_alias_domain_id");
                         entity.Property(e => e.RecordCompanyId).HasColumnName("record_company_id");
-                        entity.Property(e => e.RecordName).HasColumnName("record_name");
                         entity.Property(e => e.ReplyTo).HasColumnName("reply_to");
                         entity.Property(e => e.ReplyToForceNew).HasColumnName("reply_to_force_new");
                         entity.Property(e => e.ResDomain).HasColumnName("res_domain");

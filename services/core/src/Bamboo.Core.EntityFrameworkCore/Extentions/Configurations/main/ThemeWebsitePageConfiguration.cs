@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ViewId, "theme_website_page__view_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -35,6 +37,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.FooterVisible).HasColumnName("footer_visible");
                         entity.Property(e => e.HeaderColor).HasColumnName("header_color");
                         entity.Property(e => e.HeaderOverlay).HasColumnName("header_overlay");
+                        entity.Property(e => e.HeaderTextColor).HasColumnName("header_text_color");
                         entity.Property(e => e.HeaderVisible).HasColumnName("header_visible");
                         entity.Property(e => e.IsNewPageTemplate).HasColumnName("is_new_page_template");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");

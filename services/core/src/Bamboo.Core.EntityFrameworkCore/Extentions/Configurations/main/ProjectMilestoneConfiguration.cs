@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ProjectId, "project_milestone__project_id_index");
+
+                        entity.HasIndex(e => e.SaleLineId, "project_milestone__sale_line_id_index").HasFilter("(sale_line_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -39,6 +43,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.QuantityPercentage).HasColumnName("quantity_percentage");
                         entity.Property(e => e.ReachedDate).HasColumnName("reached_date");
                         entity.Property(e => e.SaleLineId).HasColumnName("sale_line_id");
+                        entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

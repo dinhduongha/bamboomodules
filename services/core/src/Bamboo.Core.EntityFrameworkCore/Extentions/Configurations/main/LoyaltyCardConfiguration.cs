@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PartnerId, "loyalty_card__partner_id_index");
 
+                        entity.HasIndex(e => e.ProgramId, "loyalty_card__program_id_index").HasFilter("(program_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Code, "loyalty_card_card_code_unique").IsUnique();
 
                         entity.Property(e => e.Id)

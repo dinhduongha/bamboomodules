@@ -27,14 +27,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-                        entity.Property(e => e.AccountingDate).HasColumnName("accounting_date");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.InventoryDate).HasColumnName("inventory_date");
-                        entity.Property(e => e.SetCount).HasColumnName("set_count");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

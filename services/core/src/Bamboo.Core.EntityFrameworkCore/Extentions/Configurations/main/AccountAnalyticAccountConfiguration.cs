@@ -22,6 +22,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Code, "account_analytic_account__code_index");
 
+                        entity.HasIndex(e => e.PartnerId, "account_analytic_account__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PlanId, "account_analytic_account__plan_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

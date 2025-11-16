@@ -20,8 +20,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => e.ExchangeMoveId, "account_full_reconcile__exchange_move_id_index").HasFilter("(exchange_move_id IS NOT NULL)");
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -34,7 +32,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.ExchangeMoveId).HasColumnName("exchange_move_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -45,11 +42,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_full_reconcile_create_uid_fkey");
-
-                        entity.HasOne(d => d.ExchangeMove).WithMany(p => p.AccountFullReconcile)
-                            .HasForeignKey(d => d.ExchangeMoveId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_full_reconcile_exchange_move_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountFullReconcileWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_full_reconcile_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

@@ -42,6 +42,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.FirstLineIndex).HasColumnName("first_line_index");
                         entity.Property(e => e.IsComplete).HasColumnName("is_complete");
@@ -64,6 +65,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_bank_statement_create_uid_fkey");
+
+                        // entity.HasOne(d => d.Currency).WithMany(p => p.AccountBankStatement) .HasForeignKey(d => d.CurrencyId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_bank_statement_currency_id_fkey");
+                        entity.HasOne(d => d.Currency).WithMany()
+                            .HasForeignKey(d => d.CurrencyId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_bank_statement_currency_id_fkey");
 
                         // entity.HasOne(d => d.Journal).WithMany(p => p.AccountBankStatement) .HasForeignKey(d => d.JournalId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_bank_statement_journal_id_fkey");
                         entity.HasOne(d => d.Journal).WithMany()

@@ -18,6 +18,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Name, "ir_mail_server__name_index");
 
+                        entity.HasIndex(e => e.OwnerUserId, "ir_mail_server_unique_owner_user_id").IsUnique();
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,10 +32,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.FromFilter).HasColumnName("from_filter");
                         entity.Property(e => e.GoogleGmailAccessToken).HasColumnName("google_gmail_access_token");
                         entity.Property(e => e.GoogleGmailAccessTokenExpiration).HasColumnName("google_gmail_access_token_expiration");
-                        entity.Property(e => e.GoogleGmailAuthorizationCode).HasColumnName("google_gmail_authorization_code");
                         entity.Property(e => e.GoogleGmailRefreshToken).HasColumnName("google_gmail_refresh_token");
                         entity.Property(e => e.MaxEmailSize).HasColumnName("max_email_size");
+                        entity.Property(e => e.MicrosoftOutlookAccessToken).HasColumnName("microsoft_outlook_access_token");
+                        entity.Property(e => e.MicrosoftOutlookAccessTokenExpiration).HasColumnName("microsoft_outlook_access_token_expiration");
+                        entity.Property(e => e.MicrosoftOutlookRefreshToken).HasColumnName("microsoft_outlook_refresh_token");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.OwnerLimitCount).HasColumnName("owner_limit_count");
+                        entity.Property(e => e.OwnerLimitTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("owner_limit_time");
+                        entity.Property(e => e.OwnerUserId).HasColumnName("owner_user_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.SmtpAuthentication).HasColumnName("smtp_authentication");
                         entity.Property(e => e.SmtpDebug).HasColumnName("smtp_debug");
@@ -54,6 +63,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("ir_mail_server_create_uid_fkey");
+
+                        // entity.HasOne(d => d.OwnerUser).WithOne(p => p.IrMailServerOwnerUser) .HasForeignKey<IrMailServer>(d => d.OwnerUserId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("ir_mail_server_owner_user_id_fkey");
+                        entity.HasOne(d => d.OwnerUser).WithOne(p => p.IrMailServerOwnerUser)
+                            .HasForeignKey<IrMailServer>(d => d.OwnerUserId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("ir_mail_server_owner_user_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.IrMailServerWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("ir_mail_server_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

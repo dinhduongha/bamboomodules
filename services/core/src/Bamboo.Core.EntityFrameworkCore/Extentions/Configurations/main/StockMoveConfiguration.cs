@@ -16,23 +16,23 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("stock_move");
 
+                        entity.HasIndex(e => e.AccountMoveId, "stock_move__account_move_id_index").HasFilter("(account_move_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.TenantId, "stock_move__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ConsumeUnbuildId, "stock_move__consume_unbuild_id_index").HasFilter("(consume_unbuild_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.CreatedProductionId, "stock_move__created_production_id_index");
 
                         entity.HasIndex(e => e.Date, "stock_move__date_index");
-
-                        entity.HasIndex(e => e.GroupId, "stock_move__group_id_index");
 
                         entity.HasIndex(e => e.LocationDestId, "stock_move__location_dest_id_index");
 
                         entity.HasIndex(e => e.LocationFinalId, "stock_move__location_final_id_index");
 
                         entity.HasIndex(e => e.LocationId, "stock_move__location_id_index");
-
-                        entity.HasIndex(e => e.OrderFinishedLotId, "stock_move__order_finished_lot_id_index").HasFilter("(order_finished_lot_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.OrderpointId, "stock_move__orderpoint_id_index");
 
@@ -50,13 +50,19 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.RawMaterialProductionId, "stock_move__raw_material_production_id_index").HasFilter("(raw_material_production_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.RepairId, "stock_move__repair_id_index").HasFilter("(repair_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.RepairLineType, "stock_move__repair_line_type_index");
 
                         entity.HasIndex(e => e.RestrictPartnerId, "stock_move__restrict_partner_id_index").HasFilter("(restrict_partner_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.SaleLineId, "stock_move__sale_line_id_index").HasFilter("(sale_line_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.ScrapId, "stock_move__scrap_id_index").HasFilter("(scrap_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.State, "stock_move__state_index");
+
+                        entity.HasIndex(e => e.UnbuildId, "stock_move__unbuild_id_index").HasFilter("(unbuild_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.WorkorderId, "stock_move__workorder_id_index").HasFilter("(workorder_id IS NOT NULL)");
 
@@ -69,6 +75,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.AccountMoveId).HasColumnName("account_move_id");
                         entity.Property(e => e.Additional).HasColumnName("additional");
                         entity.Property(e => e.BomLineId).HasColumnName("bom_line_id");
                         entity.Property(e => e.ByproductId).HasColumnName("byproduct_id");
@@ -90,24 +97,27 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DelayAlertDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("delay_alert_date");
-                        entity.Property(e => e.DescriptionPicking).HasColumnName("description_picking");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
-                        entity.Property(e => e.IsDone).HasColumnName("is_done");
+                        entity.Property(e => e.DescriptionPickingManual).HasColumnName("description_picking_manual");
+                        entity.Property(e => e.InventoryName).HasColumnName("inventory_name");
+                        entity.Property(e => e.IsDropship).HasColumnName("is_dropship");
+                        entity.Property(e => e.IsIn).HasColumnName("is_in");
                         entity.Property(e => e.IsInventory).HasColumnName("is_inventory");
+                        entity.Property(e => e.IsOut).HasColumnName("is_out");
                         entity.Property(e => e.IsSubcontract).HasColumnName("is_subcontract");
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
                         entity.Property(e => e.LocationFinalId).HasColumnName("location_final_id");
                         entity.Property(e => e.LocationId).HasColumnName("location_id");
-                        entity.Property(e => e.ManualConsumption).HasColumnName("manual_consumption");
-                        entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.ManualConsumption)
+                            .HasDefaultValue(false)
+                            .HasColumnName("manual_consumption");
                         entity.Property(e => e.NextSerial).HasColumnName("next_serial");
                         entity.Property(e => e.NextSerialCount).HasColumnName("next_serial_count");
                         entity.Property(e => e.OperationId).HasColumnName("operation_id");
-                        entity.Property(e => e.OrderFinishedLotId).HasColumnName("order_finished_lot_id");
                         entity.Property(e => e.OrderpointId).HasColumnName("orderpoint_id");
                         entity.Property(e => e.Origin).HasColumnName("origin");
                         entity.Property(e => e.OriginReturnedMoveId).HasColumnName("origin_returned_move_id");
-                        entity.Property(e => e.PackageLevelId).HasColumnName("package_level_id");
+                        entity.Property(e => e.PackagingUomId).HasColumnName("packaging_uom_id");
+                        entity.Property(e => e.PackagingUomQty).HasColumnName("packaging_uom_qty");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.Picked).HasColumnName("picked");
                         entity.Property(e => e.PickingId).HasColumnName("picking_id");
@@ -116,10 +126,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Priority).HasColumnName("priority");
                         entity.Property(e => e.ProcureMethod).HasColumnName("procure_method");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
-                        entity.Property(e => e.ProductPackagingId).HasColumnName("product_packaging_id");
                         entity.Property(e => e.ProductQty).HasColumnName("product_qty");
                         entity.Property(e => e.ProductUom).HasColumnName("product_uom");
                         entity.Property(e => e.ProductUomQty).HasColumnName("product_uom_qty");
+                        entity.Property(e => e.ProductionGroupId).HasColumnName("production_group_id");
                         entity.Property(e => e.ProductionId).HasColumnName("production_id");
                         entity.Property(e => e.PropagateCancel).HasColumnName("propagate_cancel");
                         entity.Property(e => e.PurchaseLineId).HasColumnName("purchase_line_id");
@@ -133,12 +143,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.RuleId).HasColumnName("rule_id");
                         entity.Property(e => e.SaleLineId).HasColumnName("sale_line_id");
                         entity.Property(e => e.ScrapId).HasColumnName("scrap_id");
-                        entity.Property(e => e.Scrapped).HasColumnName("scrapped");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.ToRefund).HasColumnName("to_refund");
                         entity.Property(e => e.UnbuildId).HasColumnName("unbuild_id");
-                        entity.Property(e => e.UnitFactor).HasColumnName("unit_factor");
+                        entity.Property(e => e.UnitFactor)
+                            .HasDefaultValue(1.0)
+                            .HasColumnName("unit_factor");
+                        entity.Property(e => e.Value).HasColumnName("value");
                         entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
                         entity.Property(e => e.Weight).HasColumnName("weight");
                         entity.Property(e => e.WorkorderId).HasColumnName("workorder_id");
@@ -146,6 +158,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                        entity.HasOne(d => d.AccountMove).WithMany(p => p.StockMove)
+                            .HasForeignKey(d => d.AccountMoveId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("stock_move_account_move_id_fkey");
 
                         entity.HasOne(d => d.BomLine).WithMany(p => p.StockMove)
                             .HasForeignKey(d => d.BomLineId)
@@ -179,11 +196,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_move_created_production_id_fkey");
 
-                        entity.HasOne(d => d.Group).WithMany(p => p.StockMove)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_group_id_fkey");
-
                         entity.HasOne(d => d.LocationDest).WithMany(p => p.StockMoveLocationDest)
                             .HasForeignKey(d => d.LocationDestId)
                             .OnDelete(DeleteBehavior.Restrict)
@@ -204,11 +216,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_move_operation_id_fkey");
 
-                        entity.HasOne(d => d.OrderFinishedLot).WithMany(p => p.StockMove)
-                            .HasForeignKey(d => d.OrderFinishedLotId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_order_finished_lot_id_fkey");
-
                         entity.HasOne(d => d.Orderpoint).WithMany(p => p.StockMove)
                             .HasForeignKey(d => d.OrderpointId)
                             .OnDelete(DeleteBehavior.SetNull)
@@ -219,10 +226,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_move_origin_returned_move_id_fkey");
 
-                        entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMove)
-                            .HasForeignKey(d => d.PackageLevelId)
+                        // entity.HasOne(d => d.PackagingUom).WithMany(p => p.StockMovePackagingUom) .HasForeignKey(d => d.PackagingUomId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_move_packaging_uom_id_fkey");
+                        entity.HasOne(d => d.PackagingUom).WithMany()
+                            .HasForeignKey(d => d.PackagingUomId)
                             .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_package_level_id_fkey");
+                            .HasConstraintName("stock_move_packaging_uom_id_fkey");
 
                         // entity.HasOne(d => d.Partner).WithMany(p => p.StockMovePartner) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_move_partner_id_fkey");
                         entity.HasOne(d => d.Partner).WithMany()
@@ -246,20 +254,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_move_product_id_fkey");
 
-                        entity.HasOne(d => d.ProductPackaging).WithMany(p => p.StockMove)
-                            .HasForeignKey(d => d.ProductPackagingId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_product_packaging_id_fkey");
-
-                        // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.StockMove) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("stock_move_product_uom_fkey");
+                        // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.StockMoveProductUomNavigation) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("stock_move_product_uom_fkey");
                         entity.HasOne(d => d.ProductUomNavigation).WithMany()
                             .HasForeignKey(d => d.ProductUom)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_move_product_uom_fkey");
 
+                        entity.HasOne(d => d.ProductionGroup).WithMany(p => p.StockMove)
+                            .HasForeignKey(d => d.ProductionGroupId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("stock_move_production_group_id_fkey");
+
                         entity.HasOne(d => d.Production).WithMany(p => p.StockMoveProduction)
                             .HasForeignKey(d => d.ProductionId)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_move_production_id_fkey");
 
                         entity.HasOne(d => d.PurchaseLine).WithMany(p => p.StockMove)
@@ -269,7 +277,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.RawMaterialProduction).WithMany(p => p.StockMoveRawMaterialProduction)
                             .HasForeignKey(d => d.RawMaterialProductionId)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_move_raw_material_production_id_fkey");
 
                         entity.HasOne(d => d.Repair).WithMany(p => p.StockMove)
@@ -374,6 +382,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "MoveDestId", "MoveOrigId" }, "stock_move_move_rel_move_dest_id_move_orig_id_idx");
                                     j.IndexerProperty<Guid>("MoveOrigId").HasColumnName("move_orig_id");
                                     j.IndexerProperty<Guid>("MoveDestId").HasColumnName("move_dest_id");
+                                });
+
+                        // entity.HasMany(d => d.ReferenceNavigation).WithMany(p => p.Move)
+                        entity.HasMany(d => d.ReferenceNavigation).WithMany(p => p.Move)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferenceMoveRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_move_rel_reference_id_fkey"),
+                                l => l.HasOne<StockMove>().WithMany()
+                                    .HasForeignKey("MoveId")
+                                    .HasConstraintName("stock_reference_move_rel_move_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("MoveId", "ReferenceId").HasName("stock_reference_move_rel_pkey");
+                                    j.ToTable("stock_reference_move_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "MoveId" }, "stock_reference_move_rel_reference_id_move_id_idx");
+                                    j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
                                 });
 
                         // entity.HasMany(d => d.Route).WithMany(p => p.Move)

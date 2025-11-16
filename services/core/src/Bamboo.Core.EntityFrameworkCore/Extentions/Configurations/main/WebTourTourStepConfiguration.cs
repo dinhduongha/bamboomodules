@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("web_tour_tour_step");
 
+                        entity.HasIndex(e => e.TourId, "web_tour_tour_step__tour_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -27,6 +29,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Run).HasColumnName("run");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.TooltipPosition).HasColumnName("tooltip_position");
                         entity.Property(e => e.TourId).HasColumnName("tour_id");
                         entity.Property(e => e.Trigger).HasColumnName("trigger");
                         entity.Property(e => e.LastModificationTime)

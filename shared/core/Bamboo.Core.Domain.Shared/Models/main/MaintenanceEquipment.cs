@@ -64,8 +64,9 @@ public partial class MaintenanceEquipment : FullAuditedAggregateRoot<Guid>, IEnt
     [Column("partner_ref")]
     public string? PartnerRef { get; set; }
 
-    [Column("location")]
-    public string? Location { get; set; }
+    // CONFLICK-V19
+    // [Column("location")]
+    // public string? Location { get; set; }
 
     [Column("model")]
     public string? Model { get; set; }

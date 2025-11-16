@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.AccountMoveLineId, "fleet_vehicle_log_services__account_move_line_id_index").HasFilter("(account_move_line_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.VehicleId, "fleet_vehicle_log_services__vehicle_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,6 +34,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AccountMoveLineId).HasColumnName("account_move_line_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.Amount).HasColumnName("amount");
+                        entity.Property(e => e.BrandId).HasColumnName("brand_id");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -40,6 +45,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Description).HasColumnName("description");
                         entity.Property(e => e.InvRef).HasColumnName("inv_ref");
                         entity.Property(e => e.ManagerId).HasColumnName("manager_id");
+                        entity.Property(e => e.ModelId).HasColumnName("model_id");
                         entity.Property(e => e.Notes).HasColumnName("notes");
                         entity.Property(e => e.OdometerId).HasColumnName("odometer_id");
                         entity.Property(e => e.PurchaserEmployeeId).HasColumnName("purchaser_employee_id");
@@ -58,6 +64,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("fleet_vehicle_log_services_account_move_line_id_fkey");
 
+                        entity.HasOne(d => d.Brand).WithMany(p => p.FleetVehicleLogServices)
+                            .HasForeignKey(d => d.BrandId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("fleet_vehicle_log_services_brand_id_fkey");
+
                         // entity.HasOne(d => d.Company).WithMany(p => p.FleetVehicleLogServices) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("fleet_vehicle_log_services_company_id_fkey");
                         entity.HasOne(d => d.Company).WithMany()
                             .HasForeignKey(d => d.TenantId)
@@ -75,6 +86,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ManagerId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("fleet_vehicle_log_services_manager_id_fkey");
+
+                        entity.HasOne(d => d.Model).WithMany(p => p.FleetVehicleLogServices)
+                            .HasForeignKey(d => d.ModelId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("fleet_vehicle_log_services_model_id_fkey");
 
                         entity.HasOne(d => d.Odometer).WithMany(p => p.FleetVehicleLogServices)
                             .HasForeignKey(d => d.OdometerId)

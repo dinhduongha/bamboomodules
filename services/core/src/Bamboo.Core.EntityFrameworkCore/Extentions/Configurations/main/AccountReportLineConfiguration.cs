@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ParentId, "account_report_line__parent_id_index").HasFilter("(parent_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ReportId, "account_report_line__report_id_index");
+
                         entity.HasIndex(e => new { e.ReportId, e.Code }, "account_report_line_code_uniq").IsUnique();
 
                         entity.Property(e => e.Id)

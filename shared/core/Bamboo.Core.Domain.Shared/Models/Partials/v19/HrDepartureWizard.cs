@@ -19,10 +19,10 @@ public partial class HrDepartureWizard
     [Column("remove_related_user")]
     public bool? RemoveRelatedUser { get; set; }
 
-    // // [Many2many] // Normal
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [NotMapped] // Many2many // Normal
-    // // [ForeignKey("HrDepartureWizardId")] // Many2many // Normal
-    // // [InverseProperty("HrDepartureWizard")] // Many2many // Normal
-    // public virtual ICollection<HrEmployee> HrEmployee { get; set; }
+    // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("HrDepartureWizardId")] // Many2many // Normal
+    // [InverseProperty("HrDepartureWizard")] // Many2many // Normal
+    public virtual ICollection<HrEmployee> HrEmployee { get; set; }
 }

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PlanId, "mail_activity_plan_template__plan_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -74,6 +76,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mail_activity_plan_template_write_uid_fkey");
+
+                        // entity.HasMany(d => d.MailActivityType).WithMany(p => p.MailActivityPlanTemplateNavigation)
+                        entity.HasMany(d => d.MailActivityType).WithMany(p => p.MailActivityPlanTemplateNavigation)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "MailActivityPlanTemplateMailActivityTypeRel",
+                                r => r.HasOne<MailActivityType>().WithMany()
+                                    .HasForeignKey("MailActivityTypeId")
+                                    .HasConstraintName("mail_activity_plan_template_mail_act_mail_activity_type_id_fkey"),
+                                l => l.HasOne<MailActivityPlanTemplate>().WithMany()
+                                    .HasForeignKey("MailActivityPlanTemplateId")
+                                    .HasConstraintName("mail_activity_plan_template_m_mail_activity_plan_template__fkey"),
+                                j =>
+                                {
+                                    j.HasKey("MailActivityPlanTemplateId", "MailActivityTypeId").HasName("mail_activity_plan_template_mail_activity_type_rel_pkey");
+                                    j.ToTable("mail_activity_plan_template_mail_activity_type_rel");
+                                    j.HasIndex(new[] { "MailActivityTypeId", "MailActivityPlanTemplateId" }, "mail_activity_plan_template_m_mail_activity_type_id_mail_ac_idx");
+                                    j.IndexerProperty<Guid>("MailActivityPlanTemplateId").HasColumnName("mail_activity_plan_template_id");
+                                    j.IndexerProperty<Guid>("MailActivityTypeId").HasColumnName("mail_activity_type_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

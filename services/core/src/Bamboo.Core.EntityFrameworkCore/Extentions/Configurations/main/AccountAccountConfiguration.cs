@@ -29,7 +29,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.AccountStockExpenseId).HasColumnName("account_stock_expense_id");
+                        entity.Property(e => e.AccountStockVariationId).HasColumnName("account_stock_variation_id");
                         entity.Property(e => e.AccountType).HasColumnName("account_type");
+                        entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.CodeStore)
                             .HasColumnType("jsonb")
                             .HasColumnName("code_store");
@@ -39,7 +42,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
-                        entity.Property(e => e.Deprecated).HasColumnName("deprecated");
+                        entity.Property(e => e.Description)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("description");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
@@ -50,6 +55,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                        // entity.HasOne(d => d.AccountStockExpense).WithMany(p => p.InverseAccountStockExpense) .HasForeignKey(d => d.AccountStockExpenseId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_account_account_stock_expense_id_fkey");
+                        entity.HasOne(d => d.AccountStockExpense).WithMany()
+                            .HasForeignKey(d => d.AccountStockExpenseId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_account_account_stock_expense_id_fkey");
+
+                        // entity.HasOne(d => d.AccountStockVariation).WithMany(p => p.InverseAccountStockVariation) .HasForeignKey(d => d.AccountStockVariationId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_account_account_stock_variation_id_fkey");
+                        entity.HasOne(d => d.AccountStockVariation).WithMany()
+                            .HasForeignKey(d => d.AccountStockVariationId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_account_account_stock_variation_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.AccountAccountCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_account_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
@@ -87,25 +104,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "AccountAccountTagId", "AccountAccountId" }, "account_account_account_tag_account_account_tag_id_account__idx");
                                     j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
                                     j.IndexerProperty<Guid>("AccountAccountTagId").HasColumnName("account_account_tag_id");
-                                });
-
-                        // entity.HasMany(d => d.AccountJournal).WithMany(p => p.AccountAccount)
-                        entity.HasMany<AccountJournal>().WithMany()
-                            .UsingEntity<Dictionary<string, object>>(
-                                "AccountAccountAccountJournalRel",
-                                r => r.HasOne<AccountJournal>().WithMany()
-                                    .HasForeignKey("AccountJournalId")
-                                    .HasConstraintName("account_account_account_journal_rel_account_journal_id_fkey"),
-                                l => l.HasOne<AccountAccount>().WithMany()
-                                    .HasForeignKey("AccountAccountId")
-                                    .HasConstraintName("account_account_account_journal_rel_account_account_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("AccountAccountId", "AccountJournalId").HasName("account_account_account_journal_rel_pkey");
-                                    j.ToTable("account_account_account_journal_rel");
-                                    j.HasIndex(new[] { "AccountJournalId", "AccountAccountId" }, "account_account_account_journ_account_journal_id_account_ac_idx");
-                                    j.IndexerProperty<Guid>("AccountAccountId").HasColumnName("account_account_id");
-                                    j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                                 });
 
                         // entity.HasMany(d => d.ResCompany).WithMany(p => p.AccountAccount)

@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CertificationBadgeId, "survey_survey__certification_badge_id_index").HasFilter("(certification_badge_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.TeamId, "survey_survey__team_id_index").HasFilter("(team_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.AccessToken, "survey_survey_access_token_unique").IsUnique();
 
                         entity.HasIndex(e => e.CertificationBadgeId, "survey_survey_badge_uniq").IsUnique();
@@ -55,6 +59,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DescriptionDone)
                             .HasColumnType("jsonb")
                             .HasColumnName("description_done");
+                        entity.Property(e => e.GenerateLead).HasColumnName("generate_lead");
                         entity.Property(e => e.IsAttemptsLimited).HasColumnName("is_attempts_limited");
                         entity.Property(e => e.IsTimeLimited).HasColumnName("is_time_limited");
                         entity.Property(e => e.ProgressionMode).HasColumnName("progression_mode");
@@ -74,6 +79,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("session_start_time");
                         entity.Property(e => e.SessionState).HasColumnName("session_state");
                         entity.Property(e => e.SurveyType).HasColumnName("survey_type");
+                        entity.Property(e => e.TeamId).HasColumnName("team_id");
                         entity.Property(e => e.TimeLimit).HasColumnName("time_limit");
                         entity.Property(e => e.Title)
                             .HasColumnType("jsonb")
@@ -107,6 +113,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("survey_survey_session_question_id_fkey");
 
+                        entity.HasOne(d => d.Team).WithMany(p => p.SurveySurvey)
+                            .HasForeignKey(d => d.TeamId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("survey_survey_team_id_fkey");
+
                         // entity.HasOne(d => d.User).WithMany(p => p.SurveySurveyUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("survey_survey_user_id_fkey");
                         entity.HasOne(d => d.User).WithMany()
                             .HasForeignKey(d => d.UserId)
@@ -118,6 +129,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("survey_survey_write_uid_fkey");
+
+                        // entity.HasMany(d => d.ResLang).WithMany(p => p.SurveySurvey)
+                        entity.HasMany(d => d.ResLang).WithMany(p => p.SurveySurvey)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ResLangSurveySurveyRel",
+                                r => r.HasOne<ResLang>().WithMany()
+                                    .HasForeignKey("ResLangId")
+                                    .HasConstraintName("res_lang_survey_survey_rel_res_lang_id_fkey"),
+                                l => l.HasOne<SurveySurvey>().WithMany()
+                                    .HasForeignKey("SurveySurveyId")
+                                    .HasConstraintName("res_lang_survey_survey_rel_survey_survey_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SurveySurveyId", "ResLangId").HasName("res_lang_survey_survey_rel_pkey");
+                                    j.ToTable("res_lang_survey_survey_rel");
+                                    j.HasIndex(new[] { "ResLangId", "SurveySurveyId" }, "res_lang_survey_survey_rel_res_lang_id_survey_survey_id_idx");
+                                    j.IndexerProperty<Guid>("SurveySurveyId").HasColumnName("survey_survey_id");
+                                    j.IndexerProperty<Guid>("ResLangId").HasColumnName("res_lang_id");
+                                });
 
                         // entity.HasMany(d => d.ResUsers).WithMany(p => p.SurveySurvey)
                         entity.HasMany(d => d.ResUsers).WithMany()

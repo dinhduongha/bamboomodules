@@ -16,11 +16,15 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("stock_putaway_rule");
 
+                        entity.HasIndex(e => e.CategoryId, "stock_putaway_rule__category_id_index").HasFilter("(category_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.TenantId, "stock_putaway_rule__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
                         entity.HasIndex(e => e.LocationInId, "stock_putaway_rule__location_in_id_index");
+
+                        entity.HasIndex(e => e.ProductId, "stock_putaway_rule__product_id_index").HasFilter("(product_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")

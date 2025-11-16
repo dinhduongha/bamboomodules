@@ -41,8 +41,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.MaxWeight).HasColumnName("max_weight");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PackageCarrierType).HasColumnName("package_carrier_type");
+                        entity.Property(e => e.PackageUse).HasColumnName("package_use");
                         entity.Property(e => e.PackagingLength).HasColumnName("packaging_length");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.SequenceId).HasColumnName("sequence_id");
                         entity.Property(e => e.ShipperPackageCode).HasColumnName("shipper_package_code");
                         entity.Property(e => e.Width).HasColumnName("width");
                         entity.Property(e => e.LastModificationTime)
@@ -62,11 +64,35 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_package_type_create_uid_fkey");
 
+                        entity.HasOne(d => d.SequenceNavigation).WithMany(p => p.StockPackageType)
+                            .HasForeignKey(d => d.SequenceId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("stock_package_type_sequence_id_fkey");
+
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.StockPackageTypeWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_package_type_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_package_type_write_uid_fkey");
+
+                        // entity.HasMany(d => d.StockRoute).WithMany(p => p.StockPackageType)
+                        entity.HasMany(d => d.StockRoute).WithMany(p => p.StockPackageType)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockPackageTypeStockRouteRel",
+                                r => r.HasOne<StockRoute>().WithMany()
+                                    .HasForeignKey("StockRouteId")
+                                    .HasConstraintName("stock_package_type_stock_route_rel_stock_route_id_fkey"),
+                                l => l.HasOne<StockPackageType>().WithMany()
+                                    .HasForeignKey("StockPackageTypeId")
+                                    .HasConstraintName("stock_package_type_stock_route_rel_stock_package_type_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("StockPackageTypeId", "StockRouteId").HasName("stock_package_type_stock_route_rel_pkey");
+                                    j.ToTable("stock_package_type_stock_route_rel");
+                                    j.HasIndex(new[] { "StockRouteId", "StockPackageTypeId" }, "stock_package_type_stock_rout_stock_route_id_stock_package__idx");
+                                    j.IndexerProperty<Guid>("StockPackageTypeId").HasColumnName("stock_package_type_id");
+                                    j.IndexerProperty<Guid>("StockRouteId").HasColumnName("stock_route_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

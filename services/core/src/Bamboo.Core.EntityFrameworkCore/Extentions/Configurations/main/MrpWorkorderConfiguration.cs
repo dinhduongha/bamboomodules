@@ -20,9 +20,13 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.OperationId, "mrp_workorder__operation_id_index").HasFilter("(operation_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ProductionId, "mrp_workorder__production_id_index");
 
                         entity.HasIndex(e => e.State, "mrp_workorder__state_index");
+
+                        entity.HasIndex(e => e.WorkcenterId, "mrp_workorder__workcenter_id_index");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -32,6 +36,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Barcode).HasColumnName("barcode");
+                        entity.Property(e => e.CostMode).HasColumnName("cost_mode");
                         entity.Property(e => e.CostsHour).HasColumnName("costs_hour");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -51,8 +56,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.LeaveId).HasColumnName("leave_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.OperationId).HasColumnName("operation_id");
-                        entity.Property(e => e.ProductId).HasColumnName("product_id");
-                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.ProductionAvailability).HasColumnName("production_availability");
                         entity.Property(e => e.ProductionDate)
                             .HasColumnType("timestamp without time zone")
@@ -83,18 +86,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.OperationId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mrp_workorder_operation_id_fkey");
-
-                        // entity.HasOne(d => d.Product).WithMany(p => p.MrpWorkorder) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("mrp_workorder_product_id_fkey");
-                        entity.HasOne(d => d.Product).WithMany()
-                            .HasForeignKey(d => d.ProductId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("mrp_workorder_product_id_fkey");
-
-                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.MrpWorkorder) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("mrp_workorder_product_uom_id_fkey");
-                        entity.HasOne(d => d.ProductUom).WithMany()
-                            .HasForeignKey(d => d.ProductUomId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("mrp_workorder_product_uom_id_fkey");
 
                         entity.HasOne(d => d.Production).WithMany(p => p.MrpWorkorder)
                             .HasForeignKey(d => d.ProductionId)

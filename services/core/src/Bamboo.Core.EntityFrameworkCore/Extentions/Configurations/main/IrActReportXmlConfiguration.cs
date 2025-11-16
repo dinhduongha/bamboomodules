@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_act_report_xml");
 
+                        entity.HasIndex(e => e.PaperformatId, "ir_act_report_xml__paperformat_id_index").HasFilter("(paperformat_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Path, "ir_act_report_xml_path_unique").IsUnique();
 
                         entity.Property(e => e.Id)

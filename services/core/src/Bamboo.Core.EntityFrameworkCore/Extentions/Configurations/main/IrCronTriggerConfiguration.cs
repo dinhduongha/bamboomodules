@@ -45,7 +45,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.Cron).WithMany(p => p.IrCronTrigger)
                             .HasForeignKey(d => d.CronId)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("ir_cron_trigger_cron_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.IrCronTriggerWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("ir_cron_trigger_write_uid_fkey");

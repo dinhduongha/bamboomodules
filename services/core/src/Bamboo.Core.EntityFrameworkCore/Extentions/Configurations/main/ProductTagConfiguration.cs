@@ -40,8 +40,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.PosDescription)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("pos_description");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.VisibleOnEcommerce).HasColumnName("visible_on_ecommerce");
+                        entity.Property(e => e.VisibleToCustomers).HasColumnName("visible_to_customers");
                         entity.Property(e => e.WebsiteId).HasColumnName("website_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

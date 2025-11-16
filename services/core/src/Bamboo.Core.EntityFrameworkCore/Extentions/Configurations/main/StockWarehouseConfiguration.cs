@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ViewLocationId, "stock_warehouse__view_location_id_index");
+
                         entity.HasIndex(e => new { e.Code, e.TenantId }, "stock_warehouse_warehouse_code_uniq").IsUnique();
 
                         entity.HasIndex(e => new { e.Name, e.TenantId }, "stock_warehouse_warehouse_name_uniq").IsUnique();
@@ -33,7 +35,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.BuyPullId).HasColumnName("buy_pull_id");
-                        entity.Property(e => e.BuyToResupply).HasColumnName("buy_to_resupply");
                         entity.Property(e => e.Code).HasColumnName("code");
 
                         entity.Property(e => e.CreationTime)
@@ -41,7 +42,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.CrossdockRouteId).HasColumnName("crossdock_route_id");
                         entity.Property(e => e.DeliveryRouteId).HasColumnName("delivery_route_id");
                         entity.Property(e => e.DeliverySteps).HasColumnName("delivery_steps");
                         entity.Property(e => e.InTypeId).HasColumnName("in_type_id");
@@ -51,7 +51,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ManufactureMtoPullId).HasColumnName("manufacture_mto_pull_id");
                         entity.Property(e => e.ManufacturePullId).HasColumnName("manufacture_pull_id");
                         entity.Property(e => e.ManufactureSteps).HasColumnName("manufacture_steps");
-                        entity.Property(e => e.ManufactureToResupply).HasColumnName("manufacture_to_resupply");
                         entity.Property(e => e.MtoPullId).HasColumnName("mto_pull_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.OpeningHours).HasColumnName("opening_hours");
@@ -75,7 +74,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.StoreTypeId).HasColumnName("store_type_id");
                         entity.Property(e => e.SubcontractingDropshippingPullId).HasColumnName("subcontracting_dropshipping_pull_id");
-                        entity.Property(e => e.SubcontractingDropshippingToResupply).HasColumnName("subcontracting_dropshipping_to_resupply");
                         entity.Property(e => e.SubcontractingMtoPullId).HasColumnName("subcontracting_mto_pull_id");
                         entity.Property(e => e.SubcontractingPullId).HasColumnName("subcontracting_pull_id");
                         entity.Property(e => e.SubcontractingResupplyTypeId).HasColumnName("subcontracting_resupply_type_id");
@@ -109,11 +107,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_warehouse_create_uid_fkey");
-
-                        entity.HasOne(d => d.CrossdockRoute).WithMany(p => p.StockWarehouseCrossdockRoute)
-                            .HasForeignKey(d => d.CrossdockRouteId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("stock_warehouse_crossdock_route_id_fkey");
 
                         entity.HasOne(d => d.DeliveryRoute).WithMany(p => p.StockWarehouseDeliveryRoute)
                             .HasForeignKey(d => d.DeliveryRouteId)

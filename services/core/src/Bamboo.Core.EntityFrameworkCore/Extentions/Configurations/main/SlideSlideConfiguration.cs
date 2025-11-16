@@ -20,7 +20,13 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CategoryId, "slide_slide__category_id_index").HasFilter("(category_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ChannelId, "slide_slide__channel_id_index");
+
                         entity.HasIndex(e => e.IsPublished, "slide_slide__is_published_index");
+
+                        entity.HasIndex(e => e.SurveyId, "slide_slide__survey_id_index").HasFilter("(survey_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -51,6 +57,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.IsCategory).HasColumnName("is_category");
                         entity.Property(e => e.IsPreview).HasColumnName("is_preview");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Likes).HasColumnName("likes");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")

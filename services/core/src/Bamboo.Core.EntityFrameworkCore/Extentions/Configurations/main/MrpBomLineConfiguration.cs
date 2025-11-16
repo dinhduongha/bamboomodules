@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ProductId, "mrp_bom_line__product_id_index");
+
                         entity.HasIndex(e => e.ProductTmplId, "mrp_bom_line__product_tmpl_id_index");
 
                         entity.Property(e => e.Id)
@@ -39,7 +41,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.ManualConsumption).HasColumnName("manual_consumption");
                         entity.Property(e => e.OperationId).HasColumnName("operation_id");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.ProductQty).HasColumnName("product_qty");

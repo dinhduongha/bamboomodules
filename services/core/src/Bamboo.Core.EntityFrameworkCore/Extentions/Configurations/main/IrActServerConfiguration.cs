@@ -16,7 +16,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_act_server");
 
+                        entity.HasIndex(e => e.BaseAutomationId, "ir_act_server__base_automation_id_index").HasFilter("(base_automation_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ModelId, "ir_act_server__model_id_index");
+
+                        entity.HasIndex(e => e.ParentId, "ir_act_server__parent_id_index");
 
                         entity.HasIndex(e => e.Path, "ir_act_server_path_unique").IsUnique();
 
@@ -31,6 +35,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ActivityUserFieldName).HasColumnName("activity_user_field_name");
                         entity.Property(e => e.ActivityUserId).HasColumnName("activity_user_id");
                         entity.Property(e => e.ActivityUserType).HasColumnName("activity_user_type");
+                        entity.Property(e => e.AutomatedName).HasColumnName("automated_name");
                         entity.Property(e => e.BaseAutomationId).HasColumnName("base_automation_id");
                         entity.Property(e => e.BindingModelId).HasColumnName("binding_model_id");
                         entity.Property(e => e.BindingType).HasColumnName("binding_type");
@@ -43,21 +48,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CrudModelId).HasColumnName("crud_model_id");
                         entity.Property(e => e.EvaluationType).HasColumnName("evaluation_type");
+                        entity.Property(e => e.FollowersPartnerFieldName).HasColumnName("followers_partner_field_name");
+                        entity.Property(e => e.FollowersType).HasColumnName("followers_type");
                         entity.Property(e => e.Help)
                             .HasColumnType("jsonb")
                             .HasColumnName("help");
+                        entity.Property(e => e.HtmlValue).HasColumnName("html_value");
                         entity.Property(e => e.LinkFieldId).HasColumnName("link_field_id");
                         entity.Property(e => e.MailPostAutofollow).HasColumnName("mail_post_autofollow");
                         entity.Property(e => e.MailPostMethod).HasColumnName("mail_post_method");
                         entity.Property(e => e.ModelId).HasColumnName("model_id");
-                        entity.Property(e => e.ModelName).HasColumnName("model_name");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.ParentId).HasColumnName("parent_id");
                         entity.Property(e => e.Path).HasColumnName("path");
                         entity.Property(e => e.ResourceRef).HasColumnName("resource_ref");
                         entity.Property(e => e.SelectionValue).HasColumnName("selection_value");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.SequenceId).HasColumnName("sequence_id");
                         entity.Property(e => e.SmsMethod).HasColumnName("sms_method");
                         entity.Property(e => e.SmsTemplateId).HasColumnName("sms_template_id");
                         entity.Property(e => e.State).HasColumnName("state");
@@ -120,10 +129,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("ir_act_server_model_id_fkey");
 
+                        entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent)
+                            .HasForeignKey(d => d.ParentId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("ir_act_server_parent_id_fkey");
+
                         entity.HasOne(d => d.SelectionValueNavigation).WithMany(p => p.IrActServer)
                             .HasForeignKey(d => d.SelectionValue)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("ir_act_server_selection_value_fkey");
+
+                        entity.HasOne(d => d.SequenceNavigation).WithMany(p => p.IrActServer)
+                            .HasForeignKey(d => d.SequenceId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("ir_act_server_sequence_id_fkey");
 
                         entity.HasOne(d => d.SmsTemplate).WithMany(p => p.IrActServer)
                             .HasForeignKey(d => d.SmsTemplateId)
@@ -150,25 +169,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("ir_act_server_write_uid_fkey");
-
-                        // entity.HasMany(d => d.Action).WithMany(p => p.Server)
-                        entity.HasMany(d => d.Action).WithMany(p => p.Server)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "RelServerActions",
-                                r => r.HasOne<IrActServer>().WithMany()
-                                    .HasForeignKey("ActionId")
-                                    .HasConstraintName("rel_server_actions_action_id_fkey"),
-                                l => l.HasOne<IrActServer>().WithMany()
-                                    .HasForeignKey("ServerId")
-                                    .HasConstraintName("rel_server_actions_server_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("ServerId", "ActionId").HasName("rel_server_actions_pkey");
-                                    j.ToTable("rel_server_actions");
-                                    j.HasIndex(new[] { "ActionId", "ServerId" }, "rel_server_actions_action_id_server_id_idx");
-                                    j.IndexerProperty<Guid>("ServerId").HasColumnName("server_id");
-                                    j.IndexerProperty<Guid>("ActionId").HasColumnName("action_id");
-                                });
 
                         // entity.HasMany(d => d.Field).WithMany(p => p.Server)
                         entity.HasMany(d => d.Field).WithMany(p => p.Server)
@@ -225,25 +225,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "ResPartnerId", "IrActServerId" }, "ir_act_server_res_partner_rel_res_partner_id_ir_act_server__idx");
                                     j.IndexerProperty<Guid>("IrActServerId").HasColumnName("ir_act_server_id");
                                     j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
-                                });
-
-                        // entity.HasMany(d => d.Server).WithMany(p => p.Action)
-                        entity.HasMany(d => d.Server).WithMany(p => p.Action)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "RelServerActions",
-                                r => r.HasOne<IrActServer>().WithMany()
-                                    .HasForeignKey("ServerId")
-                                    .HasConstraintName("rel_server_actions_server_id_fkey"),
-                                l => l.HasOne<IrActServer>().WithMany()
-                                    .HasForeignKey("ActionId")
-                                    .HasConstraintName("rel_server_actions_action_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("ServerId", "ActionId").HasName("rel_server_actions_pkey");
-                                    j.ToTable("rel_server_actions");
-                                    j.HasIndex(new[] { "ActionId", "ServerId" }, "rel_server_actions_action_id_server_id_idx");
-                                    j.IndexerProperty<Guid>("ServerId").HasColumnName("server_id");
-                                    j.IndexerProperty<Guid>("ActionId").HasColumnName("action_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

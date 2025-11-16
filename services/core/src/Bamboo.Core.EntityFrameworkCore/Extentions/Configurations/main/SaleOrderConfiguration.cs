@@ -30,6 +30,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasMethod("gin")
                             .HasOperators(new[] { "gin_trgm_ops" });
 
+                        entity.HasIndex(e => e.OpportunityId, "sale_order__opportunity_id_index").HasFilter("(opportunity_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.PartnerId, "sale_order__partner_id_index");
 
                         entity.HasIndex(e => e.PartnerInvoiceId, "sale_order__partner_invoice_id_index").HasFilter("(partner_invoice_id IS NOT NULL)");
@@ -104,9 +106,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PickupLocationData)
                             .HasColumnType("jsonb")
                             .HasColumnName("pickup_location_data");
+                        entity.Property(e => e.PreferredPaymentMethodLineId).HasColumnName("preferred_payment_method_line_id");
                         entity.Property(e => e.PrepaymentPercent).HasColumnName("prepayment_percent");
                         entity.Property(e => e.PricelistId).HasColumnName("pricelist_id");
-                        entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
                         entity.Property(e => e.ProjectId).HasColumnName("project_id");
                         entity.Property(e => e.RecomputeDeliveryPrice).HasColumnName("recompute_delivery_price");
                         entity.Property(e => e.Reference).HasColumnName("reference");
@@ -214,15 +216,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sale_order_pending_email_template_id_fkey");
 
+                        entity.HasOne(d => d.PreferredPaymentMethodLine).WithMany(p => p.SaleOrder)
+                            .HasForeignKey(d => d.PreferredPaymentMethodLineId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("sale_order_preferred_payment_method_line_id_fkey");
+
                         entity.HasOne(d => d.Pricelist).WithMany(p => p.SaleOrder)
                             .HasForeignKey(d => d.PricelistId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sale_order_pricelist_id_fkey");
-
-                        entity.HasOne(d => d.ProcurementGroupNavigation).WithMany(p => p.SaleOrder)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("sale_order_procurement_group_id_fkey");
 
                         entity.HasOne(d => d.Project).WithMany(p => p.SaleOrder)
                             .HasForeignKey(d => d.ProjectId)
@@ -341,6 +343,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "QuotationDocumentId", "SaleOrderId" }, "quotation_document_sale_order_quotation_document_id_sale_or_idx");
                                     j.IndexerProperty<Guid>("SaleOrderId").HasColumnName("sale_order_id");
                                     j.IndexerProperty<Guid>("QuotationDocumentId").HasColumnName("quotation_document_id");
+                                });
+
+                        // entity.HasMany(d => d.ReferenceNavigation).WithMany(p => p.Sale)
+                        entity.HasMany(d => d.ReferenceNavigation).WithMany(p => p.Sale)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferenceSaleRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_sale_rel_reference_id_fkey"),
+                                l => l.HasOne<SaleOrder>().WithMany()
+                                    .HasForeignKey("SaleId")
+                                    .HasConstraintName("stock_reference_sale_rel_sale_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SaleId", "ReferenceId").HasName("stock_reference_sale_rel_pkey");
+                                    j.ToTable("stock_reference_sale_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "SaleId" }, "stock_reference_sale_rel_reference_id_sale_id_idx");
+                                    j.IndexerProperty<Guid>("SaleId").HasColumnName("sale_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
                                 });
 
                         // entity.HasMany(d => d.Tag).WithMany(p => p.Order)

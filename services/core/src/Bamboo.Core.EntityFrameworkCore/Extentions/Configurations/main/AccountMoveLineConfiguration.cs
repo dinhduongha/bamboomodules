@@ -24,11 +24,15 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.DateMaturity, "account_move_line__date_maturity_index");
 
+                        entity.HasIndex(e => e.ExpenseId, "account_move_line__expense_id_index").HasFilter("(expense_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.FullReconcileId, "account_move_line__full_reconcile_id_index").HasFilter("(full_reconcile_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.GroupTaxId, "account_move_line__group_tax_id_index").HasFilter("(group_tax_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.JournalId, "account_move_line__journal_id_index");
+
+                        entity.HasIndex(e => e.L10nLatamDocumentTypeId, "account_move_line__l10n_latam_document_type_id_index").HasFilter("(l10n_latam_document_type_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.MatchingNumber, "account_move_line__matching_number_index");
 
@@ -37,6 +41,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.MoveName, "account_move_line__move_name_index");
 
                         entity.HasIndex(e => e.PaymentId, "account_move_line__payment_id_index").HasFilter("(payment_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ProductId, "account_move_line__product_id_index");
 
                         entity.HasIndex(e => e.PurchaseLineId, "account_move_line__purchase_line_id_index").HasFilter("(purchase_line_id IS NOT NULL)");
 
@@ -48,17 +54,17 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.StatementLineId, "account_move_line__statement_line_id_index").HasFilter("(statement_line_id IS NOT NULL)");
 
-                        entity.HasIndex(e => new { e.AccountId, e.PartnerId }, "account_move_line__unreconciled_index").HasFilter("(((reconciled IS NULL) OR (reconciled = false) OR (reconciled IS NOT TRUE)) AND (parent_state = 'posted'::text))");
-
                         entity.HasIndex(e => e.VehicleId, "account_move_line__vehicle_id_index").HasFilter("(vehicle_id IS NOT NULL)");
 
                         entity.HasIndex(e => new { e.AccountId, e.Date }, "account_move_line_account_id_date_idx");
 
                         entity.HasIndex(e => new { e.Date, e.MoveName, e.Id }, "account_move_line_date_name_id_idx").IsDescending(true, true, false);
 
-                        entity.HasIndex(e => e.JournalId, "account_move_line_journal_id_neg_amnt_residual_idx").HasFilter("((amount_residual < (0)::numeric) AND (parent_state = 'posted'::text))");
+                        entity.HasIndex(e => e.JournalId, "account_move_line_journal_id_neg_amnt_residual_idx").HasFilter("(amount_residual < (0)::numeric)");
 
                         entity.HasIndex(e => new { e.PartnerId, e.Ref }, "account_move_line_partner_id_ref_idx");
+
+                        entity.HasIndex(e => new { e.AccountId, e.PartnerId }, "account_move_line_unreconciled_index").HasFilter("(reconciled IS NOT TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -80,6 +86,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AssetStartDate).HasColumnName("asset_start_date");
                         entity.Property(e => e.Balance).HasColumnName("balance");
                         entity.Property(e => e.CogsOriginId).HasColumnName("cogs_origin_id");
+                        entity.Property(e => e.CollapseComposition).HasColumnName("collapse_composition");
+                        entity.Property(e => e.CollapsePrices).HasColumnName("collapse_prices");
                         entity.Property(e => e.CompanyCurrencyId).HasColumnName("company_currency_id");
 
                         entity.Property(e => e.CreationTime)
@@ -92,12 +100,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.DateMaturity).HasColumnName("date_maturity");
                         entity.Property(e => e.Debit).HasColumnName("debit");
+                        entity.Property(e => e.DeductibleAmount).HasColumnName("deductible_amount");
                         entity.Property(e => e.Discount).HasColumnName("discount");
                         entity.Property(e => e.DiscountAmountCurrency).HasColumnName("discount_amount_currency");
                         entity.Property(e => e.DiscountBalance).HasColumnName("discount_balance");
                         entity.Property(e => e.DiscountDate).HasColumnName("discount_date");
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
                         entity.Property(e => e.ExpenseId).HasColumnName("expense_id");
+                        entity.Property(e => e.ExtraTaxData)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("extra_tax_data");
                         entity.Property(e => e.FollowupDate).HasColumnName("followup_date");
                         entity.Property(e => e.FollowupLineId).HasColumnName("followup_line_id");
                         entity.Property(e => e.FullReconcileId).HasColumnName("full_reconcile_id");
@@ -106,11 +118,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.IsDownpayment).HasColumnName("is_downpayment");
                         entity.Property(e => e.IsImported).HasColumnName("is_imported");
                         entity.Property(e => e.IsLandedCostsLine).HasColumnName("is_landed_costs_line");
+                        entity.Property(e => e.IsStorno).HasColumnName("is_storno");
                         entity.Property(e => e.JournalId).HasColumnName("journal_id");
+                        entity.Property(e => e.L10nLatamDocumentTypeId).HasColumnName("l10n_latam_document_type_id");
                         entity.Property(e => e.MatchingNumber).HasColumnName("matching_number");
                         entity.Property(e => e.MoveId).HasColumnName("move_id");
                         entity.Property(e => e.MoveName).HasColumnName("move_name");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.NoFollowup).HasColumnName("no_followup");
                         entity.Property(e => e.ParentState).HasColumnName("parent_state");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.PaymentId).HasColumnName("payment_id");
@@ -131,7 +146,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TaxGroupId).HasColumnName("tax_group_id");
                         entity.Property(e => e.TaxLineId).HasColumnName("tax_line_id");
                         entity.Property(e => e.TaxRepartitionLineId).HasColumnName("tax_repartition_line_id");
-                        entity.Property(e => e.TaxTagInvert).HasColumnName("tax_tag_invert");
                         entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -203,6 +217,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.JournalId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_line_journal_id_fkey");
+
+                        entity.HasOne(d => d.L10nLatamDocumentType).WithMany(p => p.AccountMoveLine)
+                            .HasForeignKey(d => d.L10nLatamDocumentTypeId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_move_line_l10n_latam_document_type_id_fkey");
 
                         entity.HasOne(d => d.Move).WithMany(p => p.AccountMoveLine)
                             .HasForeignKey(d => d.MoveId)

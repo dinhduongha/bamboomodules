@@ -48,12 +48,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ProductPropertiesDefinition)
                             .HasColumnType("jsonb")
                             .HasColumnName("product_properties_definition");
-                        entity.Property(e => e.PropertyAccountCreditorPriceDifferenceCateg)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("property_account_creditor_price_difference_categ");
-                        entity.Property(e => e.PropertyAccountDownpaymentCategId)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("property_account_downpayment_categ_id");
                         entity.Property(e => e.PropertyAccountExpenseCategId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_account_expense_categ_id");
@@ -63,12 +57,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PropertyCostMethod)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_cost_method");
-                        entity.Property(e => e.PropertyStockAccountInputCategId)
+                        entity.Property(e => e.PropertyPriceDifferenceAccountId)
                             .HasColumnType("jsonb")
-                            .HasColumnName("property_stock_account_input_categ_id");
-                        entity.Property(e => e.PropertyStockAccountOutputCategId)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("property_stock_account_output_categ_id");
+                            .HasColumnName("property_price_difference_account_id");
                         entity.Property(e => e.PropertyStockAccountProductionCostId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_stock_account_production_cost_id");

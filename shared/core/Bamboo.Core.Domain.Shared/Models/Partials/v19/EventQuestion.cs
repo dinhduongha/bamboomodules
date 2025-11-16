@@ -26,18 +26,18 @@ public partial class EventQuestion
     [Column("is_reusable")]
     public bool? IsReusable { get; set; }
 
-    // [Many2many] // Hidden
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [NotMapped] //Many2many // Hidden
-    // // [ForeignKey("EventQuestionId")] //Many2many // Hidden
-    // // [InverseProperty("EventQuestion")] //Many2many // Hidden
-    // public virtual ICollection<EventEvent> EventEvent { get; set; }
+    [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EventQuestionId")] //Many2many // Hidden
+    // [InverseProperty("EventQuestion")] //Many2many // Hidden
+    public virtual ICollection<EventEvent> EventEvent { get; set; }
 
-    // [Many2many] // Hidden
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [NotMapped] //Many2many // Hidden
-    // // [ForeignKey("EventQuestionId")] //Many2many // Hidden
-    // // [InverseProperty("EventQuestion")] //Many2many // Hidden
-    // public virtual ICollection<EventType> EventType { get; set; }
+    [Many2many] // Hidden
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [NotMapped] //Many2many // Hidden
+    // [ForeignKey("EventQuestionId")] //Many2many // Hidden
+    // [InverseProperty("EventQuestion")] //Many2many // Hidden
+    public virtual ICollection<EventType> EventType { get; set; }
 
 }

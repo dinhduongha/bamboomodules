@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_sequence_date_range");
 
+                        entity.HasIndex(e => new { e.SequenceId, e.DateFrom, e.DateTo }, "ir_sequence_date_range_unique_range_per_sequence").IsUnique();
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

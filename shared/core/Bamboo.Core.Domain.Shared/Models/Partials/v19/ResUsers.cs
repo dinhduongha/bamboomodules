@@ -156,4 +156,9 @@ public partial class ResUsers
     // [InverseProperty("ResUsers")] //Many2many // Hidden
     public virtual ICollection<SpreadsheetDashboard> SpreadsheetDashboard { get; set; }
 
+    // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public virtual MailPresence? MailPresence { get; set; }
+
+
 }

@@ -43,10 +43,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.LegendNormal)
                             .HasColumnType("jsonb")
                             .HasColumnName("legend_normal");
+                        entity.Property(e => e.LegendWaiting)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("legend_waiting");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
                         entity.Property(e => e.Requirements).HasColumnName("requirements");
+                        entity.Property(e => e.RottingThresholdDays).HasColumnName("rotting_threshold_days");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.TemplateId).HasColumnName("template_id");
                         entity.Property(e => e.LastModificationTime)

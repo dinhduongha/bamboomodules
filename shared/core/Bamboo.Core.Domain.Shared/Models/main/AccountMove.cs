@@ -548,10 +548,11 @@ public partial class AccountMove : FullAuditedAggregateRoot<Guid>, IEntityDto<Gu
     // [InverseProperty("VendorBill")] // One2many
     public virtual ICollection<StockLandedCost> StockLandedCostVendorBill { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("StockMoveId")]
-    public virtual StockMove? StockMove { get; set; }
+    // CONFLICK-V19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("StockMoveId")]
+    // public virtual StockMove? StockMove { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

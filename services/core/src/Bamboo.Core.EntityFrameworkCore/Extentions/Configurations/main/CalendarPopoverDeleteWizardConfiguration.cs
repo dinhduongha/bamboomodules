@@ -27,17 +27,26 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Body).HasColumnName("body");
+                        entity.Property(e => e.CalendarEventId).HasColumnName("calendar_event_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Delete).HasColumnName("delete");
-                        entity.Property(e => e.Record).HasColumnName("record");
+                        entity.Property(e => e.Lang).HasColumnName("lang");
+                        entity.Property(e => e.Subject).HasColumnName("subject");
+                        entity.Property(e => e.TemplateId).HasColumnName("template_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                        entity.HasOne(d => d.CalendarEvent).WithMany(p => p.CalendarPopoverDeleteWizard)
+                            .HasForeignKey(d => d.CalendarEventId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("calendar_popover_delete_wizard_calendar_event_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.CalendarPopoverDeleteWizardCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_popover_delete_wizard_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
@@ -45,10 +54,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("calendar_popover_delete_wizard_create_uid_fkey");
 
-                        entity.HasOne(d => d.RecordNavigation).WithMany(p => p.CalendarPopoverDeleteWizard)
-                            .HasForeignKey(d => d.Record)
+                        entity.HasOne(d => d.Template).WithMany(p => p.CalendarPopoverDeleteWizard)
+                            .HasForeignKey(d => d.TemplateId)
                             .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("calendar_popover_delete_wizard_record_fkey");
+                            .HasConstraintName("calendar_popover_delete_wizard_template_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.CalendarPopoverDeleteWizardWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_popover_delete_wizard_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

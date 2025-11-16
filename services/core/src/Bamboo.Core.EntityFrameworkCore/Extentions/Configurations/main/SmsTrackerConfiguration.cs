@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.MailNotificationId, "sms_tracker__mail_notification_id_index").HasFilter("(mail_notification_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.MailingTraceId, "sms_tracker__mailing_trace_id_index").HasFilter("(mailing_trace_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.SmsUuid, "sms_tracker_sms_uuid_unique").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -36,6 +40,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.MailNotificationId).HasColumnName("mail_notification_id");
                         entity.Property(e => e.MailingTraceId).HasColumnName("mailing_trace_id");
+                        entity.Property(e => e.SmsTwilioSid).HasColumnName("sms_twilio_sid");
                         entity.Property(e => e.SmsUuid).HasColumnName("sms_uuid");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

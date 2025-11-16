@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ListId, "mailing_subscription__list_id_index");
+
                         entity.HasIndex(e => new { e.ContactId, e.ListId }, "mailing_subscription_unique_contact_list").IsUnique();
 
                         entity.Property(e => e.Id)

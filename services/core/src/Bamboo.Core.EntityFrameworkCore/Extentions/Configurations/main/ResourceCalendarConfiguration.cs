@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.TenantId, "resource_calendar__company_id_index").HasFilter("(company_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -34,10 +36,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.DurationBased).HasColumnName("duration_based");
                         entity.Property(e => e.FlexibleHours).HasColumnName("flexible_hours");
                         entity.Property(e => e.FullTimeRequiredHours).HasColumnName("full_time_required_hours");
                         entity.Property(e => e.HoursPerDay).HasColumnName("hours_per_day");
+                        entity.Property(e => e.HoursPerWeek).HasColumnName("hours_per_week");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.ScheduleType).HasColumnName("schedule_type");
                         entity.Property(e => e.TwoWeeksCalendar).HasColumnName("two_weeks_calendar");
                         entity.Property(e => e.Tz).HasColumnName("tz");
                         entity.Property(e => e.LastModificationTime)

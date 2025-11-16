@@ -47,7 +47,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Description).HasColumnName("description");
                         entity.Property(e => e.Duration).HasColumnName("duration");
                         entity.Property(e => e.LossId).HasColumnName("loss_id");
-                        entity.Property(e => e.LossType).HasColumnName("loss_type");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.WorkcenterId).HasColumnName("workcenter_id");
                         entity.Property(e => e.WorkorderId).HasColumnName("workorder_id");

@@ -51,8 +51,9 @@ public partial class SaleOrderLine : FullAuditedAggregateRoot<Guid>, IEntityDto<
     [Column("product_id")]
     public Guid? ProductId { get; set; }
 
-    [Column("product_uom")]
-    public Guid? ProductUom { get; set; }
+    // CONFLICK-V19
+    // [Column("product_uom")]
+    // public Guid? ProductUom { get; set; }
 
     [Column("linked_line_id")]
     public Guid? LinkedLineId { get; set; }
@@ -289,6 +290,7 @@ public partial class SaleOrderLine : FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("EventTicketId")]
     public virtual EventEventTicket? EventTicket { get; set; }
 
+    // CONFLICK-V19
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ExpenseId")]
@@ -347,10 +349,11 @@ public partial class SaleOrderLine : FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("ProductPackagingId")]
     public virtual ProductPackaging? ProductPackaging { get; set; }
 
+    // CONFLICK-V19
     // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("ProductUom")]
-    public virtual UomUom? ProductUomNavigation { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("ProductUom")]
+    // public virtual UomUom? ProductUomNavigation { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

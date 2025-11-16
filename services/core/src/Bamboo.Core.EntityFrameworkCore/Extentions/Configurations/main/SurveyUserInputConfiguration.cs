@@ -53,7 +53,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("end_datetime");
                         entity.Property(e => e.InviteToken).HasColumnName("invite_token");
                         entity.Property(e => e.IsSessionAnswer).HasColumnName("is_session_answer");
+                        entity.Property(e => e.LangId).HasColumnName("lang_id");
                         entity.Property(e => e.LastDisplayedPageId).HasColumnName("last_displayed_page_id");
+                        entity.Property(e => e.LeadId).HasColumnName("lead_id");
                         entity.Property(e => e.Nickname).HasColumnName("nickname");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.ScoringPercentage).HasColumnName("scoring_percentage");
@@ -84,10 +86,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("survey_user_input_create_uid_fkey");
 
+                        entity.HasOne(d => d.Lang).WithMany(p => p.SurveyUserInput)
+                            .HasForeignKey(d => d.LangId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("survey_user_input_lang_id_fkey");
+
                         entity.HasOne(d => d.LastDisplayedPage).WithMany(p => p.SurveyUserInputNavigation)
                             .HasForeignKey(d => d.LastDisplayedPageId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("survey_user_input_last_displayed_page_id_fkey");
+
+                        entity.HasOne(d => d.Lead).WithMany(p => p.SurveyUserInput)
+                            .HasForeignKey(d => d.LeadId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("survey_user_input_lead_id_fkey");
 
                         // entity.HasOne(d => d.Partner).WithMany(p => p.SurveyUserInput) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("survey_user_input_partner_id_fkey");
                         entity.HasOne(d => d.Partner).WithMany()

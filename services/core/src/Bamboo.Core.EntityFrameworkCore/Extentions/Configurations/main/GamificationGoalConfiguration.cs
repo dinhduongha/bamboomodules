@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ChallengeId, "gamification_goal__challenge_id_index");
 
+                        entity.HasIndex(e => e.UserId, "gamification_goal__user_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

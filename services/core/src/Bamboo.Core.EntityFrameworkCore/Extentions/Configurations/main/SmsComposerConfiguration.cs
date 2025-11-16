@@ -38,7 +38,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.MassForceSend).HasColumnName("mass_force_send");
                         entity.Property(e => e.MassKeepLog).HasColumnName("mass_keep_log");
                         entity.Property(e => e.MassSmsAllowUnsubscribe).HasColumnName("mass_sms_allow_unsubscribe");
-                        entity.Property(e => e.MassUseBlacklist).HasColumnName("mass_use_blacklist");
                         entity.Property(e => e.NumberFieldName).HasColumnName("number_field_name");
                         entity.Property(e => e.Numbers).HasColumnName("numbers");
                         entity.Property(e => e.RecipientSingleNumberItf).HasColumnName("recipient_single_number_itf");
@@ -46,6 +45,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ResIds).HasColumnName("res_ids");
                         entity.Property(e => e.ResModel).HasColumnName("res_model");
                         entity.Property(e => e.TemplateId).HasColumnName("template_id");
+                        entity.Property(e => e.UseExclusionList).HasColumnName("use_exclusion_list");
                         entity.Property(e => e.UtmCampaignId).HasColumnName("utm_campaign_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

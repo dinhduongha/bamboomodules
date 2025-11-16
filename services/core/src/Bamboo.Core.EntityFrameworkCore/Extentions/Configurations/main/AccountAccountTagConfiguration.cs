@@ -41,7 +41,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
-                        entity.Property(e => e.TaxNegate).HasColumnName("tax_negate");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

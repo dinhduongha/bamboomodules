@@ -22,6 +22,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.LocationId, "stock_warehouse_orderpoint__location_id_index");
 
+                        entity.HasIndex(e => e.ProductId, "stock_warehouse_orderpoint__product_id_index");
+
+                        entity.HasIndex(e => e.WarehouseId, "stock_warehouse_orderpoint__warehouse_id_index");
+
                         entity.HasIndex(e => new { e.ProductId, e.LocationId, e.TenantId }, "stock_warehouse_orderpoint_product_location_check").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -39,23 +43,19 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
+                        entity.Property(e => e.DeadlineDate).HasColumnName("deadline_date");
                         entity.Property(e => e.LocationId).HasColumnName("location_id");
-                        entity.Property(e => e.ManufacturingVisibilityDays).HasColumnName("manufacturing_visibility_days");
                         entity.Property(e => e.Name).HasColumnName("name");
-                        entity.Property(e => e.ProductCategoryId).HasColumnName("product_category_id");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.ProductMaxQty).HasColumnName("product_max_qty");
                         entity.Property(e => e.ProductMinQty).HasColumnName("product_min_qty");
-                        entity.Property(e => e.ProductSupplierId).HasColumnName("product_supplier_id");
-                        entity.Property(e => e.PurchaseVisibilityDays).HasColumnName("purchase_visibility_days");
-                        entity.Property(e => e.QtyMultiple).HasColumnName("qty_multiple");
+                        entity.Property(e => e.QtyToOrderComputed).HasColumnName("qty_to_order_computed");
                         entity.Property(e => e.QtyToOrderManual).HasColumnName("qty_to_order_manual");
+                        entity.Property(e => e.ReplenishmentUomId).HasColumnName("replenishment_uom_id");
                         entity.Property(e => e.RouteId).HasColumnName("route_id");
                         entity.Property(e => e.SnoozedUntil).HasColumnName("snoozed_until");
                         entity.Property(e => e.SupplierId).HasColumnName("supplier_id");
                         entity.Property(e => e.Trigger).HasColumnName("trigger");
-                        entity.Property(e => e.VendorId).HasColumnName("vendor_id");
                         entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -79,20 +79,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_warehouse_orderpoint_create_uid_fkey");
 
-                        entity.HasOne(d => d.Group).WithMany(p => p.StockWarehouseOrderpoint)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_warehouse_orderpoint_group_id_fkey");
-
                         entity.HasOne(d => d.Location).WithMany(p => p.StockWarehouseOrderpoint)
                             .HasForeignKey(d => d.LocationId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_warehouse_orderpoint_location_id_fkey");
-
-                        entity.HasOne(d => d.ProductCategory).WithMany(p => p.StockWarehouseOrderpoint)
-                            .HasForeignKey(d => d.ProductCategoryId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_warehouse_orderpoint_product_category_id_fkey");
 
                         // entity.HasOne(d => d.Product).WithMany(p => p.StockWarehouseOrderpoint) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("stock_warehouse_orderpoint_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()
@@ -100,11 +90,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_warehouse_orderpoint_product_id_fkey");
 
-                        // entity.HasOne(d => d.ProductSupplier).WithMany(p => p.StockWarehouseOrderpointProductSupplier) .HasForeignKey(d => d.ProductSupplierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_warehouse_orderpoint_product_supplier_id_fkey");
-                        entity.HasOne(d => d.ProductSupplier).WithMany()
-                            .HasForeignKey(d => d.ProductSupplierId)
+                        // entity.HasOne(d => d.ReplenishmentUom).WithMany(p => p.StockWarehouseOrderpoint) .HasForeignKey(d => d.ReplenishmentUomId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_warehouse_orderpoint_replenishment_uom_id_fkey");
+                        entity.HasOne(d => d.ReplenishmentUom).WithMany()
+                            .HasForeignKey(d => d.ReplenishmentUomId)
                             .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_warehouse_orderpoint_product_supplier_id_fkey");
+                            .HasConstraintName("stock_warehouse_orderpoint_replenishment_uom_id_fkey");
 
                         entity.HasOne(d => d.Route).WithMany(p => p.StockWarehouseOrderpoint)
                             .HasForeignKey(d => d.RouteId)
@@ -115,12 +105,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.SupplierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_warehouse_orderpoint_supplier_id_fkey");
-
-                        // entity.HasOne(d => d.Vendor).WithMany(p => p.StockWarehouseOrderpointVendor) .HasForeignKey(d => d.VendorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_warehouse_orderpoint_vendor_id_fkey");
-                        entity.HasOne(d => d.Vendor).WithMany()
-                            .HasForeignKey(d => d.VendorId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_warehouse_orderpoint_vendor_id_fkey");
 
                         entity.HasOne(d => d.Warehouse).WithMany(p => p.StockWarehouseOrderpoint)
                             .HasForeignKey(d => d.WarehouseId)

@@ -71,16 +71,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.Date)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("date");
                         entity.Property(e => e.DateDeadline)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date_deadline");
                         entity.Property(e => e.DateDone)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date_done");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
                         entity.Property(e => e.HasDeadlineIssue).HasColumnName("has_deadline_issue");
                         entity.Property(e => e.IsLocked).HasColumnName("is_locked");
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
@@ -105,6 +101,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ScheduledDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("scheduled_date");
+                        entity.Property(e => e.ShippingWeight).HasColumnName("shipping_weight");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.WebsiteId).HasColumnName("website_id");
@@ -140,11 +137,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_picking_create_uid_fkey");
-
-                        entity.HasOne(d => d.Group).WithMany(p => p.StockPicking)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_picking_group_id_fkey");
 
                         entity.HasOne(d => d.LocationDest).WithMany(p => p.StockPickingLocationDest)
                             .HasForeignKey(d => d.LocationDestId)
@@ -215,6 +207,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_picking_write_uid_fkey");
+
+                        // entity.HasMany(d => d.StockPackageHistory).WithMany(p => p.StockPicking)
+                        entity.HasMany(d => d.StockPackageHistory).WithMany(p => p.StockPicking)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockPackageHistoryStockPickingRel",
+                                r => r.HasOne<StockPackageHistory>().WithMany()
+                                    .HasForeignKey("StockPackageHistoryId")
+                                    .HasConstraintName("stock_package_history_stock_picki_stock_package_history_id_fkey"),
+                                l => l.HasOne<StockPicking>().WithMany()
+                                    .HasForeignKey("StockPickingId")
+                                    .HasConstraintName("stock_package_history_stock_picking_rel_stock_picking_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("StockPickingId", "StockPackageHistoryId").HasName("stock_package_history_stock_picking_rel_pkey");
+                                    j.ToTable("stock_package_history_stock_picking_rel");
+                                    j.HasIndex(new[] { "StockPackageHistoryId", "StockPickingId" }, "stock_package_history_stock_p_stock_package_history_id_stoc_idx");
+                                    j.IndexerProperty<Guid>("StockPickingId").HasColumnName("stock_picking_id");
+                                    j.IndexerProperty<Guid>("StockPackageHistoryId").HasColumnName("stock_package_history_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

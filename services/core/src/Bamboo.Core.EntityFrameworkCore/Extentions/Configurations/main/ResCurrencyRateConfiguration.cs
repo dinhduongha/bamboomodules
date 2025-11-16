@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CurrencyId, "res_currency_rate__currency_id_index");
+
                         entity.HasIndex(e => e.Name, "res_currency_rate__name_index");
 
                         entity.HasIndex(e => new { e.Name, e.CurrencyId, e.TenantId }, "res_currency_rate_unique_name_per_day").IsUnique();

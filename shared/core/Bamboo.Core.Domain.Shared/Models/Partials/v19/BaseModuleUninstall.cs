@@ -21,5 +21,5 @@ public partial class BaseModuleUninstall
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("BaseModuleUninstallId")] // Many2many // Normal
     // [InverseProperty("BaseModuleUninstall")] // Many2many // Normal
-    public virtual ICollection<IrModuleModule> IrModuleModules { get; set; }
+    public virtual ICollection<IrModuleModule> IrModuleModule { get; set; }
 }

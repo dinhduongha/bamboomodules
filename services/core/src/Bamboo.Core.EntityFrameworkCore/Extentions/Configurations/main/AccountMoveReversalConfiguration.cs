@@ -35,6 +35,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.JournalId).HasColumnName("journal_id");
+                        entity.Property(e => e.L10nLatamDocumentNumber).HasColumnName("l10n_latam_document_number");
+                        entity.Property(e => e.L10nLatamDocumentTypeId).HasColumnName("l10n_latam_document_type_id");
                         entity.Property(e => e.Reason).HasColumnName("reason");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -58,6 +60,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.JournalId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("account_move_reversal_journal_id_fkey");
+
+                        entity.HasOne(d => d.L10nLatamDocumentType).WithMany(p => p.AccountMoveReversal)
+                            .HasForeignKey(d => d.L10nLatamDocumentTypeId)
+                            .OnDelete(DeleteBehavior.Cascade)
+                            .HasConstraintName("account_move_reversal_l10n_latam_document_type_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountMoveReversalWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_move_reversal_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

@@ -28,6 +28,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.Color).HasColumnName("color");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")

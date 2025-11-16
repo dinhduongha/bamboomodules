@@ -24,13 +24,21 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ApplicantId, "calendar_event__applicant_id_index").HasFilter("(applicant_id IS NOT NULL)");
 
-                        entity.HasIndex(e => e.CandidateId, "calendar_event__candidate_id_index").HasFilter("(candidate_id IS NOT NULL)");
+                        entity.HasIndex(e => e.GoogleId, "calendar_event__google_id_index").HasFilter("(google_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.MicrosoftId, "calendar_event__microsoft_id_index");
 
                         entity.HasIndex(e => e.MsUniversalEventId, "calendar_event__ms_universal_event_id_index");
 
                         entity.HasIndex(e => e.OpportunityId, "calendar_event__opportunity_id_index");
+
+                        entity.HasIndex(e => e.RecurrenceId, "calendar_event__recurrence_id_index").HasFilter("(recurrence_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.Start, "calendar_event__start_index");
+
+                        entity.HasIndex(e => e.UserId, "calendar_event__user_id_index").HasFilter("(user_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.VideocallChannelId, "calendar_event__videocall_channel_id_index").HasFilter("(videocall_channel_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -43,7 +51,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.Allday).HasColumnName("allday");
                         entity.Property(e => e.ApplicantId).HasColumnName("applicant_id");
-                        entity.Property(e => e.CandidateId).HasColumnName("candidate_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -61,6 +68,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.NeedSync).HasColumnName("need_sync");
                         entity.Property(e => e.NeedSyncM).HasColumnName("need_sync_m");
+                        entity.Property(e => e.Notes).HasColumnName("notes");
                         entity.Property(e => e.OpportunityId).HasColumnName("opportunity_id");
                         entity.Property(e => e.Privacy).HasColumnName("privacy");
                         entity.Property(e => e.RecurrenceId).HasColumnName("recurrence_id");
@@ -89,11 +97,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ApplicantId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("calendar_event_applicant_id_fkey");
-
-                        entity.HasOne(d => d.Candidate).WithMany(p => p.CalendarEvent)
-                            .HasForeignKey(d => d.CandidateId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("calendar_event_candidate_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.CalendarEventCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("calendar_event_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

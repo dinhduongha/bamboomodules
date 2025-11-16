@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("resource_calendar_attendance");
 
+                        entity.HasIndex(e => e.CalendarId, "resource_calendar_attendance__calendar_id_index");
+
                         entity.HasIndex(e => e.Dayofweek, "resource_calendar_attendance__dayofweek_index");
 
                         entity.HasIndex(e => e.HourFrom, "resource_calendar_attendance__hour_from_index");
@@ -29,16 +31,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.DateFrom).HasColumnName("date_from");
-                        entity.Property(e => e.DateTo).HasColumnName("date_to");
                         entity.Property(e => e.DayPeriod).HasColumnName("day_period");
                         entity.Property(e => e.Dayofweek).HasColumnName("dayofweek");
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
                         entity.Property(e => e.DurationDays).HasColumnName("duration_days");
+                        entity.Property(e => e.DurationHours).HasColumnName("duration_hours");
                         entity.Property(e => e.HourFrom).HasColumnName("hour_from");
                         entity.Property(e => e.HourTo).HasColumnName("hour_to");
                         entity.Property(e => e.Name).HasColumnName("name");
-                        entity.Property(e => e.ResourceId).HasColumnName("resource_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.WeekType).HasColumnName("week_type");
                         entity.Property(e => e.WorkEntryTypeId).HasColumnName("work_entry_type_id");
@@ -57,11 +57,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("resource_calendar_attendance_create_uid_fkey");
-
-                        entity.HasOne(d => d.Resource).WithMany(p => p.ResourceCalendarAttendance)
-                            .HasForeignKey(d => d.ResourceId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("resource_calendar_attendance_resource_id_fkey");
 
                         entity.HasOne(d => d.WorkEntryType).WithMany(p => p.ResourceCalendarAttendance)
                             .HasForeignKey(d => d.WorkEntryTypeId)

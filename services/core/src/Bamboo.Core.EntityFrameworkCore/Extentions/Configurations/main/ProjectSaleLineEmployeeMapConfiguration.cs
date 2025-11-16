@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ProjectId, "project_sale_line_employee_map__project_id_index");
+
                         entity.HasIndex(e => new { e.ProjectId, e.EmployeeId }, "project_sale_line_employee_map_uniqueness_employee").IsUnique();
 
                         entity.Property(e => e.Id)

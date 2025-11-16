@@ -36,6 +36,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AlertDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("alert_date");
+                        entity.Property(e => e.AvgCost).HasColumnName("avg_cost");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -53,7 +54,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Note).HasColumnName("note");
                         entity.Property(e => e.ProductExpiryReminded).HasColumnName("product_expiry_reminded");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
-                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.Ref).HasColumnName("ref");
                         entity.Property(e => e.RemovalDate)
                             .HasColumnType("timestamp without time zone")
@@ -91,12 +91,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ProductId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_lot_product_id_fkey");
-
-                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.StockLot) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_lot_product_uom_id_fkey");
-                        entity.HasOne(d => d.ProductUom).WithMany()
-                            .HasForeignKey(d => d.ProductUomId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_lot_product_uom_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.StockLotWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_lot_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

@@ -22,8 +22,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Name, "ir_model_constraint__name_index");
 
-                        entity.HasIndex(e => e.Type, "ir_model_constraint__type_index");
-
                         entity.HasIndex(e => new { e.Name, e.Module }, "ir_model_constraint_module_name_uniq").IsUnique();
 
                         entity.Property(e => e.Id)

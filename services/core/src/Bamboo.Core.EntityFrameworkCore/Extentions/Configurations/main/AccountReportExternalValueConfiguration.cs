@@ -36,7 +36,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Date).HasColumnName("date");
-                        entity.Property(e => e.ForeignVatFiscalPositionId).HasColumnName("foreign_vat_fiscal_position_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.TargetReportExpressionId).HasColumnName("target_report_expression_id");
                         entity.Property(e => e.TextValue).HasColumnName("text_value");
@@ -62,11 +61,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_report_external_value_create_uid_fkey");
-
-                        entity.HasOne(d => d.ForeignVatFiscalPosition).WithMany(p => p.AccountReportExternalValue)
-                            .HasForeignKey(d => d.ForeignVatFiscalPositionId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_report_external_value_foreign_vat_fiscal_position__fkey");
 
                         entity.HasOne(d => d.TargetReportExpression).WithMany(p => p.AccountReportExternalValue)
                             .HasForeignKey(d => d.TargetReportExpressionId)

@@ -16,7 +16,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("account_fiscal_position");
 
-                        entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId, "account_fiscal_position__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
@@ -38,6 +38,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.ForeignVat).HasColumnName("foreign_vat");
+                        entity.Property(e => e.IsDomestic).HasColumnName("is_domestic");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
@@ -81,6 +82,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_fiscal_position_write_uid_fkey");
+
+                        // entity.HasMany(d => d.AccountTax).WithMany(p => p.AccountFiscalPosition)
+                        entity.HasMany(d => d.AccountTax).WithMany(p => p.AccountFiscalPosition)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "AccountFiscalPositionAccountTaxRel",
+                                r => r.HasOne<AccountTax>().WithMany()
+                                    .HasForeignKey("AccountTaxId")
+                                    .HasConstraintName("account_fiscal_position_account_tax_rel_account_tax_id_fkey"),
+                                l => l.HasOne<AccountFiscalPosition>().WithMany()
+                                    .HasForeignKey("AccountFiscalPositionId")
+                                    .HasConstraintName("account_fiscal_position_account_account_fiscal_position_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("AccountFiscalPositionId", "AccountTaxId").HasName("account_fiscal_position_account_tax_rel_pkey");
+                                    j.ToTable("account_fiscal_position_account_tax_rel");
+                                    j.HasIndex(new[] { "AccountTaxId", "AccountFiscalPositionId" }, "account_fiscal_position_accou_account_tax_id_account_fiscal_idx");
+                                    j.IndexerProperty<Guid>("AccountFiscalPositionId").HasColumnName("account_fiscal_position_id");
+                                    j.IndexerProperty<Guid>("AccountTaxId").HasColumnName("account_tax_id");
+                                });
 
                         // entity.HasMany(d => d.ResCountryState).WithMany(p => p.AccountFiscalPosition)
                         entity.HasMany(d => d.ResCountryState).WithMany()

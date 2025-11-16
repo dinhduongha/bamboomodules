@@ -34,7 +34,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.OriginPoId).HasColumnName("origin_po_id");
-                        entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -51,17 +50,30 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("purchase_requisition_create_alternative_origin_po_id_fkey");
 
-                        // entity.HasOne(d => d.Partner).WithMany(p => p.PurchaseRequisitionCreateAlternative) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("purchase_requisition_create_alternative_partner_id_fkey");
-                        entity.HasOne(d => d.Partner).WithMany()
-                            .HasForeignKey(d => d.PartnerId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("purchase_requisition_create_alternative_partner_id_fkey");
-
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.PurchaseRequisitionCreateAlternativeWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_requisition_create_alternative_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("purchase_requisition_create_alternative_write_uid_fkey");
+
+                        // entity.HasMany(d => d.ResPartner).WithMany(p => p.PurchaseRequisitionCreateAlternative)
+                        entity.HasMany(d => d.ResPartner).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "PurchaseRequisitionCreateAlternativeResPartnerRel",
+                                r => r.HasOne<ResPartner>().WithMany()
+                                    .HasForeignKey("ResPartnerId")
+                                    .HasConstraintName("purchase_requisition_create_alternative_res_res_partner_id_fkey"),
+                                l => l.HasOne<PurchaseRequisitionCreateAlternative>().WithMany()
+                                    .HasForeignKey("PurchaseRequisitionCreateAlternativeId")
+                                    .HasConstraintName("purchase_requisition_create_a_purchase_requisition_create__fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PurchaseRequisitionCreateAlternativeId", "ResPartnerId").HasName("purchase_requisition_create_alternative_res_partner_rel_pkey");
+                                    j.ToTable("purchase_requisition_create_alternative_res_partner_rel");
+                                    j.HasIndex(new[] { "ResPartnerId", "PurchaseRequisitionCreateAlternativeId" }, "purchase_requisition_create_a_res_partner_id_purchase_requi_idx");
+                                    j.IndexerProperty<Guid>("PurchaseRequisitionCreateAlternativeId").HasColumnName("purchase_requisition_create_alternative_id");
+                                    j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

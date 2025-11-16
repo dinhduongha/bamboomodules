@@ -64,7 +64,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("removal_date");
                         entity.Property(e => e.ReservedQuantity).HasColumnName("reserved_quantity");
-                        entity.Property(e => e.StorageCategoryId).HasColumnName("storage_category_id");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -109,11 +108,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ProductId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_quant_product_id_fkey");
-
-                        entity.HasOne(d => d.StorageCategory).WithMany(p => p.StockQuant)
-                            .HasForeignKey(d => d.StorageCategoryId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_quant_storage_category_id_fkey");
 
                         // entity.HasOne(d => d.User).WithMany(p => p.StockQuantUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_quant_user_id_fkey");
                         entity.HasOne(d => d.User).WithMany()

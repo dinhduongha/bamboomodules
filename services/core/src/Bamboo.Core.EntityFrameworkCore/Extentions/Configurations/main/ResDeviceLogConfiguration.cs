@@ -16,13 +16,15 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("res_device_log");
 
-                        entity.HasIndex(e => new { e.UserId, e.SessionIdentifier, e.Platform, e.Browser, e.LastActivity, e.Id }, "res_device_log__composite_idx").HasFilter("(revoked = false)");
-
                         entity.HasIndex(e => e.LastActivity, "res_device_log__last_activity_index");
 
                         entity.HasIndex(e => e.SessionIdentifier, "res_device_log__session_identifier_index");
 
                         entity.HasIndex(e => e.UserId, "res_device_log__user_id_index");
+
+                        entity.HasIndex(e => new { e.UserId, e.SessionIdentifier, e.Platform, e.Browser, e.LastActivity, e.Id }, "res_device_log_composite_idx").HasFilter("(revoked IS NOT TRUE)");
+
+                        entity.HasIndex(e => e.Revoked, "res_device_log_revoked_idx").HasFilter("(revoked IS NOT TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")

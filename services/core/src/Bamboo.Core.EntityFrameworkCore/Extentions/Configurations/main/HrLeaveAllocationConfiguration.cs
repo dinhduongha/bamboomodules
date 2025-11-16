@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.AccrualPlanId, "hr_leave_allocation__accrual_plan_id_index").HasFilter("(accrual_plan_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.DateFrom, "hr_leave_allocation__date_from_index");
 
                         entity.HasIndex(e => e.EmployeeId, "hr_leave_allocation__employee_id_index");
@@ -57,7 +59,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Notes).HasColumnName("notes");
                         entity.Property(e => e.NumberOfDays).HasColumnName("number_of_days");
                         entity.Property(e => e.NumberOfHoursDisplay).HasColumnName("number_of_hours_display");
-                        entity.Property(e => e.OvertimeId).HasColumnName("overtime_id");
                         entity.Property(e => e.SecondApproverId).HasColumnName("second_approver_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.LastModificationTime)
@@ -107,11 +108,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ManagerId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_leave_allocation_manager_id_fkey");
-
-                        entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeaveAllocation)
-                            .HasForeignKey(d => d.OvertimeId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_allocation_overtime_id_fkey");
 
                         entity.HasOne(d => d.SecondApprover).WithMany(p => p.HrLeaveAllocationSecondApprover)
                             .HasForeignKey(d => d.SecondApproverId)

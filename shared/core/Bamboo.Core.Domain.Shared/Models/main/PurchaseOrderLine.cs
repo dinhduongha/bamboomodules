@@ -32,8 +32,9 @@ public partial class PurchaseOrderLine : FullAuditedAggregateRoot<Guid>, IEntity
     [Column("sequence")]
     public long? Sequence { get; set; }
 
-    [Column("product_uom")]
-    public Guid? ProductUom { get; set; }
+    // CONFLICK-V19
+    // [Column("product_uom")]
+    // public Guid? ProductUom { get; set; }
 
     [Column("product_id")]
     public Guid? ProductId { get; set; }
@@ -201,10 +202,11 @@ public partial class PurchaseOrderLine : FullAuditedAggregateRoot<Guid>, IEntity
     [ForeignKey("ProductPackagingId")]
     public virtual ProductPackaging? ProductPackaging { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("ProductUom")]
-    public virtual UomUom? ProductUomNavigation { get; set; }
+    // CONFLICK-v19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("ProductUom")]
+    // public virtual UomUom? ProductUomNavigation { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

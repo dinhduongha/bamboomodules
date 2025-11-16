@@ -16,10 +16,10 @@ namespace Bamboo.Core.Models;
 
 public partial class PurchaseRequisitionCreateAlternative
 {
-    // // [Many2many] // Normal
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
-    // // [ForeignKey("PurchaseRequisitionCreateAlternativeId")] // Many2many // Normal
-    // // [InverseProperty("PurchaseRequisitionCreateAlternative")] // Many2many // Normal
-    // public virtual ICollection<ResPartner> ResPartner { get; set; }
+    // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [NotMapped] // Many2many // Peer relationship (ResPartner) is commented out
+    // [ForeignKey("PurchaseRequisitionCreateAlternativeId")] // Many2many // Normal
+    // [InverseProperty("PurchaseRequisitionCreateAlternative")] // Many2many // Normal
+    public virtual ICollection<ResPartner> ResPartner { get; set; }
 }

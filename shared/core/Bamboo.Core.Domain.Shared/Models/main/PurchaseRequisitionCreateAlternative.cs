@@ -58,10 +58,11 @@ public partial class PurchaseRequisitionCreateAlternative : FullAuditedEntity<Gu
     [ForeignKey("OriginPoId")]
     public virtual PurchaseOrder? OriginPo { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("PartnerId")]
-    public virtual ResPartner? Partner { get; set; }
+    // CONFLICK-V19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("PartnerId")]
+    // public virtual ResPartner? Partner { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

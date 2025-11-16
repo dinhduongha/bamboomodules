@@ -24,6 +24,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ParentPath, "stock_location__parent_path_index");
 
+                        entity.HasIndex(e => e.StorageCategoryId, "stock_location__storage_category_id_index").HasFilter("(storage_category_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Usage, "stock_location__usage_index");
 
                         entity.HasIndex(e => new { e.Barcode, e.TenantId }, "stock_location_barcode_company_uniq").IsUnique();
@@ -37,7 +39,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.Barcode).HasColumnName("barcode");
-                        entity.Property(e => e.Comment).HasColumnName("comment");
 
                         entity.Property(e => e.CompleteName).HasColumnName("complete_name");
                         entity.Property(e => e.CreationTime)
@@ -46,23 +47,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CyclicInventoryFrequency).HasColumnName("cyclic_inventory_frequency");
-                        entity.Property(e => e.IsADock).HasColumnName("is_a_dock");
-                        entity.Property(e => e.IsSubcontractingLocation).HasColumnName("is_subcontracting_location");
                         entity.Property(e => e.LastInventoryDate).HasColumnName("last_inventory_date");
                         entity.Property(e => e.LocationId).HasColumnName("location_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.NextInventoryDate).HasColumnName("next_inventory_date");
                         entity.Property(e => e.ParentPath).HasColumnName("parent_path");
-                        entity.Property(e => e.Posx).HasColumnName("posx");
-                        entity.Property(e => e.Posy).HasColumnName("posy");
-                        entity.Property(e => e.Posz).HasColumnName("posz");
                         entity.Property(e => e.RemovalStrategyId).HasColumnName("removal_strategy_id");
                         entity.Property(e => e.ReplenishLocation).HasColumnName("replenish_location");
-                        entity.Property(e => e.ScrapLocation).HasColumnName("scrap_location");
                         entity.Property(e => e.StorageCategoryId).HasColumnName("storage_category_id");
                         entity.Property(e => e.Usage).HasColumnName("usage");
-                        entity.Property(e => e.ValuationInAccountId).HasColumnName("valuation_in_account_id");
-                        entity.Property(e => e.ValuationOutAccountId).HasColumnName("valuation_out_account_id");
+                        entity.Property(e => e.ValuationAccountId).HasColumnName("valuation_account_id");
                         entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -96,17 +90,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_location_storage_category_id_fkey");
 
-                        // entity.HasOne(d => d.ValuationInAccount).WithMany(p => p.StockLocationValuationInAccount) .HasForeignKey(d => d.ValuationInAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_location_valuation_in_account_id_fkey");
-                        entity.HasOne(d => d.ValuationInAccount).WithMany()
-                            .HasForeignKey(d => d.ValuationInAccountId)
+                        // entity.HasOne(d => d.ValuationAccount).WithMany(p => p.StockLocation) .HasForeignKey(d => d.ValuationAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_location_valuation_account_id_fkey");
+                        entity.HasOne(d => d.ValuationAccount).WithMany()
+                            .HasForeignKey(d => d.ValuationAccountId)
                             .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_location_valuation_in_account_id_fkey");
-
-                        // entity.HasOne(d => d.ValuationOutAccount).WithMany(p => p.StockLocationValuationOutAccount) .HasForeignKey(d => d.ValuationOutAccountId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_location_valuation_out_account_id_fkey");
-                        entity.HasOne(d => d.ValuationOutAccount).WithMany()
-                            .HasForeignKey(d => d.ValuationOutAccountId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_location_valuation_out_account_id_fkey");
+                            .HasConstraintName("stock_location_valuation_account_id_fkey");
 
                         entity.HasOne(d => d.Warehouse).WithMany(p => p.StockLocation)
                             .HasForeignKey(d => d.WarehouseId)

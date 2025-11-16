@@ -24,6 +24,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.BindingModelId).HasColumnName("binding_model_id");
                         entity.Property(e => e.BindingType).HasColumnName("binding_type");
                         entity.Property(e => e.BindingViewTypes).HasColumnName("binding_view_types");
+                        entity.Property(e => e.Cache).HasColumnName("cache");
                         entity.Property(e => e.Context).HasColumnName("context");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")

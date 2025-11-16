@@ -34,7 +34,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.Color).HasColumnName("color");
 
-                        entity.Property(e => e.CompleteName).HasColumnName("complete_name");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")

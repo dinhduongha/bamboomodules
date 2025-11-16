@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ChatbotScriptId, "chatbot_script_step__chatbot_script_id_index");
+
+                        entity.HasIndex(e => e.CrmTeamId, "chatbot_script_step__crm_team_id_index").HasFilter("(crm_team_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -83,6 +87,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "ChatbotScriptAnswerId", "ChatbotScriptStepId" }, "chatbot_script_answer_chatbot_chatbot_script_answer_id_chat_idx");
                                     j.IndexerProperty<Guid>("ChatbotScriptStepId").HasColumnName("chatbot_script_step_id");
                                     j.IndexerProperty<Guid>("ChatbotScriptAnswerId").HasColumnName("chatbot_script_answer_id");
+                                });
+
+                        // entity.HasMany(d => d.ImLivechatExpertise).WithMany(p => p.ChatbotScriptStep)
+                        entity.HasMany(d => d.ImLivechatExpertise).WithMany(p => p.ChatbotScriptStep)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ChatbotScriptStepImLivechatExpertiseRel",
+                                r => r.HasOne<ImLivechatExpertise>().WithMany()
+                                    .HasForeignKey("ImLivechatExpertiseId")
+                                    .HasConstraintName("chatbot_script_step_im_livechat_e_im_livechat_expertise_id_fkey"),
+                                l => l.HasOne<ChatbotScriptStep>().WithMany()
+                                    .HasForeignKey("ChatbotScriptStepId")
+                                    .HasConstraintName("chatbot_script_step_im_livechat_exp_chatbot_script_step_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ChatbotScriptStepId", "ImLivechatExpertiseId").HasName("chatbot_script_step_im_livechat_expertise_rel_pkey");
+                                    j.ToTable("chatbot_script_step_im_livechat_expertise_rel");
+                                    j.HasIndex(new[] { "ImLivechatExpertiseId", "ChatbotScriptStepId" }, "chatbot_script_step_im_livech_im_livechat_expertise_id_chat_idx");
+                                    j.IndexerProperty<Guid>("ChatbotScriptStepId").HasColumnName("chatbot_script_step_id");
+                                    j.IndexerProperty<Guid>("ImLivechatExpertiseId").HasColumnName("im_livechat_expertise_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

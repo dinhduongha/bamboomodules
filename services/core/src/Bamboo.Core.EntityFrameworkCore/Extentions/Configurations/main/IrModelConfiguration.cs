@@ -21,11 +21,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
+                        entity.Property(e => e.Abstract).HasColumnName("abstract");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.FoldName).HasColumnName("fold_name");
                         entity.Property(e => e.Info).HasColumnName("info");
                         entity.Property(e => e.IsMailActivity).HasColumnName("is_mail_activity");
                         entity.Property(e => e.IsMailBlacklist).HasColumnName("is_mail_blacklist");
@@ -40,7 +42,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.WebsiteFormAccess).HasColumnName("website_form_access");
                         entity.Property(e => e.WebsiteFormDefaultFieldId).HasColumnName("website_form_default_field_id");
                         entity.Property(e => e.WebsiteFormKey).HasColumnName("website_form_key");
-                        entity.Property(e => e.WebsiteFormLabel).HasColumnName("website_form_label");
+                        entity.Property(e => e.WebsiteFormLabel)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("website_form_label");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

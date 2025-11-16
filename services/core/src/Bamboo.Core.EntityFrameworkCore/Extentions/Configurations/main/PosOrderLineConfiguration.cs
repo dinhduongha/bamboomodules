@@ -20,9 +20,21 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ComboParentId, "pos_order_line__combo_parent_id_index").HasFilter("(combo_parent_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.CourseId, "pos_order_line__course_id_index").HasFilter("(course_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.OrderId, "pos_order_line__order_id_index");
 
+                        entity.HasIndex(e => e.RefundedOrderlineId, "pos_order_line__refunded_orderline_id_index").HasFilter("(refunded_orderline_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.RewardId, "pos_order_line__reward_id_index").HasFilter("(reward_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.SaleOrderLineId, "pos_order_line__sale_order_line_id_index").HasFilter("(sale_order_line_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.SaleOrderOriginId, "pos_order_line__sale_order_origin_id_index").HasFilter("(sale_order_origin_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.Uuid, "pos_order_line_unique_uuid").IsUnique();
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -36,6 +48,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ComboParentId).HasColumnName("combo_parent_id");
 
                         entity.Property(e => e.CouponId).HasColumnName("coupon_id");
+                        entity.Property(e => e.CourseId).HasColumnName("course_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -45,6 +58,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Discount).HasColumnName("discount");
                         entity.Property(e => e.DownPaymentDetails).HasColumnName("down_payment_details");
                         entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
+                        entity.Property(e => e.ExtraTaxData)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("extra_tax_data");
                         entity.Property(e => e.FullProductName).HasColumnName("full_product_name");
                         entity.Property(e => e.IsEdited).HasColumnName("is_edited");
                         entity.Property(e => e.IsRewardLine).HasColumnName("is_reward_line");
@@ -67,7 +83,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.RewardIdentifierCode).HasColumnName("reward_identifier_code");
                         entity.Property(e => e.SaleOrderLineId).HasColumnName("sale_order_line_id");
                         entity.Property(e => e.SaleOrderOriginId).HasColumnName("sale_order_origin_id");
-                        entity.Property(e => e.SkipChange).HasColumnName("skip_change");
                         entity.Property(e => e.TotalCost).HasColumnName("total_cost");
                         entity.Property(e => e.Uuid).HasColumnName("uuid");
                         entity.Property(e => e.LastModificationTime)
@@ -100,6 +115,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CouponId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("pos_order_line_coupon_id_fkey");
+
+                        entity.HasOne(d => d.Course).WithMany(p => p.PosOrderLine)
+                            .HasForeignKey(d => d.CourseId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_order_line_course_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.PosOrderLineCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("pos_order_line_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

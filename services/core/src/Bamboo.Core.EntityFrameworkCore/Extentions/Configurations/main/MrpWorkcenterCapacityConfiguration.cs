@@ -20,7 +20,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => new { e.WorkcenterId, e.ProductId }, "mrp_workcenter_capacity_unique_product").IsUnique();
+                        entity.HasIndex(e => e.WorkcenterId, "mrp_workcenter_capacity__workcenter_id_index");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -36,6 +36,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
+                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.TimeStart).HasColumnName("time_start");
                         entity.Property(e => e.TimeStop).HasColumnName("time_stop");
                         entity.Property(e => e.WorkcenterId).HasColumnName("workcenter_id");
@@ -50,11 +51,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mrp_workcenter_capacity_create_uid_fkey");
 
-                        // entity.HasOne(d => d.Product).WithMany(p => p.MrpWorkcenterCapacity) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("mrp_workcenter_capacity_product_id_fkey");
+                        // entity.HasOne(d => d.Product).WithMany(p => p.MrpWorkcenterCapacity) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("mrp_workcenter_capacity_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()
                             .HasForeignKey(d => d.ProductId)
-                            .OnDelete(DeleteBehavior.Restrict)
+                            .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mrp_workcenter_capacity_product_id_fkey");
+
+                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.MrpWorkcenterCapacity) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("mrp_workcenter_capacity_product_uom_id_fkey");
+                        entity.HasOne(d => d.ProductUom).WithMany()
+                            .HasForeignKey(d => d.ProductUomId)
+                            .OnDelete(DeleteBehavior.Restrict)
+                            .HasConstraintName("mrp_workcenter_capacity_product_uom_id_fkey");
 
                         entity.HasOne(d => d.Workcenter).WithMany(p => p.MrpWorkcenterCapacity)
                             .HasForeignKey(d => d.WorkcenterId)

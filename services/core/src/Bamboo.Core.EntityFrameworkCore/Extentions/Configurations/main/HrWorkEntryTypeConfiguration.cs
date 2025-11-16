@@ -28,6 +28,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.AmountRate).HasColumnName("amount_rate");
                         entity.Property(e => e.Code).HasColumnName("code");
                         entity.Property(e => e.Color).HasColumnName("color");
                         entity.Property(e => e.CountryId).HasColumnName("country_id");
@@ -36,7 +37,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.DisplayCode)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("display_code");
                         entity.Property(e => e.ExternalCode).HasColumnName("external_code");
+                        entity.Property(e => e.IsExtraHours).HasColumnName("is_extra_hours");
                         entity.Property(e => e.IsLeave).HasColumnName("is_leave");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")

@@ -24,6 +24,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.EmployeeId, "hr_resume_line__employee_id_index");
 
+                        entity.HasIndex(e => e.EventId, "hr_resume_line__event_id_index").HasFilter("(event_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -31,7 +33,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.CertificateFilename).HasColumnName("certificate_filename");
                         entity.Property(e => e.ChannelId).HasColumnName("channel_id");
+                        entity.Property(e => e.CourseType).HasColumnName("course_type");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -43,13 +47,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Description)
                             .HasColumnType("jsonb")
                             .HasColumnName("description");
-                        entity.Property(e => e.DisplayType).HasColumnName("display_type");
+                        entity.Property(e => e.Duration).HasColumnName("duration");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
+                        entity.Property(e => e.EventId).HasColumnName("event_id");
                         entity.Property(e => e.ExpirationStatus).HasColumnName("expiration_status");
+                        entity.Property(e => e.ExternalUrl).HasColumnName("external_url");
                         entity.Property(e => e.LineTypeId).HasColumnName("line_type_id");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.ResumeLineProperties)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("resume_line_properties");
                         entity.Property(e => e.SurveyId).HasColumnName("survey_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -76,6 +85,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.EmployeeId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("hr_resume_line_employee_id_fkey");
+
+                        entity.HasOne(d => d.Event).WithMany(p => p.HrResumeLine)
+                            .HasForeignKey(d => d.EventId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_resume_line_event_id_fkey");
 
                         entity.HasOne(d => d.LineType).WithMany(p => p.HrResumeLine)
                             .HasForeignKey(d => d.LineTypeId)

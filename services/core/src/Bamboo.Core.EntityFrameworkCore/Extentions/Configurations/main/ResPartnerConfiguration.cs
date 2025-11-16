@@ -18,15 +18,21 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Activation, "res_partner__activation_index").HasFilter("(activation IS NOT NULL)");
 
+                        entity.HasIndex(e => e.AssignedPartnerId, "res_partner__assigned_partner_id_index").HasFilter("(assigned_partner_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.CommercialPartnerId, "res_partner__commercial_partner_id_index");
 
                         entity.HasIndex(e => e.TenantId, "res_partner__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CompanyRegistry, "res_partner__company_registry_index").HasFilter("(company_registry IS NOT NULL)");
+
                         entity.HasIndex(e => e.CompleteName, "res_partner__complete_name_index");
 
                         entity.HasIndex(e => e.IsPublished, "res_partner__is_published_index");
+
+                        entity.HasIndex(e => e.L10nLatamIdentificationTypeId, "res_partner__l10n_latam_identification_type_id_index").HasFilter("(l10n_latam_identification_type_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.Name, "res_partner__name_index");
 
@@ -47,9 +53,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Activation).HasColumnName("activation");
                         entity.Property(e => e.Active).HasColumnName("active");
-                        entity.Property(e => e.AdditionalInfo).HasColumnName("additional_info");
                         entity.Property(e => e.AssignedPartnerId).HasColumnName("assigned_partner_id");
-                        entity.Property(e => e.AssociateMember).HasColumnName("associate_member");
                         entity.Property(e => e.AutopostBills).HasColumnName("autopost_bills");
                         entity.Property(e => e.Barcode)
                             .HasColumnType("jsonb")
@@ -82,14 +86,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DatePartnership).HasColumnName("date_partnership");
                         entity.Property(e => e.DateReview).HasColumnName("date_review");
                         entity.Property(e => e.DateReviewNext).HasColumnName("date_review_next");
-                        entity.Property(e => e.DebitLimit).HasColumnName("debit_limit");
                         entity.Property(e => e.Email).HasColumnName("email");
                         entity.Property(e => e.EmailNormalized).HasColumnName("email_normalized");
                         entity.Property(e => e.Employee).HasColumnName("employee");
-                        entity.Property(e => e.FreeMember).HasColumnName("free_member");
                         entity.Property(e => e.Function).HasColumnName("function");
                         entity.Property(e => e.GradeId).HasColumnName("grade_id");
                         entity.Property(e => e.GradeSequence).HasColumnName("grade_sequence");
+                        entity.Property(e => e.GroupOn).HasColumnName("group_on");
+                        entity.Property(e => e.GroupRfq).HasColumnName("group_rfq");
                         entity.Property(e => e.IgnoreAbnormalInvoiceAmount)
                             .HasColumnType("jsonb")
                             .HasColumnName("ignore_abnormal_invoice_amount");
@@ -105,22 +109,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("invoice_sending_method");
                         entity.Property(e => e.InvoiceTemplatePdfReportId).HasColumnName("invoice_template_pdf_report_id");
-                        entity.Property(e => e.InvoiceWarn).HasColumnName("invoice_warn");
-                        entity.Property(e => e.InvoiceWarnMsg).HasColumnName("invoice_warn_msg");
                         entity.Property(e => e.IsCompany).HasColumnName("is_company");
+                        entity.Property(e => e.IsPickupLocation).HasColumnName("is_pickup_location");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
+                        entity.Property(e => e.L10nLatamIdentificationTypeId).HasColumnName("l10n_latam_identification_type_id");
                         entity.Property(e => e.Lang).HasColumnName("lang");
                         entity.Property(e => e.LatestFollowupSequence).HasColumnName("latest_followup_sequence");
-                        entity.Property(e => e.MembershipAmount).HasColumnName("membership_amount");
-                        entity.Property(e => e.MembershipCancel).HasColumnName("membership_cancel");
-                        entity.Property(e => e.MembershipStart).HasColumnName("membership_start");
-                        entity.Property(e => e.MembershipState).HasColumnName("membership_state");
-                        entity.Property(e => e.MembershipStop).HasColumnName("membership_stop");
                         entity.Property(e => e.MessageBounce).HasColumnName("message_bounce");
-                        entity.Property(e => e.Mobile).HasColumnName("mobile");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.ParentId).HasColumnName("parent_id");
-                        entity.Property(e => e.PartnerGid).HasColumnName("partner_gid");
                         entity.Property(e => e.PartnerLatitude).HasColumnName("partner_latitude");
                         entity.Property(e => e.PartnerLongitude).HasColumnName("partner_longitude");
                         entity.Property(e => e.PartnerShare).HasColumnName("partner_share");
@@ -136,10 +134,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("peppol_verification_state");
                         entity.Property(e => e.Phone).HasColumnName("phone");
                         entity.Property(e => e.PhoneSanitized).HasColumnName("phone_sanitized");
-                        entity.Property(e => e.PickingWarn).HasColumnName("picking_warn");
                         entity.Property(e => e.PickingWarnMsg).HasColumnName("picking_warn_msg");
-                        entity.Property(e => e.PlanToChangeBike).HasColumnName("plan_to_change_bike");
-                        entity.Property(e => e.PlanToChangeCar).HasColumnName("plan_to_change_car");
+                        entity.Property(e => e.Properties)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("properties");
                         entity.Property(e => e.PropertyAccountPayableId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_account_payable_id");
@@ -176,7 +174,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PropertySupplierPaymentTermId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_supplier_payment_term_id");
-                        entity.Property(e => e.PurchaseWarn).HasColumnName("purchase_warn");
                         entity.Property(e => e.PurchaseWarnMsg).HasColumnName("purchase_warn_msg");
                         entity.Property(e => e.ReceiptReminderEmail)
                             .HasColumnType("jsonb")
@@ -185,7 +182,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ReminderDateBeforeReceipt)
                             .HasColumnType("jsonb")
                             .HasColumnName("reminder_date_before_receipt");
-                        entity.Property(e => e.SaleWarn).HasColumnName("sale_warn");
                         entity.Property(e => e.SaleWarnMsg).HasColumnName("sale_warn_msg");
                         entity.Property(e => e.SeoName)
                             .HasColumnType("jsonb")
@@ -200,8 +196,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.StreetName).HasColumnName("street_name");
                         entity.Property(e => e.StreetNumber).HasColumnName("street_number");
                         entity.Property(e => e.StreetNumber2).HasColumnName("street_number2");
+                        entity.Property(e => e.SuggestBasedOn).HasColumnName("suggest_based_on");
+                        entity.Property(e => e.SuggestDays).HasColumnName("suggest_days");
+                        entity.Property(e => e.SuggestPercent).HasColumnName("suggest_percent");
                         entity.Property(e => e.SupplierRank).HasColumnName("supplier_rank");
-                        entity.Property(e => e.Title).HasColumnName("title");
                         entity.Property(e => e.Trust)
                             .HasColumnType("jsonb")
                             .HasColumnName("trust");
@@ -244,12 +242,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.AssignedPartnerId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("res_partner_assigned_partner_id_fkey");
-
-                        // entity.HasOne(d => d.AssociateMemberNavigation).WithMany(p => p.InverseAssociateMemberNavigation) .HasForeignKey(d => d.AssociateMember) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("res_partner_associate_member_fkey");
-                        entity.HasOne(d => d.AssociateMemberNavigation).WithMany()
-                            .HasForeignKey(d => d.AssociateMember)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("res_partner_associate_member_fkey");
 
                         // entity.HasOne(d => d.Buyer).WithMany(p => p.ResPartnerBuyer) .HasForeignKey(d => d.BuyerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("res_partner_buyer_id_fkey");
                         entity.HasOne(d => d.Buyer).WithMany()
@@ -301,6 +293,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("res_partner_invoice_template_pdf_report_id_fkey");
 
+                        entity.HasOne(d => d.L10nLatamIdentificationType).WithMany(p => p.ResPartner)
+                            .HasForeignKey(d => d.L10nLatamIdentificationTypeId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("res_partner_l10n_latam_identification_type_id_fkey");
+
                         // entity.HasOne(d => d.Parent).WithMany(p => p.InverseParent) .HasForeignKey(d => d.ParentId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("res_partner_parent_id_fkey");
                         entity.HasOne(d => d.Parent).WithMany()
                             .HasForeignKey(d => d.ParentId)
@@ -318,11 +315,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.StateId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("res_partner_state_id_fkey");
-
-                        entity.HasOne(d => d.TitleNavigation).WithMany(p => p.ResPartner)
-                            .HasForeignKey(d => d.Title)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("res_partner_title_fkey");
 
                         // entity.HasOne(d => d.User).WithMany(p => p.ResPartnerUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("res_partner_user_id_fkey");
                         entity.HasOne(d => d.User).WithMany()

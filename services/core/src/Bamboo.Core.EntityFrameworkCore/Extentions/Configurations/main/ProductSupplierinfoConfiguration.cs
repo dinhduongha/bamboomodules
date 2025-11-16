@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ProductTmplId, "product_supplierinfo__product_tmpl_id_index");
 
+                        entity.HasIndex(e => e.PurchaseRequisitionLineId, "product_supplierinfo__purchase_requisition_line_id_index").HasFilter("(purchase_requisition_line_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -47,6 +49,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.ProductName).HasColumnName("product_name");
                         entity.Property(e => e.ProductTmplId).HasColumnName("product_tmpl_id");
+                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.PurchaseRequisitionLineId).HasColumnName("purchase_requisition_line_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.LastModificationTime)
@@ -88,6 +91,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ProductTmplId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("product_supplierinfo_product_tmpl_id_fkey");
+
+                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.ProductSupplierinfo) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_supplierinfo_product_uom_id_fkey");
+                        entity.HasOne(d => d.ProductUom).WithMany()
+                            .HasForeignKey(d => d.ProductUomId)
+                            .OnDelete(DeleteBehavior.Restrict)
+                            .HasConstraintName("product_supplierinfo_product_uom_id_fkey");
 
                         entity.HasOne(d => d.PurchaseRequisitionLine).WithMany(p => p.ProductSupplierinfo)
                             .HasForeignKey(d => d.PurchaseRequisitionLineId)

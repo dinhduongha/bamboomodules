@@ -29,6 +29,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.AuthorId).HasColumnName("author_id");
                         entity.Property(e => e.Body).HasColumnName("body");
+                        entity.Property(e => e.CompositionCommentOption).HasColumnName("composition_comment_option");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -41,6 +42,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ScheduledDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("scheduled_date");
+                        entity.Property(e => e.SendContext)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("send_context");
                         entity.Property(e => e.Subject).HasColumnName("subject");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

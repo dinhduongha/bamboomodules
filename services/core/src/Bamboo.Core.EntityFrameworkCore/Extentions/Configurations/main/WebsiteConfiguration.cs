@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.SalesteamId, "website__salesteam_id_index").HasFilter("(salesteam_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Domain, "website_domain_unique").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -42,6 +44,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ChannelId).HasColumnName("channel_id");
 
                         entity.Property(e => e.ConfiguratorDone).HasColumnName("configurator_done");
+                        entity.Property(e => e.ConfirmationEmailTemplateId).HasColumnName("confirmation_email_template_id");
                         entity.Property(e => e.ContactUsButtonUrl)
                             .HasColumnType("jsonb")
                             .HasColumnName("contact_us_button_url");
@@ -59,11 +62,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DefaultLangId).HasColumnName("default_lang_id");
                         entity.Property(e => e.Domain).HasColumnName("domain");
                         entity.Property(e => e.EcommerceAccess).HasColumnName("ecommerce_access");
-                        entity.Property(e => e.EnabledPortalReorderButton).HasColumnName("enabled_portal_reorder_button");
+                        entity.Property(e => e.EnabledGmcSrc).HasColumnName("enabled_gmc_src");
                         entity.Property(e => e.EventsAppName).HasColumnName("events_app_name");
                         entity.Property(e => e.ForumCount).HasColumnName("forum_count");
                         entity.Property(e => e.GoogleAnalyticsKey).HasColumnName("google_analytics_key");
                         entity.Property(e => e.GoogleMapsApiKey).HasColumnName("google_maps_api_key");
+                        entity.Property(e => e.GooglePlacesApiKey).HasColumnName("google_places_api_key");
                         entity.Property(e => e.GoogleSearchConsole).HasColumnName("google_search_console");
                         entity.Property(e => e.HasSocialDefaultImage).HasColumnName("has_social_default_image");
                         entity.Property(e => e.HomepageUrl).HasColumnName("homepage_url");
@@ -73,23 +77,31 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PlausibleSharedKey).HasColumnName("plausible_shared_key");
                         entity.Property(e => e.PlausibleSite).HasColumnName("plausible_site");
                         entity.Property(e => e.PreventZeroPriceSale).HasColumnName("prevent_zero_price_sale");
-                        entity.Property(e => e.PreventZeroPriceSaleText)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("prevent_zero_price_sale_text");
+                        entity.Property(e => e.ProductPageColsOrder).HasColumnName("product_page_cols_order");
+                        entity.Property(e => e.ProductPageContainer).HasColumnName("product_page_container");
                         entity.Property(e => e.ProductPageGridColumns).HasColumnName("product_page_grid_columns");
                         entity.Property(e => e.ProductPageImageLayout).HasColumnName("product_page_image_layout");
+                        entity.Property(e => e.ProductPageImageRatio).HasColumnName("product_page_image_ratio");
+                        entity.Property(e => e.ProductPageImageRatioMobile).HasColumnName("product_page_image_ratio_mobile");
+                        entity.Property(e => e.ProductPageImageRoundness).HasColumnName("product_page_image_roundness");
                         entity.Property(e => e.ProductPageImageSpacing).HasColumnName("product_page_image_spacing");
                         entity.Property(e => e.ProductPageImageWidth).HasColumnName("product_page_image_width");
                         entity.Property(e => e.RobotsTxt).HasColumnName("robots_txt");
                         entity.Property(e => e.SalespersonId).HasColumnName("salesperson_id");
                         entity.Property(e => e.SalesteamId).HasColumnName("salesteam_id");
                         entity.Property(e => e.SendAbandonedCartEmail).HasColumnName("send_abandoned_cart_email");
+                        entity.Property(e => e.SendAbandonedCartEmailActivationTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("send_abandoned_cart_email_activation_time");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.ShopDefaultSort).HasColumnName("shop_default_sort");
                         entity.Property(e => e.ShopGap).HasColumnName("shop_gap");
+                        entity.Property(e => e.ShopOptProductsDesignClasses).HasColumnName("shop_opt_products_design_classes");
+                        entity.Property(e => e.ShopPageContainer).HasColumnName("shop_page_container");
                         entity.Property(e => e.ShopPpg).HasColumnName("shop_ppg");
                         entity.Property(e => e.ShopPpr).HasColumnName("shop_ppr");
                         entity.Property(e => e.ShowLineSubtotalsTaxSelection).HasColumnName("show_line_subtotals_tax_selection");
+                        entity.Property(e => e.SocialDiscord).HasColumnName("social_discord");
                         entity.Property(e => e.SocialFacebook).HasColumnName("social_facebook");
                         entity.Property(e => e.SocialGithub).HasColumnName("social_github");
                         entity.Property(e => e.SocialInstagram).HasColumnName("social_instagram");
@@ -102,12 +114,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
                         entity.Property(e => e.WebsiteSlideGoogleAppKey).HasColumnName("website_slide_google_app_key");
+                        entity.Property(e => e.WishlistGap).HasColumnName("wishlist_gap");
+                        entity.Property(e => e.WishlistGridColumns).HasColumnName("wishlist_grid_columns");
+                        entity.Property(e => e.WishlistMobileColumns).HasColumnName("wishlist_mobile_columns");
+                        entity.Property(e => e.WishlistOptProductsDesignClasses).HasColumnName("wishlist_opt_products_design_classes");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-                        entity.HasOne(d => d.CartRecoveryMailTemplate).WithMany(p => p.Website)
+                        entity.HasOne(d => d.CartRecoveryMailTemplate).WithMany(p => p.WebsiteCartRecoveryMailTemplate)
                             .HasForeignKey(d => d.CartRecoveryMailTemplateId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("website_cart_recovery_mail_template_id_fkey");
@@ -122,6 +138,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.TenantId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("website_company_id_fkey");
+
+                        entity.HasOne(d => d.ConfirmationEmailTemplate).WithMany(p => p.WebsiteConfirmationEmailTemplate)
+                            .HasForeignKey(d => d.ConfirmationEmailTemplateId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("website_confirmation_email_template_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.WebsiteCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("website_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

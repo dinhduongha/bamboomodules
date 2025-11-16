@@ -40,6 +40,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.EventId, "crm_lead__event_id_index").HasFilter("(event_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.EventLeadRuleId, "crm_lead__event_lead_rule_id_index").HasFilter("(event_lead_rule_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.LeadMiningRequestId, "crm_lead__lead_mining_request_id_index").HasFilter("(lead_mining_request_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.LostReasonId, "crm_lead__lost_reason_id_index");
@@ -49,6 +51,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.Name, "crm_lead__name_index")
                             .HasMethod("gin")
                             .HasOperators(new[] { "gin_trgm_ops" });
+
+                        entity.HasIndex(e => e.OriginChannelId, "crm_lead__origin_channel_id_index").HasFilter("(origin_channel_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.OriginSurveyId, "crm_lead__origin_survey_id_index").HasFilter("(origin_survey_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.PartnerAssignedId, "crm_lead__partner_assigned_id_index").HasFilter("(partner_assigned_id IS NOT NULL)");
 
@@ -77,6 +83,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.UserId, "crm_lead__user_id_index");
 
                         entity.HasIndex(e => new { e.CreationTime, e.TeamId }, "crm_lead_create_date_team_id_idx");
+
+                        entity.HasIndex(e => new { e.Priority, e.Id }, "crm_lead_default_order_idx")
+                            .IsDescending()
+                            .HasFilter("(active IS TRUE)");
 
                         entity.HasIndex(e => new { e.UserId, e.TeamId, e.Type }, "crm_lead_user_id_team_id_type_index");
 
@@ -138,8 +148,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.LostReasonId).HasColumnName("lost_reason_id");
                         entity.Property(e => e.MediumId).HasColumnName("medium_id");
                         entity.Property(e => e.MessageBounce).HasColumnName("message_bounce");
-                        entity.Property(e => e.Mobile).HasColumnName("mobile");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.OriginChannelId).HasColumnName("origin_channel_id");
+                        entity.Property(e => e.OriginSurveyId).HasColumnName("origin_survey_id");
                         entity.Property(e => e.PartnerAssignedId).HasColumnName("partner_assigned_id");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.PartnerLatitude).HasColumnName("partner_latitude");
@@ -167,10 +178,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Street).HasColumnName("street");
                         entity.Property(e => e.Street2).HasColumnName("street2");
                         entity.Property(e => e.TeamId).HasColumnName("team_id");
-                        entity.Property(e => e.Title).HasColumnName("title");
                         entity.Property(e => e.Type).HasColumnName("type");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.Website).HasColumnName("website");
+                        entity.Property(e => e.WonStatus).HasColumnName("won_status");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -230,6 +241,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("crm_lead_medium_id_fkey");
 
+                        entity.HasOne(d => d.OriginChannel).WithMany(p => p.CrmLead)
+                            .HasForeignKey(d => d.OriginChannelId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("crm_lead_origin_channel_id_fkey");
+
+                        entity.HasOne(d => d.OriginSurvey).WithMany(p => p.CrmLead)
+                            .HasForeignKey(d => d.OriginSurveyId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("crm_lead_origin_survey_id_fkey");
+
                         // entity.HasOne(d => d.PartnerAssigned).WithMany(p => p.CrmLeadPartnerAssigned) .HasForeignKey(d => d.PartnerAssignedId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead_partner_assigned_id_fkey");
                         entity.HasOne(d => d.PartnerAssigned).WithMany()
                             .HasForeignKey(d => d.PartnerAssignedId)
@@ -272,11 +293,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.TeamId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("crm_lead_team_id_fkey");
-
-                        entity.HasOne(d => d.TitleNavigation).WithMany(p => p.CrmLead)
-                            .HasForeignKey(d => d.Title)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("crm_lead_title_fkey");
 
                         // entity.HasOne(d => d.User).WithMany(p => p.CrmLeadUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead_user_id_fkey");
                         entity.HasOne(d => d.User).WithMany()

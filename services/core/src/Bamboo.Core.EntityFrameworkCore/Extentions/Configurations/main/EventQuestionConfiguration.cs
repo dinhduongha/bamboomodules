@@ -27,14 +27,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.EventId).HasColumnName("event_id");
-                        entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
+                        entity.Property(e => e.IsDefault).HasColumnName("is_default");
                         entity.Property(e => e.IsMandatoryAnswer).HasColumnName("is_mandatory_answer");
+                        entity.Property(e => e.IsReusable).HasColumnName("is_reusable");
                         entity.Property(e => e.OncePerOrder).HasColumnName("once_per_order");
                         entity.Property(e => e.QuestionType).HasColumnName("question_type");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
@@ -51,16 +52,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("event_question_create_uid_fkey");
-
-                        entity.HasOne(d => d.Event).WithMany(p => p.EventQuestion)
-                            .HasForeignKey(d => d.EventId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("event_question_event_id_fkey");
-
-                        entity.HasOne(d => d.EventType).WithMany(p => p.EventQuestion)
-                            .HasForeignKey(d => d.EventTypeId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("event_question_event_type_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.EventQuestionWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("event_question_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

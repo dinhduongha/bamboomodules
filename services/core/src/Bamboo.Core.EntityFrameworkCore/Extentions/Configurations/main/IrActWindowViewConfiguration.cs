@@ -16,7 +16,9 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_act_window_view");
 
-                        entity.HasIndex(e => new { e.ActWindowId, e.ViewMode }, "act_window_view_unique_mode_per_action").IsUnique();
+                        entity.HasIndex(e => e.ActWindowId, "ir_act_window_view__act_window_id_index").HasFilter("(act_window_id IS NOT NULL)");
+
+                        entity.HasIndex(e => new { e.ActWindowId, e.ViewMode }, "ir_act_window_view_unique_mode_per_action").IsUnique();
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.SuppliedWhId, "stock_route__supplied_wh_id_index").HasFilter("(supplied_wh_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -37,7 +39,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
-                        entity.Property(e => e.PackagingSelectable).HasColumnName("packaging_selectable");
+                        entity.Property(e => e.PackageTypeSelectable).HasColumnName("package_type_selectable");
                         entity.Property(e => e.ProductCategSelectable).HasColumnName("product_categ_selectable");
                         entity.Property(e => e.ProductSelectable).HasColumnName("product_selectable");
                         entity.Property(e => e.SaleSelectable).HasColumnName("sale_selectable");
@@ -96,25 +98,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "CategId", "RouteId" }, "stock_route_categ_categ_id_route_id_idx");
                                     j.IndexerProperty<Guid>("RouteId").HasColumnName("route_id");
                                     j.IndexerProperty<Guid>("CategId").HasColumnName("categ_id");
-                                });
-
-                        // entity.HasMany(d => d.Packaging).WithMany(p => p.Route)
-                        entity.HasMany(d => d.Packaging).WithMany(p => p.Route)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "StockRoutePackaging",
-                                r => r.HasOne<ProductPackaging>().WithMany()
-                                    .HasForeignKey("PackagingId")
-                                    .HasConstraintName("stock_route_packaging_packaging_id_fkey"),
-                                l => l.HasOne<StockRoute>().WithMany()
-                                    .HasForeignKey("RouteId")
-                                    .HasConstraintName("stock_route_packaging_route_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("RouteId", "PackagingId").HasName("stock_route_packaging_pkey");
-                                    j.ToTable("stock_route_packaging");
-                                    j.HasIndex(new[] { "PackagingId", "RouteId" }, "stock_route_packaging_packaging_id_route_id_idx");
-                                    j.IndexerProperty<Guid>("RouteId").HasColumnName("route_id");
-                                    j.IndexerProperty<Guid>("PackagingId").HasColumnName("packaging_id");
                                 });
 
                         // entity.HasMany(d => d.Product).WithMany(p => p.Route)

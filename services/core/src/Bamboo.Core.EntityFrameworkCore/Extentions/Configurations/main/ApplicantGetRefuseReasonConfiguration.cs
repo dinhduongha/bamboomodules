@@ -27,14 +27,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Body).HasColumnName("body");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Duplicates).HasColumnName("duplicates");
+                        entity.Property(e => e.Lang).HasColumnName("lang");
                         entity.Property(e => e.RefuseReasonId).HasColumnName("refuse_reason_id");
+                        entity.Property(e => e.ScheduledDate).HasColumnName("scheduled_date");
                         entity.Property(e => e.SendMail).HasColumnName("send_mail");
+                        entity.Property(e => e.Subject).HasColumnName("subject");
                         entity.Property(e => e.TemplateId).HasColumnName("template_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -66,6 +70,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                         // entity.HasMany(d => d.HrApplicant).WithMany(p => p.ApplicantGetRefuseReason)
                         entity.HasMany(d => d.HrApplicant).WithMany(p => p.ApplicantGetRefuseReason)
                             .UsingEntity<Dictionary<string, object>>(
+                                "ApplicantGetRefuseReasonDuplicateApplicantsRel",
+                                r => r.HasOne<HrApplicant>().WithMany()
+                                    .HasForeignKey("HrApplicantId")
+                                    .HasConstraintName("applicant_get_refuse_reason_duplicate_appl_hr_applicant_id_fkey"),
+                                l => l.HasOne<ApplicantGetRefuseReason>().WithMany()
+                                    .HasForeignKey("ApplicantGetRefuseReasonId")
+                                    .HasConstraintName("applicant_get_refuse_reason_d_applicant_get_refuse_reason__fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ApplicantGetRefuseReasonId", "HrApplicantId").HasName("applicant_get_refuse_reason_duplicate_applicants_rel_pkey");
+                                    j.ToTable("applicant_get_refuse_reason_duplicate_applicants_rel");
+                                    j.HasIndex(new[] { "HrApplicantId", "ApplicantGetRefuseReasonId" }, "applicant_get_refuse_reason_d_hr_applicant_id_applicant_get_idx");
+                                    j.IndexerProperty<Guid>("ApplicantGetRefuseReasonId").HasColumnName("applicant_get_refuse_reason_id");
+                                    j.IndexerProperty<Guid>("HrApplicantId").HasColumnName("hr_applicant_id");
+                                });
+
+                        // entity.HasMany(d => d.HrApplicantNavigation).WithMany(p => p.ApplicantGetRefuseReasonNavigation)
+                        entity.HasMany(d => d.HrApplicantNavigation).WithMany(p => p.ApplicantGetRefuseReasonNavigation)
+                            .UsingEntity<Dictionary<string, object>>(
                                 "ApplicantGetRefuseReasonHrApplicantRel",
                                 r => r.HasOne<HrApplicant>().WithMany()
                                     .HasForeignKey("HrApplicantId")
@@ -80,6 +103,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "HrApplicantId", "ApplicantGetRefuseReasonId" }, "applicant_get_refuse_reason_h_hr_applicant_id_applicant_get_idx");
                                     j.IndexerProperty<Guid>("ApplicantGetRefuseReasonId").HasColumnName("applicant_get_refuse_reason_id");
                                     j.IndexerProperty<Guid>("HrApplicantId").HasColumnName("hr_applicant_id");
+                                });
+
+                        // entity.HasMany(d => d.IrAttachment).WithMany(p => p.ApplicantGetRefuseReason)
+                        entity.HasMany(d => d.IrAttachment).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ApplicantGetRefuseReasonIrAttachmentRel",
+                                r => r.HasOne<IrAttachment>().WithMany()
+                                    .HasForeignKey("IrAttachmentId")
+                                    .HasConstraintName("applicant_get_refuse_reason_ir_attachment_ir_attachment_id_fkey"),
+                                l => l.HasOne<ApplicantGetRefuseReason>().WithMany()
+                                    .HasForeignKey("ApplicantGetRefuseReasonId")
+                                    .HasConstraintName("applicant_get_refuse_reason_i_applicant_get_refuse_reason__fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ApplicantGetRefuseReasonId", "IrAttachmentId").HasName("applicant_get_refuse_reason_ir_attachment_rel_pkey");
+                                    j.ToTable("applicant_get_refuse_reason_ir_attachment_rel");
+                                    j.HasIndex(new[] { "IrAttachmentId", "ApplicantGetRefuseReasonId" }, "applicant_get_refuse_reason_i_ir_attachment_id_applicant_ge_idx");
+                                    j.IndexerProperty<Guid>("ApplicantGetRefuseReasonId").HasColumnName("applicant_get_refuse_reason_id");
+                                    j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

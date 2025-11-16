@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PosOrderLineId, "product_attribute_custom_value__pos_order_line_id_index").HasFilter("(pos_order_line_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.SaleOrderLineId, "product_attribute_custom_value__sale_order_line_id_index").HasFilter("(sale_order_line_id IS NOT NULL)");
+
                         entity.HasIndex(e => new { e.CustomProductTemplateAttributeValueId, e.SaleOrderLineId }, "product_attribute_custom_value_sol_custom_value_unique").IsUnique();
 
                         entity.Property(e => e.Id)

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ReturnPickingTypeId, "stock_picking_type__return_picking_type_id_index").HasFilter("(return_picking_type_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -75,7 +77,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DefaultRemoveLocationDestId).HasColumnName("default_remove_location_dest_id");
                         entity.Property(e => e.DoneMrpLotLabelToPrint).HasColumnName("done_mrp_lot_label_to_print");
                         entity.Property(e => e.GeneratedMrpLotLabelToPrint).HasColumnName("generated_mrp_lot_label_to_print");
-                        entity.Property(e => e.IsRepairable).HasColumnName("is_repairable");
                         entity.Property(e => e.LotLabelFormat).HasColumnName("lot_label_format");
                         entity.Property(e => e.MoveType).HasColumnName("move_type");
                         entity.Property(e => e.MrpProductLabelToPrint).HasColumnName("mrp_product_label_to_print");
@@ -98,6 +99,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.SequenceCode).HasColumnName("sequence_code");
                         entity.Property(e => e.SequenceId).HasColumnName("sequence_id");
+                        entity.Property(e => e.SetPackageType).HasColumnName("set_package_type");
                         entity.Property(e => e.ShowEntirePacks).HasColumnName("show_entire_packs");
                         entity.Property(e => e.ShowOperations).HasColumnName("show_operations");
                         entity.Property(e => e.UseCreateComponentsLots).HasColumnName("use_create_components_lots");

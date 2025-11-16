@@ -20,8 +20,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => e.IsPublished, "im_livechat_channel__is_published_index");
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -29,6 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.BlockAssignmentDuringCall).HasColumnName("block_assignment_during_call");
                         entity.Property(e => e.ButtonBackgroundColor).HasColumnName("button_background_color");
                         entity.Property(e => e.ButtonText)
                             .HasColumnType("jsonb")
@@ -43,15 +42,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("default_message");
                         entity.Property(e => e.HeaderBackgroundColor).HasColumnName("header_background_color");
-                        entity.Property(e => e.InputPlaceholder)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("input_placeholder");
-                        entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.MaxSessions).HasColumnName("max_sessions");
+                        entity.Property(e => e.MaxSessionsMode).HasColumnName("max_sessions_mode");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.ReviewLink).HasColumnName("review_link");
                         entity.Property(e => e.TitleColor).HasColumnName("title_color");
-                        entity.Property(e => e.WebsiteDescription)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("website_description");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -68,25 +63,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("im_livechat_channel_write_uid_fkey");
-
-                        // entity.HasMany(d => d.User).WithMany(p => p.Channel)
-                        entity.HasMany(d => d.User).WithMany()
-                            .UsingEntity<Dictionary<string, object>>(
-                                "ImLivechatChannelImUser",
-                                r => r.HasOne<ResUsers>().WithMany()
-                                    .HasForeignKey("UserId")
-                                    .HasConstraintName("im_livechat_channel_im_user_user_id_fkey"),
-                                l => l.HasOne<ImLivechatChannel>().WithMany()
-                                    .HasForeignKey("ChannelId")
-                                    .HasConstraintName("im_livechat_channel_im_user_channel_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("ChannelId", "UserId").HasName("im_livechat_channel_im_user_pkey");
-                                    j.ToTable("im_livechat_channel_im_user");
-                                    j.HasIndex(new[] { "UserId", "ChannelId" }, "im_livechat_channel_im_user_user_id_channel_id_idx");
-                                    j.IndexerProperty<Guid>("ChannelId").HasColumnName("channel_id");
-                                    j.IndexerProperty<Guid>("UserId").HasColumnName("user_id");
-                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

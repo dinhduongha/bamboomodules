@@ -36,15 +36,21 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ParentId, "project_task__parent_id_index");
 
+                        entity.HasIndex(e => e.PartnerId, "project_task__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Priority, "project_task__priority_index");
 
                         entity.HasIndex(e => e.ProjectId, "project_task__project_id_index");
+
+                        entity.HasIndex(e => e.RecurrenceId, "project_task__recurrence_id_index").HasFilter("(recurrence_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.SaleLineId, "project_task__sale_line_id_index").HasFilter("(sale_line_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.StageId, "project_task__stage_id_index");
 
                         entity.HasIndex(e => e.State, "project_task__state_index");
+
+                        entity.HasIndex(e => e.IsTemplate, "project_task_is_template_idx").HasFilter("(is_template IS TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -81,9 +87,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EffectiveHours).HasColumnName("effective_hours");
                         entity.Property(e => e.EmailCc).HasColumnName("email_cc");
                         entity.Property(e => e.EmailFrom).HasColumnName("email_from");
+                        entity.Property(e => e.HasTemplateAncestor).HasColumnName("has_template_ancestor");
                         entity.Property(e => e.HtmlFieldHistory)
                             .HasColumnType("jsonb")
                             .HasColumnName("html_field_history");
+                        entity.Property(e => e.IsTemplate).HasColumnName("is_template");
                         entity.Property(e => e.MilestoneId).HasColumnName("milestone_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Overtime).HasColumnName("overtime");
@@ -200,6 +208,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "DependsOnId", "TaskId" }, "task_dependencies_rel_depends_on_id_task_id_idx");
                                     j.IndexerProperty<Guid>("TaskId").HasColumnName("task_id");
                                     j.IndexerProperty<Guid>("DependsOnId").HasColumnName("depends_on_id");
+                                });
+
+                        // entity.HasMany(d => d.ProjectRole).WithMany(p => p.ProjectTask)
+                        entity.HasMany(d => d.ProjectRole).WithMany(p => p.ProjectTask)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ProjectRoleProjectTaskRel",
+                                r => r.HasOne<ProjectRole>().WithMany()
+                                    .HasForeignKey("ProjectRoleId")
+                                    .HasConstraintName("project_role_project_task_rel_project_role_id_fkey"),
+                                l => l.HasOne<ProjectTask>().WithMany()
+                                    .HasForeignKey("ProjectTaskId")
+                                    .HasConstraintName("project_role_project_task_rel_project_task_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ProjectTaskId", "ProjectRoleId").HasName("project_role_project_task_rel_pkey");
+                                    j.ToTable("project_role_project_task_rel");
+                                    j.HasIndex(new[] { "ProjectRoleId", "ProjectTaskId" }, "project_role_project_task_rel_project_role_id_project_task__idx");
+                                    j.IndexerProperty<Guid>("ProjectTaskId").HasColumnName("project_task_id");
+                                    j.IndexerProperty<Guid>("ProjectRoleId").HasColumnName("project_role_id");
                                 });
 
                         // entity.HasMany(d => d.ProjectTags).WithMany(p => p.ProjectTask)

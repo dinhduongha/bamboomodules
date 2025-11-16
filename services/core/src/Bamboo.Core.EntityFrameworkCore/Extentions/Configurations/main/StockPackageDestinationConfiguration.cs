@@ -33,7 +33,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
-                        entity.Property(e => e.PickingId).HasColumnName("picking_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -50,16 +49,29 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_package_destination_location_dest_id_fkey");
 
-                        entity.HasOne(d => d.Picking).WithMany(p => p.StockPackageDestination)
-                            .HasForeignKey(d => d.PickingId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("stock_package_destination_picking_id_fkey");
-
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.StockPackageDestinationWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_package_destination_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_package_destination_write_uid_fkey");
+
+                        // entity.HasMany(d => d.StockMoveLine).WithMany(p => p.StockPackageDestination)
+                        entity.HasMany(d => d.StockMoveLine).WithMany(p => p.StockPackageDestination)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "Products",
+                                r => r.HasOne<StockMoveLine>().WithMany()
+                                    .HasForeignKey("StockMoveLineId")
+                                    .HasConstraintName("Products_stock_move_line_id_fkey"),
+                                l => l.HasOne<StockPackageDestination>().WithMany()
+                                    .HasForeignKey("StockPackageDestinationId")
+                                    .HasConstraintName("Products_stock_package_destination_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("StockPackageDestinationId", "StockMoveLineId").HasName("Products_pkey");
+                                    j.HasIndex(new[] { "StockMoveLineId", "StockPackageDestinationId" }, "Products_stock_move_line_id_stock_package_destination_id_idx");
+                                    j.IndexerProperty<Guid>("StockPackageDestinationId").HasColumnName("stock_package_destination_id");
+                                    j.IndexerProperty<Guid>("StockMoveLineId").HasColumnName("stock_move_line_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

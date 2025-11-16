@@ -516,11 +516,13 @@ public partial class StockLocation : FullAuditedAggregateRoot<Guid>, IEntityDto<
     [ForeignKey("StorageCategoryId")]
     public virtual StockStorageCategory? StorageCategory { get; set; }
 
-    // [Many2one]
+    // CONFLICK-v19
+    // // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ValuationInAccountId")]
     public virtual AccountAccount? ValuationInAccount { get; set; }
 
+    // CONFLICK-v19
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ValuationOutAccountId")]

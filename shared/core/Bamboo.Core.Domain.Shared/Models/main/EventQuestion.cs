@@ -85,10 +85,11 @@ public partial class EventQuestion : FullAuditedAggregateRoot<Guid>, IEntityDto<
     // [InverseProperty("Question")] // One2many
     public virtual ICollection<EventRegistrationAnswer> EventRegistrationAnswer { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("EventTypeId")]
-    public virtual EventType? EventType { get; set; }
+    // CONFLICK-V19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("EventTypeId")]
+    // public virtual EventType? EventType { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PartnerId, "product_wishlist__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
                         entity.HasIndex(e => new { e.ProductId, e.PartnerId }, "product_wishlist_product_unique_partner_id").IsUnique();
 
                         entity.Property(e => e.Id)

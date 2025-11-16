@@ -20,8 +20,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => e.TenantId, "followup_followup_company_uniq").IsUnique();
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -40,9 +38,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
-                        // entity.HasOne(d => d.Company).WithOne(p => p.FollowupFollowup) .HasForeignKey<FollowupFollowup>(d => d.TenantId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("followup_followup_company_id_fkey");
-                        entity.HasOne(d => d.Company).WithOne(p => p.FollowupFollowup)
-                            .HasForeignKey<FollowupFollowup>(d => d.TenantId)
+                        // entity.HasOne(d => d.Company).WithMany(p => p.FollowupFollowup) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("followup_followup_company_id_fkey");
+                        entity.HasOne(d => d.Company).WithMany()
+                            .HasForeignKey(d => d.TenantId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("followup_followup_company_id_fkey");
 

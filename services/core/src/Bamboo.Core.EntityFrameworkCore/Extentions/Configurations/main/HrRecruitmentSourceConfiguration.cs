@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.JobId, "hr_recruitment_source__job_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -28,6 +30,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.AliasId).HasColumnName("alias_id");
+                        entity.Property(e => e.CampaignId).HasColumnName("campaign_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -45,6 +48,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.AliasId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("hr_recruitment_source_alias_id_fkey");
+
+                        entity.HasOne(d => d.Campaign).WithMany(p => p.HrRecruitmentSource)
+                            .HasForeignKey(d => d.CampaignId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_recruitment_source_campaign_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.HrRecruitmentSourceCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_recruitment_source_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

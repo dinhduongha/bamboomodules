@@ -20,7 +20,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ForumId, "slide_channel__forum_id_index").HasFilter("(forum_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.IsPublished, "slide_channel__is_published_index");
+
+                        entity.HasIndex(e => e.ProductId, "slide_channel__product_id_index").HasFilter("(product_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.WebsiteId, "slide_channel__website_id_index");
 
@@ -60,6 +64,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("enroll_msg");
                         entity.Property(e => e.ForumId).HasColumnName("forum_id");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.KarmaGenChannelFinish).HasColumnName("karma_gen_channel_finish");
                         entity.Property(e => e.KarmaGenChannelRank).HasColumnName("karma_gen_channel_rank");
                         entity.Property(e => e.KarmaReview).HasColumnName("karma_review");

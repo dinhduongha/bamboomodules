@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.TimeOffTypeId, "hr_leave_accrual_plan__time_off_type_id_index").HasFilter("(time_off_type_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,6 +32,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AccruedGainTime).HasColumnName("accrued_gain_time");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AddedValueType).HasColumnName("added_value_type");
+                        entity.Property(e => e.CanBeCarryover).HasColumnName("can_be_carryover");
                         entity.Property(e => e.CarryoverDate).HasColumnName("carryover_date");
                         entity.Property(e => e.CarryoverDay).HasColumnName("carryover_day");
                         entity.Property(e => e.CarryoverMonth).HasColumnName("carryover_month");

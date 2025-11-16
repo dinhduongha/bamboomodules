@@ -22,6 +22,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.CampaignId, "mailing_mailing__campaign_id_index");
 
+                        entity.HasIndex(e => e.CardCampaignId, "mailing_mailing__card_campaign_id_index").HasFilter("(card_campaign_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.MailServerId, "mailing_mailing__mail_server_id_index").HasFilter("(mail_server_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -76,6 +80,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.SourceId).HasColumnName("source_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.Subject).HasColumnName("subject");
+                        entity.Property(e => e.UseExclusionList).HasColumnName("use_exclusion_list");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

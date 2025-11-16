@@ -38,6 +38,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.ForumId).HasColumnName("forum_id");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PostsCount).HasColumnName("posts_count");
                         entity.Property(e => e.SeoName)

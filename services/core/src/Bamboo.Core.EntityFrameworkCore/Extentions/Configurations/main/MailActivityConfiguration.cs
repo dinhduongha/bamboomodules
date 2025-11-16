@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CalendarEventId, "mail_activity__calendar_event_id_index").HasFilter("(calendar_event_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.DateDeadline, "mail_activity__date_deadline_index");
 
                         entity.HasIndex(e => e.ResId, "mail_activity__res_id_index");
@@ -48,6 +50,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.DateDeadline).HasColumnName("date_deadline");
                         entity.Property(e => e.DateDone).HasColumnName("date_done");
+                        entity.Property(e => e.Feedback).HasColumnName("feedback");
                         entity.Property(e => e.Note).HasColumnName("note");
                         entity.Property(e => e.PreviousActivityTypeId).HasColumnName("previous_activity_type_id");
                         entity.Property(e => e.RecommendedActivityTypeId).HasColumnName("recommended_activity_type_id");
@@ -90,10 +93,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mail_activity_recommended_activity_type_id_fkey");
 
-                        // entity.HasOne(d => d.RequestPartner).WithMany(p => p.MailActivity) .HasForeignKey(d => d.RequestPartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("mail_activity_request_partner_id_fkey");
+                        // entity.HasOne(d => d.RequestPartner).WithMany(p => p.MailActivity) .HasForeignKey(d => d.RequestPartnerId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("mail_activity_request_partner_id_fkey");
                         entity.HasOne(d => d.RequestPartner).WithMany()
                             .HasForeignKey(d => d.RequestPartnerId)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("mail_activity_request_partner_id_fkey");
 
                         entity.HasOne(d => d.ResModelNavigation).WithMany(p => p.MailActivity)

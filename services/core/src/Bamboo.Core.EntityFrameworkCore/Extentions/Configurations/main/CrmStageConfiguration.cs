@@ -27,6 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Color).HasColumnName("color");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -38,8 +39,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
                         entity.Property(e => e.Requirements).HasColumnName("requirements");
+                        entity.Property(e => e.RottingThresholdDays).HasColumnName("rotting_threshold_days");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.TeamId).HasColumnName("team_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -51,16 +52,31 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("crm_stage_create_uid_fkey");
 
-                        entity.HasOne(d => d.Team).WithMany(p => p.CrmStage)
-                            .HasForeignKey(d => d.TeamId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("crm_stage_team_id_fkey");
-
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.CrmStageWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_stage_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("crm_stage_write_uid_fkey");
+
+                        // entity.HasMany(d => d.CrmTeam).WithMany(p => p.CrmStage)
+                        entity.HasMany(d => d.CrmTeam).WithMany(p => p.CrmStage)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "CrmStageCrmTeamRel",
+                                r => r.HasOne<CrmTeam>().WithMany()
+                                    .HasForeignKey("CrmTeamId")
+                                    .OnDelete(DeleteBehavior.Restrict)
+                                    .HasConstraintName("crm_stage_crm_team_rel_crm_team_id_fkey"),
+                                l => l.HasOne<CrmStage>().WithMany()
+                                    .HasForeignKey("CrmStageId")
+                                    .HasConstraintName("crm_stage_crm_team_rel_crm_stage_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("CrmStageId", "CrmTeamId").HasName("crm_stage_crm_team_rel_pkey");
+                                    j.ToTable("crm_stage_crm_team_rel");
+                                    j.HasIndex(new[] { "CrmTeamId", "CrmStageId" }, "crm_stage_crm_team_rel_crm_team_id_crm_stage_id_idx");
+                                    j.IndexerProperty<Guid>("CrmStageId").HasColumnName("crm_stage_id");
+                                    j.IndexerProperty<Guid>("CrmTeamId").HasColumnName("crm_team_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

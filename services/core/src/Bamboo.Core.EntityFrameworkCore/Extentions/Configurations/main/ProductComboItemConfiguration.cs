@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ComboId, "product_combo_item__combo_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -58,10 +60,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("product_combo_item_create_uid_fkey");
 
-                        // entity.HasOne(d => d.Product).WithMany(p => p.ProductComboItem) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("product_combo_item_product_id_fkey");
+                        // entity.HasOne(d => d.Product).WithMany(p => p.ProductComboItem) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_combo_item_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()
                             .HasForeignKey(d => d.ProductId)
-                            .OnDelete(DeleteBehavior.Cascade)
+                            .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("product_combo_item_product_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.ProductComboItemWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("product_combo_item_write_uid_fkey");

@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.UserId, "fleet_vehicle_log_contract__user_id_index");
 
+                        entity.HasIndex(e => e.VehicleId, "fleet_vehicle_log_contract__vehicle_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

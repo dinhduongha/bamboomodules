@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "event_track__event_id_index");
+
                         entity.HasIndex(e => e.IsPublished, "event_track__is_published_index");
 
                         entity.HasIndex(e => e.StageId, "event_track__stage_id_index");
@@ -52,6 +54,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Duration).HasColumnName("duration");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.IsYoutubeReplay).HasColumnName("is_youtube_replay");
                         entity.Property(e => e.KanbanState).HasColumnName("kanban_state");
                         entity.Property(e => e.KanbanStateLabel).HasColumnName("kanban_state_label");

@@ -20,15 +20,23 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.LocationDestId, "stock_move_line__location_dest_id_index");
+
+                        entity.HasIndex(e => e.LocationId, "stock_move_line__location_id_index");
+
                         entity.HasIndex(e => e.MoveId, "stock_move_line__move_id_index");
 
                         entity.HasIndex(e => e.OwnerId, "stock_move_line__owner_id_index").HasFilter("(owner_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PackageHistoryId, "stock_move_line__package_history_id_index").HasFilter("(package_history_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.PickingId, "stock_move_line__picking_id_index");
 
                         entity.HasIndex(e => e.ProductId, "stock_move_line__product_id_index");
 
-                        entity.HasIndex(e => new { e.Id, e.TenantId, e.ProductId, e.LotId, e.LocationId, e.OwnerId, e.PackageId }, "stock_move_line_free_reservation_index").HasFilter("(((state IS NULL) OR (state <> ALL (ARRAY[('cancel'::character varying)::text, ('done'::character varying)::text]))) AND (quantity_product_uom > (0)::numeric) AND (NOT picked))");
+                        entity.HasIndex(e => e.WorkorderId, "stock_move_line__workorder_id_index").HasFilter("(workorder_id IS NOT NULL)");
+
+                        entity.HasIndex(e => new { e.Id, e.TenantId, e.ProductId, e.LotId, e.LocationId, e.OwnerId, e.PackageId }, "stock_move_line_free_reservation_index").HasFilter("(((state IS NULL) OR (state <> ALL (ARRAY[('cancel'::character varying)::text, ('done'::character varying)::text]))) AND (quantity_product_uom > (0)::numeric) AND (picked IS NOT TRUE))");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -37,8 +45,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-                        entity.Property(e => e.BatchId).HasColumnName("batch_id");
-                        entity.Property(e => e.CarrierId).HasColumnName("carrier_id");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -48,18 +54,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Date)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date");
-                        entity.Property(e => e.DescriptionPicking).HasColumnName("description_picking");
                         entity.Property(e => e.ExpirationDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("expiration_date");
+                        entity.Property(e => e.IsEntirePack).HasColumnName("is_entire_pack");
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
                         entity.Property(e => e.LocationId).HasColumnName("location_id");
                         entity.Property(e => e.LotId).HasColumnName("lot_id");
                         entity.Property(e => e.LotName).HasColumnName("lot_name");
                         entity.Property(e => e.MoveId).HasColumnName("move_id");
                         entity.Property(e => e.OwnerId).HasColumnName("owner_id");
+                        entity.Property(e => e.PackageHistoryId).HasColumnName("package_history_id");
                         entity.Property(e => e.PackageId).HasColumnName("package_id");
-                        entity.Property(e => e.PackageLevelId).HasColumnName("package_level_id");
                         entity.Property(e => e.Picked).HasColumnName("picked");
                         entity.Property(e => e.PickingId).HasColumnName("picking_id");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
@@ -67,7 +73,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ProductionId).HasColumnName("production_id");
                         entity.Property(e => e.Quantity).HasColumnName("quantity");
                         entity.Property(e => e.QuantityProductUom).HasColumnName("quantity_product_uom");
-                        entity.Property(e => e.Reference).HasColumnName("reference");
+                        entity.Property(e => e.RemovalDate)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("removal_date");
                         entity.Property(e => e.ResultPackageId).HasColumnName("result_package_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.WorkorderId).HasColumnName("workorder_id");
@@ -75,16 +83,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
-
-                        entity.HasOne(d => d.Batch).WithMany(p => p.StockMoveLine)
-                            .HasForeignKey(d => d.BatchId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_line_batch_id_fkey");
-
-                        entity.HasOne(d => d.Carrier).WithMany(p => p.StockMoveLine)
-                            .HasForeignKey(d => d.CarrierId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_line_carrier_id_fkey");
 
                         // entity.HasOne(d => d.Company).WithMany(p => p.StockMoveLine) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("stock_move_line_company_id_fkey");
                         entity.HasOne(d => d.Company).WithMany()
@@ -124,15 +122,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_move_line_owner_id_fkey");
 
+                        entity.HasOne(d => d.PackageHistory).WithMany(p => p.StockMoveLine)
+                            .HasForeignKey(d => d.PackageHistoryId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("stock_move_line_package_history_id_fkey");
+
                         entity.HasOne(d => d.Package).WithMany(p => p.StockMoveLinePackage)
                             .HasForeignKey(d => d.PackageId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_move_line_package_id_fkey");
-
-                        entity.HasOne(d => d.PackageLevel).WithMany(p => p.StockMoveLine)
-                            .HasForeignKey(d => d.PackageLevelId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_move_line_package_level_id_fkey");
 
                         entity.HasOne(d => d.Picking).WithMany(p => p.StockMoveLine)
                             .HasForeignKey(d => d.PickingId)

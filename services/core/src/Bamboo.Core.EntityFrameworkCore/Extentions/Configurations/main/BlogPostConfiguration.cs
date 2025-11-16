@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.AuthorId, "blog_post__author_id_index").HasFilter("(author_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.BlogId, "blog_post__blog_id_index");
+
                         entity.HasIndex(e => e.IsPublished, "blog_post__is_published_index");
 
                         entity.HasIndex(e => e.WebsiteId, "blog_post__website_id_index");
@@ -46,7 +48,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.FooterVisible).HasColumnName("footer_visible");
+                        entity.Property(e => e.HeaderVisible).HasColumnName("header_visible");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");

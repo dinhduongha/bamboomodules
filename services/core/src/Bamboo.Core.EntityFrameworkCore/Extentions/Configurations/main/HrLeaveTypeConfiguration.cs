@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.WorkEntryTypeId, "hr_leave_type__work_entry_type_id_index").HasFilter("(work_entry_type_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,17 +32,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AllocationNotifSubtypeId).HasColumnName("allocation_notif_subtype_id");
                         entity.Property(e => e.AllocationValidationType).HasColumnName("allocation_validation_type");
+                        entity.Property(e => e.AllowRequestOnTop).HasColumnName("allow_request_on_top");
                         entity.Property(e => e.AllowsNegative).HasColumnName("allows_negative");
-                        entity.Property(e => e.Code).HasColumnName("code");
                         entity.Property(e => e.Color).HasColumnName("color");
 
+                        entity.Property(e => e.CountryId).HasColumnName("country_id");
                         entity.Property(e => e.CreateCalendarMeeting).HasColumnName("create_calendar_meeting");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.ElligibleForAccrualRate).HasColumnName("elligible_for_accrual_rate");
                         entity.Property(e => e.EmployeeRequests).HasColumnName("employee_requests");
+                        entity.Property(e => e.HideOnDashboard).HasColumnName("hide_on_dashboard");
                         entity.Property(e => e.IconId).HasColumnName("icon_id");
                         entity.Property(e => e.IncludePublicHolidaysInDuration).HasColumnName("include_public_holidays_in_duration");
                         entity.Property(e => e.LeaveNotifSubtypeId).HasColumnName("leave_notif_subtype_id");
@@ -53,12 +58,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.RequestUnit).HasColumnName("request_unit");
                         entity.Property(e => e.RequiresAllocation).HasColumnName("requires_allocation");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.ShowOnDashboard).HasColumnName("show_on_dashboard");
                         entity.Property(e => e.SupportDocument).HasColumnName("support_document");
                         entity.Property(e => e.TimeType).HasColumnName("time_type");
-                        entity.Property(e => e.TimesheetGenerate).HasColumnName("timesheet_generate");
-                        entity.Property(e => e.TimesheetProjectId).HasColumnName("timesheet_project_id");
-                        entity.Property(e => e.TimesheetTaskId).HasColumnName("timesheet_task_id");
                         entity.Property(e => e.Unpaid).HasColumnName("unpaid");
                         entity.Property(e => e.WorkEntryTypeId).HasColumnName("work_entry_type_id");
                         entity.Property(e => e.LastModificationTime)
@@ -77,6 +78,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_leave_type_company_id_fkey");
 
+                        // entity.HasOne(d => d.Country).WithMany(p => p.HrLeaveType) .HasForeignKey(d => d.CountryId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_leave_type_country_id_fkey");
+                        entity.HasOne(d => d.Country).WithMany()
+                            .HasForeignKey(d => d.CountryId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_leave_type_country_id_fkey");
+
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.HrLeaveTypeCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_leave_type_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
                             .HasForeignKey(d => d.CreatorId)
@@ -93,16 +100,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LeaveNotifSubtypeId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_leave_type_leave_notif_subtype_id_fkey");
-
-                        entity.HasOne(d => d.TimesheetProject).WithMany(p => p.HrLeaveType)
-                            .HasForeignKey(d => d.TimesheetProjectId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_type_timesheet_project_id_fkey");
-
-                        entity.HasOne(d => d.TimesheetTask).WithMany(p => p.HrLeaveType)
-                            .HasForeignKey(d => d.TimesheetTaskId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_type_timesheet_task_id_fkey");
 
                         entity.HasOne(d => d.WorkEntryType).WithMany(p => p.HrLeaveType)
                             .HasForeignKey(d => d.WorkEntryTypeId)

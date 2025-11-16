@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ChannelId, "discuss_channel_rtc_session__channel_id_index").HasFilter("(channel_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PartnerId, "discuss_channel_rtc_session__partner_id_index");
+
                         entity.HasIndex(e => e.LastModificationTime, "discuss_channel_rtc_session__write_date_index");
 
                         entity.HasIndex(e => e.ChannelMemberId, "discuss_channel_rtc_session_channel_member_unique").IsUnique();
@@ -42,6 +46,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.IsDeaf).HasColumnName("is_deaf");
                         entity.Property(e => e.IsMuted).HasColumnName("is_muted");
                         entity.Property(e => e.IsScreenSharingOn).HasColumnName("is_screen_sharing_on");
+                        entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -62,6 +67,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("discuss_channel_rtc_session_create_uid_fkey");
+
+                        // entity.HasOne(d => d.Partner).WithMany(p => p.DiscussChannelRtcSession) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("discuss_channel_rtc_session_partner_id_fkey");
+                        entity.HasOne(d => d.Partner).WithMany()
+                            .HasForeignKey(d => d.PartnerId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("discuss_channel_rtc_session_partner_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.DiscussChannelRtcSessionWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("discuss_channel_rtc_session_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

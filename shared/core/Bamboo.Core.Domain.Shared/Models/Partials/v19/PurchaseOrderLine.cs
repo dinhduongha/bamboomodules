@@ -25,6 +25,6 @@ public partial class PurchaseOrderLine
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductUomId")]
-    public virtual UomUom? ProductUomObj { get; set; }
+    public virtual UomUom? ProductUom { get; set; }
 
 }

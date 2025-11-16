@@ -27,6 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.Body).HasColumnName("body");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -35,17 +36,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ExtraEdiCheckboxes)
                             .HasColumnType("jsonb")
                             .HasColumnName("extra_edi_checkboxes");
+                        entity.Property(e => e.Lang).HasColumnName("lang");
                         entity.Property(e => e.MailAttachmentsWidget)
                             .HasColumnType("jsonb")
                             .HasColumnName("mail_attachments_widget");
-                        entity.Property(e => e.MailBody).HasColumnName("mail_body");
-                        entity.Property(e => e.MailSubject).HasColumnName("mail_subject");
-                        entity.Property(e => e.MailTemplateId).HasColumnName("mail_template_id");
+                        entity.Property(e => e.Model).HasColumnName("model");
                         entity.Property(e => e.MoveId).HasColumnName("move_id");
                         entity.Property(e => e.PdfReportId).HasColumnName("pdf_report_id");
+                        entity.Property(e => e.ResIds).HasColumnName("res_ids");
                         entity.Property(e => e.SendingMethodCheckboxes)
                             .HasColumnType("jsonb")
                             .HasColumnName("sending_method_checkboxes");
+                        entity.Property(e => e.Subject).HasColumnName("subject");
+                        entity.Property(e => e.TemplateId).HasColumnName("template_id");
+                        entity.Property(e => e.TemplateName).HasColumnName("template_name");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -57,11 +61,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_send_wizard_create_uid_fkey");
 
-                        entity.HasOne(d => d.MailTemplate).WithMany(p => p.AccountMoveSendWizard)
-                            .HasForeignKey(d => d.MailTemplateId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_move_send_wizard_mail_template_id_fkey");
-
                         entity.HasOne(d => d.Move).WithMany(p => p.AccountMoveSendWizard)
                             .HasForeignKey(d => d.MoveId)
                             .OnDelete(DeleteBehavior.Cascade)
@@ -71,6 +70,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.PdfReportId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_send_wizard_pdf_report_id_fkey");
+
+                        entity.HasOne(d => d.Template).WithMany(p => p.AccountMoveSendWizard)
+                            .HasForeignKey(d => d.TemplateId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_move_send_wizard_template_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountMoveSendWizardWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_move_send_wizard_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

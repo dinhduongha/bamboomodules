@@ -42,6 +42,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.MailingId).HasColumnName("mailing_id");
                         entity.Property(e => e.Number).HasColumnName("number");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
+                        entity.Property(e => e.RecordCompanyId).HasColumnName("record_company_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.ToDelete).HasColumnName("to_delete");
                         entity.Property(e => e.Uuid).HasColumnName("uuid");
@@ -71,6 +72,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.PartnerId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sms_sms_partner_id_fkey");
+
+                        // entity.HasOne(d => d.RecordCompany).WithMany(p => p.SmsSms) .HasForeignKey(d => d.RecordCompanyId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("sms_sms_record_company_id_fkey");
+                        entity.HasOne(d => d.RecordCompany).WithMany()
+                            .HasForeignKey(d => d.RecordCompanyId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("sms_sms_record_company_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.SmsSmsWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("sms_sms_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

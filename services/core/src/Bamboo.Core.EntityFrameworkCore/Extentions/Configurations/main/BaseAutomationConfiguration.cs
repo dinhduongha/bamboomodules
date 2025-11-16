@@ -40,6 +40,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TrgDateCalendarId).HasColumnName("trg_date_calendar_id");
                         entity.Property(e => e.TrgDateId).HasColumnName("trg_date_id");
                         entity.Property(e => e.TrgDateRange).HasColumnName("trg_date_range");
+                        entity.Property(e => e.TrgDateRangeMode).HasColumnName("trg_date_range_mode");
                         entity.Property(e => e.TrgDateRangeType).HasColumnName("trg_date_range_type");
                         entity.Property(e => e.TrgFieldRef).HasColumnName("trg_field_ref");
                         entity.Property(e => e.TrgSelectionFieldId).HasColumnName("trg_selection_field_id");

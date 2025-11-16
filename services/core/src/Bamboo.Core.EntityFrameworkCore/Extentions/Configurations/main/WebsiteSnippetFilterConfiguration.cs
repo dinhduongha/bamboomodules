@@ -39,6 +39,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.FieldNames).HasColumnName("field_names");
                         entity.Property(e => e.FilterId).HasColumnName("filter_id");
+                        entity.Property(e => e.Help)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("help");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
                         entity.Property(e => e.Limit).HasColumnName("limit");
                         entity.Property(e => e.Name)

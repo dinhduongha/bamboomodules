@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "event_mail__event_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -32,6 +34,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.ErrorDatetime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("error_datetime");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
                         entity.Property(e => e.IntervalNbr).HasColumnName("interval_nbr");
                         entity.Property(e => e.IntervalType).HasColumnName("interval_type");

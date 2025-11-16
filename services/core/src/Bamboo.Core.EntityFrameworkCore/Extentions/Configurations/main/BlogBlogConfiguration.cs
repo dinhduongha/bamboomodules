@@ -39,12 +39,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
                         entity.Property(e => e.SeoName)
                             .HasColumnType("jsonb")
                             .HasColumnName("seo_name");
+                        entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.Subtitle)
                             .HasColumnType("jsonb")
                             .HasColumnName("subtitle");

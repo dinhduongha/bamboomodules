@@ -24,6 +24,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PricelistId, "product_pricelist_item__pricelist_id_index");
 
+                        entity.HasIndex(e => e.ProductId, "product_pricelist_item__product_id_index").HasFilter("(product_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ProductTmplId, "product_pricelist_item__product_tmpl_id_index").HasFilter("(product_tmpl_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

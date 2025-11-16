@@ -34,6 +34,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrderId, "account_analytic_line__order_id_index");
 
+                        entity.HasIndex(e => e.ParentTaskId, "account_analytic_line__parent_task_id_index").HasFilter("(parent_task_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ProjectId, "account_analytic_line__project_id_index");
 
                         entity.HasIndex(e => e.SoLine, "account_analytic_line__so_line_index").HasFilter("(so_line IS NOT NULL)");
@@ -47,6 +49,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.XPlan2Id, "account_analytic_line__x_plan2_id_index").HasFilter("(x_plan2_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.XPlan3Id, "account_analytic_line__x_plan3_id_index").HasFilter("(x_plan3_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.TaskId, "account_analytic_line_timeoff_timesheet_idx").HasFilter("(((global_leave_id IS NOT NULL) OR (holiday_id IS NOT NULL)) AND (project_id IS NOT NULL))");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -225,12 +229,12 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.XPlan2).WithMany(p => p.AccountAnalyticLineXPlan2)
                             .HasForeignKey(d => d.XPlan2Id)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_analytic_line_x_plan2_id_fkey");
 
                         entity.HasOne(d => d.XPlan3).WithMany(p => p.AccountAnalyticLineXPlan3)
                             .HasForeignKey(d => d.XPlan3Id)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_analytic_line_x_plan3_id_fkey");
 
                 entity.TryConfigureExtraProperties();

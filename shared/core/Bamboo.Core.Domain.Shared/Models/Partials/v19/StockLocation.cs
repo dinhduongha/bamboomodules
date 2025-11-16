@@ -55,4 +55,8 @@ public partial class StockLocation
     // [InverseProperty("LocationDest")] // One2many
     public virtual ICollection<StockPutInPack> StockPutInPack { get; set; }
 
+    // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("ValuationAccountId")]
+    public virtual AccountAccount? ValuationAccount { get; set; }
 }

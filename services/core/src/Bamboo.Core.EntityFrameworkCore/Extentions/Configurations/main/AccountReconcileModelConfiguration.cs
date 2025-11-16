@@ -20,8 +20,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => new { e.Name, e.TenantId }, "account_reconcile_model_name_unique").IsUnique();
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,41 +28,25 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
-                        entity.Property(e => e.AllowPaymentTolerance).HasColumnName("allow_payment_tolerance");
-                        entity.Property(e => e.AutoReconcile).HasColumnName("auto_reconcile");
+                        entity.Property(e => e.CanBeProposed).HasColumnName("can_be_proposed");
 
-                        entity.Property(e => e.CounterpartType).HasColumnName("counterpart_type");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.DecimalSeparator).HasColumnName("decimal_separator");
+                        entity.Property(e => e.MappedPartnerId).HasColumnName("mapped_partner_id");
                         entity.Property(e => e.MatchAmount).HasColumnName("match_amount");
                         entity.Property(e => e.MatchAmountMax).HasColumnName("match_amount_max");
                         entity.Property(e => e.MatchAmountMin).HasColumnName("match_amount_min");
                         entity.Property(e => e.MatchLabel).HasColumnName("match_label");
                         entity.Property(e => e.MatchLabelParam).HasColumnName("match_label_param");
-                        entity.Property(e => e.MatchNature).HasColumnName("match_nature");
-                        entity.Property(e => e.MatchNote).HasColumnName("match_note");
-                        entity.Property(e => e.MatchNoteParam).HasColumnName("match_note_param");
-                        entity.Property(e => e.MatchPartner).HasColumnName("match_partner");
-                        entity.Property(e => e.MatchSameCurrency).HasColumnName("match_same_currency");
-                        entity.Property(e => e.MatchTextLocationLabel).HasColumnName("match_text_location_label");
-                        entity.Property(e => e.MatchTextLocationNote).HasColumnName("match_text_location_note");
-                        entity.Property(e => e.MatchTextLocationReference).HasColumnName("match_text_location_reference");
-                        entity.Property(e => e.MatchTransactionType).HasColumnName("match_transaction_type");
-                        entity.Property(e => e.MatchTransactionTypeParam).HasColumnName("match_transaction_type_param");
-                        entity.Property(e => e.MatchingOrder).HasColumnName("matching_order");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
-                        entity.Property(e => e.PastMonthsLimit).HasColumnName("past_months_limit");
-                        entity.Property(e => e.PaymentToleranceParam).HasColumnName("payment_tolerance_param");
-                        entity.Property(e => e.PaymentToleranceType).HasColumnName("payment_tolerance_type");
-                        entity.Property(e => e.RuleType).HasColumnName("rule_type");
+                        entity.Property(e => e.NextActivityTypeId).HasColumnName("next_activity_type_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.ToCheck).HasColumnName("to_check");
+                        entity.Property(e => e.Trigger).HasColumnName("trigger");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -81,6 +63,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_reconcile_model_create_uid_fkey");
+
+                        // entity.HasOne(d => d.MappedPartner).WithMany(p => p.AccountReconcileModel) .HasForeignKey(d => d.MappedPartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_reconcile_model_mapped_partner_id_fkey");
+                        entity.HasOne(d => d.MappedPartner).WithMany()
+                            .HasForeignKey(d => d.MappedPartnerId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_reconcile_model_mapped_partner_id_fkey");
+
+                        entity.HasOne(d => d.NextActivityType).WithMany(p => p.AccountReconcileModel)
+                            .HasForeignKey(d => d.NextActivityTypeId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_reconcile_model_next_activity_type_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountReconcileModelWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_reconcile_model_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
@@ -107,7 +100,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("AccountJournalId").HasColumnName("account_journal_id");
                                 });
 
-                        // entity.HasMany(d => d.ResPartner).WithMany(p => p.AccountReconcileModel)
+                        // entity.HasMany(d => d.ResPartner).WithMany(p => p.AccountReconcileModelNavigation)
                         entity.HasMany(d => d.ResPartner).WithMany()
                             .UsingEntity<Dictionary<string, object>>(
                                 "AccountReconcileModelResPartnerRel",
@@ -124,25 +117,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "ResPartnerId", "AccountReconcileModelId" }, "account_reconcile_model_res_p_res_partner_id_account_reconc_idx");
                                     j.IndexerProperty<Guid>("AccountReconcileModelId").HasColumnName("account_reconcile_model_id");
                                     j.IndexerProperty<Guid>("ResPartnerId").HasColumnName("res_partner_id");
-                                });
-
-                        // entity.HasMany(d => d.ResPartnerCategory).WithMany(p => p.AccountReconcileModel)
-                        entity.HasMany(d => d.ResPartnerCategory).WithMany(p => p.AccountReconcileModel)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "AccountReconcileModelResPartnerCategoryRel",
-                                r => r.HasOne<ResPartnerCategory>().WithMany()
-                                    .HasForeignKey("ResPartnerCategoryId")
-                                    .HasConstraintName("account_reconcile_model_res_partne_res_partner_category_id_fkey"),
-                                l => l.HasOne<AccountReconcileModel>().WithMany()
-                                    .HasForeignKey("AccountReconcileModelId")
-                                    .HasConstraintName("account_reconcile_model_res_pa_account_reconcile_model_id_fkey1"),
-                                j =>
-                                {
-                                    j.HasKey("AccountReconcileModelId", "ResPartnerCategoryId").HasName("account_reconcile_model_res_partner_category_rel_pkey");
-                                    j.ToTable("account_reconcile_model_res_partner_category_rel");
-                                    j.HasIndex(new[] { "ResPartnerCategoryId", "AccountReconcileModelId" }, "account_reconcile_model_res_p_res_partner_category_id_accou_idx");
-                                    j.IndexerProperty<Guid>("AccountReconcileModelId").HasColumnName("account_reconcile_model_id");
-                                    j.IndexerProperty<Guid>("ResPartnerCategoryId").HasColumnName("res_partner_category_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

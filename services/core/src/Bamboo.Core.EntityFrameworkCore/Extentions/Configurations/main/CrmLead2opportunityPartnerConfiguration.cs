@@ -28,6 +28,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Action).HasColumnName("action");
+                        entity.Property(e => e.CommercialPartnerId).HasColumnName("commercial_partner_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -44,6 +45,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
 
+                        // entity.HasOne(d => d.CommercialPartner).WithMany(p => p.CrmLead2opportunityPartnerCommercialPartner) .HasForeignKey(d => d.CommercialPartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead2opportunity_partner_commercial_partner_id_fkey");
+                        entity.HasOne(d => d.CommercialPartner).WithMany()
+                            .HasForeignKey(d => d.CommercialPartnerId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("crm_lead2opportunity_partner_commercial_partner_id_fkey");
+
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.CrmLead2opportunityPartnerCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead2opportunity_partner_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
                             .HasForeignKey(d => d.CreatorId)
@@ -55,7 +62,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("crm_lead2opportunity_partner_lead_id_fkey");
 
-                        // entity.HasOne(d => d.Partner).WithMany(p => p.CrmLead2opportunityPartner) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead2opportunity_partner_partner_id_fkey");
+                        // entity.HasOne(d => d.Partner).WithMany(p => p.CrmLead2opportunityPartnerPartner) .HasForeignKey(d => d.PartnerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("crm_lead2opportunity_partner_partner_id_fkey");
                         entity.HasOne(d => d.Partner).WithMany()
                             .HasForeignKey(d => d.PartnerId)
                             .OnDelete(DeleteBehavior.SetNull)

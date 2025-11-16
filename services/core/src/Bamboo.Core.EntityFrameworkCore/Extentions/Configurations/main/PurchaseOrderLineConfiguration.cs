@@ -48,13 +48,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.DatePlanned)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date_planned");
                         entity.Property(e => e.Discount).HasColumnName("discount");
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
                         entity.Property(e => e.IsDownpayment).HasColumnName("is_downpayment");
                         entity.Property(e => e.LocationFinalId).HasColumnName("location_final_id");
                         entity.Property(e => e.Name).HasColumnName("name");
@@ -68,10 +66,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PriceUnit).HasColumnName("price_unit");
                         entity.Property(e => e.ProductDescriptionVariants).HasColumnName("product_description_variants");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
-                        entity.Property(e => e.ProductPackagingId).HasColumnName("product_packaging_id");
-                        entity.Property(e => e.ProductPackagingQty).HasColumnName("product_packaging_qty");
                         entity.Property(e => e.ProductQty).HasColumnName("product_qty");
-                        entity.Property(e => e.ProductUom).HasColumnName("product_uom");
+                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.ProductUomQty).HasColumnName("product_uom_qty");
                         entity.Property(e => e.PropagateCancel).HasColumnName("propagate_cancel");
                         entity.Property(e => e.QtyInvoiced).HasColumnName("qty_invoiced");
@@ -80,9 +76,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.QtyReceivedMethod).HasColumnName("qty_received_method");
                         entity.Property(e => e.QtyToInvoice).HasColumnName("qty_to_invoice");
                         entity.Property(e => e.SaleLineId).HasColumnName("sale_line_id");
-                        entity.Property(e => e.SaleOrderId).HasColumnName("sale_order_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.State).HasColumnName("state");
+                        entity.Property(e => e.TechnicalPriceUnit).HasColumnName("technical_price_unit");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -99,17 +94,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("purchase_order_line_create_uid_fkey");
-
-                        // entity.HasOne(d => d.Currency).WithMany(p => p.PurchaseOrderLine) .HasForeignKey(d => d.CurrencyId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_currency_id_fkey");
-                        entity.HasOne(d => d.Currency).WithMany()
-                            .HasForeignKey(d => d.CurrencyId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_line_currency_id_fkey");
-
-                        entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrderLine)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_line_group_id_fkey");
 
                         entity.HasOne(d => d.LocationFinal).WithMany(p => p.PurchaseOrderLine)
                             .HasForeignKey(d => d.LocationFinalId)
@@ -138,26 +122,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("purchase_order_line_product_id_fkey");
 
-                        entity.HasOne(d => d.ProductPackaging).WithMany(p => p.PurchaseOrderLine)
-                            .HasForeignKey(d => d.ProductPackagingId)
+                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.PurchaseOrderLine) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_product_uom_id_fkey");
+                        entity.HasOne(d => d.ProductUom).WithMany()
+                            .HasForeignKey(d => d.ProductUomId)
                             .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_line_product_packaging_id_fkey");
-
-                        // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.PurchaseOrderLine) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_product_uom_fkey");
-                        entity.HasOne(d => d.ProductUomNavigation).WithMany()
-                            .HasForeignKey(d => d.ProductUom)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_line_product_uom_fkey");
+                            .HasConstraintName("purchase_order_line_product_uom_id_fkey");
 
                         entity.HasOne(d => d.SaleLine).WithMany(p => p.PurchaseOrderLine)
                             .HasForeignKey(d => d.SaleLineId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("purchase_order_line_sale_line_id_fkey");
-
-                        entity.HasOne(d => d.SaleOrder).WithMany(p => p.PurchaseOrderLine)
-                            .HasForeignKey(d => d.SaleOrderId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_line_sale_order_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.PurchaseOrderLineWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("purchase_order_line_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
@@ -210,7 +184,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
                                     .HasForeignKey("ProductTemplateAttributeValueId")
                                     .OnDelete(DeleteBehavior.Restrict)
-                                    .HasConstraintName("product_template_attribute_v_product_template_attribute_v_fkey1"),
+                                    .HasConstraintName("product_template_attribute_va_product_template_attribute_v_fkey"),
                                 l => l.HasOne<PurchaseOrderLine>().WithMany()
                                     .HasForeignKey("PurchaseOrderLineId")
                                     .HasConstraintName("product_template_attribute_value_pu_purchase_order_line_id_fkey"),
@@ -218,7 +192,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 {
                                     j.HasKey("PurchaseOrderLineId", "ProductTemplateAttributeValueId").HasName("product_template_attribute_value_purchase_order_line_rel_pkey");
                                     j.ToTable("product_template_attribute_value_purchase_order_line_rel");
-                                    j.HasIndex(new[] { "ProductTemplateAttributeValueId", "PurchaseOrderLineId" }, "product_template_attribute_va_product_template_attribute_v_idx1");
+                                    j.HasIndex(new[] { "ProductTemplateAttributeValueId", "PurchaseOrderLineId" }, "product_template_attribute_va_product_template_attribute_va_idx");
                                     j.IndexerProperty<Guid>("PurchaseOrderLineId").HasColumnName("purchase_order_line_id");
                                     j.IndexerProperty<Guid>("ProductTemplateAttributeValueId").HasColumnName("product_template_attribute_value_id");
                                 });

@@ -55,14 +55,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("description");
                         entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
+                        entity.Property(e => e.EventUrl).HasColumnName("event_url");
                         entity.Property(e => e.ExhibitorMenu).HasColumnName("exhibitor_menu");
+                        entity.Property(e => e.FooterVisible).HasColumnName("footer_visible");
+                        entity.Property(e => e.HeaderVisible).HasColumnName("header_visible");
                         entity.Property(e => e.IntroductionMenu).HasColumnName("introduction_menu");
+                        entity.Property(e => e.IsMultiSlots).HasColumnName("is_multi_slots");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.KanbanState).HasColumnName("kanban_state");
-                        entity.Property(e => e.KanbanStateLabel).HasColumnName("kanban_state_label");
                         entity.Property(e => e.Lang).HasColumnName("lang");
-                        entity.Property(e => e.LocationMenu).HasColumnName("location_menu");
-                        entity.Property(e => e.MeetingRoomAllowCreation).HasColumnName("meeting_room_allow_creation");
                         entity.Property(e => e.MenuId).HasColumnName("menu_id");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
@@ -168,6 +170,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("event_event_write_uid_fkey");
+
+                        // entity.HasMany(d => d.EventQuestion).WithMany(p => p.EventEvent)
+                        entity.HasMany(d => d.EventQuestion).WithMany(p => p.EventEvent)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "EventEventEventQuestionRel",
+                                r => r.HasOne<EventQuestion>().WithMany()
+                                    .HasForeignKey("EventQuestionId")
+                                    .HasConstraintName("event_event_event_question_rel_event_question_id_fkey"),
+                                l => l.HasOne<EventEvent>().WithMany()
+                                    .HasForeignKey("EventEventId")
+                                    .HasConstraintName("event_event_event_question_rel_event_event_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("EventEventId", "EventQuestionId").HasName("event_event_event_question_rel_pkey");
+                                    j.ToTable("event_event_event_question_rel");
+                                    j.HasIndex(new[] { "EventQuestionId", "EventEventId" }, "event_event_event_question_re_event_question_id_event_event_idx");
+                                    j.IndexerProperty<Guid>("EventEventId").HasColumnName("event_event_id");
+                                    j.IndexerProperty<Guid>("EventQuestionId").HasColumnName("event_question_id");
+                                });
 
                         // entity.HasMany(d => d.EventTag).WithMany(p => p.EventEvent)
                         entity.HasMany(d => d.EventTag).WithMany(p => p.EventEvent)

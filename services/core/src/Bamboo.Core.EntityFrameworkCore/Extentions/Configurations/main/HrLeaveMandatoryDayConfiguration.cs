@@ -85,6 +85,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("HrDepartmentId").HasColumnName("hr_department_id");
                                 });
 
+                        // entity.HasMany(d => d.HrJob).WithMany(p => p.HrLeaveMandatoryDay)
+                        entity.HasMany(d => d.HrJob).WithMany(p => p.HrLeaveMandatoryDay)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "HrJobHrLeaveMandatoryDayRel",
+                                r => r.HasOne<HrJob>().WithMany()
+                                    .HasForeignKey("HrJobId")
+                                    .HasConstraintName("hr_job_hr_leave_mandatory_day_rel_hr_job_id_fkey"),
+                                l => l.HasOne<HrLeaveMandatoryDay>().WithMany()
+                                    .HasForeignKey("HrLeaveMandatoryDayId")
+                                    .HasConstraintName("hr_job_hr_leave_mandatory_day_re_hr_leave_mandatory_day_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("HrLeaveMandatoryDayId", "HrJobId").HasName("hr_job_hr_leave_mandatory_day_rel_pkey");
+                                    j.ToTable("hr_job_hr_leave_mandatory_day_rel");
+                                    j.HasIndex(new[] { "HrJobId", "HrLeaveMandatoryDayId" }, "hr_job_hr_leave_mandatory_day_hr_job_id_hr_leave_mandatory__idx");
+                                    j.IndexerProperty<Guid>("HrLeaveMandatoryDayId").HasColumnName("hr_leave_mandatory_day_id");
+                                    j.IndexerProperty<Guid>("HrJobId").HasColumnName("hr_job_id");
+                                });
+
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();
                 entity.TryConfigureConcurrencyStamp();

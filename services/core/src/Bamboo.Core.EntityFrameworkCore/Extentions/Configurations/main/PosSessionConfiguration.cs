@@ -28,8 +28,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.UserId, "pos_session__user_id_index");
 
-                        entity.HasIndex(e => e.Name, "pos_session_uniq_name").IsUnique();
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -50,12 +48,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
-                        entity.Property(e => e.LoginNumber).HasColumnName("login_number");
                         entity.Property(e => e.MoveId).HasColumnName("move_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.OpeningNotes).HasColumnName("opening_notes");
                         entity.Property(e => e.Rescue).HasColumnName("rescue");
-                        entity.Property(e => e.SequenceNumber).HasColumnName("sequence_number");
                         entity.Property(e => e.StartAt)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("start_at");

@@ -7,6 +7,74 @@ namespace Bamboo.Core.EntityFrameworkCore
 {
     public static partial class ModelBuilderExtensions
     {
+        public static void ApplyV16Configurations(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.ConfigureAccountAccountTemplate();
+            modelBuilder.ConfigureAccountBankStatementImport();
+            modelBuilder.ConfigureAccountBankStatementImportJournalCreation();
+            modelBuilder.ConfigureAccountChartTemplate();
+            modelBuilder.ConfigureAccountFiscalPositionAccountTemplate();
+            modelBuilder.ConfigureAccountFiscalPositionTaxTemplate();
+            modelBuilder.ConfigureAccountFiscalPositionTemplate();
+            modelBuilder.ConfigureAccountGroupTemplate();
+            modelBuilder.ConfigureAccountInvoiceSend();
+            modelBuilder.ConfigureAccountReconcileModelLineTemplate();
+            modelBuilder.ConfigureAccountReconcileModelTemplate();
+            modelBuilder.ConfigureAccountTaxRepartitionLineTemplate();
+            modelBuilder.ConfigureAccountTaxTemplate();
+            modelBuilder.ConfigureAccountTourUploadBill();
+            modelBuilder.ConfigureAccountTourUploadBillEmailConfirm();
+            modelBuilder.ConfigureAccountUnreconcile();
+            modelBuilder.ConfigureBaseImportTestsModelsChar();
+            modelBuilder.ConfigureBaseImportTestsModelsCharNoreadonly();
+            modelBuilder.ConfigureBaseImportTestsModelsCharReadonly();
+            modelBuilder.ConfigureBaseImportTestsModelsCharRequired();
+            modelBuilder.ConfigureBaseImportTestsModelsCharStates();
+            modelBuilder.ConfigureBaseImportTestsModelsCharStillreadonly();
+            modelBuilder.ConfigureBaseImportTestsModelsComplex();
+            modelBuilder.ConfigureBaseImportTestsModelsFloat();
+            modelBuilder.ConfigureBaseImportTestsModelsM2o();
+            modelBuilder.ConfigureBaseImportTestsModelsM2oRelated();
+            modelBuilder.ConfigureBaseImportTestsModelsM2oRequired();
+            modelBuilder.ConfigureBaseImportTestsModelsM2oRequiredRelated();
+            modelBuilder.ConfigureBaseImportTestsModelsO2m();
+            modelBuilder.ConfigureBaseImportTestsModelsO2mChild();
+            modelBuilder.ConfigureBaseImportTestsModelsPreview();
+            modelBuilder.ConfigureGoogleCalendarCredentials();
+            modelBuilder.ConfigureHrLeaveStressDay();
+            modelBuilder.ConfigureHrPlan();
+            modelBuilder.ConfigureHrPlanActivityType();
+            modelBuilder.ConfigureHrPlanWizard();
+            modelBuilder.ConfigureIrProperty();
+            modelBuilder.ConfigureIrServerObjectLines();
+            modelBuilder.ConfigureMailChannel();
+            modelBuilder.ConfigureMailChannelMember();
+            modelBuilder.ConfigureMailChannelRtcSession();
+            modelBuilder.ConfigureMailShortcode();
+            modelBuilder.ConfigureMailingContactListRel();
+            modelBuilder.ConfigureMrpDocument();
+            modelBuilder.ConfigureMrpImmediateProduction();
+            modelBuilder.ConfigureMrpImmediateProductionLine();
+            modelBuilder.ConfigureNoteNote();
+            modelBuilder.ConfigureNoteStage();
+            modelBuilder.ConfigureNoteTag();
+            modelBuilder.ConfigurePaymentIcon();
+            modelBuilder.ConfigurePosSessionCheckProductWizard();
+            modelBuilder.ConfigureProjectCreateSaleOrder();
+            modelBuilder.ConfigureProjectCreateSaleOrderLine();
+            modelBuilder.ConfigurePurchaseRequisitionType();
+            modelBuilder.ConfigureRepairFee();
+            modelBuilder.ConfigureRepairLine();
+            modelBuilder.ConfigureRepairOrderMakeInvoice();
+            modelBuilder.ConfigureResConfigInstaller();
+            modelBuilder.ConfigureRestaurantPrinter();
+            modelBuilder.ConfigureSnailmailConfirmInvoice();
+            modelBuilder.ConfigureStockAssignSerial();
+            modelBuilder.ConfigureStockImmediateTransfer();
+            modelBuilder.ConfigureStockImmediateTransferLine();
+            modelBuilder.ConfigureStockSchedulerCompute();
+            
+        }
         public static void ConfigureCompat(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<HrApplicantSkill>(entity =>

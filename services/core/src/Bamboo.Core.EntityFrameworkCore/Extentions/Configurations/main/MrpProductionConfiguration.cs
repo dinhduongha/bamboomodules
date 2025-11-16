@@ -26,6 +26,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PickingTypeId, "mrp_production__picking_type_id_index");
 
+                        entity.HasIndex(e => e.ProductionGroupId, "mrp_production__production_group_id_index");
+
                         entity.HasIndex(e => e.ReservationState, "mrp_production__reservation_state_index");
 
                         entity.HasIndex(e => e.State, "mrp_production__state_index");
@@ -65,18 +67,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
                         entity.Property(e => e.LocationFinalId).HasColumnName("location_final_id");
                         entity.Property(e => e.LocationSrcId).HasColumnName("location_src_id");
-                        entity.Property(e => e.LotProducingId).HasColumnName("lot_producing_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.OrderpointId).HasColumnName("orderpoint_id");
                         entity.Property(e => e.Origin).HasColumnName("origin");
                         entity.Property(e => e.PickingTypeId).HasColumnName("picking_type_id");
                         entity.Property(e => e.Priority).HasColumnName("priority");
-                        entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
                         entity.Property(e => e.ProductDescriptionVariants).HasColumnName("product_description_variants");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.ProductQty).HasColumnName("product_qty");
                         entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.ProductUomQty).HasColumnName("product_uom_qty");
+                        entity.Property(e => e.ProductionGroupId).HasColumnName("production_group_id");
                         entity.Property(e => e.ProductionLocationId).HasColumnName("production_location_id");
                         entity.Property(e => e.ProjectId).HasColumnName("project_id");
                         entity.Property(e => e.PropagateCancel).HasColumnName("propagate_cancel");
@@ -124,11 +125,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("mrp_production_location_src_id_fkey");
 
-                        entity.HasOne(d => d.LotProducing).WithMany(p => p.MrpProduction)
-                            .HasForeignKey(d => d.LotProducingId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("mrp_production_lot_producing_id_fkey");
-
                         entity.HasOne(d => d.Orderpoint).WithMany(p => p.MrpProduction)
                             .HasForeignKey(d => d.OrderpointId)
                             .OnDelete(DeleteBehavior.SetNull)
@@ -138,11 +134,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.PickingTypeId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("mrp_production_picking_type_id_fkey");
-
-                        entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.MrpProduction)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("mrp_production_procurement_group_id_fkey");
 
                         // entity.HasOne(d => d.Product).WithMany(p => p.MrpProduction) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("mrp_production_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()
@@ -155,6 +146,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ProductUomId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("mrp_production_product_uom_id_fkey");
+
+                        entity.HasOne(d => d.ProductionGroup).WithMany(p => p.MrpProduction)
+                            .HasForeignKey(d => d.ProductionGroupId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("mrp_production_production_group_id_fkey");
 
                         entity.HasOne(d => d.ProductionLocation).WithMany(p => p.MrpProductionProductionLocation)
                             .HasForeignKey(d => d.ProductionLocationId)
@@ -188,6 +184,63 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mrp_production_write_uid_fkey");
+
+                        // entity.HasMany(d => d.Move).WithMany(p => p.Production)
+                        entity.HasMany(d => d.Move).WithMany(p => p.Production)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "WipMoveProductionRel",
+                                r => r.HasOne<AccountMove>().WithMany()
+                                    .HasForeignKey("MoveId")
+                                    .HasConstraintName("wip_move_production_rel_move_id_fkey"),
+                                l => l.HasOne<MrpProduction>().WithMany()
+                                    .HasForeignKey("ProductionId")
+                                    .HasConstraintName("wip_move_production_rel_production_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ProductionId", "MoveId").HasName("wip_move_production_rel_pkey");
+                                    j.ToTable("wip_move_production_rel");
+                                    j.HasIndex(new[] { "MoveId", "ProductionId" }, "wip_move_production_rel_move_id_production_id_idx");
+                                    j.IndexerProperty<Guid>("ProductionId").HasColumnName("production_id");
+                                    j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                                });
+
+                        // entity.HasMany(d => d.Reference).WithMany(p => p.Production)
+                        entity.HasMany(d => d.Reference).WithMany(p => p.Production)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferenceProductionRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_production_rel_reference_id_fkey"),
+                                l => l.HasOne<MrpProduction>().WithMany()
+                                    .HasForeignKey("ProductionId")
+                                    .HasConstraintName("stock_reference_production_rel_production_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ProductionId", "ReferenceId").HasName("stock_reference_production_rel_pkey");
+                                    j.ToTable("stock_reference_production_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "ProductionId" }, "stock_reference_production_rel_reference_id_production_id_idx");
+                                    j.IndexerProperty<Guid>("ProductionId").HasColumnName("production_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
+                                });
+
+                        // entity.HasMany(d => d.StockLot).WithMany(p => p.MrpProduction)
+                        entity.HasMany(d => d.StockLot).WithMany(p => p.MrpProduction)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "MrpProductionStockLotRel",
+                                r => r.HasOne<StockLot>().WithMany()
+                                    .HasForeignKey("StockLotId")
+                                    .HasConstraintName("mrp_production_stock_lot_rel_stock_lot_id_fkey"),
+                                l => l.HasOne<MrpProduction>().WithMany()
+                                    .HasForeignKey("MrpProductionId")
+                                    .HasConstraintName("mrp_production_stock_lot_rel_mrp_production_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("MrpProductionId", "StockLotId").HasName("mrp_production_stock_lot_rel_pkey");
+                                    j.ToTable("mrp_production_stock_lot_rel");
+                                    j.HasIndex(new[] { "StockLotId", "MrpProductionId" }, "mrp_production_stock_lot_rel_stock_lot_id_mrp_production_id_idx");
+                                    j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                                    j.IndexerProperty<Guid>("StockLotId").HasColumnName("stock_lot_id");
+                                });
 
                         // entity.HasMany(d => d.TemplateAttributeValue).WithMany(p => p.Production)
                         entity.HasMany(d => d.TemplateAttributeValue).WithMany(p => p.Production)

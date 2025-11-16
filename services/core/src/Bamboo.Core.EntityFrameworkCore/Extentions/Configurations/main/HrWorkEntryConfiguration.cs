@@ -24,9 +24,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.WorkEntryTypeId, "hr_work_entry__work_entry_type_id_index");
 
-                        entity.HasIndex(e => new { e.ContractId, e.DateStart, e.DateStop }, "hr_work_entry_contract_date_start_stop_idx").HasFilter("(state = ANY (ARRAY[('draft'::character varying)::text, ('validated'::character varying)::text]))");
-
-                        entity.HasIndex(e => new { e.DateStart, e.DateStop }, "hr_work_entry_date_start_date_stop_index");
+                        entity.HasIndex(e => new { e.VersionId, e.Date }, "hr_work_entry_contract_date_start_stop_idx").HasFilter("(state = ANY (ARRAY[('draft'::character varying)::text, ('validated'::character varying)::text]))");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -36,26 +34,22 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.AmountRate).HasColumnName("amount_rate");
 
                         entity.Property(e => e.Conflict).HasColumnName("conflict");
-                        entity.Property(e => e.ContractId).HasColumnName("contract_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
-                        entity.Property(e => e.DateStart)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("date_start");
-                        entity.Property(e => e.DateStop)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("date_stop");
+                        entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.DepartmentId).HasColumnName("department_id");
                         entity.Property(e => e.Duration).HasColumnName("duration");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.LeaveId).HasColumnName("leave_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.State).HasColumnName("state");
+                        entity.Property(e => e.VersionId).HasColumnName("version_id");
                         entity.Property(e => e.WorkEntryTypeId).HasColumnName("work_entry_type_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -67,11 +61,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.TenantId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("hr_work_entry_company_id_fkey");
-
-                        entity.HasOne(d => d.Contract).WithMany(p => p.HrWorkEntry)
-                            .HasForeignKey(d => d.ContractId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("hr_work_entry_contract_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.HrWorkEntryCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_work_entry_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
@@ -93,6 +82,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LeaveId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_work_entry_leave_id_fkey");
+
+                        entity.HasOne(d => d.Version).WithMany(p => p.HrWorkEntry)
+                            .HasForeignKey(d => d.VersionId)
+                            .OnDelete(DeleteBehavior.Restrict)
+                            .HasConstraintName("hr_work_entry_version_id_fkey");
 
                         entity.HasOne(d => d.WorkEntryType).WithMany(p => p.HrWorkEntry)
                             .HasForeignKey(d => d.WorkEntryTypeId)

@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_asset");
 
+                        entity.HasIndex(e => e.ThemeTemplateId, "ir_asset__theme_template_id_index").HasFilter("(theme_template_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

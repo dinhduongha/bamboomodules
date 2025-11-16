@@ -30,6 +30,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AnalyticDistribution)
                             .HasColumnType("jsonb")
                             .HasColumnName("analytic_distribution");
+                        entity.Property(e => e.ApprovalDate)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("approval_date");
+                        entity.Property(e => e.ApprovalState).HasColumnName("approval_state");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -39,6 +43,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.ExpenseId).HasColumnName("expense_id");
+                        entity.Property(e => e.ManagerId).HasColumnName("manager_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.ProductHasCost).HasColumnName("product_has_cost");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
@@ -77,6 +82,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.ExpenseId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_expense_split_expense_id_fkey");
+
+                        // entity.HasOne(d => d.Manager).WithMany(p => p.HrExpenseSplitManager) .HasForeignKey(d => d.ManagerId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_expense_split_manager_id_fkey");
+                        entity.HasOne(d => d.Manager).WithMany()
+                            .HasForeignKey(d => d.ManagerId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_expense_split_manager_id_fkey");
 
                         // entity.HasOne(d => d.Product).WithMany(p => p.HrExpenseSplit) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("hr_expense_split_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()

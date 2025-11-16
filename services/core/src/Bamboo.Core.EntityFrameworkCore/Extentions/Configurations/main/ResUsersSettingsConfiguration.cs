@@ -16,8 +16,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("res_users_settings");
 
-                        entity.HasIndex(e => e.MuteUntilDt, "res_users_settings__mute_until_dt_index");
-
                         entity.HasIndex(e => e.UserId, "res_users_settings_unique_user_id").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -46,9 +44,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("microsoft_last_sync_date");
                         entity.Property(e => e.MicrosoftSynchronizationStopped).HasColumnName("microsoft_synchronization_stopped");
-                        entity.Property(e => e.MuteUntilDt)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("mute_until_dt");
                         entity.Property(e => e.PushToTalkKey).HasColumnName("push_to_talk_key");
                         entity.Property(e => e.UsePushToTalk).HasColumnName("use_push_to_talk");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -75,6 +70,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("res_users_settings_write_uid_fkey");
+
+                        // entity.HasMany(d => d.ImLivechatExpertise).WithMany(p => p.ResUsersSettings)
+                        entity.HasMany(d => d.ImLivechatExpertise).WithMany(p => p.ResUsersSettings)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ImLivechatExpertiseResUsersSettingsRel",
+                                r => r.HasOne<ImLivechatExpertise>().WithMany()
+                                    .HasForeignKey("ImLivechatExpertiseId")
+                                    .HasConstraintName("im_livechat_expertise_res_users_s_im_livechat_expertise_id_fkey"),
+                                l => l.HasOne<ResUsersSettings>().WithMany()
+                                    .HasForeignKey("ResUsersSettingsId")
+                                    .HasConstraintName("im_livechat_expertise_res_users_sett_res_users_settings_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ResUsersSettingsId", "ImLivechatExpertiseId").HasName("im_livechat_expertise_res_users_settings_rel_pkey");
+                                    j.ToTable("im_livechat_expertise_res_users_settings_rel");
+                                    j.HasIndex(new[] { "ImLivechatExpertiseId", "ResUsersSettingsId" }, "im_livechat_expertise_res_use_im_livechat_expertise_id_res__idx");
+                                    j.IndexerProperty<Guid>("ResUsersSettingsId").HasColumnName("res_users_settings_id");
+                                    j.IndexerProperty<Guid>("ImLivechatExpertiseId").HasColumnName("im_livechat_expertise_id");
+                                });
 
                         // entity.HasMany(d => d.ResLang).WithMany(p => p.ResUsersSettings)
                         entity.HasMany(d => d.ResLang).WithMany(p => p.ResUsersSettings)

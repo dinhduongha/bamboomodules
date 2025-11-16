@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.RecycleModelId, "data_recycle_record__recycle_model_id_index").HasFilter("(recycle_model_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ResId, "data_recycle_record__res_id_index");
 
                         entity.Property(e => e.Id)

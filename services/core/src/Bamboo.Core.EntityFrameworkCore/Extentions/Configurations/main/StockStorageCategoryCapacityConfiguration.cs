@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PackageTypeId, "stock_storage_category_capacity__package_type_id_index").HasFilter("(package_type_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ProductId, "stock_storage_category_capacity__product_id_index").HasFilter("(product_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.StorageCategoryId, "stock_storage_category_capacity__storage_category_id_index");
 
                         entity.HasIndex(e => new { e.PackageTypeId, e.StorageCategoryId }, "stock_storage_category_capacity_unique_package_type").IsUnique();

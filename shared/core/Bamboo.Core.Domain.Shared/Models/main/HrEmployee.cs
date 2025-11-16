@@ -352,10 +352,11 @@ public partial class HrEmployee : FullAuditedAggregateRoot<Guid>, IEntityDto<Gui
     [ForeignKey("AttendanceManagerId")]
     public virtual ResUsers? AttendanceManager { get; set; }
 
-    // [Many2one]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    [ForeignKey("BankAccountId")]
-    public virtual ResPartnerBank? BankAccount { get; set; }
+    // CONFLICK-V19
+    // // [Many2one]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [ForeignKey("BankAccountId")]
+    // public virtual ResPartnerBank? BankAccount { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

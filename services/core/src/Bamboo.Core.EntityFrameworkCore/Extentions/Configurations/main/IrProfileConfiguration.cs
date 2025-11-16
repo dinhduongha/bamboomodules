@@ -21,6 +21,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
+                        entity.Property(e => e.CpuDuration).HasColumnName("cpu_duration");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -29,6 +30,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EntryCount).HasColumnName("entry_count");
                         entity.Property(e => e.InitStackTrace).HasColumnName("init_stack_trace");
                         entity.Property(e => e.Name).HasColumnName("name");
+                        entity.Property(e => e.Others).HasColumnName("others");
                         entity.Property(e => e.Qweb).HasColumnName("qweb");
                         entity.Property(e => e.Session).HasColumnName("session");
                         entity.Property(e => e.Sql).HasColumnName("sql");

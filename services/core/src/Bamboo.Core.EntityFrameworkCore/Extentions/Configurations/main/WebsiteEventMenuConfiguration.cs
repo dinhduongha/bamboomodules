@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "website_event_menu__event_id_index").HasFilter("(event_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -33,9 +35,23 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.MenuId).HasColumnName("menu_id");
                         entity.Property(e => e.MenuType).HasColumnName("menu_type");
+                        entity.Property(e => e.SeoName)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("seo_name");
                         entity.Property(e => e.ViewId).HasColumnName("view_id");
+                        entity.Property(e => e.WebsiteMetaDescription)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("website_meta_description");
+                        entity.Property(e => e.WebsiteMetaKeywords)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("website_meta_keywords");
+                        entity.Property(e => e.WebsiteMetaOgImg).HasColumnName("website_meta_og_img");
+                        entity.Property(e => e.WebsiteMetaTitle)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("website_meta_title");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

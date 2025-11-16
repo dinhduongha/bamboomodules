@@ -30,7 +30,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasMethod("gin")
                             .HasOperators(new[] { "gin_trgm_ops" });
 
+                        entity.HasIndex(e => e.PartnerId, "purchase_order__partner_id_index");
+
                         entity.HasIndex(e => e.Priority, "purchase_order__priority_index");
+
+                        entity.HasIndex(e => e.PurchaseGroupId, "purchase_order__purchase_group_id_index").HasFilter("(purchase_group_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.RequisitionId, "purchase_order__requisition_id_index").HasFilter("(requisition_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.State, "purchase_order__state_index");
 
@@ -44,6 +50,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.AccessToken).HasColumnName("access_token");
+                        entity.Property(e => e.Acknowledged).HasColumnName("acknowledged");
                         entity.Property(e => e.AmountTax).HasColumnName("amount_tax");
                         entity.Property(e => e.AmountTotal).HasColumnName("amount_total");
                         entity.Property(e => e.AmountTotalCc).HasColumnName("amount_total_cc");
@@ -73,16 +80,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("effective_date");
                         entity.Property(e => e.FiscalPositionId).HasColumnName("fiscal_position_id");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
                         entity.Property(e => e.IncotermId).HasColumnName("incoterm_id");
                         entity.Property(e => e.IncotermLocation).HasColumnName("incoterm_location");
                         entity.Property(e => e.InvoiceCount).HasColumnName("invoice_count");
                         entity.Property(e => e.InvoiceStatus).HasColumnName("invoice_status");
-                        entity.Property(e => e.MailReceptionConfirmed).HasColumnName("mail_reception_confirmed");
-                        entity.Property(e => e.MailReceptionDeclined).HasColumnName("mail_reception_declined");
-                        entity.Property(e => e.MailReminderConfirmed).HasColumnName("mail_reminder_confirmed");
+                        entity.Property(e => e.Locked).HasColumnName("locked");
                         entity.Property(e => e.Name).HasColumnName("name");
-                        entity.Property(e => e.Notes).HasColumnName("notes");
+                        entity.Property(e => e.Note).HasColumnName("note");
                         entity.Property(e => e.Origin).HasColumnName("origin");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.PartnerRef).HasColumnName("partner_ref");
@@ -91,7 +95,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Priority).HasColumnName("priority");
                         entity.Property(e => e.ProjectId).HasColumnName("project_id");
                         entity.Property(e => e.PurchaseGroupId).HasColumnName("purchase_group_id");
+                        entity.Property(e => e.ReceiptReminderEmail).HasColumnName("receipt_reminder_email");
                         entity.Property(e => e.ReceiptStatus).HasColumnName("receipt_status");
+                        entity.Property(e => e.ReminderDateBeforeReceipt).HasColumnName("reminder_date_before_receipt");
                         entity.Property(e => e.ReportGrids).HasColumnName("report_grids");
                         entity.Property(e => e.RequisitionId).HasColumnName("requisition_id");
                         entity.Property(e => e.State).HasColumnName("state");
@@ -129,11 +135,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.FiscalPositionId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("purchase_order_fiscal_position_id_fkey");
-
-                        entity.HasOne(d => d.Group).WithMany(p => p.PurchaseOrder)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("purchase_order_group_id_fkey");
 
                         entity.HasOne(d => d.Incoterm).WithMany(p => p.PurchaseOrder)
                             .HasForeignKey(d => d.IncotermId)
@@ -200,6 +201,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "AccountMoveId", "PurchaseOrderId" }, "account_move_purchase_order_r_account_move_id_purchase_orde_idx");
                                     j.IndexerProperty<Guid>("PurchaseOrderId").HasColumnName("purchase_order_id");
                                     j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
+                                });
+
+                        // entity.HasMany(d => d.Reference).WithMany(p => p.Purchase)
+                        entity.HasMany(d => d.Reference).WithMany(p => p.Purchase)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferencePurchaseRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_purchase_rel_reference_id_fkey"),
+                                l => l.HasOne<PurchaseOrder>().WithMany()
+                                    .HasForeignKey("PurchaseId")
+                                    .HasConstraintName("stock_reference_purchase_rel_purchase_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PurchaseId", "ReferenceId").HasName("stock_reference_purchase_rel_pkey");
+                                    j.ToTable("stock_reference_purchase_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "PurchaseId" }, "stock_reference_purchase_rel_reference_id_purchase_id_idx");
+                                    j.IndexerProperty<Guid>("PurchaseId").HasColumnName("purchase_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
                                 });
 
                         // entity.HasMany(d => d.StockPicking).WithMany(p => p.PurchaseOrder)

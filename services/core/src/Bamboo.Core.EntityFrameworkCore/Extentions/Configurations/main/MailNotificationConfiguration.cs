@@ -38,9 +38,9 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => new { e.AuthorId, e.NotificationStatus }, "mail_notification_author_id_notification_status_failure").HasFilter("(notification_status = ANY (ARRAY[('bounce'::character varying)::text, ('exception'::character varying)::text]))");
 
-                        entity.HasIndex(e => new { e.ResPartnerId, e.IsRead, e.NotificationStatus, e.MailMessageId }, "mail_notification_res_partner_id_is_read_notification_status_ma");
+                        entity.HasIndex(e => new { e.ResPartnerId, e.IsRead, e.NotificationStatus, e.MailMessageId }, "mail_notification_res_partner_id_is_read_notification__e5e0b7fb");
 
-                        entity.HasIndex(e => new { e.MailMessageId, e.ResPartnerId }, "unique_mail_message_id_res_partner_id_if_set")
+                        entity.HasIndex(e => new { e.MailMessageId, e.ResPartnerId }, "mail_notification_unique_mail_message_id_res_partner_id_")
                             .IsUnique()
                             .HasFilter("(res_partner_id IS NOT NULL)");
 
@@ -56,6 +56,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.FailureType).HasColumnName("failure_type");
                         entity.Property(e => e.IsRead).HasColumnName("is_read");
                         entity.Property(e => e.LetterId).HasColumnName("letter_id");
+                        entity.Property(e => e.MailEmailAddress).HasColumnName("mail_email_address");
                         entity.Property(e => e.MailMailId).HasColumnName("mail_mail_id");
                         entity.Property(e => e.MailMessageId).HasColumnName("mail_message_id");
                         entity.Property(e => e.NotificationStatus).HasColumnName("notification_status");

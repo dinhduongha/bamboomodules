@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.UserId, "resource_resource__user_id_index").HasFilter("(user_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -29,6 +31,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.CalendarId).HasColumnName("calendar_id");
+                        entity.Property(e => e.Color).HasColumnName("color");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")

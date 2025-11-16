@@ -20,6 +20,14 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CategoryId, "maintenance_equipment__category_id_index").HasFilter("(category_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.EmployeeId, "maintenance_equipment__employee_id_index").HasFilter("(employee_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.MaintenanceTeamId, "maintenance_equipment__maintenance_team_id_index").HasFilter("(maintenance_team_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.OwnerUserId, "maintenance_equipment__owner_user_id_index").HasFilter("(owner_user_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.SerialNo, "maintenance_equipment_serial_no").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -48,7 +56,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("equipment_properties");
                         entity.Property(e => e.ExpectedMtbf).HasColumnName("expected_mtbf");
-                        entity.Property(e => e.Location).HasColumnName("location");
+                        entity.Property(e => e.LocationId).HasColumnName("location_id");
                         entity.Property(e => e.MaintenanceCount).HasColumnName("maintenance_count");
                         entity.Property(e => e.MaintenanceOpenCount).HasColumnName("maintenance_open_count");
                         entity.Property(e => e.MaintenanceTeamId).HasColumnName("maintenance_team_id");
@@ -95,6 +103,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.EmployeeId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("maintenance_equipment_employee_id_fkey");
+
+                        entity.HasOne(d => d.Location).WithMany(p => p.MaintenanceEquipment)
+                            .HasForeignKey(d => d.LocationId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("maintenance_equipment_location_id_fkey");
 
                         entity.HasOne(d => d.MaintenanceTeam).WithMany(p => p.MaintenanceEquipment)
                             .HasForeignKey(d => d.MaintenanceTeamId)

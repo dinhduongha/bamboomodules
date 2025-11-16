@@ -46,7 +46,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DelayFrom).HasColumnName("delay_from");
                         entity.Property(e => e.DelayUnit).HasColumnName("delay_unit");
                         entity.Property(e => e.Icon).HasColumnName("icon");
-                        entity.Property(e => e.KeepDone).HasColumnName("keep_done");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");

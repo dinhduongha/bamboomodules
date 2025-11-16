@@ -177,12 +177,13 @@ public partial class HrExpense : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [ForeignKey("SaleOrderId")]
     public virtual SaleOrder? SaleOrder { get; set; }
 
-    // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("ExpenseId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("Expense")] // One2many
-    public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
+    // CONFLICK-V19
+    // // [One2many]
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("ExpenseId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("Expense")] // One2many
+    // public virtual ICollection<SaleOrderLine> SaleOrderLine { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

@@ -19,8 +19,8 @@ public partial class MaintenanceEquipment
     [Column("location_id")]
     public Guid? LocationId { get; set; }
 
-    // [Many2one]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [ForeignKey("LocationId")]
-    // public virtual StockLocation? Location { get; set; }
+    [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("LocationId")]
+    public virtual StockLocation? Location { get; set; }
 }

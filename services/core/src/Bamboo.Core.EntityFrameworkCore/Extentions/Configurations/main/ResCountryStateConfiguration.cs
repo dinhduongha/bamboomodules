@@ -16,6 +16,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("res_country_state");
 
+                        entity.HasIndex(e => e.CountryId, "res_country_state__country_id_index");
+
                         entity.HasIndex(e => new { e.CountryId, e.Code }, "res_country_state_name_code_uniq").IsUnique();
 
                         entity.Property(e => e.Id)

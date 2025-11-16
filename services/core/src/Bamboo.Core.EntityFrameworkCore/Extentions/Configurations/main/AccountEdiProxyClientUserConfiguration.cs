@@ -16,17 +16,13 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("account_edi_proxy_client_user");
 
-                        entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.TenantId, "account_edi_proxy_client_user__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
                         entity.HasIndex(e => new { e.TenantId, e.ProxyType, e.EdiMode }, "account_edi_proxy_client_user_unique_active_company_proxy")
                             .IsUnique()
-                            .HasFilter("(active = true)");
-
-                        entity.HasIndex(e => new { e.EdiIdentification, e.ProxyType, e.EdiMode }, "account_edi_proxy_client_user_unique_active_edi_identification")
-                            .IsUnique()
-                            .HasFilter("(active = true)");
+                            .HasFilter("(active IS TRUE)");
 
                         entity.HasIndex(e => e.IdClient, "account_edi_proxy_client_user_unique_id_client").IsUnique();
 
@@ -47,10 +43,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EdiIdentification).HasColumnName("edi_identification");
                         entity.Property(e => e.EdiMode).HasColumnName("edi_mode");
                         entity.Property(e => e.IdClient).HasColumnName("id_client");
-                        entity.Property(e => e.PeppolVerificationCode).HasColumnName("peppol_verification_code");
+                        entity.Property(e => e.IsTokenOutOfSync).HasColumnName("is_token_out_of_sync");
                         entity.Property(e => e.PrivateKeyId).HasColumnName("private_key_id");
                         entity.Property(e => e.ProxyType).HasColumnName("proxy_type");
                         entity.Property(e => e.RefreshToken).HasColumnName("refresh_token");
+                        entity.Property(e => e.TokenSyncVersion).HasColumnName("token_sync_version");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

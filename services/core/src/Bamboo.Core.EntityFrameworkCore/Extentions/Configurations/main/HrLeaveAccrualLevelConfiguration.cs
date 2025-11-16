@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.AccrualPlanId, "hr_leave_accrual_level__accrual_plan_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -36,6 +38,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AddedValueType).HasColumnName("added_value_type");
                         entity.Property(e => e.CapAccruedTime).HasColumnName("cap_accrued_time");
                         entity.Property(e => e.CapAccruedTimeYearly).HasColumnName("cap_accrued_time_yearly");
+                        entity.Property(e => e.CarryoverOptions).HasColumnName("carryover_options");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -45,9 +48,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.FirstMonth).HasColumnName("first_month");
                         entity.Property(e => e.FirstMonthDay).HasColumnName("first_month_day");
                         entity.Property(e => e.Frequency).HasColumnName("frequency");
-                        entity.Property(e => e.FrequencyHourlySource).HasColumnName("frequency_hourly_source");
                         entity.Property(e => e.MaximumLeave).HasColumnName("maximum_leave");
                         entity.Property(e => e.MaximumLeaveYearly).HasColumnName("maximum_leave_yearly");
+                        entity.Property(e => e.MilestoneDate).HasColumnName("milestone_date");
                         entity.Property(e => e.PostponeMaxDays).HasColumnName("postpone_max_days");
                         entity.Property(e => e.SecondDay).HasColumnName("second_day");
                         entity.Property(e => e.SecondMonth).HasColumnName("second_month");

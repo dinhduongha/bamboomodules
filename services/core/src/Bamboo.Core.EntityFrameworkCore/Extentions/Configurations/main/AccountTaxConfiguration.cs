@@ -47,8 +47,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.InvoiceLabel)
                             .HasColumnType("jsonb")
                             .HasColumnName("invoice_label");
-                        entity.Property(e => e.InvoiceLegalNotes).HasColumnName("invoice_legal_notes");
+                        entity.Property(e => e.InvoiceLegalNotes)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("invoice_legal_notes");
                         entity.Property(e => e.IsBaseAffected).HasColumnName("is_base_affected");
+                        entity.Property(e => e.IsDomestic).HasColumnName("is_domestic");
+                        entity.Property(e => e.IsWithholdingTaxOnPayment).HasColumnName("is_withholding_tax_on_payment");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
@@ -60,6 +64,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TypeTaxUse).HasColumnName("type_tax_use");
                         entity.Property(e => e.UblCiiTaxCategoryCode).HasColumnName("ubl_cii_tax_category_code");
                         entity.Property(e => e.UblCiiTaxExemptionReasonCode).HasColumnName("ubl_cii_tax_exemption_reason_code");
+                        entity.Property(e => e.WithholdingSequenceId).HasColumnName("withholding_sequence_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -94,6 +99,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_tax_tax_group_id_fkey");
 
+                        entity.HasOne(d => d.WithholdingSequence).WithMany(p => p.AccountTax)
+                            .HasForeignKey(d => d.WithholdingSequenceId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_tax_withholding_sequence_id_fkey");
+
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.AccountTaxWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("account_tax_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
@@ -119,6 +129,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("ChildTax").HasColumnName("child_tax");
                                 });
 
+                        // entity.HasMany(d => d.DestTax).WithMany(p => p.SrcTax)
+                        entity.HasMany(d => d.DestTax).WithMany(p => p.SrcTax)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "AccountTaxAlternatives",
+                                r => r.HasOne<AccountTax>().WithMany()
+                                    .HasForeignKey("DestTaxId")
+                                    .HasConstraintName("account_tax_alternatives_dest_tax_id_fkey"),
+                                l => l.HasOne<AccountTax>().WithMany()
+                                    .HasForeignKey("SrcTaxId")
+                                    .HasConstraintName("account_tax_alternatives_src_tax_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("DestTaxId", "SrcTaxId").HasName("account_tax_alternatives_pkey");
+                                    j.ToTable("account_tax_alternatives");
+                                    j.HasIndex(new[] { "SrcTaxId", "DestTaxId" }, "account_tax_alternatives_src_tax_id_dest_tax_id_idx");
+                                    j.IndexerProperty<Guid>("DestTaxId").HasColumnName("dest_tax_id");
+                                    j.IndexerProperty<Guid>("SrcTaxId").HasColumnName("src_tax_id");
+                                });
+
                         // entity.HasMany(d => d.ParentTax).WithMany(p => p.ChildTax)
                         entity.HasMany(d => d.ParentTax).WithMany(p => p.ChildTax)
                             .UsingEntity<Dictionary<string, object>>(
@@ -136,6 +165,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "ChildTax", "ParentTax" }, "account_tax_filiation_rel_child_tax_parent_tax_idx");
                                     j.IndexerProperty<Guid>("ParentTax").HasColumnName("parent_tax");
                                     j.IndexerProperty<Guid>("ChildTax").HasColumnName("child_tax");
+                                });
+
+                        // entity.HasMany(d => d.SrcTax).WithMany(p => p.DestTax)
+                        entity.HasMany(d => d.SrcTax).WithMany(p => p.DestTax)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "AccountTaxAlternatives",
+                                r => r.HasOne<AccountTax>().WithMany()
+                                    .HasForeignKey("SrcTaxId")
+                                    .HasConstraintName("account_tax_alternatives_src_tax_id_fkey"),
+                                l => l.HasOne<AccountTax>().WithMany()
+                                    .HasForeignKey("DestTaxId")
+                                    .HasConstraintName("account_tax_alternatives_dest_tax_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("DestTaxId", "SrcTaxId").HasName("account_tax_alternatives_pkey");
+                                    j.ToTable("account_tax_alternatives");
+                                    j.HasIndex(new[] { "SrcTaxId", "DestTaxId" }, "account_tax_alternatives_src_tax_id_dest_tax_id_idx");
+                                    j.IndexerProperty<Guid>("DestTaxId").HasColumnName("dest_tax_id");
+                                    j.IndexerProperty<Guid>("SrcTaxId").HasColumnName("src_tax_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

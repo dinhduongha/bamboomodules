@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.GoogleId, "calendar_recurrence__google_id_index").HasFilter("(google_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.MicrosoftId, "calendar_recurrence__microsoft_id_index");
 
                         entity.HasIndex(e => e.MsUniversalEventId, "calendar_recurrence__ms_universal_event_id_index");

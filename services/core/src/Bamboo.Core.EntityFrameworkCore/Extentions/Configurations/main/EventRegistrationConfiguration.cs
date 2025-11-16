@@ -20,15 +20,29 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "event_registration__event_id_index");
+
+                        entity.HasIndex(e => e.EventSlotId, "event_registration__event_slot_id_index").HasFilter("(event_slot_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.EventTicketId, "event_registration__event_ticket_id_index").HasFilter("(event_ticket_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Name, "event_registration__name_index")
                             .HasMethod("gin")
                             .HasOperators(new[] { "gin_trgm_ops" });
+
+                        entity.HasIndex(e => e.PartnerId, "event_registration__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PosOrderLineId, "event_registration__pos_order_line_id_index").HasFilter("(pos_order_line_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.SaleOrderLineId, "event_registration__sale_order_line_id_index").HasFilter("(sale_order_line_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.UtmCampaignId, "event_registration__utm_campaign_id_index");
 
                         entity.HasIndex(e => e.UtmMediumId, "event_registration__utm_medium_id_index");
 
                         entity.HasIndex(e => e.UtmSourceId, "event_registration__utm_source_id_index");
+
+                        entity.HasIndex(e => e.VisitorId, "event_registration__visitor_id_index").HasFilter("(visitor_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.Barcode, "event_registration_barcode_event_uniq").IsUnique();
 
@@ -53,6 +67,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("date_closed");
                         entity.Property(e => e.Email).HasColumnName("email");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.EventSlotId).HasColumnName("event_slot_id");
                         entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
@@ -90,6 +105,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.EventId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("event_registration_event_id_fkey");
+
+                        entity.HasOne(d => d.EventSlot).WithMany(p => p.EventRegistration)
+                            .HasForeignKey(d => d.EventSlotId)
+                            .OnDelete(DeleteBehavior.Restrict)
+                            .HasConstraintName("event_registration_event_slot_id_fkey");
 
                         entity.HasOne(d => d.EventTicket).WithMany(p => p.EventRegistration)
                             .HasForeignKey(d => d.EventTicketId)

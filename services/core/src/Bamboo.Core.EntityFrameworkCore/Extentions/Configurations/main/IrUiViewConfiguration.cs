@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Model, "ir_ui_view__model_index");
 
+                        entity.HasIndex(e => e.ThemeTemplateId, "ir_ui_view__theme_template_id_index").HasFilter("(theme_template_id IS NOT NULL)");
+
                         entity.HasIndex(e => new { e.Model, e.InheritId }, "ir_ui_view_model_type_inherit_id");
 
                         entity.Property(e => e.Id)
@@ -41,6 +43,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CustomizeShow).HasColumnName("customize_show");
                         entity.Property(e => e.InheritId).HasColumnName("inherit_id");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Key).HasColumnName("key");
                         entity.Property(e => e.Mode).HasColumnName("mode");
                         entity.Property(e => e.Model).HasColumnName("model");

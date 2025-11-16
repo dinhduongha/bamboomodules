@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventBoothId, "event_booth_registration__event_booth_id_index");
+
+                        entity.HasIndex(e => e.SaleOrderLineId, "event_booth_registration__sale_order_line_id_index");
+
                         entity.HasIndex(e => new { e.SaleOrderLineId, e.EventBoothId }, "event_booth_registration_unique_registration").IsUnique();
 
                         entity.Property(e => e.Id)
@@ -41,7 +45,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.SaleOrderLineId).HasColumnName("sale_order_line_id");
                         entity.Property(e => e.SponsorEmail).HasColumnName("sponsor_email");
-                        entity.Property(e => e.SponsorMobile).HasColumnName("sponsor_mobile");
                         entity.Property(e => e.SponsorName).HasColumnName("sponsor_name");
                         entity.Property(e => e.SponsorPhone).HasColumnName("sponsor_phone");
                         entity.Property(e => e.SponsorSubtitle).HasColumnName("sponsor_subtitle");

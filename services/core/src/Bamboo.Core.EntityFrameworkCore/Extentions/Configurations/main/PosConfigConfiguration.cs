@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CrmTeamId, "pos_config__crm_team_id_index").HasFilter("(crm_team_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -40,13 +42,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CrmTeamId).HasColumnName("crm_team_id");
+                        entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.CustomerDisplayBgImgName).HasColumnName("customer_display_bg_img_name");
-                        entity.Property(e => e.CustomerDisplayType).HasColumnName("customer_display_type");
                         entity.Property(e => e.DefaultFiscalPositionId).HasColumnName("default_fiscal_position_id");
+                        entity.Property(e => e.DefaultPresetId).HasColumnName("default_preset_id");
+                        entity.Property(e => e.DefaultScreen).HasColumnName("default_screen");
+                        entity.Property(e => e.DeviceSeqId).HasColumnName("device_seq_id");
                         entity.Property(e => e.DiscountPc).HasColumnName("discount_pc");
                         entity.Property(e => e.DiscountProductId).HasColumnName("discount_product_id");
                         entity.Property(e => e.DownPaymentProductId).HasColumnName("down_payment_product_id");
                         entity.Property(e => e.EpsonPrinterIp).HasColumnName("epson_printer_ip");
+                        entity.Property(e => e.FallbackNomenclatureId).HasColumnName("fallback_nomenclature_id");
                         entity.Property(e => e.GroupPosManagerId).HasColumnName("group_pos_manager_id");
                         entity.Property(e => e.GroupPosUserId).HasColumnName("group_pos_user_id");
                         entity.Property(e => e.HasPaper).HasColumnName("has_paper");
@@ -54,6 +60,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.IfaceCashdrawer).HasColumnName("iface_cashdrawer");
                         entity.Property(e => e.IfaceDiscount).HasColumnName("iface_discount");
                         entity.Property(e => e.IfaceElectronicScale).HasColumnName("iface_electronic_scale");
+                        entity.Property(e => e.IfaceGroupByCateg).HasColumnName("iface_group_by_categ");
                         entity.Property(e => e.IfacePrintAuto).HasColumnName("iface_print_auto");
                         entity.Property(e => e.IfacePrintSkipScreen).HasColumnName("iface_print_skip_screen");
                         entity.Property(e => e.IfacePrintViaProxy).HasColumnName("iface_print_via_proxy");
@@ -69,18 +76,23 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.IsOrderPrinter).HasColumnName("is_order_printer");
                         entity.Property(e => e.IsPosbox).HasColumnName("is_posbox");
                         entity.Property(e => e.JournalId).HasColumnName("journal_id");
+                        entity.Property(e => e.LastDataChange)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("last_data_change");
                         entity.Property(e => e.LimitCategories).HasColumnName("limit_categories");
                         entity.Property(e => e.ManualDiscount).HasColumnName("manual_discount");
+                        entity.Property(e => e.ModulePosAppointment).HasColumnName("module_pos_appointment");
                         entity.Property(e => e.ModulePosAvatax).HasColumnName("module_pos_avatax");
                         entity.Property(e => e.ModulePosDiscount).HasColumnName("module_pos_discount");
                         entity.Property(e => e.ModulePosHr).HasColumnName("module_pos_hr");
                         entity.Property(e => e.ModulePosRestaurant).HasColumnName("module_pos_restaurant");
-                        entity.Property(e => e.ModulePosRestaurantAppointment).HasColumnName("module_pos_restaurant_appointment");
                         entity.Property(e => e.ModulePosSms).HasColumnName("module_pos_sms");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.OnlyRoundCashMethod).HasColumnName("only_round_cash_method");
+                        entity.Property(e => e.OrderBackendSeqId).HasColumnName("order_backend_seq_id");
                         entity.Property(e => e.OrderEditTracking).HasColumnName("order_edit_tracking");
-                        entity.Property(e => e.OrderlinesSequenceInCartByCategory).HasColumnName("orderlines_sequence_in_cart_by_category");
+                        entity.Property(e => e.OrderLineSeqId).HasColumnName("order_line_seq_id");
+                        entity.Property(e => e.OrderSeqId).HasColumnName("order_seq_id");
                         entity.Property(e => e.OtherDevices).HasColumnName("other_devices");
                         entity.Property(e => e.PickingPolicy).HasColumnName("picking_policy");
                         entity.Property(e => e.PickingTypeId).HasColumnName("picking_type_id");
@@ -98,18 +110,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.SelfOrderingMode).HasColumnName("self_ordering_mode");
                         entity.Property(e => e.SelfOrderingPayAfter).HasColumnName("self_ordering_pay_after");
                         entity.Property(e => e.SelfOrderingServiceMode).HasColumnName("self_ordering_service_mode");
-                        entity.Property(e => e.SelfOrderingTakeaway).HasColumnName("self_ordering_takeaway");
-                        entity.Property(e => e.SequenceId).HasColumnName("sequence_id");
-                        entity.Property(e => e.SequenceLineId).HasColumnName("sequence_line_id");
                         entity.Property(e => e.SetMaximumDifference).HasColumnName("set_maximum_difference");
                         entity.Property(e => e.SetTipAfterPayment).HasColumnName("set_tip_after_payment");
                         entity.Property(e => e.ShipLater).HasColumnName("ship_later");
                         entity.Property(e => e.ShowCategoryImages).HasColumnName("show_category_images");
                         entity.Property(e => e.ShowProductImages).HasColumnName("show_product_images");
-                        entity.Property(e => e.Takeaway).HasColumnName("takeaway");
-                        entity.Property(e => e.TakeawayFpId).HasColumnName("takeaway_fp_id");
                         entity.Property(e => e.TaxRegimeSelection).HasColumnName("tax_regime_selection");
                         entity.Property(e => e.TipProductId).HasColumnName("tip_product_id");
+                        entity.Property(e => e.UseFastPayment).HasColumnName("use_fast_payment");
+                        entity.Property(e => e.UsePresets).HasColumnName("use_presets");
                         entity.Property(e => e.UsePricelist).HasColumnName("use_pricelist");
                         entity.Property(e => e.Uuid).HasColumnName("uuid");
                         entity.Property(e => e.WarehouseId).HasColumnName("warehouse_id");
@@ -135,10 +144,26 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_config_crm_team_id_fkey");
 
-                        entity.HasOne(d => d.DefaultFiscalPosition).WithMany(p => p.PosConfigDefaultFiscalPosition)
+                        // entity.HasOne(d => d.Currency).WithMany(p => p.PosConfig) .HasForeignKey(d => d.CurrencyId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("pos_config_currency_id_fkey");
+                        entity.HasOne(d => d.Currency).WithMany()
+                            .HasForeignKey(d => d.CurrencyId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_currency_id_fkey");
+
+                        entity.HasOne(d => d.DefaultFiscalPosition).WithMany(p => p.PosConfigNavigation)
                             .HasForeignKey(d => d.DefaultFiscalPositionId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_config_default_fiscal_position_id_fkey");
+
+                        entity.HasOne(d => d.DefaultPreset).WithMany(p => p.PosConfig)
+                            .HasForeignKey(d => d.DefaultPresetId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_default_preset_id_fkey");
+
+                        entity.HasOne(d => d.DeviceSeq).WithMany(p => p.PosConfigDeviceSeq)
+                            .HasForeignKey(d => d.DeviceSeqId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_device_seq_id_fkey");
 
                         // entity.HasOne(d => d.DiscountProduct).WithMany(p => p.PosConfigDiscountProduct) .HasForeignKey(d => d.DiscountProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("pos_config_discount_product_id_fkey");
                         entity.HasOne(d => d.DiscountProduct).WithMany()
@@ -151,6 +176,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.DownPaymentProductId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_config_down_payment_product_id_fkey");
+
+                        entity.HasOne(d => d.FallbackNomenclature).WithMany(p => p.PosConfig)
+                            .HasForeignKey(d => d.FallbackNomenclatureId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_fallback_nomenclature_id_fkey");
 
                         entity.HasOne(d => d.GroupPosManager).WithMany(p => p.PosConfigGroupPosManager)
                             .HasForeignKey(d => d.GroupPosManagerId)
@@ -172,6 +202,21 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.JournalId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("pos_config_journal_id_fkey");
+
+                        entity.HasOne(d => d.OrderBackendSeq).WithMany(p => p.PosConfigOrderBackendSeq)
+                            .HasForeignKey(d => d.OrderBackendSeqId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_order_backend_seq_id_fkey");
+
+                        entity.HasOne(d => d.OrderLineSeq).WithMany(p => p.PosConfigOrderLineSeq)
+                            .HasForeignKey(d => d.OrderLineSeqId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_order_line_seq_id_fkey");
+
+                        entity.HasOne(d => d.OrderSeq).WithMany(p => p.PosConfigOrderSeq)
+                            .HasForeignKey(d => d.OrderSeqId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_config_order_seq_id_fkey");
 
                         entity.HasOne(d => d.PickingType).WithMany(p => p.PosConfig)
                             .HasForeignKey(d => d.PickingTypeId)
@@ -208,21 +253,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.SelfOrderingDefaultUserId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_config_self_ordering_default_user_id_fkey");
-
-                        entity.HasOne(d => d.Sequence).WithMany(p => p.PosConfigSequence)
-                            .HasForeignKey(d => d.SequenceId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("pos_config_sequence_id_fkey");
-
-                        entity.HasOne(d => d.SequenceLine).WithMany(p => p.PosConfigSequenceLine)
-                            .HasForeignKey(d => d.SequenceLineId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("pos_config_sequence_line_id_fkey");
-
-                        entity.HasOne(d => d.TakeawayFp).WithMany(p => p.PosConfigTakeawayFp)
-                            .HasForeignKey(d => d.TakeawayFpId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("pos_config_takeaway_fp_id_fkey");
 
                         // entity.HasOne(d => d.TipProduct).WithMany(p => p.PosConfigTipProduct) .HasForeignKey(d => d.TipProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("pos_config_tip_product_id_fkey");
                         entity.HasOne(d => d.TipProduct).WithMany()
@@ -279,6 +309,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
                                 });
 
+                        // entity.HasMany(d => d.HrEmployee1).WithMany(p => p.PosConfig1)
+                        entity.HasMany(d => d.HrEmployee1).WithMany(p => p.PosConfig1)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "PosHrMinimalEmployeeHrEmployee",
+                                r => r.HasOne<HrEmployee>().WithMany()
+                                    .HasForeignKey("HrEmployeeId")
+                                    .HasConstraintName("pos_hr_minimal_employee_hr_employee_hr_employee_id_fkey"),
+                                l => l.HasOne<PosConfig>().WithMany()
+                                    .HasForeignKey("PosConfigId")
+                                    .HasConstraintName("pos_hr_minimal_employee_hr_employee_pos_config_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PosConfigId", "HrEmployeeId").HasName("pos_hr_minimal_employee_hr_employee_pkey");
+                                    j.ToTable("pos_hr_minimal_employee_hr_employee");
+                                    j.HasIndex(new[] { "HrEmployeeId", "PosConfigId" }, "pos_hr_minimal_employee_hr_emp_hr_employee_id_pos_config_id_idx");
+                                    j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                                    j.IndexerProperty<Guid>("HrEmployeeId").HasColumnName("hr_employee_id");
+                                });
+
                         // entity.HasMany(d => d.HrEmployeeNavigation).WithMany(p => p.PosConfigNavigation)
                         entity.HasMany(d => d.HrEmployeeNavigation).WithMany(p => p.PosConfigNavigation)
                             .UsingEntity<Dictionary<string, object>>(
@@ -313,6 +362,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasKey("PosConfigId", "IrAttachmentId").HasName("ir_attachment_pos_config_rel_pkey");
                                     j.ToTable("ir_attachment_pos_config_rel");
                                     j.HasIndex(new[] { "IrAttachmentId", "PosConfigId" }, "ir_attachment_pos_config_rel_ir_attachment_id_pos_config_id_idx");
+                                    j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                                    j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
+                                });
+
+                        // entity.HasMany(d => d.IrAttachmentNavigation).WithMany(p => p.PosConfigNavigation)
+                        entity.HasMany(d => d.IrAttachmentNavigation).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "PosSelfOrderBackgroundRels",
+                                r => r.HasOne<IrAttachment>().WithMany()
+                                    .HasForeignKey("IrAttachmentId")
+                                    .HasConstraintName("pos_self_order_background_rels_ir_attachment_id_fkey"),
+                                l => l.HasOne<PosConfig>().WithMany()
+                                    .HasForeignKey("PosConfigId")
+                                    .HasConstraintName("pos_self_order_background_rels_pos_config_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PosConfigId", "IrAttachmentId").HasName("pos_self_order_background_rels_pkey");
+                                    j.ToTable("pos_self_order_background_rels");
+                                    j.HasIndex(new[] { "IrAttachmentId", "PosConfigId" }, "pos_self_order_background_rel_ir_attachment_id_pos_config_i_idx");
                                     j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
                                     j.IndexerProperty<Guid>("IrAttachmentId").HasColumnName("ir_attachment_id");
                                 });
@@ -431,23 +499,42 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("PosPaymentMethodId").HasColumnName("pos_payment_method_id");
                                 });
 
-                        // entity.HasMany(d => d.Printer).WithMany(p => p.Config)
-                        entity.HasMany(d => d.Printer).WithMany(p => p.Config)
+                        // entity.HasMany(d => d.PosPaymentMethodNavigation).WithMany(p => p.PosConfig1)
+                        entity.HasMany(d => d.PosPaymentMethodNavigation).WithMany(p => p.PosConfig1)
                             .UsingEntity<Dictionary<string, object>>(
-                                "PosConfigPrinterRel",
-                                r => r.HasOne<PosPrinter>().WithMany()
-                                    .HasForeignKey("PrinterId")
-                                    .HasConstraintName("pos_config_printer_rel_printer_id_fkey"),
+                                "PosPaymentMethodConfigFastValidationRelation",
+                                r => r.HasOne<PosPaymentMethod>().WithMany()
+                                    .HasForeignKey("PosPaymentMethodId")
+                                    .HasConstraintName("pos_payment_method_config_fast_valid_pos_payment_method_id_fkey"),
                                 l => l.HasOne<PosConfig>().WithMany()
-                                    .HasForeignKey("ConfigId")
-                                    .HasConstraintName("pos_config_printer_rel_config_id_fkey"),
+                                    .HasForeignKey("PosConfigId")
+                                    .HasConstraintName("pos_payment_method_config_fast_validation_re_pos_config_id_fkey"),
                                 j =>
                                 {
-                                    j.HasKey("ConfigId", "PrinterId").HasName("pos_config_printer_rel_pkey");
-                                    j.ToTable("pos_config_printer_rel");
-                                    j.HasIndex(new[] { "PrinterId", "ConfigId" }, "pos_config_printer_rel_printer_id_config_id_idx");
-                                    j.IndexerProperty<Guid>("ConfigId").HasColumnName("config_id");
-                                    j.IndexerProperty<Guid>("PrinterId").HasColumnName("printer_id");
+                                    j.HasKey("PosConfigId", "PosPaymentMethodId").HasName("pos_payment_method_config_fast_validation_relation_pkey");
+                                    j.ToTable("pos_payment_method_config_fast_validation_relation");
+                                    j.HasIndex(new[] { "PosPaymentMethodId", "PosConfigId" }, "pos_payment_method_config_fas_pos_payment_method_id_pos_con_idx");
+                                    j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                                    j.IndexerProperty<Guid>("PosPaymentMethodId").HasColumnName("pos_payment_method_id");
+                                });
+
+                        // entity.HasMany(d => d.PosPreset).WithMany(p => p.PosConfigNavigation)
+                        entity.HasMany(d => d.PosPreset).WithMany(p => p.PosConfigNavigation)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "PosConfigPosPresetRel",
+                                r => r.HasOne<PosPreset>().WithMany()
+                                    .HasForeignKey("PosPresetId")
+                                    .HasConstraintName("pos_config_pos_preset_rel_pos_preset_id_fkey"),
+                                l => l.HasOne<PosConfig>().WithMany()
+                                    .HasForeignKey("PosConfigId")
+                                    .HasConstraintName("pos_config_pos_preset_rel_pos_config_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PosConfigId", "PosPresetId").HasName("pos_config_pos_preset_rel_pkey");
+                                    j.ToTable("pos_config_pos_preset_rel");
+                                    j.HasIndex(new[] { "PosPresetId", "PosConfigId" }, "pos_config_pos_preset_rel_pos_preset_id_pos_config_id_idx");
+                                    j.IndexerProperty<Guid>("PosConfigId").HasColumnName("pos_config_id");
+                                    j.IndexerProperty<Guid>("PosPresetId").HasColumnName("pos_preset_id");
                                 });
 
                         // entity.HasMany(d => d.ProductPricelist).WithMany(p => p.PosConfigNavigation)

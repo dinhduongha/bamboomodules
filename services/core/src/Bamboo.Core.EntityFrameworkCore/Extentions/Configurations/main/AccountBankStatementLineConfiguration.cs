@@ -22,11 +22,21 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.MoveId, "account_bank_statement_line__move_id_index");
 
+                        entity.HasIndex(e => e.PartnerName, "account_bank_statement_line__partner_name_index").HasFilter("(partner_name IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PaymentRef, "account_bank_statement_line__payment_ref_index")
+                            .HasMethod("gin")
+                            .HasOperators(new[] { "gin_trgm_ops" });
+
+                        entity.HasIndex(e => e.PosSessionId, "account_bank_statement_line__pos_session_id_index").HasFilter("(pos_session_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.StatementId, "account_bank_statement_line__statement_id_index");
+
                         entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_main_idx");
 
                         entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_orphan_idx").HasFilter("(statement_id IS NULL)");
 
-                        entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_unreconciled_idx").HasFilter("((NOT is_reconciled) OR (is_reconciled IS NULL))");
+                        entity.HasIndex(e => new { e.JournalId, e.TenantId, e.InternalIndex }, "account_bank_statement_line_unreconciled_idx").HasFilter("(is_reconciled IS NOT TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")

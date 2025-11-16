@@ -27,12 +27,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.BasedOn).HasColumnName("based_on");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.OrderpointId).HasColumnName("orderpoint_id");
+                        entity.Property(e => e.PercentFactor).HasColumnName("percent_factor");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -54,6 +56,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_replenishment_info_write_uid_fkey");
+
+                        // entity.HasMany(d => d.MrpBom).WithMany(p => p.StockReplenishmentInfo)
+                        entity.HasMany(d => d.MrpBom).WithMany(p => p.StockReplenishmentInfo)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "MrpBomStockReplenishmentInfoRel",
+                                r => r.HasOne<MrpBom>().WithMany()
+                                    .HasForeignKey("MrpBomId")
+                                    .HasConstraintName("mrp_bom_stock_replenishment_info_rel_mrp_bom_id_fkey"),
+                                l => l.HasOne<StockReplenishmentInfo>().WithMany()
+                                    .HasForeignKey("StockReplenishmentInfoId")
+                                    .HasConstraintName("mrp_bom_stock_replenishment_in_stock_replenishment_info_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("StockReplenishmentInfoId", "MrpBomId").HasName("mrp_bom_stock_replenishment_info_rel_pkey");
+                                    j.ToTable("mrp_bom_stock_replenishment_info_rel");
+                                    j.HasIndex(new[] { "MrpBomId", "StockReplenishmentInfoId" }, "mrp_bom_stock_replenishment_i_mrp_bom_id_stock_replenishmen_idx");
+                                    j.IndexerProperty<Guid>("StockReplenishmentInfoId").HasColumnName("stock_replenishment_info_id");
+                                    j.IndexerProperty<Guid>("MrpBomId").HasColumnName("mrp_bom_id");
+                                });
 
                         // entity.HasMany(d => d.ProductSupplierinfo).WithMany(p => p.StockReplenishmentInfo)
                         entity.HasMany(d => d.ProductSupplierinfo).WithMany(p => p.StockReplenishmentInfo)

@@ -18,8 +18,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ModelId, "ir_rule__model_id_index");
 
-                        entity.HasIndex(e => e.Name, "ir_rule__name_index");
-
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -65,7 +63,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 "RuleGroupRel",
                                 r => r.HasOne<ResGroups>().WithMany()
                                     .HasForeignKey("GroupId")
-                                    .OnDelete(DeleteBehavior.Restrict)
                                     .HasConstraintName("rule_group_rel_group_id_fkey"),
                                 l => l.HasOne<IrRule>().WithMany()
                                     .HasForeignKey("RuleGroupId")

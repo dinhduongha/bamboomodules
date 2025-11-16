@@ -31,6 +31,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AutoValidationState).HasColumnName("auto_validation_state");
+                        entity.Property(e => e.Color).HasColumnName("color");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -41,7 +42,14 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.RatingActive).HasColumnName("rating_active");
+                        entity.Property(e => e.RatingRequestDeadline)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("rating_request_deadline");
+                        entity.Property(e => e.RatingStatus).HasColumnName("rating_status");
+                        entity.Property(e => e.RatingStatusPeriod).HasColumnName("rating_status_period");
                         entity.Property(e => e.RatingTemplateId).HasColumnName("rating_template_id");
+                        entity.Property(e => e.RottingThresholdDays).HasColumnName("rotting_threshold_days");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.SmsTemplateId).HasColumnName("sms_template_id");
                         entity.Property(e => e.UserId).HasColumnName("user_id");

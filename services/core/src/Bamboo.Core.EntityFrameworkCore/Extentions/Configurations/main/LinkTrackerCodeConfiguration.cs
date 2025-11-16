@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.LinkId, "link_tracker_code__link_id_index");
+
                         entity.HasIndex(e => e.Code, "link_tracker_code_code").IsUnique();
 
                         entity.Property(e => e.Id)

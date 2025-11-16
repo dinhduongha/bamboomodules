@@ -17,11 +17,11 @@ namespace Bamboo.Core.Models;
 public partial class EventType
 {
     //CONFLICK
-    // [Many2many] // Normal
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [NotMapped] // Many2many // Normal
-    // // [ForeignKey("EventTypeId")] // Many2many // Normal
-    // // [InverseProperty("EventType")] // Many2many // Normal
-    // public virtual ICollection<EventQuestion> EventQuestion { get; set; }
+    [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EventTypeId")] // Many2many // Normal
+    // [InverseProperty("EventType")] // Many2many // Normal
+    public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
 }

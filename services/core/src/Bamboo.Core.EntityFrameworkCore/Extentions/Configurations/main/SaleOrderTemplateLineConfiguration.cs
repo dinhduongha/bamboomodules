@@ -36,6 +36,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
+                        entity.Property(e => e.IsOptional).HasColumnName("is_optional");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");

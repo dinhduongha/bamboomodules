@@ -35,11 +35,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.AlignCategoryContent).HasColumnName("align_category_content");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
@@ -49,6 +51,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("seo_name");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.ShowCategoryDescription).HasColumnName("show_category_description");
+                        entity.Property(e => e.ShowCategoryTitle).HasColumnName("show_category_title");
                         entity.Property(e => e.WebsiteDescription)
                             .HasColumnType("jsonb")
                             .HasColumnName("website_description");

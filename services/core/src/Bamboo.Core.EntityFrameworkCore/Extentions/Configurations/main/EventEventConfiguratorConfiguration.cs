@@ -33,6 +33,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.EventSlotId).HasColumnName("event_slot_id");
                         entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.LastModificationTime)
@@ -50,6 +51,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.EventId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("event_event_configurator_event_id_fkey");
+
+                        entity.HasOne(d => d.EventSlot).WithMany(p => p.EventEventConfigurator)
+                            .HasForeignKey(d => d.EventSlotId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("event_event_configurator_event_slot_id_fkey");
 
                         entity.HasOne(d => d.EventTicket).WithMany(p => p.EventEventConfigurator)
                             .HasForeignKey(d => d.EventTicketId)

@@ -36,8 +36,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
-                        entity.Property(e => e.VolumeCapacity).HasColumnName("volume_capacity");
-                        entity.Property(e => e.WeightCapacity).HasColumnName("weight_capacity");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

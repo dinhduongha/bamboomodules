@@ -68,25 +68,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("HrExpenseId").HasColumnName("hr_expense_id");
                                 });
 
-                        // entity.HasMany(d => d.HrExpenseSheet).WithMany(p => p.HrExpenseApproveDuplicate)
-                        entity.HasMany(d => d.HrExpenseSheet).WithMany(p => p.HrExpenseApproveDuplicate)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "HrExpenseApproveDuplicateHrExpenseSheetRel",
-                                r => r.HasOne<HrExpenseSheet>().WithMany()
-                                    .HasForeignKey("HrExpenseSheetId")
-                                    .HasConstraintName("hr_expense_approve_duplicate_hr_expens_hr_expense_sheet_id_fkey"),
-                                l => l.HasOne<HrExpenseApproveDuplicate>().WithMany()
-                                    .HasForeignKey("HrExpenseApproveDuplicateId")
-                                    .HasConstraintName("hr_expense_approve_duplicate__hr_expense_approve_duplicate_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("HrExpenseApproveDuplicateId", "HrExpenseSheetId").HasName("hr_expense_approve_duplicate_hr_expense_sheet_rel_pkey");
-                                    j.ToTable("hr_expense_approve_duplicate_hr_expense_sheet_rel");
-                                    j.HasIndex(new[] { "HrExpenseSheetId", "HrExpenseApproveDuplicateId" }, "hr_expense_approve_duplicate__hr_expense_sheet_id_hr_expens_idx");
-                                    j.IndexerProperty<Guid>("HrExpenseApproveDuplicateId").HasColumnName("hr_expense_approve_duplicate_id");
-                                    j.IndexerProperty<Guid>("HrExpenseSheetId").HasColumnName("hr_expense_sheet_id");
-                                });
-
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();
                 entity.TryConfigureConcurrencyStamp();

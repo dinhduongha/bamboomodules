@@ -22,9 +22,19 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.IsPublished, "product_template__is_published_index");
 
+                        entity.HasIndex(e => e.VariantsDefaultCode, "product_template__variants_default_code_index")
+                            .HasMethod("gin")
+                            .HasOperators(new[] { "gin_trgm_ops" });
+
                         entity.HasIndex(e => e.WebsiteId, "product_template__website_id_index");
 
                         entity.HasIndex(e => e.WebsiteSequence, "product_template__website_sequence_index");
+
+                        entity.HasIndex(e => e.DefaultCode, "product_template_default_code_gist_idx")
+                            .HasMethod("gist")
+                            .HasOperators(new[] { "gist_trgm_ops" });
+
+                        entity.HasIndex(e => e.IsFavorite, "product_template_is_favorite_index").HasFilter("(is_favorite IS TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -56,7 +66,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
-                        entity.Property(e => e.CreateRepair).HasColumnName("create_repair");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.DefaultCode).HasColumnName("default_code");
                         entity.Property(e => e.DeferredRevenueCategoryId)
@@ -86,24 +95,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EmailTemplateId).HasColumnName("email_template_id");
                         entity.Property(e => e.ExpensePolicy).HasColumnName("expense_policy");
                         entity.Property(e => e.ExpirationTime).HasColumnName("expiration_time");
+                        entity.Property(e => e.GradeId).HasColumnName("grade_id");
                         entity.Property(e => e.HasConfigurableAttributes).HasColumnName("has_configurable_attributes");
                         entity.Property(e => e.HsCode).HasColumnName("hs_code");
                         entity.Property(e => e.InvoicePolicy).HasColumnName("invoice_policy");
                         entity.Property(e => e.IsFavorite).HasColumnName("is_favorite");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.IsStorable).HasColumnName("is_storable");
                         entity.Property(e => e.LandedCostOk).HasColumnName("landed_cost_ok");
                         entity.Property(e => e.ListPrice).HasColumnName("list_price");
+                        entity.Property(e => e.LotSequenceId).HasColumnName("lot_sequence_id");
                         entity.Property(e => e.LotValuated).HasColumnName("lot_valuated");
-                        entity.Property(e => e.Membership).HasColumnName("membership");
-                        entity.Property(e => e.MembershipDateFrom).HasColumnName("membership_date_from");
-                        entity.Property(e => e.MembershipDateTo).HasColumnName("membership_date_to");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
                         entity.Property(e => e.OutOfStockMessage)
                             .HasColumnType("jsonb")
                             .HasColumnName("out_of_stock_message");
+                        entity.Property(e => e.PosSequence).HasColumnName("pos_sequence");
                         entity.Property(e => e.ProductAddMode).HasColumnName("product_add_mode");
                         entity.Property(e => e.ProductProperties)
                             .HasColumnType("jsonb")
@@ -114,15 +124,15 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ProjectTemplateId)
                             .HasColumnType("jsonb")
                             .HasColumnName("project_template_id");
-                        entity.Property(e => e.PropertyAccountCreditorPriceDifference)
-                            .HasColumnType("jsonb")
-                            .HasColumnName("property_account_creditor_price_difference");
                         entity.Property(e => e.PropertyAccountExpenseId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_account_expense_id");
                         entity.Property(e => e.PropertyAccountIncomeId)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_account_income_id");
+                        entity.Property(e => e.PropertyPriceDifferenceAccountId)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("property_price_difference_account_id");
                         entity.Property(e => e.PropertyStockInventory)
                             .HasColumnType("jsonb")
                             .HasColumnName("property_stock_inventory");
@@ -132,7 +142,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PublicDescription)
                             .HasColumnType("jsonb")
                             .HasColumnName("public_description");
-                        entity.Property(e => e.PurchaseLineWarn).HasColumnName("purchase_line_warn");
+                        entity.Property(e => e.PublishDate)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("publish_date");
                         entity.Property(e => e.PurchaseLineWarnMsg).HasColumnName("purchase_line_warn_msg");
                         entity.Property(e => e.PurchaseMethod).HasColumnName("purchase_method");
                         entity.Property(e => e.PurchaseOk).HasColumnName("purchase_ok");
@@ -142,7 +154,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("jsonb")
                             .HasColumnName("responsible_id");
                         entity.Property(e => e.SaleDelay).HasColumnName("sale_delay");
-                        entity.Property(e => e.SaleLineWarn).HasColumnName("sale_line_warn");
                         entity.Property(e => e.SaleLineWarnMsg).HasColumnName("sale_line_warn_msg");
                         entity.Property(e => e.SaleOk).HasColumnName("sale_ok");
                         entity.Property(e => e.SelfOrderAvailable).HasColumnName("self_order_available");
@@ -158,13 +169,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ServiceUpsellThreshold).HasColumnName("service_upsell_threshold");
                         entity.Property(e => e.ShowAvailability).HasColumnName("show_availability");
                         entity.Property(e => e.SplitMethodLandedCost).HasColumnName("split_method_landed_cost");
+                        entity.Property(e => e.TaskTemplateId)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("task_template_id");
                         entity.Property(e => e.ToWeight).HasColumnName("to_weight");
                         entity.Property(e => e.Tracking).HasColumnName("tracking");
                         entity.Property(e => e.Type).HasColumnName("type");
                         entity.Property(e => e.UomId).HasColumnName("uom_id");
-                        entity.Property(e => e.UomPoId).HasColumnName("uom_po_id");
                         entity.Property(e => e.UseExpirationDate).HasColumnName("use_expiration_date");
                         entity.Property(e => e.UseTime).HasColumnName("use_time");
+                        entity.Property(e => e.VariantsDefaultCode).HasColumnName("variants_default_code");
                         entity.Property(e => e.Volume).HasColumnName("volume");
                         entity.Property(e => e.WebsiteDescription)
                             .HasColumnType("jsonb")
@@ -197,7 +211,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.Categ).WithMany(p => p.ProductTemplate)
                             .HasForeignKey(d => d.CategId)
-                            .OnDelete(DeleteBehavior.Restrict)
+                            .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("product_template_categ_id_fkey");
 
                         // entity.HasOne(d => d.Company).WithMany(p => p.ProductTemplate) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("product_template_company_id_fkey");
@@ -223,17 +237,21 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("product_template_email_template_id_fkey");
 
-                        // entity.HasOne(d => d.Uom).WithMany(p => p.ProductTemplateUom) .HasForeignKey(d => d.UomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_template_uom_id_fkey");
+                        entity.HasOne(d => d.Grade).WithMany(p => p.ProductTemplate)
+                            .HasForeignKey(d => d.GradeId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("product_template_grade_id_fkey");
+
+                        entity.HasOne(d => d.LotSequence).WithMany(p => p.ProductTemplate)
+                            .HasForeignKey(d => d.LotSequenceId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("product_template_lot_sequence_id_fkey");
+
+                        // entity.HasOne(d => d.Uom).WithMany(p => p.ProductTemplate) .HasForeignKey(d => d.UomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_template_uom_id_fkey");
                         entity.HasOne(d => d.Uom).WithMany()
                             .HasForeignKey(d => d.UomId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("product_template_uom_id_fkey");
-
-                        // entity.HasOne(d => d.UomPo).WithMany(p => p.ProductTemplateUomPo) .HasForeignKey(d => d.UomPoId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_template_uom_po_id_fkey");
-                        entity.HasOne(d => d.UomPo).WithMany()
-                            .HasForeignKey(d => d.UomPoId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("product_template_uom_po_id_fkey");
 
                         // entity.HasOne(d => d.Website).WithMany(p => p.ProductTemplate) .HasForeignKey(d => d.WebsiteId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("product_template_website_id_fkey");
                         entity.HasOne(d => d.Website).WithMany()
@@ -272,26 +290,45 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 });
 
                         // entity.HasMany(d => d.Dest).WithMany(p => p.Src)
-                        entity.HasMany(d => d.Dest).WithMany()
+                        entity.HasMany(d => d.Dest).WithMany(p => p.Src)
                             .UsingEntity<Dictionary<string, object>>(
-                                "ProductAccessoryRel",
-                                r => r.HasOne<ProductProduct>().WithMany()
+                                "PosProductOptionalRel",
+                                r => r.HasOne<ProductTemplate>().WithMany()
                                     .HasForeignKey("DestId")
-                                    .HasConstraintName("product_accessory_rel_dest_id_fkey"),
+                                    .HasConstraintName("pos_product_optional_rel_dest_id_fkey"),
                                 l => l.HasOne<ProductTemplate>().WithMany()
                                     .HasForeignKey("SrcId")
-                                    .HasConstraintName("product_accessory_rel_src_id_fkey"),
+                                    .HasConstraintName("pos_product_optional_rel_src_id_fkey"),
                                 j =>
                                 {
-                                    j.HasKey("SrcId", "DestId").HasName("product_accessory_rel_pkey");
-                                    j.ToTable("product_accessory_rel");
-                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_accessory_rel_dest_id_src_id_idx");
+                                    j.HasKey("SrcId", "DestId").HasName("pos_product_optional_rel_pkey");
+                                    j.ToTable("pos_product_optional_rel");
+                                    j.HasIndex(new[] { "DestId", "SrcId" }, "pos_product_optional_rel_dest_id_src_id_idx");
                                     j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
                                     j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
                                 });
 
                         // entity.HasMany(d => d.Dest1).WithMany(p => p.SrcNavigation)
                         entity.HasMany(d => d.Dest1).WithMany(p => p.SrcNavigation)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ProductAlternativeRel",
+                                r => r.HasOne<ProductTemplate>().WithMany()
+                                    .HasForeignKey("DestId")
+                                    .HasConstraintName("product_alternative_rel_dest_id_fkey"),
+                                l => l.HasOne<ProductTemplate>().WithMany()
+                                    .HasForeignKey("SrcId")
+                                    .HasConstraintName("product_alternative_rel_src_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SrcId", "DestId").HasName("product_alternative_rel_pkey");
+                                    j.ToTable("product_alternative_rel");
+                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_alternative_rel_dest_id_src_id_idx");
+                                    j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
+                                    j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
+                                });
+
+                        // entity.HasMany(d => d.Dest2).WithMany(p => p.Src1)
+                        entity.HasMany(d => d.Dest2).WithMany(p => p.Src1)
                             .UsingEntity<Dictionary<string, object>>(
                                 "ProductOptionalRel",
                                 r => r.HasOne<ProductTemplate>().WithMany()
@@ -310,20 +347,20 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 });
 
                         // entity.HasMany(d => d.DestNavigation).WithMany(p => p.Src)
-                        entity.HasMany(d => d.DestNavigation).WithMany(p => p.Src)
+                        entity.HasMany(d => d.DestNavigation).WithMany()
                             .UsingEntity<Dictionary<string, object>>(
-                                "ProductAlternativeRel",
-                                r => r.HasOne<ProductTemplate>().WithMany()
+                                "ProductAccessoryRel",
+                                r => r.HasOne<ProductProduct>().WithMany()
                                     .HasForeignKey("DestId")
-                                    .HasConstraintName("product_alternative_rel_dest_id_fkey"),
+                                    .HasConstraintName("product_accessory_rel_dest_id_fkey"),
                                 l => l.HasOne<ProductTemplate>().WithMany()
                                     .HasForeignKey("SrcId")
-                                    .HasConstraintName("product_alternative_rel_src_id_fkey"),
+                                    .HasConstraintName("product_accessory_rel_src_id_fkey"),
                                 j =>
                                 {
-                                    j.HasKey("SrcId", "DestId").HasName("product_alternative_rel_pkey");
-                                    j.ToTable("product_alternative_rel");
-                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_alternative_rel_dest_id_src_id_idx");
+                                    j.HasKey("SrcId", "DestId").HasName("product_accessory_rel_pkey");
+                                    j.ToTable("product_accessory_rel");
+                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_accessory_rel_dest_id_src_id_idx");
                                     j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
                                     j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
                                 });
@@ -385,27 +422,27 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("ProductTagId").HasColumnName("product_tag_id");
                                 });
 
-                        // entity.HasMany(d => d.Src).WithMany(p => p.DestNavigation)
-                        entity.HasMany(d => d.Src).WithMany(p => p.DestNavigation)
+                        // entity.HasMany(d => d.Src).WithMany(p => p.Dest)
+                        entity.HasMany(d => d.Src).WithMany(p => p.Dest)
                             .UsingEntity<Dictionary<string, object>>(
-                                "ProductAlternativeRel",
+                                "PosProductOptionalRel",
                                 r => r.HasOne<ProductTemplate>().WithMany()
                                     .HasForeignKey("SrcId")
-                                    .HasConstraintName("product_alternative_rel_src_id_fkey"),
+                                    .HasConstraintName("pos_product_optional_rel_src_id_fkey"),
                                 l => l.HasOne<ProductTemplate>().WithMany()
                                     .HasForeignKey("DestId")
-                                    .HasConstraintName("product_alternative_rel_dest_id_fkey"),
+                                    .HasConstraintName("pos_product_optional_rel_dest_id_fkey"),
                                 j =>
                                 {
-                                    j.HasKey("SrcId", "DestId").HasName("product_alternative_rel_pkey");
-                                    j.ToTable("product_alternative_rel");
-                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_alternative_rel_dest_id_src_id_idx");
+                                    j.HasKey("SrcId", "DestId").HasName("pos_product_optional_rel_pkey");
+                                    j.ToTable("pos_product_optional_rel");
+                                    j.HasIndex(new[] { "DestId", "SrcId" }, "pos_product_optional_rel_dest_id_src_id_idx");
                                     j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
                                     j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
                                 });
 
-                        // entity.HasMany(d => d.SrcNavigation).WithMany(p => p.Dest1)
-                        entity.HasMany(d => d.SrcNavigation).WithMany(p => p.Dest1)
+                        // entity.HasMany(d => d.Src1).WithMany(p => p.Dest2)
+                        entity.HasMany(d => d.Src1).WithMany(p => p.Dest2)
                             .UsingEntity<Dictionary<string, object>>(
                                 "ProductOptionalRel",
                                 r => r.HasOne<ProductTemplate>().WithMany()
@@ -419,6 +456,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasKey("SrcId", "DestId").HasName("product_optional_rel_pkey");
                                     j.ToTable("product_optional_rel");
                                     j.HasIndex(new[] { "DestId", "SrcId" }, "product_optional_rel_dest_id_src_id_idx");
+                                    j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
+                                    j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
+                                });
+
+                        // entity.HasMany(d => d.SrcNavigation).WithMany(p => p.Dest1)
+                        entity.HasMany(d => d.SrcNavigation).WithMany(p => p.Dest1)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ProductAlternativeRel",
+                                r => r.HasOne<ProductTemplate>().WithMany()
+                                    .HasForeignKey("SrcId")
+                                    .HasConstraintName("product_alternative_rel_src_id_fkey"),
+                                l => l.HasOne<ProductTemplate>().WithMany()
+                                    .HasForeignKey("DestId")
+                                    .HasConstraintName("product_alternative_rel_dest_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SrcId", "DestId").HasName("product_alternative_rel_pkey");
+                                    j.ToTable("product_alternative_rel");
+                                    j.HasIndex(new[] { "DestId", "SrcId" }, "product_alternative_rel_dest_id_src_id_idx");
                                     j.IndexerProperty<Guid>("SrcId").HasColumnName("src_id");
                                     j.IndexerProperty<Guid>("DestId").HasColumnName("dest_id");
                                 });
@@ -459,6 +515,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "TaxId", "ProdId" }, "product_taxes_rel_tax_id_prod_id_idx");
                                     j.IndexerProperty<Guid>("ProdId").HasColumnName("prod_id");
                                     j.IndexerProperty<Guid>("TaxId").HasColumnName("tax_id");
+                                });
+
+                        // entity.HasMany(d => d.UomUom).WithMany(p => p.ProductTemplateNavigation)
+                        entity.HasMany(d => d.UomUom).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ProductTemplateUomUomRel",
+                                r => r.HasOne<UomUom>().WithMany()
+                                    .HasForeignKey("UomUomId")
+                                    .HasConstraintName("product_template_uom_uom_rel_uom_uom_id_fkey"),
+                                l => l.HasOne<ProductTemplate>().WithMany()
+                                    .HasForeignKey("ProductTemplateId")
+                                    .HasConstraintName("product_template_uom_uom_rel_product_template_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("ProductTemplateId", "UomUomId").HasName("product_template_uom_uom_rel_pkey");
+                                    j.ToTable("product_template_uom_uom_rel");
+                                    j.HasIndex(new[] { "UomUomId", "ProductTemplateId" }, "product_template_uom_uom_rel_uom_uom_id_product_template_id_idx");
+                                    j.IndexerProperty<Guid>("ProductTemplateId").HasColumnName("product_template_id");
+                                    j.IndexerProperty<Guid>("UomUomId").HasColumnName("uom_uom_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

@@ -16,11 +16,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("stock_rule");
 
-                        entity.HasIndex(e => e.TenantId);
+                        entity.HasIndex(e => e.Action, "stock_rule__action_index");
+
+                        entity.HasIndex(e => e.TenantId, "stock_rule__company_id_index");
 
                         entity.HasIndex(e => e.OrganizationUnitId);
-
-                        entity.HasIndex(e => e.Action, "stock_rule__action_index");
 
                         entity.HasIndex(e => e.LocationDestId, "stock_rule__location_dest_id_index");
 
@@ -47,8 +47,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Delay).HasColumnName("delay");
-                        entity.Property(e => e.GroupId).HasColumnName("group_id");
-                        entity.Property(e => e.GroupPropagationOption).HasColumnName("group_propagation_option");
                         entity.Property(e => e.LocationDestFromRule).HasColumnName("location_dest_from_rule");
                         entity.Property(e => e.LocationDestId).HasColumnName("location_dest_id");
                         entity.Property(e => e.LocationSrcId).HasColumnName("location_src_id");
@@ -60,7 +58,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ProcureMethod).HasColumnName("procure_method");
                         entity.Property(e => e.PropagateCancel).HasColumnName("propagate_cancel");
                         entity.Property(e => e.PropagateCarrier).HasColumnName("propagate_carrier");
-                        entity.Property(e => e.PropagateWarehouseId).HasColumnName("propagate_warehouse_id");
                         entity.Property(e => e.PushDomain).HasColumnName("push_domain");
                         entity.Property(e => e.RouteId).HasColumnName("route_id");
                         entity.Property(e => e.RouteSequence).HasColumnName("route_sequence");
@@ -83,11 +80,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_rule_create_uid_fkey");
 
-                        entity.HasOne(d => d.Group).WithMany(p => p.StockRule)
-                            .HasForeignKey(d => d.GroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_rule_group_id_fkey");
-
                         entity.HasOne(d => d.LocationDest).WithMany(p => p.StockRuleLocationDest)
                             .HasForeignKey(d => d.LocationDestId)
                             .OnDelete(DeleteBehavior.Restrict)
@@ -109,17 +101,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("stock_rule_picking_type_id_fkey");
 
-                        entity.HasOne(d => d.PropagateWarehouse).WithMany(p => p.StockRulePropagateWarehouse)
-                            .HasForeignKey(d => d.PropagateWarehouseId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_rule_propagate_warehouse_id_fkey");
-
                         entity.HasOne(d => d.Route).WithMany(p => p.StockRule)
                             .HasForeignKey(d => d.RouteId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("stock_rule_route_id_fkey");
 
-                        entity.HasOne(d => d.Warehouse).WithMany(p => p.StockRuleWarehouse)
+                        entity.HasOne(d => d.Warehouse).WithMany(p => p.StockRule)
                             .HasForeignKey(d => d.WarehouseId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_rule_warehouse_id_fkey");

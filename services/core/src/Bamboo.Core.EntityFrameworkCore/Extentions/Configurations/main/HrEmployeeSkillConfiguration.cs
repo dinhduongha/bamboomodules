@@ -20,7 +20,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => new { e.EmployeeId, e.SkillId }, "hr_employee_skill__unique_skill").IsUnique();
+                        entity.HasIndex(e => e.EmployeeId, "hr_employee_skill__employee_id_index");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -34,10 +34,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.DisplayWarningMessage).HasColumnName("display_warning_message");
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.SkillId).HasColumnName("skill_id");
                         entity.Property(e => e.SkillLevelId).HasColumnName("skill_level_id");
                         entity.Property(e => e.SkillTypeId).HasColumnName("skill_type_id");
+                        entity.Property(e => e.ValidFrom).HasColumnName("valid_from");
+                        entity.Property(e => e.ValidTo).HasColumnName("valid_to");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

@@ -22,7 +22,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Operation, "payment_transaction__operation_index");
 
+                        entity.HasIndex(e => e.SourceTransactionId, "payment_transaction__source_transaction_id_index").HasFilter("(source_transaction_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.State, "payment_transaction__state_index");
+
+                        entity.HasIndex(e => e.TokenId, "payment_transaction__token_id_index").HasFilter("(token_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.Reference, "payment_transaction_reference_uniq").IsUnique();
 
@@ -42,6 +46,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CurrencyId).HasColumnName("currency_id");
                         entity.Property(e => e.IsDonation).HasColumnName("is_donation");
+                        entity.Property(e => e.IsLive).HasColumnName("is_live");
                         entity.Property(e => e.IsPostProcessed).HasColumnName("is_post_processed");
                         entity.Property(e => e.LandingRoute).HasColumnName("landing_route");
                         entity.Property(e => e.LastStateChange)

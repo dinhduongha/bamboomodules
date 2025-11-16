@@ -236,12 +236,13 @@ public partial class StockMove : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid
     [Column("is_subcontract")]
     public bool? IsSubcontract { get; set; }
 
+    // CONFLICK-v19
     // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("StockMoveId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("StockMove")] // One2many
-    public virtual ICollection<AccountMove> AccountMove { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("StockMoveId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("StockMove")] // One2many
+    // public virtual ICollection<AccountMove> AccountMove { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

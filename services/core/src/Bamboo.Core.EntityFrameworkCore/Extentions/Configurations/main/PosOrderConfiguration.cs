@@ -34,6 +34,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.TableId, "pos_order__table_id_index").HasFilter("(table_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.Uuid, "pos_order_unique_uuid").IsUnique();
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -66,8 +68,10 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.FiscalPositionId).HasColumnName("fiscal_position_id");
                         entity.Property(e => e.FloatingOrderName).HasColumnName("floating_order_name");
-                        entity.Property(e => e.GeneralNote).HasColumnName("general_note");
+                        entity.Property(e => e.GeneralCustomerNote).HasColumnName("general_customer_note");
                         entity.Property(e => e.HasDeletedLine).HasColumnName("has_deleted_line");
+                        entity.Property(e => e.InternalNote).HasColumnName("internal_note");
+                        entity.Property(e => e.IsRefund).HasColumnName("is_refund");
                         entity.Property(e => e.IsTipped).HasColumnName("is_tipped");
                         entity.Property(e => e.LastOrderPreparationChange).HasColumnName("last_order_preparation_change");
                         entity.Property(e => e.Mobile).HasColumnName("mobile");
@@ -76,19 +80,24 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.NextOnlinePaymentAmount).HasColumnName("next_online_payment_amount");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.PosReference).HasColumnName("pos_reference");
+                        entity.Property(e => e.PresetId).HasColumnName("preset_id");
+                        entity.Property(e => e.PresetTime)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("preset_time");
                         entity.Property(e => e.PricelistId).HasColumnName("pricelist_id");
-                        entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
                         entity.Property(e => e.SaleJournal).HasColumnName("sale_journal");
+                        entity.Property(e => e.SelfOrderingTableId).HasColumnName("self_ordering_table_id");
                         entity.Property(e => e.SequenceNumber).HasColumnName("sequence_number");
                         entity.Property(e => e.SessionId).HasColumnName("session_id");
                         entity.Property(e => e.ShippingDate).HasColumnName("shipping_date");
+                        entity.Property(e => e.Source).HasColumnName("source");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.TableId).HasColumnName("table_id");
                         entity.Property(e => e.TableStandNumber).HasColumnName("table_stand_number");
-                        entity.Property(e => e.Takeaway).HasColumnName("takeaway");
                         entity.Property(e => e.TicketCode).HasColumnName("ticket_code");
                         entity.Property(e => e.TipAmount).HasColumnName("tip_amount");
                         entity.Property(e => e.ToInvoice).HasColumnName("to_invoice");
+                        entity.Property(e => e.TrackingNumber).HasColumnName("tracking_number");
                         entity.Property(e => e.UseSelfOrderOnlinePayment).HasColumnName("use_self_order_online_payment");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.Uuid).HasColumnName("uuid");
@@ -140,27 +149,32 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_order_partner_id_fkey");
 
+                        entity.HasOne(d => d.Preset).WithMany(p => p.PosOrder)
+                            .HasForeignKey(d => d.PresetId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_order_preset_id_fkey");
+
                         entity.HasOne(d => d.Pricelist).WithMany(p => p.PosOrder)
                             .HasForeignKey(d => d.PricelistId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_order_pricelist_id_fkey");
-
-                        entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.PosOrder)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("pos_order_procurement_group_id_fkey");
 
                         entity.HasOne(d => d.SaleJournalNavigation).WithMany(p => p.PosOrder)
                             .HasForeignKey(d => d.SaleJournal)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("pos_order_sale_journal_fkey");
 
+                        entity.HasOne(d => d.SelfOrderingTable).WithMany(p => p.PosOrderSelfOrderingTable)
+                            .HasForeignKey(d => d.SelfOrderingTableId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("pos_order_self_ordering_table_id_fkey");
+
                         entity.HasOne(d => d.Session).WithMany(p => p.PosOrder)
                             .HasForeignKey(d => d.SessionId)
-                            .OnDelete(DeleteBehavior.Restrict)
+                            .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_order_session_id_fkey");
 
-                        entity.HasOne(d => d.Table).WithMany(p => p.PosOrder)
+                        entity.HasOne(d => d.Table).WithMany(p => p.PosOrderTable)
                             .HasForeignKey(d => d.TableId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_order_table_id_fkey");
@@ -176,6 +190,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("pos_order_write_uid_fkey");
+
+                        // entity.HasMany(d => d.Reference).WithMany(p => p.PosOrder)
+                        entity.HasMany(d => d.Reference).WithMany(p => p.PosOrder)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferencePosOrderRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_pos_order_rel_reference_id_fkey"),
+                                l => l.HasOne<PosOrder>().WithMany()
+                                    .HasForeignKey("PosOrderId")
+                                    .HasConstraintName("stock_reference_pos_order_rel_pos_order_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PosOrderId", "ReferenceId").HasName("stock_reference_pos_order_rel_pkey");
+                                    j.ToTable("stock_reference_pos_order_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "PosOrderId" }, "stock_reference_pos_order_rel_reference_id_pos_order_id_idx");
+                                    j.IndexerProperty<Guid>("PosOrderId").HasColumnName("pos_order_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

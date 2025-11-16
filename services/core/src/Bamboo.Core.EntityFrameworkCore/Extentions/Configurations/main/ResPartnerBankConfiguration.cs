@@ -31,12 +31,12 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-                        entity.Property(e => e.AbaRouting).HasColumnName("aba_routing");
                         entity.Property(e => e.AccHolderName).HasColumnName("acc_holder_name");
                         entity.Property(e => e.AccNumber).HasColumnName("acc_number");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AllowOutPayment).HasColumnName("allow_out_payment");
                         entity.Property(e => e.BankId).HasColumnName("bank_id");
+                        entity.Property(e => e.ClearingNumber).HasColumnName("clearing_number");
 
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
@@ -47,6 +47,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.HasIbanWarning).HasColumnName("has_iban_warning");
                         entity.Property(e => e.HasMoneyTransferWarning).HasColumnName("has_money_transfer_warning");
                         entity.Property(e => e.IncludeReference).HasColumnName("include_reference");
+                        entity.Property(e => e.Note).HasColumnName("note");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.ProxyType).HasColumnName("proxy_type");
                         entity.Property(e => e.ProxyValue).HasColumnName("proxy_value");

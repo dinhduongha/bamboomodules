@@ -32,6 +32,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
+                        entity.Property(e => e.ForceHash).HasColumnName("force_hash");
                         entity.Property(e => e.ForcePost).HasColumnName("force_post");
                         entity.Property(e => e.IgnoreAbnormalAmount).HasColumnName("ignore_abnormal_amount");
                         entity.Property(e => e.IgnoreAbnormalDate).HasColumnName("ignore_abnormal_date");

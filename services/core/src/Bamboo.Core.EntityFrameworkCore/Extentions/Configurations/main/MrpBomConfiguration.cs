@@ -33,6 +33,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AllowOperationDependencies).HasColumnName("allow_operation_dependencies");
+                        entity.Property(e => e.BatchSize).HasColumnName("batch_size");
                         entity.Property(e => e.Code).HasColumnName("code");
 
                         entity.Property(e => e.Consumption).HasColumnName("consumption");
@@ -42,6 +43,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.DaysToPrepareMo).HasColumnName("days_to_prepare_mo");
+                        entity.Property(e => e.EnableBatchSize).HasColumnName("enable_batch_size");
                         entity.Property(e => e.PickingTypeId).HasColumnName("picking_type_id");
                         entity.Property(e => e.ProduceDelay).HasColumnName("produce_delay");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");

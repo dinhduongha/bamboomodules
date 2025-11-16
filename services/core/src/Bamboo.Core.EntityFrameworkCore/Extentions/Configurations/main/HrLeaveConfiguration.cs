@@ -55,17 +55,16 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EmployeeId).HasColumnName("employee_id");
                         entity.Property(e => e.FirstApproverId).HasColumnName("first_approver_id");
                         entity.Property(e => e.HolidayStatusId).HasColumnName("holiday_status_id");
-                        entity.Property(e => e.ManagerId).HasColumnName("manager_id");
                         entity.Property(e => e.MeetingId).HasColumnName("meeting_id");
                         entity.Property(e => e.MessageMainAttachmentId).HasColumnName("message_main_attachment_id");
                         entity.Property(e => e.Notes).HasColumnName("notes");
                         entity.Property(e => e.NumberOfDays).HasColumnName("number_of_days");
                         entity.Property(e => e.NumberOfHours).HasColumnName("number_of_hours");
-                        entity.Property(e => e.OvertimeId).HasColumnName("overtime_id");
                         entity.Property(e => e.PrivateName).HasColumnName("private_name");
                         entity.Property(e => e.RequestDateFrom).HasColumnName("request_date_from");
                         entity.Property(e => e.RequestDateFromPeriod).HasColumnName("request_date_from_period");
                         entity.Property(e => e.RequestDateTo).HasColumnName("request_date_to");
+                        entity.Property(e => e.RequestDateToPeriod).HasColumnName("request_date_to_period");
                         entity.Property(e => e.RequestHourFrom).HasColumnName("request_hour_from");
                         entity.Property(e => e.RequestHourTo).HasColumnName("request_hour_to");
                         entity.Property(e => e.RequestUnitHalf).HasColumnName("request_unit_half");
@@ -117,11 +116,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("hr_leave_holiday_status_id_fkey");
 
-                        entity.HasOne(d => d.Manager).WithMany(p => p.HrLeaveManager)
-                            .HasForeignKey(d => d.ManagerId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_manager_id_fkey");
-
                         entity.HasOne(d => d.Meeting).WithMany(p => p.HrLeave)
                             .HasForeignKey(d => d.MeetingId)
                             .OnDelete(DeleteBehavior.SetNull)
@@ -132,11 +126,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.MessageMainAttachmentId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("hr_leave_message_main_attachment_id_fkey");
-
-                        entity.HasOne(d => d.Overtime).WithMany(p => p.HrLeave)
-                            .HasForeignKey(d => d.OvertimeId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("hr_leave_overtime_id_fkey");
 
                         entity.HasOne(d => d.ResourceCalendar).WithMany(p => p.HrLeave)
                             .HasForeignKey(d => d.ResourceCalendarId)

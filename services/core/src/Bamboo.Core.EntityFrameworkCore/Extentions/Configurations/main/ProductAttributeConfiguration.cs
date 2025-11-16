@@ -40,9 +40,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.CreateVariant).HasColumnName("create_variant");
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
+                        entity.Property(e => e.IsThumbnailVisible).HasColumnName("is_thumbnail_visible");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
+                        entity.Property(e => e.PreviewVariants).HasColumnName("preview_variants");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.Visibility).HasColumnName("visibility");
                         entity.Property(e => e.LastModificationTime)

@@ -20,9 +20,15 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ControllerPageId, "website_menu__controller_page_id_index").HasFilter("(controller_page_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PageId, "website_menu__page_id_index").HasFilter("(page_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.ParentId, "website_menu__parent_id_index");
 
                         entity.HasIndex(e => e.ParentPath, "website_menu__parent_path_index");
+
+                        entity.HasIndex(e => e.ThemeTemplateId, "website_menu__theme_template_id_index").HasFilter("(theme_template_id IS NOT NULL)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")

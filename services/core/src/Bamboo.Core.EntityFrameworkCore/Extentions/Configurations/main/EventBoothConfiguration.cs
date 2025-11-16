@@ -20,6 +20,16 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.BoothCategoryId, "event_booth__booth_category_id_index");
+
+                        entity.HasIndex(e => e.EventId, "event_booth__event_id_index");
+
+                        entity.HasIndex(e => e.EventTypeId, "event_booth__event_type_id_index");
+
+                        entity.HasIndex(e => e.SaleOrderId, "event_booth__sale_order_id_index").HasFilter("(sale_order_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.SaleOrderLineId, "event_booth__sale_order_line_id_index").HasFilter("(sale_order_line_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");

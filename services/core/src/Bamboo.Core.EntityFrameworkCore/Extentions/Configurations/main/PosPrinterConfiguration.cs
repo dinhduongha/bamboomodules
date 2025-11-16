@@ -79,6 +79,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("CategoryId").HasColumnName("category_id");
                                 });
 
+                        // entity.HasMany(d => d.Config).WithMany(p => p.Printer)
+                        entity.HasMany(d => d.Config).WithMany(p => p.Printer)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "PosConfigPrinterRel",
+                                r => r.HasOne<PosConfig>().WithMany()
+                                    .HasForeignKey("ConfigId")
+                                    .HasConstraintName("pos_config_printer_rel_config_id_fkey"),
+                                l => l.HasOne<PosPrinter>().WithMany()
+                                    .HasForeignKey("PrinterId")
+                                    .HasConstraintName("pos_config_printer_rel_printer_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("PrinterId", "ConfigId").HasName("pos_config_printer_rel_pkey");
+                                    j.ToTable("pos_config_printer_rel");
+                                    j.HasIndex(new[] { "ConfigId", "PrinterId" }, "pos_config_printer_rel_config_id_printer_id_idx");
+                                    j.IndexerProperty<Guid>("PrinterId").HasColumnName("printer_id");
+                                    j.IndexerProperty<Guid>("ConfigId").HasColumnName("config_id");
+                                });
+
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();
                 entity.TryConfigureConcurrencyStamp();

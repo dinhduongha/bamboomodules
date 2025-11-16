@@ -44,6 +44,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DateTo)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date_to");
+                        entity.Property(e => e.ElligibleForAccrualRate).HasColumnName("elligible_for_accrual_rate");
                         entity.Property(e => e.HolidayId).HasColumnName("holiday_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.ResourceId).HasColumnName("resource_id");

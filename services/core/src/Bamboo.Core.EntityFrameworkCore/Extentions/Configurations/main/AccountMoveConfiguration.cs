@@ -28,13 +28,13 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.DebitOriginId, "account_move__debit_origin_id_index").HasFilter("(debit_origin_id IS NOT NULL)");
 
-                        entity.HasIndex(e => e.ExpenseSheetId, "account_move__expense_sheet_id_index").HasFilter("(expense_sheet_id IS NOT NULL)");
-
                         entity.HasIndex(e => e.InalterableHash, "account_move__inalterable_hash_index").HasFilter("(inalterable_hash IS NOT NULL)");
 
                         entity.HasIndex(e => e.InvoiceDateDue, "account_move__invoice_date_due_index");
 
                         entity.HasIndex(e => e.InvoiceDate, "account_move__invoice_date_index");
+
+                        entity.HasIndex(e => e.L10nLatamDocumentTypeId, "account_move__l10n_latam_document_type_id_index").HasFilter("(l10n_latam_document_type_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.MediumId, "account_move__medium_id_index").HasFilter("(medium_id IS NOT NULL)");
 
@@ -48,6 +48,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OriginPaymentId, "account_move__origin_payment_id_index").HasFilter("(origin_payment_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.PartnerBankId, "account_move__partner_bank_id_index").HasFilter("(partner_bank_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.PartnerId, "account_move__partner_id_index");
 
                         entity.HasIndex(e => e.PaymentReference, "account_move__payment_reference_index")
@@ -60,23 +62,25 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ReversedEntryId, "account_move__reversed_entry_id_index").HasFilter("(reversed_entry_id IS NOT NULL)");
 
+                        entity.HasIndex(e => e.ReversedPosOrderId, "account_move__reversed_pos_order_id_index").HasFilter("(reversed_pos_order_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.SecureSequenceNumber, "account_move__secure_sequence_number_index");
 
                         entity.HasIndex(e => e.SourceId, "account_move__source_id_index").HasFilter("(source_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.StatementLineId, "account_move__statement_line_id_index").HasFilter("(statement_line_id IS NOT NULL)");
 
-                        entity.HasIndex(e => e.StockMoveId, "account_move__stock_move_id_index").HasFilter("(stock_move_id IS NOT NULL)");
-
                         entity.HasIndex(e => e.TaxCashBasisOriginMoveId, "account_move__tax_cash_basis_origin_move_id_index").HasFilter("(tax_cash_basis_origin_move_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.TaxCashBasisRecId, "account_move__tax_cash_basis_rec_id_index").HasFilter("(tax_cash_basis_rec_id IS NOT NULL)");
 
-                        entity.HasIndex(e => e.JournalId, "account_move_checked_idx").HasFilter("(checked = false)");
+                        entity.HasIndex(e => e.JournalId, "account_move_checked_idx").HasFilter("(checked IS NOT TRUE)");
+
+                        entity.HasIndex(e => e.Ref, "account_move_duplicate_bills_idx").HasFilter("(move_type = ANY (ARRAY[('in_invoice'::character varying)::text, ('in_refund'::character varying)::text]))");
 
                         entity.HasIndex(e => new { e.JournalId, e.TenantId, e.Date }, "account_move_journal_id_company_id_idx");
 
-                        entity.HasIndex(e => new { e.JournalId, e.TenantId, e.Date }, "account_move_made_gaps").HasFilter("(made_sequence_gap = true)");
+                        entity.HasIndex(e => new { e.JournalId, e.State, e.PaymentState, e.MoveType, e.Date }, "account_move_made_gaps").HasFilter("(made_sequence_gap IS TRUE)");
 
                         entity.HasIndex(e => new { e.JournalId, e.State, e.PaymentState, e.MoveType, e.Date }, "account_move_payment_idx");
 
@@ -86,7 +90,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => new { e.Name, e.JournalId }, "account_move_unique_name")
                             .IsUnique()
-                            .HasFilter("((state = 'posted'::text) AND (name <> '/'::text))");
+                            .HasFilter("((state = 'posted'::text) AND (name <> '/'::text) AND ((l10n_latam_document_type_id IS NULL) OR (move_type <> ALL (ARRAY[('in_invoice'::character varying)::text, ('in_refund'::character varying)::text, ('in_receipt'::character varying)::text]))))");
+
+                        entity.HasIndex(e => new { e.Name, e.CommercialPartnerId, e.L10nLatamDocumentTypeId, e.TenantId }, "account_move_unique_name_latam")
+                            .IsUnique()
+                            .HasFilter("((state = 'posted'::text) AND (name <> '/'::text) AND ((l10n_latam_document_type_id IS NOT NULL) AND (move_type = ANY (ARRAY[('in_invoice'::character varying)::text, ('in_refund'::character varying)::text, ('in_receipt'::character varying)::text]))))");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -124,7 +132,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DebitOriginId).HasColumnName("debit_origin_id");
                         entity.Property(e => e.DeliveryDate).HasColumnName("delivery_date");
                         entity.Property(e => e.EdiState).HasColumnName("edi_state");
-                        entity.Property(e => e.ExpenseSheetId).HasColumnName("expense_sheet_id");
                         entity.Property(e => e.FiscalPositionId).HasColumnName("fiscal_position_id");
                         entity.Property(e => e.InalterableHash).HasColumnName("inalterable_hash");
                         entity.Property(e => e.IncotermLocation).HasColumnName("incoterm_location");
@@ -140,8 +147,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.InvoiceUserId).HasColumnName("invoice_user_id");
                         entity.Property(e => e.IsManuallyModified).HasColumnName("is_manually_modified");
                         entity.Property(e => e.IsMoveSent).HasColumnName("is_move_sent");
-                        entity.Property(e => e.IsStorno).HasColumnName("is_storno");
                         entity.Property(e => e.JournalId).HasColumnName("journal_id");
+                        entity.Property(e => e.L10nLatamDocumentTypeId).HasColumnName("l10n_latam_document_type_id");
                         entity.Property(e => e.L10nVnEInvoiceNumber).HasColumnName("l10n_vn_e_invoice_number");
                         entity.Property(e => e.MadeSequenceGap).HasColumnName("made_sequence_gap");
                         entity.Property(e => e.MediumId).HasColumnName("medium_id");
@@ -173,9 +180,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.SourceId).HasColumnName("source_id");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.StatementLineId).HasColumnName("statement_line_id");
-                        entity.Property(e => e.StockMoveId).HasColumnName("stock_move_id");
                         entity.Property(e => e.TaxCashBasisOriginMoveId).HasColumnName("tax_cash_basis_origin_move_id");
                         entity.Property(e => e.TaxCashBasisRecId).HasColumnName("tax_cash_basis_rec_id");
+                        entity.Property(e => e.TaxableSupplyDate).HasColumnName("taxable_supply_date");
                         entity.Property(e => e.TeamId).HasColumnName("team_id");
                         entity.Property(e => e.WebsiteId).HasColumnName("website_id");
                         entity.Property(e => e.LastModificationTime)
@@ -222,11 +229,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_debit_origin_id_fkey");
 
-                        entity.HasOne(d => d.ExpenseSheet).WithMany(p => p.AccountMove)
-                            .HasForeignKey(d => d.ExpenseSheetId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_move_expense_sheet_id_fkey");
-
                         entity.HasOne(d => d.FiscalPosition).WithMany(p => p.AccountMove)
                             .HasForeignKey(d => d.FiscalPositionId)
                             .OnDelete(DeleteBehavior.Restrict)
@@ -258,6 +260,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.JournalId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("account_move_journal_id_fkey");
+
+                        entity.HasOne(d => d.L10nLatamDocumentType).WithMany(p => p.AccountMove)
+                            .HasForeignKey(d => d.L10nLatamDocumentTypeId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("account_move_l10n_latam_document_type_id_fkey");
 
                         entity.HasOne(d => d.Medium).WithMany(p => p.AccountMove)
                             .HasForeignKey(d => d.MediumId)
@@ -317,11 +324,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_statement_line_id_fkey");
 
-                        entity.HasOne(d => d.StockMove).WithMany(p => p.AccountMove)
-                            .HasForeignKey(d => d.StockMoveId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("account_move_stock_move_id_fkey");
-
                         entity.HasOne(d => d.TaxCashBasisOriginMove).WithMany(p => p.InverseTaxCashBasisOriginMove)
                             .HasForeignKey(d => d.TaxCashBasisOriginMoveId)
                             .OnDelete(DeleteBehavior.SetNull)
@@ -349,23 +351,42 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("account_move_write_uid_fkey");
 
-                        // entity.HasMany(d => d.MrpProduction).WithMany(p => p.AccountMove)
-                        entity.HasMany(d => d.MrpProduction).WithMany(p => p.AccountMove)
+                        // entity.HasMany(d => d.AdjustingEntryMove).WithMany(p => p.Move)
+                        entity.HasMany(d => d.AdjustingEntryMove).WithMany(p => p.Move)
                             .UsingEntity<Dictionary<string, object>>(
-                                "AccountMoveMrpProductionRel",
-                                r => r.HasOne<MrpProduction>().WithMany()
-                                    .HasForeignKey("MrpProductionId")
-                                    .HasConstraintName("account_move_mrp_production_rel_mrp_production_id_fkey"),
+                                "AdjustingEntriesAccountMove",
+                                r => r.HasOne<AccountMove>().WithMany()
+                                    .HasForeignKey("AdjustingEntryMoveId")
+                                    .HasConstraintName("adjusting_entries__account_move_adjusting_entry_move_id_fkey"),
                                 l => l.HasOne<AccountMove>().WithMany()
-                                    .HasForeignKey("AccountMoveId")
-                                    .HasConstraintName("account_move_mrp_production_rel_account_move_id_fkey"),
+                                    .HasForeignKey("MoveId")
+                                    .HasConstraintName("adjusting_entries__account_move_move_id_fkey"),
                                 j =>
                                 {
-                                    j.HasKey("AccountMoveId", "MrpProductionId").HasName("account_move_mrp_production_rel_pkey");
-                                    j.ToTable("account_move_mrp_production_rel");
-                                    j.HasIndex(new[] { "MrpProductionId", "AccountMoveId" }, "account_move_mrp_production_r_mrp_production_id_account_mov_idx");
-                                    j.IndexerProperty<Guid>("AccountMoveId").HasColumnName("account_move_id");
-                                    j.IndexerProperty<Guid>("MrpProductionId").HasColumnName("mrp_production_id");
+                                    j.HasKey("MoveId", "AdjustingEntryMoveId").HasName("adjusting_entries__account_move_pkey");
+                                    j.ToTable("adjusting_entries__account_move");
+                                    j.HasIndex(new[] { "AdjustingEntryMoveId", "MoveId" }, "adjusting_entries__account_mo_adjusting_entry_move_id_move__idx");
+                                    j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                                    j.IndexerProperty<Guid>("AdjustingEntryMoveId").HasColumnName("adjusting_entry_move_id");
+                                });
+
+                        // entity.HasMany(d => d.Move).WithMany(p => p.AdjustingEntryMove)
+                        entity.HasMany(d => d.Move).WithMany(p => p.AdjustingEntryMove)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "AdjustingEntriesAccountMove",
+                                r => r.HasOne<AccountMove>().WithMany()
+                                    .HasForeignKey("MoveId")
+                                    .HasConstraintName("adjusting_entries__account_move_move_id_fkey"),
+                                l => l.HasOne<AccountMove>().WithMany()
+                                    .HasForeignKey("AdjustingEntryMoveId")
+                                    .HasConstraintName("adjusting_entries__account_move_adjusting_entry_move_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("MoveId", "AdjustingEntryMoveId").HasName("adjusting_entries__account_move_pkey");
+                                    j.ToTable("adjusting_entries__account_move");
+                                    j.HasIndex(new[] { "AdjustingEntryMoveId", "MoveId" }, "adjusting_entries__account_mo_adjusting_entry_move_id_move__idx");
+                                    j.IndexerProperty<Guid>("MoveId").HasColumnName("move_id");
+                                    j.IndexerProperty<Guid>("AdjustingEntryMoveId").HasColumnName("adjusting_entry_move_id");
                                 });
 
                         // entity.HasMany(d => d.OriginalAccountMove).WithMany(p => p.RefundAccountMove)

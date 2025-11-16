@@ -37,7 +37,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DefaultTimezone).HasColumnName("default_timezone");
                         entity.Property(e => e.ExhibitorMenu).HasColumnName("exhibitor_menu");
                         entity.Property(e => e.HasSeatsLimitation).HasColumnName("has_seats_limitation");
-                        entity.Property(e => e.MeetingRoomAllowCreation).HasColumnName("meeting_room_allow_creation");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
@@ -66,6 +65,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("event_type_write_uid_fkey");
+
+                        // entity.HasMany(d => d.EventQuestion).WithMany(p => p.EventType)
+                        entity.HasMany(d => d.EventQuestion).WithMany(p => p.EventType)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "EventQuestionEventTypeRel",
+                                r => r.HasOne<EventQuestion>().WithMany()
+                                    .HasForeignKey("EventQuestionId")
+                                    .HasConstraintName("event_question_event_type_rel_event_question_id_fkey"),
+                                l => l.HasOne<EventType>().WithMany()
+                                    .HasForeignKey("EventTypeId")
+                                    .HasConstraintName("event_question_event_type_rel_event_type_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("EventTypeId", "EventQuestionId").HasName("event_question_event_type_rel_pkey");
+                                    j.ToTable("event_question_event_type_rel");
+                                    j.HasIndex(new[] { "EventQuestionId", "EventTypeId" }, "event_question_event_type_rel_event_question_id_event_type__idx");
+                                    j.IndexerProperty<Guid>("EventTypeId").HasColumnName("event_type_id");
+                                    j.IndexerProperty<Guid>("EventQuestionId").HasColumnName("event_question_id");
+                                });
 
                         // entity.HasMany(d => d.EventTag).WithMany(p => p.EventType)
                         entity.HasMany(d => d.EventTag).WithMany(p => p.EventType)

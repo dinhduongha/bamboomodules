@@ -35,6 +35,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EditorId).HasColumnName("editor_id");
                         entity.Property(e => e.Email).HasColumnName("email");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.EventSlotId).HasColumnName("event_slot_id");
                         entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Phone).HasColumnName("phone");
@@ -60,6 +61,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.EventId)
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("registration_editor_line_event_id_fkey");
+
+                        entity.HasOne(d => d.EventSlot).WithMany(p => p.RegistrationEditorLine)
+                            .HasForeignKey(d => d.EventSlotId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("registration_editor_line_event_slot_id_fkey");
 
                         entity.HasOne(d => d.EventTicket).WithMany(p => p.RegistrationEditorLine)
                             .HasForeignKey(d => d.EventTicketId)

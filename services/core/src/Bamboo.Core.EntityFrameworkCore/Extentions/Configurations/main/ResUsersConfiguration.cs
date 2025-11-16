@@ -24,6 +24,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PartnerId, "res_users__partner_id_index");
 
+                        entity.HasIndex(e => e.RankId, "res_users__rank_id_index").HasFilter("(rank_id IS NOT NULL)");
+
                         entity.HasIndex(e => new { e.Login, e.WebsiteId }, "res_users_login_key").IsUnique();
 
                         entity.HasIndex(e => new { e.OauthProviderId, e.OauthUid }, "res_users_uniq_users_oauth_provider_oauth_uid").IsUnique();
@@ -48,6 +50,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Karma).HasColumnName("karma");
                         entity.Property(e => e.LastLunchLocationId).HasColumnName("last_lunch_location_id");
                         entity.Property(e => e.Login).HasColumnName("login");
+                        entity.Property(e => e.ManualImStatus).HasColumnName("manual_im_status");
                         entity.Property(e => e.MicrosoftCalendarRtoken).HasColumnName("microsoft_calendar_rtoken");
                         entity.Property(e => e.MicrosoftCalendarToken).HasColumnName("microsoft_calendar_token");
                         entity.Property(e => e.MicrosoftCalendarTokenValidity)
@@ -60,6 +63,13 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OauthUid).HasColumnName("oauth_uid");
                         entity.Property(e => e.OdoobotFailed).HasColumnName("odoobot_failed");
                         entity.Property(e => e.OdoobotState).HasColumnName("odoobot_state");
+                        entity.Property(e => e.OutOfOfficeFrom)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("out_of_office_from");
+                        entity.Property(e => e.OutOfOfficeMessage).HasColumnName("out_of_office_message");
+                        entity.Property(e => e.OutOfOfficeTo)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("out_of_office_to");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.Password).HasColumnName("password");
                         entity.Property(e => e.PropertyWarehouseId)
@@ -69,9 +79,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.SaleTeamId).HasColumnName("sale_team_id");
                         entity.Property(e => e.Share).HasColumnName("share");
                         entity.Property(e => e.Signature).HasColumnName("signature");
-                        entity.Property(e => e.TargetSalesDone).HasColumnName("target_sales_done");
-                        entity.Property(e => e.TargetSalesInvoiced).HasColumnName("target_sales_invoiced");
-                        entity.Property(e => e.TargetSalesWon).HasColumnName("target_sales_won");
+                        entity.Property(e => e.TotpLastCounter).HasColumnName("totp_last_counter");
                         entity.Property(e => e.TotpSecret).HasColumnName("totp_secret");
                         entity.Property(e => e.TourEnabled).HasColumnName("tour_enabled");
                         entity.Property(e => e.WebsiteId).HasColumnName("website_id");
@@ -134,6 +142,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("res_users_write_uid_fkey");
+
+                        // entity.HasMany(d => d.Channel).WithMany(p => p.User)
+                        entity.HasMany<ImLivechatChannel>().WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ImLivechatChannelImUser",
+                                r => r.HasOne<ImLivechatChannel>().WithMany()
+                                    .HasForeignKey("ChannelId")
+                                    .HasConstraintName("im_livechat_channel_im_user_channel_id_fkey"),
+                                l => l.HasOne<ResUsers>().WithMany()
+                                    .HasForeignKey("UserId")
+                                    .HasConstraintName("im_livechat_channel_im_user_user_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("UserId", "ChannelId").HasName("im_livechat_channel_im_user_pkey");
+                                    j.ToTable("im_livechat_channel_im_user");
+                                    j.HasIndex(new[] { "ChannelId", "UserId" }, "im_livechat_channel_im_user_channel_id_user_id_idx");
+                                    j.IndexerProperty<Guid>("UserId").HasColumnName("user_id");
+                                    j.IndexerProperty<Guid>("ChannelId").HasColumnName("channel_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

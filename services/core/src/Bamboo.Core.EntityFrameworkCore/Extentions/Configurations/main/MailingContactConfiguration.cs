@@ -42,7 +42,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Mobile).HasColumnName("mobile");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PhoneSanitized).HasColumnName("phone_sanitized");
-                        entity.Property(e => e.TitleId).HasColumnName("title_id");
+                        entity.Property(e => e.Properties)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("properties");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -59,11 +61,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.CreatorId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("mailing_contact_create_uid_fkey");
-
-                        entity.HasOne(d => d.Title).WithMany(p => p.MailingContact)
-                            .HasForeignKey(d => d.TitleId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("mailing_contact_title_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.MailingContactWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("mailing_contact_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

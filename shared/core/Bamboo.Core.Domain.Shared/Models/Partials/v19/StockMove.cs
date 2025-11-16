@@ -46,10 +46,10 @@ public partial class StockMove
     [Column("is_dropship")]
     public bool? IsDropship { get; set; }
 
-    // // [Many2one]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [ForeignKey("AccountMoveId")]
-    // public virtual AccountMove? AccountMove { get; set; }
+    // [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("AccountMoveId")]
+    public virtual AccountMove? AccountMove { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

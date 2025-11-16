@@ -24,6 +24,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.CreatorId, "forum_post__create_uid_index");
 
+                        entity.HasIndex(e => e.ForumId, "forum_post__forum_id_index");
+
                         entity.HasIndex(e => e.ParentId, "forum_post__parent_id_index");
 
                         entity.HasIndex(e => e.LastModificationTime, "forum_post__write_date_index");
@@ -55,6 +57,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ForumId).HasColumnName("forum_id");
                         entity.Property(e => e.HasValidatedAnswer).HasColumnName("has_validated_answer");
                         entity.Property(e => e.IsCorrect).HasColumnName("is_correct");
+                        entity.Property(e => e.IsSeoOptimized).HasColumnName("is_seo_optimized");
                         entity.Property(e => e.LastActivityDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("last_activity_date");

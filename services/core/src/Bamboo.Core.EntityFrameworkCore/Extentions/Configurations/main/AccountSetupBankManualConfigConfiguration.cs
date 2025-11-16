@@ -33,7 +33,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.NewJournalName).HasColumnName("new_journal_name");
-                        entity.Property(e => e.NumJournalsWithoutAccount).HasColumnName("num_journals_without_account");
+                        entity.Property(e => e.NumJournalsWithoutAccountBank).HasColumnName("num_journals_without_account_bank");
+                        entity.Property(e => e.NumJournalsWithoutAccountCredit).HasColumnName("num_journals_without_account_credit");
                         entity.Property(e => e.ResPartnerBankId).HasColumnName("res_partner_bank_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")

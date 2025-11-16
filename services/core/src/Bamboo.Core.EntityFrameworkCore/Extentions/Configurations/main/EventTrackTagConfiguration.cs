@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CategoryId, "event_track_tag__category_id_index").HasFilter("(category_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.Name, "event_track_tag_name_uniq").IsUnique();
 
                         entity.Property(e => e.Id)

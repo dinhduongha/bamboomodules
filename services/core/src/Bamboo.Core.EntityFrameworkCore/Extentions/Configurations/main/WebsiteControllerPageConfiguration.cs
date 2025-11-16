@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.IsPublished, "website_controller_page__is_published_index");
 
+                        entity.HasIndex(e => e.ViewId, "website_controller_page__view_id_index");
+
                         entity.HasIndex(e => e.WebsiteId, "website_controller_page__website_id_index");
 
                         entity.HasIndex(e => e.NameSlugified, "website_controller_page_unique_name_slugified").IsUnique();

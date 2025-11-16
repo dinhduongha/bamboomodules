@@ -88,6 +88,13 @@ public partial class ProductTemplate
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [NotMapped] // Many2many // Normal
     // [ForeignKey("SrcId")] // Many2many // Normal
+    // [InverseProperty("SrcNavigation")] // Many2many // Normal
+    public virtual ICollection<ProductTemplate> Dest1 { get; set; }
+
+    // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("SrcId")] // Many2many // Normal
     // [InverseProperty("Src1")] // Many2many // Normal
     public virtual ICollection<ProductTemplate> Dest2 { get; set; }
 

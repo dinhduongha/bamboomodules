@@ -16,7 +16,9 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.ToTable("ir_filters");
 
-                        entity.HasIndex(e => new { e.ModelId, e.UserId, e.ActionId, e.EmbeddedActionId, e.EmbeddedParentResId, e.Name }, "ir_filters_name_model_uid_unique").IsUnique();
+                        entity.HasIndex(e => e.EmbeddedActionId, "ir_filters__embedded_action_id_index").HasFilter("(embedded_action_id IS NOT NULL)");
+
+                        entity.HasIndex(e => new { e.ModelId, e.ActionId, e.EmbeddedActionId, e.EmbeddedParentResId }, "ir_filters_get_filters_index");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -36,7 +38,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ModelId).HasColumnName("model_id");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.Sort).HasColumnName("sort");
-                        entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -53,17 +54,30 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("ir_filters_embedded_action_id_fkey");
 
-                        // entity.HasOne(d => d.User).WithMany(p => p.IrFiltersUser) .HasForeignKey(d => d.UserId) .OnDelete(DeleteBehavior.Cascade) .HasConstraintName("ir_filters_user_id_fkey");
-                        entity.HasOne(d => d.User).WithMany()
-                            .HasForeignKey(d => d.UserId)
-                            .OnDelete(DeleteBehavior.Cascade)
-                            .HasConstraintName("ir_filters_user_id_fkey");
-
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.IrFiltersWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("ir_filters_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("ir_filters_write_uid_fkey");
+
+                        // entity.HasMany(d => d.ResUsers).WithMany(p => p.IrFilters)
+                        entity.HasMany(d => d.ResUsers).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "IrFiltersResUsersRel",
+                                r => r.HasOne<ResUsers>().WithMany()
+                                    .HasForeignKey("ResUsersId")
+                                    .HasConstraintName("ir_filters_res_users_rel_res_users_id_fkey"),
+                                l => l.HasOne<IrFilters>().WithMany()
+                                    .HasForeignKey("IrFiltersId")
+                                    .HasConstraintName("ir_filters_res_users_rel_ir_filters_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("IrFiltersId", "ResUsersId").HasName("ir_filters_res_users_rel_pkey");
+                                    j.ToTable("ir_filters_res_users_rel");
+                                    j.HasIndex(new[] { "ResUsersId", "IrFiltersId" }, "ir_filters_res_users_rel_res_users_id_ir_filters_id_idx");
+                                    j.IndexerProperty<Guid>("IrFiltersId").HasColumnName("ir_filters_id");
+                                    j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
+                                });
 
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();

@@ -22,6 +22,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.CreationTime, "forum_post_vote__create_date_index");
 
+                        entity.HasIndex(e => e.ForumId, "forum_post_vote__forum_id_index").HasFilter("(forum_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.PostId, "forum_post_vote__post_id_index");
+
                         entity.HasIndex(e => new { e.PostId, e.UserId }, "forum_post_vote_vote_uniq").IsUnique();
 
                         entity.Property(e => e.Id)

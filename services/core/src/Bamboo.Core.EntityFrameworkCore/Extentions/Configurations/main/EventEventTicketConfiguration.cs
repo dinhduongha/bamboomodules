@@ -20,6 +20,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "event_event_ticket__event_id_index");
+
+                        entity.HasIndex(e => e.ProductId, "event_event_ticket__product_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -41,6 +45,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("end_sale_datetime");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
                         entity.Property(e => e.EventTypeId).HasColumnName("event_type_id");
+                        entity.Property(e => e.LimitMaxPerOrder).HasColumnName("limit_max_per_order");
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");

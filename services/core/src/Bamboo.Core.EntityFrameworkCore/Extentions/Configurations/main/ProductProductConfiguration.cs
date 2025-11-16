@@ -32,6 +32,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .IsUnique()
                             .HasFilter("(active IS TRUE)");
 
+                        entity.HasIndex(e => e.IsFavorite, "product_product_is_favorite_index").HasFilter("(is_favorite IS TRUE)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -51,7 +53,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.DefaultCode).HasColumnName("default_code");
-                        entity.Property(e => e.ImageFetchPending).HasColumnName("image_fetch_pending");
+                        entity.Property(e => e.IsFavorite).HasColumnName("is_favorite");
+                        entity.Property(e => e.IsInSelectedSectionOfOrder).HasColumnName("is_in_selected_section_of_order");
                         entity.Property(e => e.LotPropertiesDefinition)
                             .HasColumnType("jsonb")
                             .HasColumnName("lot_properties_definition");

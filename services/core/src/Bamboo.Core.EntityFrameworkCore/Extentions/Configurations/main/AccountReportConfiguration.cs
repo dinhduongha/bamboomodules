@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.RootReportId, "account_report__root_report_id_index").HasFilter("(root_report_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -28,6 +30,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.AllowForeignVat).HasColumnName("allow_foreign_vat");
                         entity.Property(e => e.AvailabilityCondition).HasColumnName("availability_condition");
                         entity.Property(e => e.ChartTemplate).HasColumnName("chart_template");
                         entity.Property(e => e.CountryId).HasColumnName("country_id");
@@ -43,7 +46,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.FilterAnalytic).HasColumnName("filter_analytic");
                         entity.Property(e => e.FilterBudgets).HasColumnName("filter_budgets");
                         entity.Property(e => e.FilterDateRange).HasColumnName("filter_date_range");
-                        entity.Property(e => e.FilterFiscalPosition).HasColumnName("filter_fiscal_position");
                         entity.Property(e => e.FilterGrowthComparison).HasColumnName("filter_growth_comparison");
                         entity.Property(e => e.FilterHide0Lines).HasColumnName("filter_hide_0_lines");
                         entity.Property(e => e.FilterHierarchy).HasColumnName("filter_hierarchy");

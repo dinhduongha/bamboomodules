@@ -20,7 +20,13 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
-                        entity.HasIndex(e => e.MailMessageId, "chatbot_message__unique_mail_message_id").IsUnique();
+                        entity.HasIndex(e => e.DiscussChannelId, "chatbot_message__discuss_channel_id_index");
+
+                        entity.HasIndex(e => e.ScriptStepId, "chatbot_message__script_step_id_index").HasFilter("(script_step_id IS NOT NULL)");
+
+                        entity.HasIndex(e => new { e.DiscussChannelId, e.UserRawScriptAnswerId }, "chatbot_message_channel_id_user_raw_script_answer_id_idx").HasFilter("(user_raw_script_answer_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.MailMessageId, "chatbot_message_unique_mail_message_id").IsUnique();
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -38,6 +44,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.MailMessageId).HasColumnName("mail_message_id");
                         entity.Property(e => e.ScriptStepId).HasColumnName("script_step_id");
                         entity.Property(e => e.UserRawAnswer).HasColumnName("user_raw_answer");
+                        entity.Property(e => e.UserRawScriptAnswerId).HasColumnName("user_raw_script_answer_id");
                         entity.Property(e => e.UserScriptAnswerId).HasColumnName("user_script_answer_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
@@ -57,12 +64,12 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.MailMessage).WithOne(p => p.ChatbotMessage)
                             .HasForeignKey<ChatbotMessage>(d => d.MailMessageId)
-                            .OnDelete(DeleteBehavior.Cascade)
+                            .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("chatbot_message_mail_message_id_fkey");
 
                         entity.HasOne(d => d.ScriptStep).WithMany(p => p.ChatbotMessage)
                             .HasForeignKey(d => d.ScriptStepId)
-                            .OnDelete(DeleteBehavior.Cascade)
+                            .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("chatbot_message_script_step_id_fkey");
 
                         entity.HasOne(d => d.UserScriptAnswer).WithMany(p => p.ChatbotMessage)

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.FetchmailServerId, "mail_mail__fetchmail_server_id_index").HasFilter("(fetchmail_server_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.MailMessageId, "mail_mail__mail_message_id_index");
 
                         entity.Property(e => e.Id)

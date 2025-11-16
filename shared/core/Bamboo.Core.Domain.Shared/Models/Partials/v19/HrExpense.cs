@@ -46,8 +46,8 @@ public partial class HrExpense
     [Column("approval_date", TypeName = "timestamp without time zone")]
     public DateTime? ApprovalDate { get; set; }
 
-    // [Column("sale_order_line_id")]
-    // public Guid? SaleOrderLineId { get; set; }
+    [Column("sale_order_line_id")]
+    public Guid? SaleOrderLineId { get; set; }
 
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -76,10 +76,10 @@ public partial class HrExpense
     [ForeignKey("PaymentMethodLineId")]
     public virtual AccountPaymentMethodLine? PaymentMethodLine { get; set; }
 
-    // [Many2one]
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [ForeignKey("SaleOrderLineId")]
-    // public virtual SaleOrderLine? SaleOrderLine { get; set; }
+    [Many2one]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    [ForeignKey("SaleOrderLineId")]
+    public virtual SaleOrderLine? SaleOrderLine { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

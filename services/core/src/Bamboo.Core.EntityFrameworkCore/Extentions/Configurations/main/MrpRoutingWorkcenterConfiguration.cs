@@ -22,6 +22,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.BomId, "mrp_routing_workcenter__bom_id_index");
 
+                        entity.HasIndex(e => e.WorkcenterId, "mrp_routing_workcenter__workcenter_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -31,20 +33,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.BomId).HasColumnName("bom_id");
+                        entity.Property(e => e.CostMode).HasColumnName("cost_mode");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Name).HasColumnName("name");
-                        entity.Property(e => e.Note).HasColumnName("note");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.TimeCycleManual).HasColumnName("time_cycle_manual");
                         entity.Property(e => e.TimeMode).HasColumnName("time_mode");
                         entity.Property(e => e.TimeModeBatch).HasColumnName("time_mode_batch");
                         entity.Property(e => e.WorkcenterId).HasColumnName("workcenter_id");
-                        entity.Property(e => e.WorksheetGoogleSlide).HasColumnName("worksheet_google_slide");
-                        entity.Property(e => e.WorksheetType).HasColumnName("worksheet_type");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");

@@ -33,6 +33,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
                         entity.Property(e => e.AssignmentDomain).HasColumnName("assignment_domain");
+                        entity.Property(e => e.AssignmentDomainPreferred).HasColumnName("assignment_domain_preferred");
                         entity.Property(e => e.AssignmentMax).HasColumnName("assignment_max");
                         entity.Property(e => e.AssignmentOptout).HasColumnName("assignment_optout");
                         entity.Property(e => e.CreationTime)

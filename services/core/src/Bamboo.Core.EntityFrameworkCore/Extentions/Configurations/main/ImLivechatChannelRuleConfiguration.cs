@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ChannelId, "im_livechat_channel_rule__channel_id_index").HasFilter("(channel_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -30,7 +32,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Action).HasColumnName("action");
                         entity.Property(e => e.AutoPopupTimer).HasColumnName("auto_popup_timer");
                         entity.Property(e => e.ChannelId).HasColumnName("channel_id");
-                        entity.Property(e => e.ChatbotOnlyIfNoOperator).HasColumnName("chatbot_only_if_no_operator");
+                        entity.Property(e => e.ChatbotEnabledCondition).HasColumnName("chatbot_enabled_condition");
                         entity.Property(e => e.ChatbotScriptId).HasColumnName("chatbot_script_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")

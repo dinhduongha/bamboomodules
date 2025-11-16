@@ -32,6 +32,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.PartsLocationId, "repair_order__parts_location_id_index");
 
+                        entity.HasIndex(e => e.PickingId, "repair_order__picking_id_index").HasFilter("(picking_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.PickingTypeId, "repair_order__picking_type_id_index");
 
                         entity.HasIndex(e => e.ProductLocationDestId, "repair_order__product_location_dest_id_index");
@@ -39,6 +41,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.HasIndex(e => e.ProductLocationSrcId, "repair_order__product_location_src_id_index");
 
                         entity.HasIndex(e => e.RecycleLocationId, "repair_order__recycle_location_id_index");
+
+                        entity.HasIndex(e => e.SaleOrderId, "repair_order__sale_order_id_index").HasFilter("(sale_order_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.ScheduleDate, "repair_order__schedule_date_index");
 
@@ -70,7 +74,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PickingId).HasColumnName("picking_id");
                         entity.Property(e => e.PickingTypeId).HasColumnName("picking_type_id");
                         entity.Property(e => e.Priority).HasColumnName("priority");
-                        entity.Property(e => e.ProcurementGroupId).HasColumnName("procurement_group_id");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
                         entity.Property(e => e.ProductLocationDestId).HasColumnName("product_location_dest_id");
                         entity.Property(e => e.ProductLocationSrcId).HasColumnName("product_location_src_id");
@@ -146,11 +149,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("repair_order_picking_type_id_fkey");
 
-                        entity.HasOne(d => d.ProcurementGroup).WithMany(p => p.RepairOrder)
-                            .HasForeignKey(d => d.ProcurementGroupId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("repair_order_procurement_group_id_fkey");
-
                         // entity.HasOne(d => d.Product).WithMany(p => p.RepairOrder) .HasForeignKey(d => d.ProductId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("repair_order_product_id_fkey");
                         entity.HasOne(d => d.Product).WithMany()
                             .HasForeignKey(d => d.ProductId)
@@ -199,6 +197,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("repair_order_write_uid_fkey");
+
+                        // entity.HasMany(d => d.Reference).WithMany(p => p.Repair)
+                        entity.HasMany(d => d.Reference).WithMany(p => p.Repair)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "StockReferenceRepairRel",
+                                r => r.HasOne<StockReference>().WithMany()
+                                    .HasForeignKey("ReferenceId")
+                                    .HasConstraintName("stock_reference_repair_rel_reference_id_fkey"),
+                                l => l.HasOne<RepairOrder>().WithMany()
+                                    .HasForeignKey("RepairId")
+                                    .HasConstraintName("stock_reference_repair_rel_repair_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("RepairId", "ReferenceId").HasName("stock_reference_repair_rel_pkey");
+                                    j.ToTable("stock_reference_repair_rel");
+                                    j.HasIndex(new[] { "ReferenceId", "RepairId" }, "stock_reference_repair_rel_reference_id_repair_id_idx");
+                                    j.IndexerProperty<Guid>("RepairId").HasColumnName("repair_id");
+                                    j.IndexerProperty<Guid>("ReferenceId").HasColumnName("reference_id");
+                                });
 
                         // entity.HasMany(d => d.RepairTags).WithMany(p => p.RepairOrder)
                         entity.HasMany(d => d.RepairTags).WithMany(p => p.RepairOrder)

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.ProgramId, "loyalty_reward__program_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -106,25 +108,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.LastModifierId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("loyalty_reward_write_uid_fkey");
-
-                        // entity.HasMany(d => d.AccountTax).WithMany(p => p.LoyaltyReward)
-                        entity.HasMany(d => d.AccountTax).WithMany(p => p.LoyaltyReward)
-                            .UsingEntity<Dictionary<string, object>>(
-                                "AccountTaxLoyaltyRewardRel",
-                                r => r.HasOne<AccountTax>().WithMany()
-                                    .HasForeignKey("AccountTaxId")
-                                    .HasConstraintName("account_tax_loyalty_reward_rel_account_tax_id_fkey"),
-                                l => l.HasOne<LoyaltyReward>().WithMany()
-                                    .HasForeignKey("LoyaltyRewardId")
-                                    .HasConstraintName("account_tax_loyalty_reward_rel_loyalty_reward_id_fkey"),
-                                j =>
-                                {
-                                    j.HasKey("LoyaltyRewardId", "AccountTaxId").HasName("account_tax_loyalty_reward_rel_pkey");
-                                    j.ToTable("account_tax_loyalty_reward_rel");
-                                    j.HasIndex(new[] { "AccountTaxId", "LoyaltyRewardId" }, "account_tax_loyalty_reward_re_account_tax_id_loyalty_reward_idx");
-                                    j.IndexerProperty<Guid>("LoyaltyRewardId").HasColumnName("loyalty_reward_id");
-                                    j.IndexerProperty<Guid>("AccountTaxId").HasColumnName("account_tax_id");
-                                });
 
                         // entity.HasMany(d => d.ProductProduct).WithMany(p => p.LoyaltyReward)
                         entity.HasMany(d => d.ProductProduct).WithMany()

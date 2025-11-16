@@ -24,6 +24,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.Date, "project_project__date_index");
 
+                        entity.HasIndex(e => e.PartnerId, "project_project__partner_id_index").HasFilter("(partner_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.SaleLineId, "project_project__sale_line_id_index").HasFilter("(sale_line_id IS NOT NULL)");
 
                         entity.HasIndex(e => e.StageId, "project_project__stage_id_index");
@@ -46,6 +48,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AllocatedHours).HasColumnName("allocated_hours");
                         entity.Property(e => e.AllowBillable).HasColumnName("allow_billable");
                         entity.Property(e => e.AllowMilestones).HasColumnName("allow_milestones");
+                        entity.Property(e => e.AllowRecurringTasks).HasColumnName("allow_recurring_tasks");
                         entity.Property(e => e.AllowTaskDependencies).HasColumnName("allow_task_dependencies");
                         entity.Property(e => e.AllowTimesheets).HasColumnName("allow_timesheets");
                         entity.Property(e => e.BillingType).HasColumnName("billing_type");
@@ -59,6 +62,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Date).HasColumnName("date");
                         entity.Property(e => e.DateStart).HasColumnName("date_start");
                         entity.Property(e => e.Description).HasColumnName("description");
+                        entity.Property(e => e.IsTemplate).HasColumnName("is_template");
                         entity.Property(e => e.LabelTasks)
                             .HasColumnType("jsonb")
                             .HasColumnName("label_tasks");
@@ -69,12 +73,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("name");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.PrivacyVisibility).HasColumnName("privacy_visibility");
-                        entity.Property(e => e.RatingActive).HasColumnName("rating_active");
-                        entity.Property(e => e.RatingRequestDeadline)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("rating_request_deadline");
-                        entity.Property(e => e.RatingStatus).HasColumnName("rating_status");
-                        entity.Property(e => e.RatingStatusPeriod).HasColumnName("rating_status_period");
                         entity.Property(e => e.ReinvoicedSaleOrderId).HasColumnName("reinvoiced_sale_order_id");
                         entity.Property(e => e.SaleLineId).HasColumnName("sale_line_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
@@ -160,12 +158,12 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasOne(d => d.XPlan2).WithMany(p => p.ProjectProjectXPlan2)
                             .HasForeignKey(d => d.XPlan2Id)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("project_project_x_plan2_id_fkey");
 
                         entity.HasOne(d => d.XPlan3).WithMany(p => p.ProjectProjectXPlan3)
                             .HasForeignKey(d => d.XPlan3Id)
-                            .OnDelete(DeleteBehavior.SetNull)
+                            .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("project_project_x_plan3_id_fkey");
 
                         // entity.HasMany(d => d.ProjectTags).WithMany(p => p.ProjectProject)

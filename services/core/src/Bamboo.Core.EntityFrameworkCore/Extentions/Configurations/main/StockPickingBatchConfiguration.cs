@@ -38,11 +38,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("create_date");
                         entity.Property(e => e.CreatorId).HasColumnName("create_uid");
                         entity.Property(e => e.Description).HasColumnName("description");
-                        entity.Property(e => e.DockId).HasColumnName("dock_id");
-                        entity.Property(e => e.DriverId).HasColumnName("driver_id");
-                        entity.Property(e => e.EndDate)
-                            .HasColumnType("timestamp without time zone")
-                            .HasColumnName("end_date");
                         entity.Property(e => e.IsWave).HasColumnName("is_wave");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PickingTypeId).HasColumnName("picking_type_id");
@@ -54,8 +49,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnName("scheduled_date");
                         entity.Property(e => e.State).HasColumnName("state");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
-                        entity.Property(e => e.VehicleCategoryId).HasColumnName("vehicle_category_id");
-                        entity.Property(e => e.VehicleId).HasColumnName("vehicle_id");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
@@ -73,17 +66,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_picking_batch_create_uid_fkey");
 
-                        entity.HasOne(d => d.Dock).WithMany(p => p.StockPickingBatch)
-                            .HasForeignKey(d => d.DockId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_picking_batch_dock_id_fkey");
-
-                        // entity.HasOne(d => d.Driver).WithMany(p => p.StockPickingBatch) .HasForeignKey(d => d.DriverId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_picking_batch_driver_id_fkey");
-                        entity.HasOne(d => d.Driver).WithMany()
-                            .HasForeignKey(d => d.DriverId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_picking_batch_driver_id_fkey");
-
                         entity.HasOne(d => d.PickingType).WithMany(p => p.StockPickingBatch)
                             .HasForeignKey(d => d.PickingTypeId)
                             .OnDelete(DeleteBehavior.SetNull)
@@ -94,16 +76,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.UserId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("stock_picking_batch_user_id_fkey");
-
-                        entity.HasOne(d => d.VehicleCategory).WithMany(p => p.StockPickingBatch)
-                            .HasForeignKey(d => d.VehicleCategoryId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_picking_batch_vehicle_category_id_fkey");
-
-                        entity.HasOne(d => d.Vehicle).WithMany(p => p.StockPickingBatch)
-                            .HasForeignKey(d => d.VehicleId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("stock_picking_batch_vehicle_id_fkey");
 
                         // entity.HasOne(d => d.WriteU).WithMany(p => p.StockPickingBatchWriteU) .HasForeignKey(d => d.LastModifierId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("stock_picking_batch_write_uid_fkey");
                         entity.HasOne(d => d.WriteU).WithMany()

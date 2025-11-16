@@ -48,6 +48,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DebitAmountCurrency).HasColumnName("debit_amount_currency");
                         entity.Property(e => e.DebitCurrencyId).HasColumnName("debit_currency_id");
                         entity.Property(e => e.DebitMoveId).HasColumnName("debit_move_id");
+                        entity.Property(e => e.DraftCabaMoveVals)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("draft_caba_move_vals");
                         entity.Property(e => e.ExchangeMoveId).HasColumnName("exchange_move_id");
                         entity.Property(e => e.FullReconcileId).HasColumnName("full_reconcile_id");
                         entity.Property(e => e.MaxDate).HasColumnName("max_date");

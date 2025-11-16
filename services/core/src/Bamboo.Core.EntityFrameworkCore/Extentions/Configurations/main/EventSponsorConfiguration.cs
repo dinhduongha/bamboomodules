@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "event_sponsor__event_id_index");
+
                         entity.HasIndex(e => e.IsPublished, "event_sponsor__is_published_index");
 
                         entity.Property(e => e.Id)
@@ -30,7 +32,6 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
-                        entity.Property(e => e.ChatRoomId).HasColumnName("chat_room_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -42,11 +43,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.HourFrom).HasColumnName("hour_from");
                         entity.Property(e => e.HourTo).HasColumnName("hour_to");
                         entity.Property(e => e.IsPublished).HasColumnName("is_published");
-                        entity.Property(e => e.Mobile).HasColumnName("mobile");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.PartnerId).HasColumnName("partner_id");
                         entity.Property(e => e.Phone).HasColumnName("phone");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
+                        entity.Property(e => e.ShowOnTicket).HasColumnName("show_on_ticket");
                         entity.Property(e => e.SponsorTypeId).HasColumnName("sponsor_type_id");
                         entity.Property(e => e.Subtitle).HasColumnName("subtitle");
                         entity.Property(e => e.Url).HasColumnName("url");
@@ -57,11 +58,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
-
-                        entity.HasOne(d => d.ChatRoom).WithMany(p => p.EventSponsor)
-                            .HasForeignKey(d => d.ChatRoomId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("event_sponsor_chat_room_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.EventSponsorCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("event_sponsor_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

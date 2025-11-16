@@ -46,6 +46,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Email).HasColumnName("email");
                         entity.Property(e => e.FailureReason).HasColumnName("failure_reason");
                         entity.Property(e => e.FailureType).HasColumnName("failure_type");
+                        entity.Property(e => e.IsTestTrace).HasColumnName("is_test_trace");
                         entity.Property(e => e.LinksClickDatetime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("links_click_datetime");

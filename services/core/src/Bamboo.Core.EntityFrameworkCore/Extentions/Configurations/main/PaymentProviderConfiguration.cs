@@ -32,10 +32,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AuthMsg)
                             .HasColumnType("jsonb")
                             .HasColumnName("auth_msg");
-                        entity.Property(e => e.AuthorizeClientKey).HasColumnName("authorize_client_key");
-                        entity.Property(e => e.AuthorizeLogin).HasColumnName("authorize_login");
-                        entity.Property(e => e.AuthorizeSignatureKey).HasColumnName("authorize_signature_key");
-                        entity.Property(e => e.AuthorizeTransactionKey).HasColumnName("authorize_transaction_key");
                         entity.Property(e => e.CancelMsg)
                             .HasColumnType("jsonb")
                             .HasColumnName("cancel_msg");

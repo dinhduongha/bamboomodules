@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.DashboardGroupId, "spreadsheet_dashboard__dashboard_group_id_index");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -27,7 +29,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
-
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -44,12 +45,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
-
-                        // entity.HasOne(d => d.Company).WithMany(p => p.SpreadsheetDashboard) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("spreadsheet_dashboard_company_id_fkey");
-                        entity.HasOne(d => d.Company).WithMany()
-                            .HasForeignKey(d => d.TenantId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("spreadsheet_dashboard_company_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.SpreadsheetDashboardCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("spreadsheet_dashboard_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()
@@ -87,6 +82,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.IndexerProperty<Guid>("IrModelId").HasColumnName("ir_model_id");
                                 });
 
+                        // entity.HasMany(d => d.ResCompany).WithMany(p => p.SpreadsheetDashboard)
+                        entity.HasMany(d => d.ResCompany).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ResCompanySpreadsheetDashboardRel",
+                                r => r.HasOne<ResCompany>().WithMany()
+                                    .HasForeignKey("ResCompanyId")
+                                    .HasConstraintName("res_company_spreadsheet_dashboard_rel_res_company_id_fkey"),
+                                l => l.HasOne<SpreadsheetDashboard>().WithMany()
+                                    .HasForeignKey("SpreadsheetDashboardId")
+                                    .HasConstraintName("res_company_spreadsheet_dashboard_spreadsheet_dashboard_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SpreadsheetDashboardId", "ResCompanyId").HasName("res_company_spreadsheet_dashboard_rel_pkey");
+                                    j.ToTable("res_company_spreadsheet_dashboard_rel");
+                                    j.HasIndex(new[] { "ResCompanyId", "SpreadsheetDashboardId" }, "res_company_spreadsheet_dashb_res_company_id_spreadsheet_da_idx");
+                                    j.IndexerProperty<Guid>("SpreadsheetDashboardId").HasColumnName("spreadsheet_dashboard_id");
+                                    j.IndexerProperty<Guid>("ResCompanyId").HasColumnName("res_company_id");
+                                });
+
                         // entity.HasMany(d => d.ResGroups).WithMany(p => p.SpreadsheetDashboard)
                         entity.HasMany(d => d.ResGroups).WithMany(p => p.SpreadsheetDashboard)
                             .UsingEntity<Dictionary<string, object>>(
@@ -104,6 +118,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                                     j.HasIndex(new[] { "ResGroupsId", "SpreadsheetDashboardId" }, "res_groups_spreadsheet_dashbo_res_groups_id_spreadsheet_das_idx");
                                     j.IndexerProperty<Guid>("SpreadsheetDashboardId").HasColumnName("spreadsheet_dashboard_id");
                                     j.IndexerProperty<Guid>("ResGroupsId").HasColumnName("res_groups_id");
+                                });
+
+                        // entity.HasMany(d => d.ResUsers).WithMany(p => p.SpreadsheetDashboard)
+                        entity.HasMany(d => d.ResUsers).WithMany()
+                            .UsingEntity<Dictionary<string, object>>(
+                                "ResUsersSpreadsheetDashboardRel",
+                                r => r.HasOne<ResUsers>().WithMany()
+                                    .HasForeignKey("ResUsersId")
+                                    .HasConstraintName("res_users_spreadsheet_dashboard_rel_res_users_id_fkey"),
+                                l => l.HasOne<SpreadsheetDashboard>().WithMany()
+                                    .HasForeignKey("SpreadsheetDashboardId")
+                                    .HasConstraintName("res_users_spreadsheet_dashboard_r_spreadsheet_dashboard_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SpreadsheetDashboardId", "ResUsersId").HasName("res_users_spreadsheet_dashboard_rel_pkey");
+                                    j.ToTable("res_users_spreadsheet_dashboard_rel");
+                                    j.HasIndex(new[] { "ResUsersId", "SpreadsheetDashboardId" }, "res_users_spreadsheet_dashboa_res_users_id_spreadsheet_dash_idx");
+                                    j.IndexerProperty<Guid>("SpreadsheetDashboardId").HasColumnName("spreadsheet_dashboard_id");
+                                    j.IndexerProperty<Guid>("ResUsersId").HasColumnName("res_users_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

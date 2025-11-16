@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.PrimaryPaymentMethodId, "payment_method__primary_payment_method_id_index").HasFilter("(primary_payment_method_id IS NOT NULL)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -40,6 +42,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PrimaryPaymentMethodId).HasColumnName("primary_payment_method_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.SupportExpressCheckout).HasColumnName("support_express_checkout");
+                        entity.Property(e => e.SupportManualCapture).HasColumnName("support_manual_capture");
                         entity.Property(e => e.SupportRefund).HasColumnName("support_refund");
                         entity.Property(e => e.SupportTokenization).HasColumnName("support_tokenization");
                         entity.Property(e => e.LastModificationTime)

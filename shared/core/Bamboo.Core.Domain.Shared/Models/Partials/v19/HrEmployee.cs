@@ -93,12 +93,12 @@ public partial class HrEmployee
     // [InverseProperty("Employee")] // One2many
     public virtual ICollection<HrVersion> HrVersion { get; set; }
 
-    // // [Many2many] // Normal
-    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // // [NotMapped] // Many2many // Normal
-    // // [ForeignKey("EmployeeId")] // Many2many // Normal
-    // // [InverseProperty("Employee")] // Many2many // Normal
-    // public virtual ICollection<ResPartnerBank> BankAccount { get; set; }
+    // [Many2many] // Normal
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // [NotMapped] // Many2many // Normal
+    // [ForeignKey("EmployeeId")] // Many2many // Normal
+    // [InverseProperty("Employee")] // Many2many // Normal
+    public virtual ICollection<ResPartnerBank> BankAccount { get; set; }
 
     // // [Many2many] // Hidden
     // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

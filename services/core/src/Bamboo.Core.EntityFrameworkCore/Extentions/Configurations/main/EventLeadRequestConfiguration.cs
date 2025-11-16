@@ -37,6 +37,25 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Cascade)
                             .HasConstraintName("event_lead_request_event_id_fkey");
 
+                        // entity.HasMany(d => d.EventLeadRule).WithMany(p => p.EventLeadRequest)
+                        entity.HasMany(d => d.EventLeadRule).WithMany(p => p.EventLeadRequest)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "EventLeadRequestEventLeadRuleRel",
+                                r => r.HasOne<EventLeadRule>().WithMany()
+                                    .HasForeignKey("EventLeadRuleId")
+                                    .HasConstraintName("event_lead_request_event_lead_rule_rel_event_lead_rule_id_fkey"),
+                                l => l.HasOne<EventLeadRequest>().WithMany()
+                                    .HasForeignKey("EventLeadRequestId")
+                                    .HasConstraintName("event_lead_request_event_lead_rule_r_event_lead_request_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("EventLeadRequestId", "EventLeadRuleId").HasName("event_lead_request_event_lead_rule_rel_pkey");
+                                    j.ToTable("event_lead_request_event_lead_rule_rel");
+                                    j.HasIndex(new[] { "EventLeadRuleId", "EventLeadRequestId" }, "event_lead_request_event_lead_event_lead_rule_id_event_lead_idx");
+                                    j.IndexerProperty<Guid>("EventLeadRequestId").HasColumnName("event_lead_request_id");
+                                    j.IndexerProperty<Guid>("EventLeadRuleId").HasColumnName("event_lead_rule_id");
+                                });
+
                 entity.TryConfigureExtraProperties();
                 entity.TryConfigureObjectExtensions();
                 entity.TryConfigureConcurrencyStamp();

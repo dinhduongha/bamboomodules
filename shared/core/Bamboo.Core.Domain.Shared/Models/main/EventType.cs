@@ -15,7 +15,7 @@ using Bamboo.Core.Domain.Shared.Attributes;
 namespace Bamboo.Core.Models;
 
 [Table("event_type")]
-public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
+public partial class EventType : FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>, IMultiTenant, IAuditedObject
 {
     [Key]
     [Column("id")]
@@ -109,12 +109,13 @@ public partial class EventType: FullAuditedAggregateRoot<Guid>, IEntityDto<Guid>
     // [InverseProperty("EventType")] // One2many
     public virtual ICollection<EventEventTicket> EventEventTicket { get; set; }
 
+    // CONFLICK-V19
     // [One2many]
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    // [One2many] [ForeignKey("EventTypeId")]
-    // [NotMapped] // One2many // Normal
-    // [InverseProperty("EventType")] // One2many
-    public virtual ICollection<EventQuestion> EventQuestion { get; set; }
+    // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    // // [One2many] [ForeignKey("EventTypeId")]
+    // // [NotMapped] // One2many // Normal
+    // // [InverseProperty("EventType")] // One2many
+    // public virtual ICollection<EventQuestion> EventQuestion { get; set; }
 
     // [One2many]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

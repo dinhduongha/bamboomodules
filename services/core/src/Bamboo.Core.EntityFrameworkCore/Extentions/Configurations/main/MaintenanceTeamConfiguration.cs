@@ -28,6 +28,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.AliasId).HasColumnName("alias_id");
                         entity.Property(e => e.Color).HasColumnName("color");
 
                         entity.Property(e => e.CreationTime)
@@ -42,6 +43,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                        entity.HasOne(d => d.Alias).WithMany(p => p.MaintenanceTeam)
+                            .HasForeignKey(d => d.AliasId)
+                            .OnDelete(DeleteBehavior.Restrict)
+                            .HasConstraintName("maintenance_team_alias_id_fkey");
 
                         // entity.HasOne(d => d.Company).WithMany(p => p.MaintenanceTeam) .HasForeignKey(d => d.TenantId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("maintenance_team_company_id_fkey");
                         entity.HasOne(d => d.Company).WithMany()

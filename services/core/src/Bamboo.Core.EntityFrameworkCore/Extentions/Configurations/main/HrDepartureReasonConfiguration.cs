@@ -27,6 +27,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.TenantId).HasColumnName("company_id");
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
+                        entity.Property(e => e.CountryId).HasColumnName("country_id");
                         entity.Property(e => e.CreationTime)
                             .HasDefaultValueSql("now()")
                             .HasColumnType("timestamp without time zone")
@@ -35,12 +36,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Name)
                             .HasColumnType("jsonb")
                             .HasColumnName("name");
-                        entity.Property(e => e.ReasonCode).HasColumnName("reason_code");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.LastModificationTime)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("write_date");
                         entity.Property(e => e.LastModifierId).HasColumnName("write_uid");
+
+                        // entity.HasOne(d => d.Country).WithMany(p => p.HrDepartureReason) .HasForeignKey(d => d.CountryId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_departure_reason_country_id_fkey");
+                        entity.HasOne(d => d.Country).WithMany()
+                            .HasForeignKey(d => d.CountryId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("hr_departure_reason_country_id_fkey");
 
                         // entity.HasOne(d => d.CreateU).WithMany(p => p.HrDepartureReasonCreateU) .HasForeignKey(d => d.CreatorId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("hr_departure_reason_create_uid_fkey");
                         entity.HasOne(d => d.CreateU).WithMany()

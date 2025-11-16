@@ -36,6 +36,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.ResModel, "rating_rating__res_model_index");
 
+                        entity.HasIndex(e => new { e.ResModel, e.ResId, e.LastModificationTime }, "rating_rating_consumed_idx").HasFilter("(consumed IS TRUE)");
+
+                        entity.HasIndex(e => new { e.ParentResModel, e.ParentResId, e.LastModificationTime }, "rating_rating_parent_consumed_idx").HasFilter("(consumed IS TRUE)");
+
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
                             .HasColumnName("id");
@@ -63,6 +67,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("publisher_datetime");
                         entity.Property(e => e.PublisherId).HasColumnName("publisher_id");
+                        entity.Property(e => e.RatedOn)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("rated_on");
                         entity.Property(e => e.RatedPartnerId).HasColumnName("rated_partner_id");
                         entity.Property(e => e.Rating).HasColumnName("rating");
                         entity.Property(e => e.RatingText).HasColumnName("rating_text");

@@ -20,6 +20,8 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.EventId, "sale_order_line__event_id_index").HasFilter("(event_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.LinkedLineId, "sale_order_line__linked_line_id_index");
 
                         entity.HasIndex(e => e.OrderId, "sale_order_line__order_id_index");
@@ -34,7 +36,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => new { e.OrderId, e.Sequence, e.Id }, "sale_order_line_name_search_services_index")
                             .IsDescending(true, false, false)
-                            .HasFilter("(is_service = true)");
+                            .HasFilter("(is_service IS TRUE)");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -46,6 +48,8 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.AnalyticDistribution)
                             .HasColumnType("jsonb")
                             .HasColumnName("analytic_distribution");
+                        entity.Property(e => e.CollapseComposition).HasColumnName("collapse_composition");
+                        entity.Property(e => e.CollapsePrices).HasColumnName("collapse_prices");
                         entity.Property(e => e.ComboItemId).HasColumnName("combo_item_id");
 
                         entity.Property(e => e.CouponId).HasColumnName("coupon_id");
@@ -60,13 +64,18 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.DisplayType).HasColumnName("display_type");
                         entity.Property(e => e.EventBoothCategoryId).HasColumnName("event_booth_category_id");
                         entity.Property(e => e.EventId).HasColumnName("event_id");
+                        entity.Property(e => e.EventSlotId).HasColumnName("event_slot_id");
                         entity.Property(e => e.EventTicketId).HasColumnName("event_ticket_id");
                         entity.Property(e => e.ExpenseId).HasColumnName("expense_id");
+                        entity.Property(e => e.ExtraTaxData)
+                            .HasColumnType("jsonb")
+                            .HasColumnName("extra_tax_data");
                         entity.Property(e => e.HasDisplayedWarningUpsell).HasColumnName("has_displayed_warning_upsell");
                         entity.Property(e => e.InvoiceStatus).HasColumnName("invoice_status");
                         entity.Property(e => e.IsDelivery).HasColumnName("is_delivery");
                         entity.Property(e => e.IsDownpayment).HasColumnName("is_downpayment");
                         entity.Property(e => e.IsExpense).HasColumnName("is_expense");
+                        entity.Property(e => e.IsOptional).HasColumnName("is_optional");
                         entity.Property(e => e.IsService).HasColumnName("is_service");
                         entity.Property(e => e.LinkedLineId).HasColumnName("linked_line_id");
                         entity.Property(e => e.LinkedVirtualId).HasColumnName("linked_virtual_id");
@@ -83,9 +92,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.PriceTotal).HasColumnName("price_total");
                         entity.Property(e => e.PriceUnit).HasColumnName("price_unit");
                         entity.Property(e => e.ProductId).HasColumnName("product_id");
-                        entity.Property(e => e.ProductPackagingId).HasColumnName("product_packaging_id");
-                        entity.Property(e => e.ProductPackagingQty).HasColumnName("product_packaging_qty");
-                        entity.Property(e => e.ProductUom).HasColumnName("product_uom");
+                        entity.Property(e => e.ProductUomId).HasColumnName("product_uom_id");
                         entity.Property(e => e.ProductUomQty).HasColumnName("product_uom_qty");
                         entity.Property(e => e.ProjectId).HasColumnName("project_id");
                         entity.Property(e => e.PurchasePrice).HasColumnName("purchase_price");
@@ -96,7 +103,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.RemainingHours).HasColumnName("remaining_hours");
                         entity.Property(e => e.RewardId).HasColumnName("reward_id");
                         entity.Property(e => e.RewardIdentifierCode).HasColumnName("reward_identifier_code");
-                        entity.Property(e => e.RouteId).HasColumnName("route_id");
                         entity.Property(e => e.SalesmanId).HasColumnName("salesman_id");
                         entity.Property(e => e.Sequence).HasColumnName("sequence");
                         entity.Property(e => e.ShopWarning).HasColumnName("shop_warning");
@@ -150,12 +156,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sale_order_line_event_id_fkey");
 
+                        entity.HasOne(d => d.EventSlot).WithMany(p => p.SaleOrderLine)
+                            .HasForeignKey(d => d.EventSlotId)
+                            .OnDelete(DeleteBehavior.SetNull)
+                            .HasConstraintName("sale_order_line_event_slot_id_fkey");
+
                         entity.HasOne(d => d.EventTicket).WithMany(p => p.SaleOrderLine)
                             .HasForeignKey(d => d.EventTicketId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sale_order_line_event_ticket_id_fkey");
 
-                        entity.HasOne(d => d.Expense).WithMany(p => p.SaleOrderLine)
+                        entity.HasOne(d => d.Expense).WithMany(p => p.SaleOrderLineNavigation)
                             .HasForeignKey(d => d.ExpenseId)
                             .OnDelete(DeleteBehavior.SetNull)
                             .HasConstraintName("sale_order_line_expense_id_fkey");
@@ -182,16 +193,11 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("sale_order_line_product_id_fkey");
 
-                        entity.HasOne(d => d.ProductPackaging).WithMany(p => p.SaleOrderLine)
-                            .HasForeignKey(d => d.ProductPackagingId)
-                            .OnDelete(DeleteBehavior.SetNull)
-                            .HasConstraintName("sale_order_line_product_packaging_id_fkey");
-
-                        // entity.HasOne(d => d.ProductUomNavigation).WithMany(p => p.SaleOrderLine) .HasForeignKey(d => d.ProductUom) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("sale_order_line_product_uom_fkey");
-                        entity.HasOne(d => d.ProductUomNavigation).WithMany()
-                            .HasForeignKey(d => d.ProductUom)
+                        // entity.HasOne(d => d.ProductUom).WithMany(p => p.SaleOrderLine) .HasForeignKey(d => d.ProductUomId) .OnDelete(DeleteBehavior.Restrict) .HasConstraintName("sale_order_line_product_uom_id_fkey");
+                        entity.HasOne(d => d.ProductUom).WithMany()
+                            .HasForeignKey(d => d.ProductUomId)
                             .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("sale_order_line_product_uom_fkey");
+                            .HasConstraintName("sale_order_line_product_uom_id_fkey");
 
                         entity.HasOne(d => d.Project).WithMany(p => p.SaleOrderLine)
                             .HasForeignKey(d => d.ProjectId)
@@ -202,11 +208,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                             .HasForeignKey(d => d.RewardId)
                             .OnDelete(DeleteBehavior.Restrict)
                             .HasConstraintName("sale_order_line_reward_id_fkey");
-
-                        entity.HasOne(d => d.Route).WithMany(p => p.SaleOrderLine)
-                            .HasForeignKey(d => d.RouteId)
-                            .OnDelete(DeleteBehavior.Restrict)
-                            .HasConstraintName("sale_order_line_route_id_fkey");
 
                         // entity.HasOne(d => d.Salesman).WithMany(p => p.SaleOrderLineSalesman) .HasForeignKey(d => d.SalesmanId) .OnDelete(DeleteBehavior.SetNull) .HasConstraintName("sale_order_line_salesman_id_fkey");
                         entity.HasOne(d => d.Salesman).WithMany()
@@ -275,7 +276,7 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 r => r.HasOne<ProductTemplateAttributeValue>().WithMany()
                                     .HasForeignKey("ProductTemplateAttributeValueId")
                                     .OnDelete(DeleteBehavior.Restrict)
-                                    .HasConstraintName("product_template_attribute_va_product_template_attribute_v_fkey"),
+                                    .HasConstraintName("product_template_attribute_v_product_template_attribute_v_fkey1"),
                                 l => l.HasOne<SaleOrderLine>().WithMany()
                                     .HasForeignKey("SaleOrderLineId")
                                     .HasConstraintName("product_template_attribute_value_sale_o_sale_order_line_id_fkey"),
@@ -283,9 +284,29 @@ namespace Bamboo.Core.EntityFrameworkCore
                                 {
                                     j.HasKey("SaleOrderLineId", "ProductTemplateAttributeValueId").HasName("product_template_attribute_value_sale_order_line_rel_pkey");
                                     j.ToTable("product_template_attribute_value_sale_order_line_rel");
-                                    j.HasIndex(new[] { "ProductTemplateAttributeValueId", "SaleOrderLineId" }, "product_template_attribute_va_product_template_attribute_va_idx");
+                                    j.HasIndex(new[] { "ProductTemplateAttributeValueId", "SaleOrderLineId" }, "product_template_attribute_va_product_template_attribute_v_idx1");
                                     j.IndexerProperty<Guid>("SaleOrderLineId").HasColumnName("sale_order_line_id");
                                     j.IndexerProperty<Guid>("ProductTemplateAttributeValueId").HasColumnName("product_template_attribute_value_id");
+                                });
+
+                        // entity.HasMany(d => d.StockRoute).WithMany(p => p.SaleOrderLine)
+                        entity.HasMany(d => d.StockRoute).WithMany(p => p.SaleOrderLine)
+                            .UsingEntity<Dictionary<string, object>>(
+                                "SaleOrderLineStockRouteRel",
+                                r => r.HasOne<StockRoute>().WithMany()
+                                    .HasForeignKey("StockRouteId")
+                                    .OnDelete(DeleteBehavior.Restrict)
+                                    .HasConstraintName("sale_order_line_stock_route_rel_stock_route_id_fkey"),
+                                l => l.HasOne<SaleOrderLine>().WithMany()
+                                    .HasForeignKey("SaleOrderLineId")
+                                    .HasConstraintName("sale_order_line_stock_route_rel_sale_order_line_id_fkey"),
+                                j =>
+                                {
+                                    j.HasKey("SaleOrderLineId", "StockRouteId").HasName("sale_order_line_stock_route_rel_pkey");
+                                    j.ToTable("sale_order_line_stock_route_rel");
+                                    j.HasIndex(new[] { "StockRouteId", "SaleOrderLineId" }, "sale_order_line_stock_route_r_stock_route_id_sale_order_lin_idx");
+                                    j.IndexerProperty<Guid>("SaleOrderLineId").HasColumnName("sale_order_line_id");
+                                    j.IndexerProperty<Guid>("StockRouteId").HasColumnName("stock_route_id");
                                 });
 
                 entity.TryConfigureExtraProperties();

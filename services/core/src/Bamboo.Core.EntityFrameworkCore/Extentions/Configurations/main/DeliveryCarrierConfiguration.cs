@@ -32,6 +32,7 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.Property(e => e.OrganizationUnitId).HasColumnName("organization_unit_id");
                         entity.Property(e => e.Active).HasColumnName("active");
+                        entity.Property(e => e.AllowCashOnDelivery).HasColumnName("allow_cash_on_delivery");
                         entity.Property(e => e.Amount).HasColumnName("amount");
                         entity.Property(e => e.CarrierDescription)
                             .HasColumnType("jsonb")

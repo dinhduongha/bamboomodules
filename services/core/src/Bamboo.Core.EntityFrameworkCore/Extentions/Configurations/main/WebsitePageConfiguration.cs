@@ -22,6 +22,10 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.IsPublished, "website_page__is_published_index");
 
+                        entity.HasIndex(e => e.ThemeTemplateId, "website_page__theme_template_id_index").HasFilter("(theme_template_id IS NOT NULL)");
+
+                        entity.HasIndex(e => e.ViewId, "website_page__view_id_index");
+
                         entity.HasIndex(e => e.WebsiteId, "website_page__website_id_index");
 
                         entity.Property(e => e.Id)

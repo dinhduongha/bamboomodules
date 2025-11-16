@@ -57,19 +57,21 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.EmailAddSignature).HasColumnName("email_add_signature");
                         entity.Property(e => e.EmailFrom).HasColumnName("email_from");
                         entity.Property(e => e.EmailLayoutXmlid).HasColumnName("email_layout_xmlid");
+                        entity.Property(e => e.IncomingEmailCc).HasColumnName("incoming_email_cc");
+                        entity.Property(e => e.IncomingEmailTo).HasColumnName("incoming_email_to");
                         entity.Property(e => e.IsInternal).HasColumnName("is_internal");
                         entity.Property(e => e.MailActivityTypeId).HasColumnName("mail_activity_type_id");
                         entity.Property(e => e.MailServerId).HasColumnName("mail_server_id");
                         entity.Property(e => e.MessageId).HasColumnName("message_id");
                         entity.Property(e => e.MessageType).HasColumnName("message_type");
                         entity.Property(e => e.Model).HasColumnName("model");
+                        entity.Property(e => e.OutgoingEmailTo).HasColumnName("outgoing_email_to");
                         entity.Property(e => e.ParentId).HasColumnName("parent_id");
                         entity.Property(e => e.PinnedAt)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("pinned_at");
                         entity.Property(e => e.RecordAliasDomainId).HasColumnName("record_alias_domain_id");
                         entity.Property(e => e.RecordCompanyId).HasColumnName("record_company_id");
-                        entity.Property(e => e.RecordName).HasColumnName("record_name");
                         entity.Property(e => e.ReplyTo).HasColumnName("reply_to");
                         entity.Property(e => e.ReplyToForceNew).HasColumnName("reply_to_force_new");
                         entity.Property(e => e.ResId).HasColumnName("res_id");

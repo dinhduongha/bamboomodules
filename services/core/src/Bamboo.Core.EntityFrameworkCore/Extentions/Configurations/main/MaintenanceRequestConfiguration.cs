@@ -20,7 +20,11 @@ namespace Bamboo.Core.EntityFrameworkCore
 
                         entity.HasIndex(e => e.OrganizationUnitId);
 
+                        entity.HasIndex(e => e.CategoryId, "maintenance_request__category_id_index").HasFilter("(category_id IS NOT NULL)");
+
                         entity.HasIndex(e => e.EquipmentId, "maintenance_request__equipment_id_index");
+
+                        entity.HasIndex(e => e.MaintenanceTeamId, "maintenance_request__maintenance_team_id_index");
 
                         entity.Property(e => e.Id)
                             .HasDefaultValueSql("uuidv7()")
@@ -62,6 +66,9 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.ScheduleDate)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("schedule_date");
+                        entity.Property(e => e.ScheduleEnd)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("schedule_end");
                         entity.Property(e => e.StageId).HasColumnName("stage_id");
                         entity.Property(e => e.UserId).HasColumnName("user_id");
                         entity.Property(e => e.LastModificationTime)

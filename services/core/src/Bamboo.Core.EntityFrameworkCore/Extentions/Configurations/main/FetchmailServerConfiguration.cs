@@ -42,11 +42,17 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.Date)
                             .HasColumnType("timestamp without time zone")
                             .HasColumnName("date");
+                        entity.Property(e => e.ErrorDate)
+                            .HasColumnType("timestamp without time zone")
+                            .HasColumnName("error_date");
+                        entity.Property(e => e.ErrorMessage).HasColumnName("error_message");
                         entity.Property(e => e.GoogleGmailAccessToken).HasColumnName("google_gmail_access_token");
                         entity.Property(e => e.GoogleGmailAccessTokenExpiration).HasColumnName("google_gmail_access_token_expiration");
-                        entity.Property(e => e.GoogleGmailAuthorizationCode).HasColumnName("google_gmail_authorization_code");
                         entity.Property(e => e.GoogleGmailRefreshToken).HasColumnName("google_gmail_refresh_token");
                         entity.Property(e => e.IsSsl).HasColumnName("is_ssl");
+                        entity.Property(e => e.MicrosoftOutlookAccessToken).HasColumnName("microsoft_outlook_access_token");
+                        entity.Property(e => e.MicrosoftOutlookAccessTokenExpiration).HasColumnName("microsoft_outlook_access_token_expiration");
+                        entity.Property(e => e.MicrosoftOutlookRefreshToken).HasColumnName("microsoft_outlook_refresh_token");
                         entity.Property(e => e.Name).HasColumnName("name");
                         entity.Property(e => e.ObjectId).HasColumnName("object_id");
                         entity.Property(e => e.Original).HasColumnName("original");

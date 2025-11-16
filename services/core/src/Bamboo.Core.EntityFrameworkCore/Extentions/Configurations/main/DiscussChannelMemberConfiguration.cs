@@ -58,7 +58,6 @@ namespace Bamboo.Core.EntityFrameworkCore
                         entity.Property(e => e.CustomChannelName).HasColumnName("custom_channel_name");
                         entity.Property(e => e.CustomNotifications).HasColumnName("custom_notifications");
                         entity.Property(e => e.FetchedMessageId).HasColumnName("fetched_message_id");
-                        entity.Property(e => e.FoldState).HasColumnName("fold_state");
                         entity.Property(e => e.GuestId).HasColumnName("guest_id");
                         entity.Property(e => e.LastInterestDt)
                             .HasColumnType("timestamp without time zone")
