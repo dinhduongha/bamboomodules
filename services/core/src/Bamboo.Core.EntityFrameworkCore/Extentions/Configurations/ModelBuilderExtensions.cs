@@ -13,6 +13,9 @@ namespace Bamboo.Core.EntityFrameworkCore
     {
         public static void ApplyAllCoreConfigurations(this ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresExtension("pg_trgm");
+            modelBuilder.HasPostgresExtension("btree_gist");
+
             // Áp dụng global cho tất cả FullAudited entities (nếu dùng ABP 8.x+)
             //modelBuilder.Entity<FullAuditedAggregateRoot<Guid>>(b => b.Property(e => e.ExtraProperties).IsRequired(false));
 
@@ -51,7 +54,9 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.ApplyV18Configurations();
             modelBuilder.ConfigureV18Compat();
             modelBuilder.ApplyV16Configurations();
-            modelBuilder.ConfigureCompat();
+            modelBuilder.ConfigureV16Compat();
+            modelBuilder.ApplyExtrasConfigurations();
+            //modelBuilder.ApplyViewsConfigurations();            
         }
     }
 }

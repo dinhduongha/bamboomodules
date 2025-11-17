@@ -71,7 +71,7 @@ public partial class AccountMoveSendWizard : FullAuditedEntity<Guid>, IEntityDto
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
-    // CONFLICK-V19
+    // CONFLICK-V19 => Use Template+TemplateId
     // // [Many2one]
     // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // [ForeignKey("MailTemplateId")]

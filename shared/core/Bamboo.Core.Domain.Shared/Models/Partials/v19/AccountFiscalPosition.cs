@@ -19,6 +19,7 @@ public partial class AccountFiscalPosition
     [Column("is_domestic")]
     public bool? IsDomestic { get; set; }
 
+    // CONFLICK
     // // [One2many]
     // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // // [One2many] [ForeignKey("DefaultFiscalPositionId")]

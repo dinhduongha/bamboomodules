@@ -73,9 +73,9 @@ namespace Bamboo.Core.EntityFrameworkCore
             modelBuilder.ConfigureStockImmediateTransfer();
             modelBuilder.ConfigureStockImmediateTransferLine();
             modelBuilder.ConfigureStockSchedulerCompute();
-            
+
         }
-        public static void ConfigureCompat(this ModelBuilder modelBuilder)
+        public static void ConfigureV16Compat(this ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<HrApplicantSkill>(entity =>
             {

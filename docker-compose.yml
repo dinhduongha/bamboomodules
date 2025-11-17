@@ -120,7 +120,7 @@ services:
       - abp-network
 
   postgresdb:
-    image: timescale/timescaledb-ha:pg16.9-ts2.21.3-all
+    image: timescale/timescaledb-ha:pg18-ts2.23-all-oss
     container_name: bamboo-db
     #user: "0:0"
     environment:

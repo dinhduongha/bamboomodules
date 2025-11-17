@@ -27,9 +27,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountAccountTag> AccountAccountTags { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountAccountTemplate> AccountAccountTemplates { get; set; }
-#endif
     public virtual DbSet<AccountAccountType> AccountAccountTypes { get; set; }
 
     public virtual DbSet<AccountAccruedOrdersWizard> AccountAccruedOrdersWizards { get; set; }
@@ -60,11 +57,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountBankStatement> AccountBankStatements { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountBankStatementImport> AccountBankStatementImports { get; set; }
-
-    public virtual DbSet<AccountBankStatementImportJournalCreation> AccountBankStatementImportJournalCreations { get; set; }
-#endif
     public virtual DbSet<AccountBankStatementLine> AccountBankStatementLines { get; set; }
 
     public virtual DbSet<AccountBankbookReport> AccountBankbookReports { get; set; }
@@ -75,9 +67,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountCashbookReport> AccountCashbookReports { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountChartTemplate> AccountChartTemplates { get; set; }
-#endif
     public virtual DbSet<AccountCommonAccountReport> AccountCommonAccountReports { get; set; }
 
     public virtual DbSet<AccountCommonJournalReport> AccountCommonJournalReports { get; set; }
@@ -105,30 +94,14 @@ public partial class CoreDbContext
     public virtual DbSet<AccountFiscalPositionAccount> AccountFiscalPositionAccounts { get; set; }
 
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountFiscalPositionAccountTemplate> AccountFiscalPositionAccountTemplates { get; set; }
-#endif
-    public virtual DbSet<AccountFiscalPositionTax> AccountFiscalPositionTaxes { get; set; }
-
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountFiscalPositionTaxTemplate> AccountFiscalPositionTaxTemplates { get; set; }
-
-    public virtual DbSet<AccountFiscalPositionTemplate> AccountFiscalPositionTemplates { get; set; }
-#endif
     public virtual DbSet<AccountFiscalYear> AccountFiscalYears { get; set; }
 
     public virtual DbSet<AccountFullReconcile> AccountFullReconciles { get; set; }
 
     public virtual DbSet<AccountGroup> AccountGroups { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountGroupTemplate> AccountGroupTemplates { get; set; }
-#endif
     public virtual DbSet<AccountIncoterms> AccountIncoterms { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountInvoiceSend> AccountInvoiceSends { get; set; }
-#endif
     public virtual DbSet<AccountJournal> AccountJournals { get; set; }
 
     public virtual DbSet<AccountJournalGroup> AccountJournalGroups { get; set; }
@@ -165,7 +138,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountPeppolService> AccountPeppolServices { get; set; }
 
-    public virtual DbSet<AccountPeppolServiceWizard> AccountPeppolServiceWizards { get; set; }
 
     public virtual DbSet<AccountPrintJournal> AccountPrintJournals { get; set; }
 
@@ -173,14 +145,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountReconcileModelLine> AccountReconcileModelLines { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountReconcileModelLineTemplate> AccountReconcileModelLineTemplates { get; set; }
-#endif
-    public virtual DbSet<AccountReconcileModelPartnerMapping> AccountReconcileModelPartnerMappings { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountReconcileModelTemplate> AccountReconcileModelTemplates { get; set; }
-#endif
     public virtual DbSet<AccountRecurringTemplate> AccountRecurringTemplates { get; set; }
 
     public virtual DbSet<AccountReport> AccountReports { get; set; }
@@ -209,20 +174,8 @@ public partial class CoreDbContext
 
     public virtual DbSet<AccountTaxRepartitionLine> AccountTaxRepartitionLines { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountTaxRepartitionLineTemplate> AccountTaxRepartitionLineTemplates { get; set; }
-#endif
     public virtual DbSet<AccountTaxReportWizard> AccountTaxReportWizards { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<AccountTaxTemplate> AccountTaxTemplates { get; set; }
-
-    public virtual DbSet<AccountTourUploadBill> AccountTourUploadBills { get; set; }
-
-    public virtual DbSet<AccountTourUploadBillEmailConfirm> AccountTourUploadBillEmailConfirms { get; set; }
-
-    public virtual DbSet<AccountUnreconcile> AccountUnreconciles { get; set; }
-#endif
     public virtual DbSet<AccountUpdateTaxTagsWizard> AccountUpdateTaxTagsWizards { get; set; }
 
     public virtual DbSet<AccountingReport> AccountingReports { get; set; }
@@ -264,39 +217,6 @@ public partial class CoreDbContext
     public virtual DbSet<BaseImportMapping> BaseImportMappings { get; set; }
 
     public virtual DbSet<BaseImportModule> BaseImportModules { get; set; }
-
-
-#if ODOO16_ENABLE
-    public virtual DbSet<BaseImportTestsModelsChar> BaseImportTestsModelsChars { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsCharNoreadonly> BaseImportTestsModelsCharNoreadonlies { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsCharReadonly> BaseImportTestsModelsCharReadonlies { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsCharRequired> BaseImportTestsModelsCharRequireds { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsCharStates> BaseImportTestsModelsCharStates { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsCharStillreadonly> BaseImportTestsModelsCharStillreadonlies { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsComplex> BaseImportTestsModelsComplexes { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsFloat> BaseImportTestsModelsFloats { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsM2o> BaseImportTestsModelsM2os { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsM2oRelated> BaseImportTestsModelsM2oRelateds { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsM2oRequired> BaseImportTestsModelsM2oRequireds { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsM2oRequiredRelated> BaseImportTestsModelsM2oRequiredRelateds { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsO2m> BaseImportTestsModelsO2ms { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsO2mChild> BaseImportTestsModelsO2mChildren { get; set; }
-
-    public virtual DbSet<BaseImportTestsModelsPreview> BaseImportTestsModelsPreviews { get; set; }
-#endif
 
     public virtual DbSet<BaseLanguageExport> BaseLanguageExports { get; set; }
 
@@ -348,7 +268,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<CalendarRecurrence> CalendarRecurrences { get; set; }
 
-    public virtual DbSet<CandidateSendMail> CandidateSendMails { get; set; }
 
     public virtual DbSet<CardCampaign> CardCampaigns { get; set; }
 
@@ -372,7 +291,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ChangeProductionQty> ChangeProductionQties { get; set; }
 
-    public virtual DbSet<ChatRoom> ChatRooms { get; set; }
 
     public virtual DbSet<ChatbotMessage> ChatbotMessages { get; set; }
 
@@ -384,7 +302,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ChooseDeliveryCarrier> ChooseDeliveryCarriers { get; set; }
 
-    public virtual DbSet<ChooseDeliveryPackage> ChooseDeliveryPackages { get; set; }
 
     public virtual DbSet<ConfirmStockSms> ConfirmStockSms { get; set; }
 
@@ -490,7 +407,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<EventMailRegistration> EventMailRegistrations { get; set; }
 
-    public virtual DbSet<EventMeetingRoom> EventMeetingRooms { get; set; }
 
     public virtual DbSet<EventQuestion> EventQuestions { get; set; }
 
@@ -604,11 +520,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<GoogleCalendarAccountReset> GoogleCalendarAccountResets { get; set; }
 
-
-#if ODOO16_ENABLE
-    public virtual DbSet<GoogleCalendarCredentials> GoogleCalendarCredentials { get; set; }
-#endif
-
     public virtual DbSet<HomeworkLocationWizard> HomeworkLocationWizards { get; set; }
 
     public virtual DbSet<HrApplicant> HrApplicants { get; set; }
@@ -617,24 +528,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrApplicantRefuseReason> HrApplicantRefuseReasons { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<HrApplicantSkill> HrApplicantSkills { get; set; }
-#endif
     public virtual DbSet<HrAttendance> HrAttendances { get; set; }
 
-    public virtual DbSet<HrAttendanceOvertime> HrAttendanceOvertimes { get; set; }
 
-    public virtual DbSet<HrCandidate> HrCandidates { get; set; }
-
-    public virtual DbSet<HrCandidateSkill> HrCandidateSkills { get; set; }
-
-    public virtual DbSet<HrContract> HrContracts { get; set; }
-
-    public virtual DbSet<HrContractAdvantageTemplate> HrContractAdvantageTemplates { get; set; }
 
     public virtual DbSet<HrContractType> HrContractTypes { get; set; }
 
-    public virtual DbSet<HrContributionRegister> HrContributionRegisters { get; set; }
 
     public virtual DbSet<HrDepartment> HrDepartments { get; set; }
 
@@ -654,7 +553,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrEmployeeSkill> HrEmployeeSkills { get; set; }
 
-    public virtual DbSet<HrEmployeeSkillLog> HrEmployeeSkillLogs { get; set; }
 
     public virtual DbSet<HrExpense> HrExpenses { get; set; }
 
@@ -662,7 +560,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrExpenseRefuseWizard> HrExpenseRefuseWizards { get; set; }
 
-    public virtual DbSet<HrExpenseSheet> HrExpenseSheets { get; set; }
 
     public virtual DbSet<HrExpenseSplit> HrExpenseSplits { get; set; }
 
@@ -690,34 +587,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrLeaveMandatoryDay> HrLeaveMandatoryDays { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<HrLeaveStressDay> HrLeaveStressDays { get; set; }
-#endif
     public virtual DbSet<HrLeaveType> HrLeaveTypes { get; set; }
 
-    public virtual DbSet<HrPayrollStructure> HrPayrollStructures { get; set; }
 
     public virtual DbSet<HrPayrollStructureType> HrPayrollStructureTypes { get; set; }
 
-    public virtual DbSet<HrPayslip> HrPayslips { get; set; }
 
-    public virtual DbSet<HrPayslipEmployees> HrPayslipEmployees { get; set; }
-
-    public virtual DbSet<HrPayslipInput> HrPayslipInputs { get; set; }
-
-    public virtual DbSet<HrPayslipLine> HrPayslipLines { get; set; }
-
-    public virtual DbSet<HrPayslipRun> HrPayslipRuns { get; set; }
-
-    public virtual DbSet<HrPayslipWorkedDays> HrPayslipWorkedDays { get; set; }
-
-#if ODOO16_ENABLE
-    public virtual DbSet<HrPlan> HrPlans { get; set; }
-
-    public virtual DbSet<HrPlanActivityType> HrPlanActivityTypes { get; set; }
-
-    public virtual DbSet<HrPlanWizard> HrPlanWizards { get; set; }
-#endif
     public virtual DbSet<HrRecruitmentDegree> HrRecruitmentDegrees { get; set; }
 
     public virtual DbSet<HrRecruitmentSource> HrRecruitmentSources { get; set; }
@@ -728,11 +603,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<HrResumeLineType> HrResumeLineTypes { get; set; }
 
-    public virtual DbSet<HrRuleInput> HrRuleInputs { get; set; }
 
-    public virtual DbSet<HrSalaryRule> HrSalaryRules { get; set; }
-
-    public virtual DbSet<HrSalaryRuleCategory> HrSalaryRuleCategories { get; set; }
 
     public virtual DbSet<HrSkill> HrSkills { get; set; }
 
@@ -835,18 +706,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<IrProfile> IrProfiles { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<IrProperty> IrProperties { get; set; }
-#endif
     public virtual DbSet<IrRule> IrRules { get; set; }
 
     public virtual DbSet<IrSequence> IrSequences { get; set; }
 
     public virtual DbSet<IrSequenceDateRange> IrSequenceDateRanges { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<IrServerObjectLines> IrServerObjectLines { get; set; }
-#endif
     public virtual DbSet<IrUiMenu> IrUiMenus { get; set; }
 
     public virtual DbSet<IrUiView> IrUiViews { get; set; }
@@ -915,29 +780,11 @@ public partial class CoreDbContext
 
     public virtual DbSet<MailCannedResponse> MailCannedResponses { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<MailChannel> MailChannels { get; set; }
-
-    public virtual DbSet<MailChannelMember> MailChannelMembers { get; set; }
-
-    public virtual DbSet<MailChannelRtcSession> MailChannelRtcSessions { get; set; }
-#endif    
-
     public virtual DbSet<MailComposeMessage> MailComposeMessages { get; set; }
 
     public virtual DbSet<MailFollowers> MailFollowers { get; set; }
 
     public virtual DbSet<MailGatewayAllowed> MailGatewayAlloweds { get; set; }
-
-    public virtual DbSet<MailGroup> MailGroups { get; set; }
-
-    public virtual DbSet<MailGroupMember> MailGroupMembers { get; set; }
-
-    public virtual DbSet<MailGroupMessage> MailGroupMessages { get; set; }
-
-    public virtual DbSet<MailGroupMessageReject> MailGroupMessageRejects { get; set; }
-
-    public virtual DbSet<MailGroupModeration> MailGroupModerations { get; set; }
 
     public virtual DbSet<MailGuest> MailGuests { get; set; }
 
@@ -963,15 +810,9 @@ public partial class CoreDbContext
 
     public virtual DbSet<MailPushDevice> MailPushDevices { get; set; }
 
-    public virtual DbSet<MailResendMessage> MailResendMessages { get; set; }
-
-    public virtual DbSet<MailResendPartner> MailResendPartners { get; set; }
 
     public virtual DbSet<MailScheduledMessage> MailScheduledMessages { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<MailShortcode> MailShortcodes { get; set; }
-#endif
     public virtual DbSet<MailTemplate> MailTemplates { get; set; }
 
     public virtual DbSet<MailTemplatePreview> MailTemplatePreviews { get; set; }
@@ -980,15 +821,11 @@ public partial class CoreDbContext
 
     public virtual DbSet<MailTrackingValue> MailTrackingValues { get; set; }
 
-    public virtual DbSet<MailWizardInvite> MailWizardInvites { get; set; }
 
     public virtual DbSet<MailingContact> MailingContacts { get; set; }
 
     public virtual DbSet<MailingContactImport> MailingContactImports { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<MailingContactListRel> MailingContactListRels { get; set; }
-#endif
     public virtual DbSet<MailingContactToList> MailingContactToLists { get; set; }
 
     public virtual DbSet<MailingFilter> MailingFilters { get; set; }
@@ -1021,9 +858,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<MaintenanceTeam> MaintenanceTeams { get; set; }
 
-    public virtual DbSet<MembershipInvoice> MembershipInvoices { get; set; }
-
-    public virtual DbSet<MembershipMembershipLine> MembershipMembershipLines { get; set; }
 
     public virtual DbSet<MicrosoftCalendarAccountReset> MicrosoftCalendarAccountResets { get; set; }
 
@@ -1031,7 +865,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<MrpAccountWipAccountingLine> MrpAccountWipAccountingLines { get; set; }
 
-    public virtual DbSet<MrpBatchProduce> MrpBatchProduces { get; set; }
 
     public virtual DbSet<MrpBom> MrpBoms { get; set; }
 
@@ -1043,13 +876,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<MrpConsumptionWarningLine> MrpConsumptionWarningLines { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<MrpDocument> MrpDocuments { get; set; }
-
-    public virtual DbSet<MrpImmediateProduction> MrpImmediateProductions { get; set; }
-
-    public virtual DbSet<MrpImmediateProductionLine> MrpImmediateProductionLines { get; set; }
-#endif
     public virtual DbSet<MrpProduction> MrpProductions { get; set; }
 
     public virtual DbSet<MrpProductionBackorder> MrpProductionBackorders { get; set; }
@@ -1080,13 +906,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<MrpWorkorder> MrpWorkorders { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<NoteNote> NoteNotes { get; set; }
-
-    public virtual DbSet<NoteStage> NoteStages { get; set; }
-
-    public virtual DbSet<NoteTag> NoteTags { get; set; }
-#endif
     public virtual DbSet<OnboardingOnboarding> OnboardingOnboardings { get; set; }
 
     public virtual DbSet<OnboardingOnboardingStep> OnboardingOnboardingSteps { get; set; }
@@ -1099,16 +918,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<PaymentCaptureWizard> PaymentCaptureWizards { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<PaymentIcon> PaymentIcons { get; set; }
-#endif
     public virtual DbSet<PaymentLinkWizard> PaymentLinkWizards { get; set; }
 
     public virtual DbSet<PaymentMethod> PaymentMethods { get; set; }
 
     public virtual DbSet<PaymentProvider> PaymentProviders { get; set; }
 
-    public virtual DbSet<PaymentProviderOnboardingWizard> PaymentProviderOnboardingWizards { get; set; }
 
     public virtual DbSet<PaymentRefundWizard> PaymentRefundWizards { get; set; }
 
@@ -1116,7 +931,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
-    public virtual DbSet<PayslipLinesContributionRegister> PayslipLinesContributionRegisters { get; set; }
 
     public virtual DbSet<PeppolRegistration> PeppolRegistrations { get; set; }
 
@@ -1164,16 +978,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<PosSession> PosSessions { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<PosSessionCheckProductWizard> PosSessionCheckProductWizards { get; set; }
-#endif
     public virtual DbSet<PrivacyLog> PrivacyLogs { get; set; }
 
     public virtual DbSet<PrivacyLookupWizard> PrivacyLookupWizards { get; set; }
 
     public virtual DbSet<PrivacyLookupWizardLine> PrivacyLookupWizardLines { get; set; }
 
-    public virtual DbSet<ProcurementGroup> ProcurementGroups { get; set; }
 
     public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
 
@@ -1191,7 +1001,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ProductDocument> ProductDocuments { get; set; }
 
-    public virtual DbSet<ProductFetchImageWizard> ProductFetchImageWizards { get; set; }
 
     public virtual DbSet<ProductImage> ProductImages { get; set; }
 
@@ -1199,7 +1008,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ProductMargin> ProductMargins { get; set; }
 
-    public virtual DbSet<ProductPackaging> ProductPackagings { get; set; }
 
     public virtual DbSet<ProductPricelist> ProductPricelists { get; set; }
 
@@ -1231,13 +1039,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<ProjectCollaborator> ProjectCollaborators { get; set; }
 
-    public virtual DbSet<ProjectCreateInvoice> ProjectCreateInvoices { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<ProjectCreateSaleOrder> ProjectCreateSaleOrders { get; set; }
-
-    public virtual DbSet<ProjectCreateSaleOrderLine> ProjectCreateSaleOrderLines { get; set; }
-#endif
     public virtual DbSet<ProjectMilestone> ProjectMilestones { get; set; }
 
     public virtual DbSet<ProjectProject> ProjectProjects { get; set; }
@@ -1280,9 +1082,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<PurchaseRequisitionLine> PurchaseRequisitionLines { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<PurchaseRequisitionType> PurchaseRequisitionTypes { get; set; }
-#endif
     public virtual DbSet<QuotationDocument> QuotationDocuments { get; set; }
 
     public virtual DbSet<RatingRating> RatingRatings { get; set; }
@@ -1295,16 +1094,8 @@ public partial class CoreDbContext
 
     public virtual DbSet<RegistrationEditorLine> RegistrationEditorLines { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<RepairFee> RepairFees { get; set; }
-
-    public virtual DbSet<RepairLine> RepairLines { get; set; }
-#endif
     public virtual DbSet<RepairOrder> RepairOrders { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<RepairOrderMakeInvoice> RepairOrderMakeInvoices { get; set; }
-#endif
     public virtual DbSet<RepairTags> RepairTags { get; set; }
 
     public virtual DbSet<ReportLayout> ReportLayouts { get; set; }
@@ -1319,9 +1110,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ResConfig> ResConfigs { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<ResConfigInstaller> ResConfigInstallers { get; set; }
-#endif
     public virtual DbSet<ResConfigSettings> ResConfigSettings { get; set; }
 
     public virtual DbSet<ResCountry> ResCountries { get; set; }
@@ -1388,9 +1176,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<RestaurantFloor> RestaurantFloors { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<RestaurantPrinter> RestaurantPrinters { get; set; }
-#endif
     public virtual DbSet<RestaurantTable> RestaurantTables { get; set; }
 
     public virtual DbSet<SaleAdvancePaymentInv> SaleAdvancePaymentInvs { get; set; }
@@ -1403,7 +1188,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<SaleOrder> SaleOrders { get; set; }
 
-    public virtual DbSet<SaleOrderCancel> SaleOrderCancels { get; set; }
 
     public virtual DbSet<SaleOrderCouponPoints> SaleOrderCouponPoints { get; set; }
 
@@ -1411,15 +1195,12 @@ public partial class CoreDbContext
 
     public virtual DbSet<SaleOrderLine> SaleOrderLines { get; set; }
 
-    public virtual DbSet<SaleOrderOption> SaleOrderOptions { get; set; }
 
     public virtual DbSet<SaleOrderTemplate> SaleOrderTemplates { get; set; }
 
     public virtual DbSet<SaleOrderTemplateLine> SaleOrderTemplateLines { get; set; }
 
-    public virtual DbSet<SaleOrderTemplateOption> SaleOrderTemplateOptions { get; set; }
 
-    public virtual DbSet<SalePaymentProviderOnboardingWizard> SalePaymentProviderOnboardingWizards { get; set; }
 
     public virtual DbSet<SalePdfFormField> SalePdfFormFields { get; set; }
 
@@ -1455,10 +1236,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<SmsComposer> SmsComposers { get; set; }
 
-    public virtual DbSet<SmsResend> SmsResends { get; set; }
-
-    public virtual DbSet<SmsResendRecipient> SmsResendRecipients { get; set; }
-
     public virtual DbSet<SmsSms> SmsSms { get; set; }
 
     public virtual DbSet<SmsTemplate> SmsTemplates { get; set; }
@@ -1469,14 +1246,7 @@ public partial class CoreDbContext
 
     public virtual DbSet<SmsTracker> SmsTrackers { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<SnailmailConfirmInvoice> SnailmailConfirmInvoices { get; set; }
-#endif
     public virtual DbSet<SnailmailLetter> SnailmailLetters { get; set; }
-
-    public virtual DbSet<SnailmailLetterFormatError> SnailmailLetterFormatErrors { get; set; }
-
-    public virtual DbSet<SnailmailLetterMissingRequiredFields> SnailmailLetterMissingRequiredFields { get; set; }
 
     public virtual DbSet<SparseFieldsTest> SparseFieldsTests { get; set; }
 
@@ -1488,20 +1258,10 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockAddToWave> StockAddToWaves { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<StockAssignSerial> StockAssignSerials { get; set; }
-#endif
     public virtual DbSet<StockBackorderConfirmation> StockBackorderConfirmations { get; set; }
 
     public virtual DbSet<StockBackorderConfirmationLine> StockBackorderConfirmationLines { get; set; }
 
-    public virtual DbSet<StockChangeProductQty> StockChangeProductQties { get; set; }
-
-#if ODOO16_ENABLE
-    public virtual DbSet<StockImmediateTransfer> StockImmediateTransfers { get; set; }
-
-    public virtual DbSet<StockImmediateTransferLine> StockImmediateTransferLines { get; set; }
-#endif    
 
     public virtual DbSet<StockInventoryAdjustmentName> StockInventoryAdjustmentNames { get; set; }
 
@@ -1525,7 +1285,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockPackageDestination> StockPackageDestinations { get; set; }
 
-    public virtual DbSet<StockPackageLevel> StockPackageLevels { get; set; }
 
     public virtual DbSet<StockPackageType> StockPackageTypes { get; set; }
 
@@ -1541,7 +1300,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockQuant> StockQuants { get; set; }
 
-    public virtual DbSet<StockQuantPackage> StockQuantPackages { get; set; }
 
     public virtual DbSet<StockQuantRelocate> StockQuantRelocates { get; set; }
 
@@ -1563,9 +1321,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockRulesReport> StockRulesReports { get; set; }
 
-#if ODOO16_ENABLE
-    public virtual DbSet<StockSchedulerCompute> StockSchedulerComputes { get; set; }
-#endif
     public virtual DbSet<StockScrap> StockScraps { get; set; }
 
     public virtual DbSet<StockScrapReasonTag> StockScrapReasonTags { get; set; }
@@ -1576,15 +1331,9 @@ public partial class CoreDbContext
 
     public virtual DbSet<StockTraceabilityReport> StockTraceabilityReports { get; set; }
 
-    public virtual DbSet<StockTrackConfirmation> StockTrackConfirmations { get; set; }
-
-    public virtual DbSet<StockTrackLine> StockTrackLines { get; set; }
 
     public virtual DbSet<StockValuationAdjustmentLines> StockValuationAdjustmentLines { get; set; }
 
-    public virtual DbSet<StockValuationLayer> StockValuationLayers { get; set; }
-
-    public virtual DbSet<StockValuationLayerRevaluation> StockValuationLayerRevaluations { get; set; }
 
     public virtual DbSet<StockWarehouse> StockWarehouses { get; set; }
 
@@ -1618,7 +1367,6 @@ public partial class CoreDbContext
 
     public virtual DbSet<ThemeWebsitePage> ThemeWebsitePages { get; set; }
 
-    public virtual DbSet<UomCategory> UomCategories { get; set; }
 
     public virtual DbSet<UomUom> UomUoms { get; set; }
 
@@ -1679,7 +1427,7 @@ public partial class CoreDbContext
     public virtual DbSet<WebsiteVisitor> WebsiteVisitors { get; set; }
 
     public virtual DbSet<WizardIrModelMenuCreate> WizardIrModelMenuCreates { get; set; }
-    
+
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }

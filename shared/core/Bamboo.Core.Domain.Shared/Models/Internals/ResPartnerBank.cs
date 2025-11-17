@@ -141,7 +141,7 @@ public partial class ResPartnerBank : FullAuditedAggregateRoot<Guid>, IEntityDto
     [ForeignKey("CurrencyId")]
     public virtual ResCurrency? Currency { get; set; }
 
-    // CONFLICK-V9
+    // CONFLICK-V9: Use M2M property Employee
     // // [One2many]
     // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // // [One2many] [ForeignKey("BankAccountId")]

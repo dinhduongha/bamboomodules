@@ -122,7 +122,7 @@ public partial class AccountFiscalPosition : FullAuditedAggregateRoot<Guid>, IEn
     [ForeignKey("CreatorId")]
     public virtual ResUsers? CreateU { get; set; }
 
-    // CONFLICK-V19
+    // CONFLICK-V19: Use M2M
     // // [One2many]
     // [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     // // [One2many] [ForeignKey("DefaultFiscalPositionId")]

@@ -48,7 +48,7 @@ public partial class SaleOrderLine
     // [InverseProperty("SaleOrderLine")] // One2many
     public virtual ICollection<HrExpense> HrExpense { get; set; }
 
-    // CONFLICK
+    // CONFLICK-V19: Name conflick
     // [Many2one]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     [ForeignKey("ProductUomId")]
