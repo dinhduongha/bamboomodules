@@ -8,7 +8,7 @@ using Volo.Abp.Identity;
 namespace Bamboo.Admin;
 
 [Table("AbpRoles")]
-public class RolesExtra: IdentityRole
+public class RolesExtra : IdentityRole
 {
-    public Guid? BrandId { get; set; }
+    public Guid? BranchId { get; set; }
 }

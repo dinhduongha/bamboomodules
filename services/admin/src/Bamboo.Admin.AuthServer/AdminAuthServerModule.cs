@@ -12,8 +12,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.HttpOverrides;
 
 using StackExchange.Redis;
+using OpenIddict.Server.AspNetCore;
 
 using Volo.Abp;
 using Volo.Abp.Account;
@@ -76,6 +78,20 @@ public class AdminAuthServerModule : AbpModule
             });
         });
 
+        PreConfigure<OpenIddictServerBuilder>(builder =>
+        {
+            builder.SetAuthorizationCodeLifetime(TimeSpan.FromHours(1));
+            builder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
+            var issuer = configuration["AuthServer:Authority"];
+            if (!string.IsNullOrWhiteSpace(issuer))
+            {
+                builder.SetIssuer(new Uri(issuer));
+            }
+        });
+        PreConfigure<OpenIddictServerAspNetCoreBuilder>(configure =>
+        {
+            configure.DisableTransportSecurityRequirement();
+        });
         if (!hostingEnvironment.IsDevelopment())
         {
             PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
@@ -85,7 +101,10 @@ public class AdminAuthServerModule : AbpModule
 
             PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
             {
-                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "9d763224-f649-47fc-a509-c5ab6aef4008");
+                // Optional: Use custome openiddict.pfx
+                string pfxKey = configuration["AuthServer:PfxKey"] ?? "9d763224-f649-47fc-a509-c5ab6aef4008";
+                serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", pfxKey);
+                //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "9d763224-f649-47fc-a509-c5ab6aef4008");
             });
         }
     }
@@ -94,6 +113,28 @@ public class AdminAuthServerModule : AbpModule
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
+
+        Configure<OpenIddictServerAspNetCoreOptions>(options =>
+                {
+                    options.DisableTransportSecurityRequirement = true;
+                });
+
+        Configure<AbpOpenIddictAspNetCoreOptions>(options =>
+        {
+            options.AddDevelopmentEncryptionAndSigningCertificate = true;
+            // Ngăn OpenIddict dùng Request.Scheme + Host
+            // options.DisableAccessTokenIssuer = true;
+        });
+
+        Configure<OpenIddictServerBuilder>(builder =>
+        {
+            // Ép buộc Issuer từ appsettings.json
+            var issuer = configuration["AuthServer:Authority"];
+            if (!string.IsNullOrWhiteSpace(issuer))
+            {
+                builder.SetIssuer(new Uri(issuer));
+            }
+        });
 
         Configure<AbpLocalizationOptions>(options =>
         {
@@ -280,6 +321,25 @@ public class AdminAuthServerModule : AbpModule
     {
         var app = context.GetApplicationBuilder();
         var env = context.GetEnvironment();
+        var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
+        var useSSL = configuration.GetValue("Auth:OpenIddict:UseSSL", true);
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
+        {
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.All
+        });
+        ///// Always behind ssl proxy
+        if (useSSL)
+        {
+            app.Use((context, next) =>
+            {
+                var xproto = context.Request.Headers["X-Forwarded-Proto"].ToString();
+                if (xproto != null && xproto.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Request.Scheme = "https";
+                }
+                return next();
+            });
+        }
 
         if (env.IsDevelopment())
         {
@@ -294,7 +354,8 @@ public class AdminAuthServerModule : AbpModule
         }
 
         app.UseCorrelationId();
-        app.UseStaticFiles();
+        //app.UseStaticFiles();
+        app.MapAbpStaticAssets();
         app.UseRouting();
         app.UseCors();
         app.UseAuthentication();

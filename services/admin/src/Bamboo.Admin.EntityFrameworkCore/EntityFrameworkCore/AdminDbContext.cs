@@ -52,7 +52,7 @@ public class AdminDbContext :
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
 
     public DbSet<TenantOwner> TenantOwners { get; set; }
-    public DbSet<UserBrand> UserBrands { get; set; }
+    public DbSet<UserBranch> UserBrands { get; set; }
     public DbSet<RolesExtra> RolesExtras { get; set; }
     public DbSet<UserLoginExtra> UserLoginExtras { get; set; }
     //public DbSet<OpenIddictApplicationExtra> OpenIddictApplicationExtras { get; set; }
@@ -70,6 +70,7 @@ public class AdminDbContext :
         base.OnModelCreating(builder);
 
         /* Include modules to your migration db context */
+        builder.ConfigureBamboo();
 
         builder.ConfigurePermissionManagement();
         builder.ConfigureSettingManagement();
@@ -88,5 +89,6 @@ public class AdminDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
     }
 }

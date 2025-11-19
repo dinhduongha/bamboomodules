@@ -34,6 +34,7 @@ using Rebus.Transport.InMem;
 using Rebus.Persistence.InMem;
 
 namespace Bamboo.AdminExtensions;
+
 [DependsOn(
     typeof(AbpAutofacModule),
     typeof(AbpCachingModule),
@@ -48,7 +49,7 @@ public class AbpAdminExtensionsModule : AbpModule
 
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
-        
+
         var configuration = context.Services.GetConfiguration();
 
         context.Services.AddHttpClient();
@@ -63,7 +64,7 @@ public class AbpAdminExtensionsModule : AbpModule
         ConfigureDistributedLock(context, configuration);
         ConfigureDataProtection(context, configuration);
     }
-       
+
 
     private void ConfigureCache(ServiceConfigurationContext context, IConfiguration configuration)
     {
@@ -175,7 +176,8 @@ public class AbpAdminExtensionsModule : AbpModule
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor
                                        | ForwardedHeaders.XForwardedProto
                                        | ForwardedHeaders.XForwardedHost;
-            options.KnownNetworks.Clear();
+            //options.KnownNetworks.Clear();
+            options.KnownIPNetworks.Clear();
             options.KnownProxies.Clear();
             options.RequireHeaderSymmetry = false;
         });
@@ -221,7 +223,7 @@ public class AbpAdminExtensionsModule : AbpModule
         //app.UseHttpMethodOverride();
         app.UseForwardedHeaders();
         //app.UseHttpLogging();
-        
+
         ///// Always behind ssl proxy
         app.Use((context, next) =>
         {

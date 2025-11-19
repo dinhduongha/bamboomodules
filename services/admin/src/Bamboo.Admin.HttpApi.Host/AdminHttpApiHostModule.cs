@@ -49,7 +49,7 @@ namespace Bamboo.Admin;
     typeof(AdminApplicationModule),
     typeof(AdminEntityFrameworkCoreModule),
     typeof(AbpAspNetCoreSerilogModule),
-    typeof(AbpAdminExtensionsModule),    
+    typeof(AbpAdminExtensionsModule),
     typeof(AbpSwashbuckleModule)
 )]
 public class AdminHttpApiHostModule : AbpModule
@@ -58,9 +58,20 @@ public class AdminHttpApiHostModule : AbpModule
     {
         var configuration = context.Services.GetConfiguration();
         var hostingEnvironment = context.Services.GetHostingEnvironment();
+        // Configure<AbpAuditingOptions>(options =>
+        // {
+        //     options.IsEnabled = false; // Tắt toàn bộ Audit Logging
+        // });
         Configure<AbpAntiForgeryOptions>(options =>
         {
             options.AutoValidate = false; // Tắt toàn bộ antiforgery cho API
+        });
+        Configure<AbpAspNetCoreMvcOptions>(options =>
+        {
+            options.ConventionalControllers.Create(typeof(AdminHttpApiHostModule).Assembly, opts =>
+            {
+                opts.RootPath = "admin";
+            });
         });
 
         ConfigureConventionalControllers();
@@ -266,7 +277,7 @@ public class AdminHttpApiHostModule : AbpModule
         {
             options.SwaggerEndpoint("/admin/swagger/v1/swagger.json", "Bamboo API");
             options.RoutePrefix = "swagger";
-            
+
             var configuration = context.GetConfiguration();
             options.OAuthClientId(configuration["AuthServer:SwaggerClientId"]);
             options.OAuthScopes("Bamboo");

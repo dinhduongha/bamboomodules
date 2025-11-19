@@ -8,9 +8,10 @@ using Volo.Abp;
 
 namespace Bamboo.AdminExtensions;
 
+[NonController]
 [Produces("application/json")]
 [Route("api/admin/client-app")]
-[Authorize(Roles="admin")]
+[Authorize(Roles = "admin")]
 public class HostClientAppController : AbpController
 {
     private readonly ClientAppService _clientAppService;

@@ -48,6 +48,7 @@ using Bamboo.Abp.VerificationCode;
 
 
 namespace Bamboo.Abp.LoginUi.Web;
+
 [DependsOn(
     typeof(AbpAccountWebModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule)
@@ -145,7 +146,7 @@ public class AbpLoginUiWebModule : AbpModule
 
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/?view=aspnetcore-6.0&tabs=visual-studio
-        var builder = context.Services.AddAuthentication();        
+        var builder = context.Services.AddAuthentication();
         ConfigureDefaultSocialAuthentication(builder, configuration);
     }
 
@@ -277,7 +278,8 @@ public class AbpLoginUiWebModule : AbpModule
             options.ForwardedHeaders = ForwardedHeaders.XForwardedFor
                                        | ForwardedHeaders.XForwardedProto
                                        | ForwardedHeaders.XForwardedHost;
-            options.KnownNetworks.Clear();
+            options.KnownIPNetworks.Clear();
+            //options.KnownNetworks.Clear();
             options.KnownProxies.Clear();
             options.RequireHeaderSymmetry = false;
         });

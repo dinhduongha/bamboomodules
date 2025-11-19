@@ -10,9 +10,10 @@ using Volo.Abp;
 
 namespace Bamboo.AdminExtensions;
 
+[NonController]
 [Route("api/admin/scope-management")]
 [Produces("application/json")]
-[Authorize(Roles="admin")]
+[Authorize(Roles = "admin")]
 public class HostScopeController : AbpController
 {
     private readonly IRepository<OpenIddictScope, Guid> _openIddictScopeRepository;

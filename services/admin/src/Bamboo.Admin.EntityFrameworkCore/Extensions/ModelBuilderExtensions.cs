@@ -124,7 +124,7 @@ public static partial class ModelBuilderExtensions
             {
                 //index.SetName(index.Name.ToSnakeCase());
                 index.SetDatabaseName(index.Name.ToSnakeCase());
-                
+
             }
         }
         return builder;
@@ -148,7 +148,7 @@ public static partial class ModelBuilderExtensions
                     }
                     else if (fieldInfo.FieldType == typeof(System.Guid) && fieldInfo.Name == "id")
                     {
-                        //property.SetDefaultValueSql("uuidv7()");
+                        property.SetDefaultValueSql("uuidv7()");
                     }
                 }
                 if (property.GetColumnType() == "jsonb")

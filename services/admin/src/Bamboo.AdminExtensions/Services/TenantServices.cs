@@ -158,11 +158,13 @@ public class TenantService : ApplicationService
 
     public async Task<Tenant?> CreateAdminTenantUserAsync(Guid id, String password, Tenant? tenant = null)
     {
-        if (tenant == null) {
+        if (tenant == null)
+        {
             tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Id == id));
-        }        
+        }
         var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
-        if (tenant == null) {
+        if (tenant == null)
+        {
             return tenant;
         }
 
@@ -170,7 +172,7 @@ public class TenantService : ApplicationService
         using (CurrentTenant.Change(null))
         {
         }
-        var domain = _configuration["App:Domain"]??"bamboo.io";
+        var domain = _configuration["App:Domain"] ?? "dad.vn";
         using (CurrentTenant.Change(tenant.Id, tenant.Name))
         {
             await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
@@ -321,15 +323,35 @@ public class TenantService : ApplicationService
             throw new UserFriendlyException("Only host user can migrate tenant");
         }
 
+        var adminRandomPassword = _configuration.GetValue("App:AdminRandomPassword", false);
+        string adminTenantPassword =
+            adminRandomPassword ? GuidGenerator.Create().ToString()
+            : _configuration.GetValue("App:AdminTenantPassword",
+            IdentityDataSeedContributor.AdminPasswordDefaultValue);
+
         TenantCreateDto input = new TenantCreateDto()
         {
             Name = data.Name,
             AdminEmailAddress = CurrentUser.Email,
-            AdminPassword = GuidGenerator.Create().ToString(),
+            AdminPassword = adminTenantPassword,
         };
+        var newId = GuidGenerator.Create();
+        if (data.Uuid != null)
+        {
+            newId = (Guid)data.Uuid;
+        }
+        else
+        {
+            if (data.Id != null)
+            {
+                newId = Utils.NewGuid((long)data.Id);
+            }
+        }
 
-        var newId = Utils.NewGuid(data.Id);
-        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Name == input.Name) ||(tenant.Id == newId)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
+        var tenant = await _tenantRepository
+                .FirstOrDefaultAsync(tenant => (tenant.Name == input.Name)
+                || (tenant.Id == newId)
+                || (tenant.Id == data.Uuid)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
         if (tenant != null)
         {
             //if (tenant.CreatorId == CurrentUser.Id)
@@ -352,12 +374,12 @@ public class TenantService : ApplicationService
             var _ctx = await _dbContextProvider.GetDbContextAsync();
             var sql = $"UPDATE public.\"AbpTenants\" SET \"Id\"='{newId}' WHERE \"Id\"='{tenant.Id}';";
             await _ctx.Database.ExecuteSqlRawAsync(sql);
-            tenant = await CreateAdminTenantUserAsync(newId, data.Password, null);
+            tenant = await CreateAdminTenantUserAsync((Guid)newId, data.Password, null);
         }
-        catch 
+        catch
         {
-        }        
-        return ObjectMapper.Map<Tenant, TenantDto>(tenant);        
+        }
+        return ObjectMapper.Map<Tenant, TenantDto>(tenant);
     }
 
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
@@ -415,7 +437,7 @@ public class TenantService : ApplicationService
         Guid userId = dto.UserId;
         using (_dataFilter.Disable<IMultiTenant>())
         {
-            var lstRole = await _userRepository.GetRolesAsync(currentUser.Id);            
+            var lstRole = await _userRepository.GetRolesAsync(currentUser.Id);
             var linkuserinfo = new IdentityLinkUserInfo(userId, null);
             var linkUsers = await _linkManager.GetListAsync(linkuserinfo);
             if (linkUsers.Count > 0)
@@ -642,124 +664,124 @@ public class TenantService : ApplicationService
 }
 
 
-    //[HttpGet]
-    //[Route("vendor-link")]
-    //public async Task<string> GetVendorJwtAsync(Guid id)
-    //{
-    //    using (CurrentTenant.Change(null))
-    //    {
-    //        var linkUser = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
-    //        var lst = await _linkManager.GetListAsync(linkUser, true);
-    //        //var user = await _userManager.GetByIdAsync((Guid)CurrentUser.Id);
-    //        //var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "");
-    //        if (lst.Count == 0)
-    //        {
+//[HttpGet]
+//[Route("vendor-link")]
+//public async Task<string> GetVendorJwtAsync(Guid id)
+//{
+//    using (CurrentTenant.Change(null))
+//    {
+//        var linkUser = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
+//        var lst = await _linkManager.GetListAsync(linkUser, true);
+//        //var user = await _userManager.GetByIdAsync((Guid)CurrentUser.Id);
+//        //var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultProvider, "");
+//        if (lst.Count == 0)
+//        {
 
-    //        }
-    //    }
-    //    // Create a new ClaimsPrincipal containing the claims that
-    //    // will be used to create an id_token, a token or a code.
-    //    //var principal = await SignInManager.CreateUserPrincipalAsync(user);
+//        }
+//    }
+//    // Create a new ClaimsPrincipal containing the claims that
+//    // will be used to create an id_token, a token or a code.
+//    //var principal = await SignInManager.CreateUserPrincipalAsync(user);
 
-    //    //principal.SetScopes(request.GetScopes());
-    //    //principal.SetResources(await GetResourcesAsync(request.GetScopes()));
+//    //principal.SetScopes(request.GetScopes());
+//    //principal.SetResources(await GetResourcesAsync(request.GetScopes()));
 
-    //    //await SetClaimsDestinationsAsync(principal);
+//    //await SetClaimsDestinationsAsync(principal);
 
-    //    //await IdentitySecurityLogManager.SaveAsync(
-    //    //    new IdentitySecurityLogContext
-    //    //    {
-    //    //        Identity = OpenIddictSecurityLogIdentityConsts.OpenIddict,
-    //    //        Action = OpenIddictSecurityLogActionConsts.LoginSucceeded,
-    //    //        UserName = request.Username,
-    //    //        ClientId = request.ClientId
-    //    //    }
-    //    //);
+//    //await IdentitySecurityLogManager.SaveAsync(
+//    //    new IdentitySecurityLogContext
+//    //    {
+//    //        Identity = OpenIddictSecurityLogIdentityConsts.OpenIddict,
+//    //        Action = OpenIddictSecurityLogActionConsts.LoginSucceeded,
+//    //        UserName = request.Username,
+//    //        ClientId = request.ClientId
+//    //    }
+//    //);
 
-    //    //return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+//    //return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 
-    //    return "";
-    //    //throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.GetDefaultConnectionStringAsync(id);
-    //}
-    //[HttpGet]
-    //[Route("claims")]
-    //public JsonResult Get()
-    //{
-    //    return Json(User.Claims.Select(x => new { Type = x.Type, Value = x.Value }));
-    //}
+//    return "";
+//    //throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.GetDefaultConnectionStringAsync(id);
+//}
+//[HttpGet]
+//[Route("claims")]
+//public JsonResult Get()
+//{
+//    return Json(User.Claims.Select(x => new { Type = x.Type, Value = x.Value }));
+//}
 
-    //[HttpGet]
-    //[Route("access_token")]
-    //public async Task<string> Token(Guid tenant)
-    //{
-    //    var user = await _userRepository.FindAsync((Guid)CurrentUser.Id);
+//[HttpGet]
+//[Route("access_token")]
+//public async Task<string> Token(Guid tenant)
+//{
+//    var user = await _userRepository.FindAsync((Guid)CurrentUser.Id);
 
-    //    var token = await _userManager.GenerateUserTokenAsync(user, "PasswordlessLoginProvider", "passwordless-auth");
+//    var token = await _userManager.GenerateUserTokenAsync(user, "PasswordlessLoginProvider", "passwordless-auth");
 
-    //    return token;
-    //    //return Json(User.Claims.Select(x => new { Type = x.Type, Value = x.Value }));
-    //}
+//    return token;
+//    //return Json(User.Claims.Select(x => new { Type = x.Type, Value = x.Value }));
+//}
 
 
 
-    //[HttpGet]
-    //[Route("default-connection")]
-    //public async Task<string> GetDefaultConnectionStringAsync(Guid id)
-    //{
-    //    await Task.CompletedTask;
-    //    throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.GetDefaultConnectionStringAsync(id);
-    //}
+//[HttpGet]
+//[Route("default-connection")]
+//public async Task<string> GetDefaultConnectionStringAsync(Guid id)
+//{
+//    await Task.CompletedTask;
+//    throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.GetDefaultConnectionStringAsync(id);
+//}
 
-    //[HttpGet]
-    //[Route("update-connection")]
-    //public async Task UpdateDefaultConnectionStringAsync(Guid id, string defaultConnectionString)
-    //{
-    //    await Task.CompletedTask;
-    //    throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.UpdateDefaultConnectionStringAsync(id, defaultConnectionString);
-    //}
-    //[HttpDelete]
-    //[Route("delete-connection")]
-    //public async Task DeleteDefaultConnectionStringAsync(Guid id)
-    //{
-    //    await Task.CompletedTask;
-    //    throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.DeleteDefaultConnectionStringAsync(id);
-    //}
+//[HttpGet]
+//[Route("update-connection")]
+//public async Task UpdateDefaultConnectionStringAsync(Guid id, string defaultConnectionString)
+//{
+//    await Task.CompletedTask;
+//    throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.UpdateDefaultConnectionStringAsync(id, defaultConnectionString);
+//}
+//[HttpDelete]
+//[Route("delete-connection")]
+//public async Task DeleteDefaultConnectionStringAsync(Guid id)
+//{
+//    await Task.CompletedTask;
+//    throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.DeleteDefaultConnectionStringAsync(id);
+//}
 
-    //[HttpPut]
-    //[Route("{id}")]
-    //public async Task<TenantDto> UpdateAsync(Guid id, TenantUpdateDto input)
-    //{
-    //    await Task.CompletedTask;
-    //    throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.UpdateAsync(id, input);
-    //}
+//[HttpPut]
+//[Route("{id}")]
+//public async Task<TenantDto> UpdateAsync(Guid id, TenantUpdateDto input)
+//{
+//    await Task.CompletedTask;
+//    throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.UpdateAsync(id, input);
+//}
 
-    //[HttpDelete]
-    //[Route("{id}")]
-    //public async Task DeleteAsync(Guid id)
-    //{
-    //    await Task.CompletedTask;
-    //    throw new UserFriendlyException($"Not support");
-    //    //return TenantAppService.DeleteAsync(id);
-    //}
+//[HttpDelete]
+//[Route("{id}")]
+//public async Task DeleteAsync(Guid id)
+//{
+//    await Task.CompletedTask;
+//    throw new UserFriendlyException($"Not support");
+//    //return TenantAppService.DeleteAsync(id);
+//}
 
-    //[HttpPut]
-    //[Route("{id}")]
-    //public async Task<TenantDto> UpdateAsync(Guid id, TenantUpdateDto input)
-    //{
-    //    return await TenantAppService.UpdateAsync(id, input);
-    //}
+//[HttpPut]
+//[Route("{id}")]
+//public async Task<TenantDto> UpdateAsync(Guid id, TenantUpdateDto input)
+//{
+//    return await TenantAppService.UpdateAsync(id, input);
+//}
 
-    //[HttpDelete]
-    //[Route("{id}")]
-    //public async Task DeleteAsync(Guid id)
-    //{
-    //    await TenantAppService.DeleteAsync(id);
-    //}
+//[HttpDelete]
+//[Route("{id}")]
+//public async Task DeleteAsync(Guid id)
+//{
+//    await TenantAppService.DeleteAsync(id);
+//}
 
 
 /*

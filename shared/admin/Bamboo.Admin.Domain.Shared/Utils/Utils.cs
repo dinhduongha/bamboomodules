@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Security.Cryptography;
-using Newtonsoft.Json;
+using System.Text.Json;
 using Volo.Abp.Threading;
+
 namespace Bamboo.Admin.Domain.Shared;
+
 public partial class Utils
 {
     private const long UNIXEPOCHMICROSECONDS = 62135596800000000;
@@ -22,7 +24,7 @@ public partial class Utils
                                     randomPart[4], randomPart[5], randomPart[6], randomPart[7]};
         return new Guid(bytes);
     }
-    public static Guid NewGuid(DateTime timePart, long randPart)
+    public static Guid NewGUlidSequentialGuid(DateTime timePart, long randPart)
     {
         var d = DateTimeOffsetToByteArray(timePart);
         var randomPart = BitConverter.GetBytes(randPart);
@@ -71,7 +73,20 @@ public partial class Utils
 
     public static TDestination JsonMap<TSource, TDestination>(TSource source)
     {
-        var serialized = Newtonsoft.Json.JsonConvert.SerializeObject(source);
-        return Newtonsoft.Json.JsonConvert.DeserializeObject<TDestination>(serialized);
+        if (source == null)
+            return default;
+
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = false,
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
+
+        // Serialize source object sang JSON
+        var json = JsonSerializer.Serialize(source, options);
+
+        // Deserialize sang kiểu đích
+        return JsonSerializer.Deserialize<TDestination>(json, options);
     }
 }

@@ -19,10 +19,11 @@ namespace Bamboo.Admin.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("_Abp_DatabaseProvider", EfCoreDatabaseProvider.PostgreSql)
-                .HasAnnotation("ProductVersion", "8.0.2")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
+            NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
                 {
@@ -196,6 +197,34 @@ namespace Bamboo.Admin.Migrations
                     b.ToTable("AbpAuditLogActions", (string)null);
                 });
 
+            modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLogExcelFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("CreationTime");
+
+                    b.Property<Guid?>("CreatorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("CreatorId");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("FileName");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AbpAuditLogExcelFiles", (string)null);
+                });
+
             modelBuilder.Entity("Volo.Abp.AuditLogging.EntityChange", b =>
                 {
                     b.Property<Guid>("Id")
@@ -292,6 +321,10 @@ namespace Bamboo.Admin.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<string>("ApplicationName")
+                        .HasMaxLength(96)
+                        .HasColumnType("character varying(96)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -471,7 +504,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityClaimType", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -480,12 +514,15 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("ConcurrencyStamp");
 
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreationTime");
+
                     b.Property<string>("Description")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -519,7 +556,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityLinkUser", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<Guid?>("SourceTenantId")
                         .HasColumnType("uuid");
@@ -544,7 +582,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRole", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -552,6 +591,10 @@ namespace Bamboo.Admin.Migrations
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
                         .HasColumnName("ConcurrencyStamp");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("timestamptz")
+                        .HasColumnName("CreationTime");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -562,7 +605,6 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -598,7 +640,7 @@ namespace Bamboo.Admin.Migrations
 
                     b.ToTable("AbpRoles", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityRole");
+                    b.HasDiscriminator().HasValue("IdentityRole");
 
                     b.UseTphMappingStrategy();
                 });
@@ -606,7 +648,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityRoleClaim", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
@@ -634,7 +677,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentitySecurityLog", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("Action")
                         .HasMaxLength(96)
@@ -668,10 +712,9 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("character varying(64)");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -707,16 +750,76 @@ namespace Bamboo.Admin.Migrations
                     b.ToTable("AbpSecurityLogs", (string)null);
                 });
 
+            modelBuilder.Entity("Volo.Abp.Identity.IdentitySession", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Device")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("DeviceInfo")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("ExtraProperties")
+                        .HasColumnType("text")
+                        .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("IpAddresses")
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<DateTime?>("LastAccessed")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<string>("SessionId")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime>("SignedIn")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("TenantId");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Device");
+
+                    b.HasIndex("SessionId");
+
+                    b.HasIndex("TenantId", "UserId");
+
+                    b.ToTable("AbpSessions", (string)null);
+                });
+
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUser", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<int>("AccessFailedCount")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0)
                         .HasColumnName("AccessFailedCount");
+
+                    b.Property<Guid?>("BranchId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -726,7 +829,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("ConcurrencyStamp");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("CreationTime");
 
                     b.Property<Guid?>("CreatorId")
@@ -738,7 +841,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("DeleterId");
 
                     b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("DeletionTime");
 
                     b.Property<string>("Discriminator")
@@ -762,7 +865,6 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -783,7 +885,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("IsExternal");
 
                     b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("LastModificationTime");
 
                     b.Property<Guid?>("LastModifierId")
@@ -835,6 +937,9 @@ namespace Bamboo.Admin.Migrations
                         .HasDefaultValue(false)
                         .HasColumnName("PhoneNumberConfirmed");
 
+                    b.Property<Guid?>("PublicId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("SecurityStamp")
                         .IsRequired()
                         .HasMaxLength(256)
@@ -877,7 +982,7 @@ namespace Bamboo.Admin.Migrations
 
                     b.ToTable("AbpUsers", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
+                    b.HasDiscriminator().HasValue("IdentityUser");
 
                     b.UseTphMappingStrategy();
                 });
@@ -885,7 +990,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserClaim", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
@@ -913,16 +1019,17 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.IdentityUserDelegation", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("SourceUserId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamptz");
 
                     b.Property<Guid>("TargetUserId")
                         .HasColumnType("uuid");
@@ -969,7 +1076,7 @@ namespace Bamboo.Admin.Migrations
 
                     b.ToTable("AbpUserLogins", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserLogin");
+                    b.HasDiscriminator().HasValue("IdentityUserLogin");
 
                     b.UseTphMappingStrategy();
                 });
@@ -983,7 +1090,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("CreationTime");
 
                     b.Property<Guid?>("CreatorId")
@@ -1048,7 +1155,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.Identity.OrganizationUnit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -1064,7 +1172,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("ConcurrencyStamp");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("CreationTime");
 
                     b.Property<Guid?>("CreatorId")
@@ -1076,7 +1184,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("DeleterId");
 
                     b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("DeletionTime");
 
                     b.Property<string>("DisplayName")
@@ -1089,7 +1197,6 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -1100,7 +1207,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("IsDeleted");
 
                     b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("LastModificationTime");
 
                     b.Property<Guid?>("LastModifierId")
@@ -1132,7 +1239,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("CreationTime");
 
                     b.Property<Guid?>("CreatorId")
@@ -1212,6 +1319,9 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
+                    b.Property<string>("FrontChannelLogoutUri")
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -1276,40 +1386,10 @@ namespace Bamboo.Admin.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid?>("DeleterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("DeleterId");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("DeletionTime");
-
                     b.Property<string>("ExtraProperties")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("IsDeleted");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("LastModifierId");
 
                     b.Property<string>("Properties")
                         .HasColumnType("text");
@@ -1435,22 +1515,6 @@ namespace Bamboo.Admin.Migrations
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid?>("DeleterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("DeleterId");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("DeletionTime");
-
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -1458,20 +1522,6 @@ namespace Bamboo.Admin.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("IsDeleted");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("LastModifierId");
 
                     b.Property<string>("Payload")
                         .HasColumnType("text");
@@ -1495,8 +1545,8 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("character varying(400)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)");
 
                     b.HasKey("Id");
 
@@ -1707,7 +1757,8 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Volo.Abp.TenantManagement.Tenant", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("uuidv7()");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -1717,7 +1768,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("ConcurrencyStamp");
 
                     b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("CreationTime");
 
                     b.Property<Guid?>("CreatorId")
@@ -1729,8 +1780,11 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("DeleterId");
 
                     b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("DeletionTime");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -1741,7 +1795,6 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ExtraProperties")
-                        .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
 
@@ -1752,7 +1805,7 @@ namespace Bamboo.Admin.Migrations
                         .HasColumnName("IsDeleted");
 
                     b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("LastModificationTime");
 
                     b.Property<Guid?>("LastModifierId")
@@ -1769,6 +1822,9 @@ namespace Bamboo.Admin.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
 
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name");
@@ -1777,7 +1833,7 @@ namespace Bamboo.Admin.Migrations
 
                     b.ToTable("AbpTenants", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Tenant");
+                    b.HasDiscriminator().HasValue("Tenant");
 
                     b.UseTphMappingStrategy();
                 });
@@ -1805,7 +1861,7 @@ namespace Bamboo.Admin.Migrations
                 {
                     b.HasBaseType("Volo.Abp.Identity.IdentityRole");
 
-                    b.Property<Guid?>("BrandId")
+                    b.Property<Guid?>("BranchId")
                         .HasColumnType("uuid");
 
                     b.ToTable("AbpRoles");
@@ -1813,16 +1869,13 @@ namespace Bamboo.Admin.Migrations
                     b.HasDiscriminator().HasValue("RolesExtra");
                 });
 
-            modelBuilder.Entity("Bamboo.Admin.UserBrand", b =>
+            modelBuilder.Entity("Bamboo.Admin.UserBranch", b =>
                 {
                     b.HasBaseType("Volo.Abp.Identity.IdentityUser");
 
-                    b.Property<Guid?>("BrandId")
-                        .HasColumnType("uuid");
-
                     b.ToTable("AbpUsers");
 
-                    b.HasDiscriminator().HasValue("UserBrand");
+                    b.HasDiscriminator().HasValue("UserBranch");
                 });
 
             modelBuilder.Entity("Bamboo.Admin.UserLoginExtra", b =>
@@ -1840,9 +1893,6 @@ namespace Bamboo.Admin.Migrations
             modelBuilder.Entity("Bamboo.Admin.TenantOwner", b =>
                 {
                     b.HasBaseType("Volo.Abp.TenantManagement.Tenant");
-
-                    b.Property<Guid?>("OwnerId")
-                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ParentId")
                         .HasColumnType("uuid");

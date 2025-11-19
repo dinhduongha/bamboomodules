@@ -1,14 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text;
+using System.Text.Json;
 using Volo.Abp.Application.Dtos;
 
-[JsonObject(ItemNullValueHandling = NullValueHandling.Ignore)]
-public class FilterBase: PagedAndSortedResultRequestDto
+public class FilterBase : PagedAndSortedResultRequestDto
 {
     public int Page { get; set; } = 0;
     public int Size { get; set; } = 0;
@@ -36,42 +34,76 @@ public class FilterBase: PagedAndSortedResultRequestDto
     public static IDictionary<string, string> ToKeyValue(object metaToken)
     {
         if (metaToken == null)
-        {
             return null;
-        }
 
-        JToken token = metaToken as JToken;
-        if (token == null)
-        {
-            return ToKeyValue(JObject.FromObject(metaToken));
-        }
+        var json = JsonSerializer.Serialize(metaToken);
+        using var doc = JsonDocument.Parse(json);
+        var result = new Dictionary<string, string>();
+        FlattenElement(doc.RootElement, result, null);
+        return result;
+    }
 
-        if (token.HasValues)
+    private static void FlattenElement(JsonElement element, IDictionary<string, string> dict, string prefix)
+    {
+        switch (element.ValueKind)
         {
-            var contentData = new Dictionary<string, string>();
-            foreach (var child in token.Children().ToList())
-            {
-                var childContent = ToKeyValue(child);
-                if (childContent != null)
+            case JsonValueKind.Object:
+                foreach (var prop in element.EnumerateObject())
                 {
-                    contentData = contentData.Concat(childContent)
-                                             .ToDictionary(k => k.Key, v => v.Value);
+                    var propName = prefix != null ? $"{prefix}.{prop.Name}" : prop.Name;
+                    FlattenElement(prop.Value, dict, propName);
                 }
-            }
+                break;
 
-            return contentData;
+            case JsonValueKind.Array:
+                int index = 0;
+                foreach (var item in element.EnumerateArray())
+                {
+                    var propName = $"{prefix}[{index}]";
+                    FlattenElement(item, dict, propName);
+                    index++;
+                }
+                break;
+
+            case JsonValueKind.String:
+                if (element.TryGetDateTime(out var date))
+                    dict[prefix] = date.ToString("o", CultureInfo.InvariantCulture);
+                else
+                    dict[prefix] = element.GetString();
+                break;
+
+            case JsonValueKind.Number:
+                dict[prefix] = element.ToString();
+                break;
+
+            case JsonValueKind.True:
+            case JsonValueKind.False:
+                dict[prefix] = element.GetBoolean().ToString();
+                break;
+
+            case JsonValueKind.Null:
+            case JsonValueKind.Undefined:
+                break; // bỏ qua null
         }
+    }
 
-        var jValue = token as JValue;
-        if (jValue?.Value == null)
+    public static string ToFormUrlEncodedString(object obj)
+    {
+        var dict = ToKeyValue(obj);
+        if (dict == null || dict.Count == 0)
+            return string.Empty;
+
+        var sb = new StringBuilder();
+        foreach (var kv in dict)
         {
-            return null;
+            if (sb.Length > 0)
+                sb.Append('&');
+
+            sb.Append(Uri.EscapeDataString(kv.Key));
+            sb.Append('=');
+            sb.Append(Uri.EscapeDataString(kv.Value ?? ""));
         }
 
-        var value = jValue?.Type == JTokenType.Date ?
-                        jValue?.ToString("o", CultureInfo.InvariantCulture) :
-                        jValue?.ToString(CultureInfo.InvariantCulture);
-
-        return new Dictionary<string, string> { { token.Path, value } };
+        return sb.ToString();
     }
 }

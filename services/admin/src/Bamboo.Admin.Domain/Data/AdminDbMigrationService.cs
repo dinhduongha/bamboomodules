@@ -5,11 +5,13 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Identity;
+using Volo.Abp.Guids;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.TenantManagement;
 
@@ -23,13 +25,19 @@ public class AdminDbMigrationService : ITransientDependency
     private readonly IEnumerable<IAdminDbSchemaMigrator> _dbSchemaMigrators;
     private readonly ITenantRepository _tenantRepository;
     private readonly ICurrentTenant _currentTenant;
+    private readonly IConfiguration _configuration;
+    private readonly IGuidGenerator _guidGenerator;
 
     public AdminDbMigrationService(
+        IConfiguration configuration,
         IDataSeeder dataSeeder,
+        IGuidGenerator guidGenerator,
         IEnumerable<IAdminDbSchemaMigrator> dbSchemaMigrators,
         ITenantRepository tenantRepository,
         ICurrentTenant currentTenant)
     {
+        _configuration = configuration;
+        _guidGenerator = guidGenerator;
         _dataSeeder = dataSeeder;
         _dbSchemaMigrators = dbSchemaMigrators;
         _tenantRepository = tenantRepository;
@@ -99,11 +107,30 @@ public class AdminDbMigrationService : ITransientDependency
     private async Task SeedDataAsync(Tenant? tenant = null)
     {
         Logger.LogInformation($"Executing {(tenant == null ? "host" : tenant.Name + " tenant")} database seed...");
+        var domain = _configuration["App:Domain"] ?? "dad.vn";
+        string adminEmail = _configuration.GetValue("App:AdminEmail", IdentityDataSeedContributor.AdminEmailDefaultValue);
+        string adminPassword = _configuration.GetValue("App:AdminPassword", IdentityDataSeedContributor.AdminPasswordDefaultValue);
+        var adminRandomPassword = _configuration.GetValue("App:AdminRandomPassword", false);
+        string adminTenantPassword =
+            adminRandomPassword ? _guidGenerator.Create().ToString() : _configuration.GetValue("App:AdminTenantPassword", IdentityDataSeedContributor.AdminPasswordDefaultValue);
 
-        await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
-            .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, IdentityDataSeedContributor.AdminEmailDefaultValue)
-            .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, IdentityDataSeedContributor.AdminPasswordDefaultValue)
-        );
+        if (tenant == null)
+        {
+            await _dataSeeder.SeedAsync(new DataSeedContext(tenant?.Id)
+                    .WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, tenant == null ? IdentityDataSeedContributor.AdminUserNameDefaultValue : tenant.Name)
+                    .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, tenant == null ? adminEmail : IdentityDataSeedContributor.AdminEmailDefaultValue)
+                    .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, tenant == null ? adminPassword : IdentityDataSeedContributor.AdminPasswordDefaultValue)
+                );
+        }
+        else
+        {
+            await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
+                        .WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, $"admin_{tenant.Name}")
+                        .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"admin_{tenant.Name}@{domain}")
+                        .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{adminTenantPassword}")
+                        );
+        }
+
     }
 
     private bool AddInitialMigrationIfNotExist()
@@ -207,7 +234,9 @@ public class AdminDbMigrationService : ITransientDependency
         {
             currentDirectory = Directory.GetParent(currentDirectory.FullName);
 
-            if (currentDirectory != null && Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null)
+            if (currentDirectory != null &&
+                (Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".sln")) != null)
+                || Directory.GetFiles(currentDirectory.FullName).FirstOrDefault(f => f.EndsWith(".slnx")) != null)
             {
                 return currentDirectory.FullName;
             }

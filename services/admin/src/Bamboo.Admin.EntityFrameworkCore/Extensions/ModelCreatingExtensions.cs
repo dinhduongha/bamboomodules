@@ -1,20 +1,84 @@
-﻿using Bamboo.Admin;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+
 using Volo.Abp;
+using Volo.Abp.Data;
+using Volo.Abp.Domain.Entities;
 using Volo.Abp.EntityFrameworkCore.Modeling;
+
+using Bamboo.Admin;
 
 public static class DbContextModelCreatingExtensions
 {
-	/*
+    /*
 	    builder.InitPostgreSQLExtension();
 
         base.OnModelCreating(builder);
 
         builder.ConfigureBamboo();
 	*/
-	
+
     public static void ConfigureBamboo(this ModelBuilder builder)
     {
+        builder.HasPostgresExtension("pg_trgm");
+        //modelBuilder.HasPostgresExtension("btree_gist");
+
+        // Áp dụng global cho tất cả FullAudited entities (nếu dùng ABP 8.x+)
+        //modelBuilder.Entity<FullAuditedAggregateRoot<Guid>>(b => b.Property(e => e.ExtraProperties).IsRequired(false));
+
+        // Lấy tất cả các type kế thừa từ FullAuditedAggregateRoot<Guid>
+        // var entityTypes = modelBuilder.Model.GetEntityTypes()
+        // .Where(t => typeof(FullAuditedAggregateRoot<Guid>).IsAssignableFrom(t.ClrType) && t.ClrType != typeof(FullAuditedAggregateRoot<Guid>));
+
+        // Lấy tất cả các entity implement IHasExtraProperties
+        var entityTypeExtras = builder.Model.GetEntityTypes()
+            .Where(t => typeof(IHasExtraProperties).IsAssignableFrom(t.ClrType) && !t.ClrType.IsAbstract);
+
+        foreach (var entityType in entityTypeExtras)
+        {
+            // Cấu hình ExtraProperties nullable cho entity
+            builder.Entity(entityType.ClrType, b =>
+            {
+                b.Property(nameof(IHasExtraProperties.ExtraProperties)).IsRequired(false);
+            });
+        }
+
+        // var entityTypeConcurrencyStamps = modelBuilder.Model.GetEntityTypes()
+        //     .Where(t => typeof(IHasConcurrencyStamp).IsAssignableFrom(t.ClrType) && !t.ClrType.IsAbstract);
+
+        // foreach (var entityType in entityTypeConcurrencyStamps)
+        // {
+        //     // Cấu hình ExtraProperties nullable cho entity
+        //     modelBuilder.Entity(entityType.ClrType, b =>
+        //     {
+        //         b.Property(nameof(IHasConcurrencyStamp.ConcurrencyStamp))
+        //             .IsRequired(false)
+        //             .HasDefaultValueSql("uuidv7()::text"); ;
+        //     });
+        // }
+
+        var entityTypes = builder.Model.GetEntityTypes()
+            // Lọc ra các entity class kế thừa IEntity và không phải abstract
+            .Where(t => typeof(IEntity).IsAssignableFrom(t.ClrType) && !t.ClrType.IsAbstract);
+
+        foreach (var entityType in entityTypes)
+        {
+            // Lấy đối tượng PropertyInfo của thuộc tính "Id"
+            var idProperty = entityType.ClrType.GetProperty("Id");
+
+            // Chỉ cấu hình nếu thuộc tính "Id" tồn tại trên Entity và có kiểu Guid
+            if (idProperty != null && idProperty.PropertyType == typeof(Guid))
+            {
+                builder.Entity(entityType.ClrType, b =>
+                {
+                    b.Property("Id") // Dùng tên chuỗi "Id" hoặc nameof(IEntity.Id)
+                        .HasDefaultValueSql("uuidv7()");
+                });
+            }
+        }
+
         Check.NotNull(builder, nameof(builder));
 
         /* Configure your own tables/entities inside here */
@@ -26,33 +90,33 @@ public static class DbContextModelCreatingExtensions
         //    //...
         //});
 
-        builder.Entity<TenantOwner>(b =>
-        {
-            b.ToTable("AbpTenants")
-             .HasIndex(b => b.OwnerId);
-            b.ConfigureByConvention(); //auto configure for the base class props
-            //...
-        });
-        builder.Entity<UserBrand>(b =>
-        {
-            b.ToTable("AbpUsers").HasIndex(b=>b.BrandId);
-            b.ConfigureByConvention(); //auto configure for the base class props
-            //...
-        });
+        // builder.Entity<TenantOwner>(b =>
+        // {
+        //     b.ToTable("AbpTenants")
+        //      .HasIndex(b => b.OwnerId);
+        //     b.ConfigureByConvention(); //auto configure for the base class props
+        //     //...
+        // });
+        // builder.Entity<UserBrand>(b =>
+        // {
+        //     b.ToTable("AbpUsers").HasIndex(b => b.BrandId);
+        //     b.ConfigureByConvention(); //auto configure for the base class props
+        //     //...
+        // });
 
-        builder.Entity<RolesExtra>(b =>
-        {
-            b.ToTable("AbpRoles").HasIndex(b => b.BrandId);
-            b.ConfigureByConvention(); //auto configure for the base class props
-            //...
-        });
+        // builder.Entity<RolesExtra>(b =>
+        // {
+        //     b.ToTable("AbpRoles").HasIndex(b => b.BrandId);
+        //     b.ConfigureByConvention(); //auto configure for the base class props
+        //     //...
+        // });
 
-        builder.Entity<UserLoginExtra>(b =>
-        {
-            b.ToTable("AbpUserLogins");
-            b.ConfigureByConvention(); //auto configure for the base class props
-            //...
-        });
+        // builder.Entity<UserLoginExtra>(b =>
+        // {
+        //     b.ToTable("AbpUserLogins");
+        //     b.ConfigureByConvention(); //auto configure for the base class props
+        //     //...
+        // });
 
         //builder.Entity<OpenIddictApplicationExtra>(b =>
         //{

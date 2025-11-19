@@ -61,11 +61,13 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         var scopeNames = new List<string>()
         {
             "Bamboo",
+            "Admin",
             "Core",
             "Pos",
             "Crm",
             "Hrm",
             "Push",
+            "Web3",
         };
         foreach (var scope in scopeNames)
         {
@@ -97,6 +99,7 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
         };
 
         var configurationSection = _configuration.GetSection("OpenIddict:Applications");
+        var sectionName = "Bamboo";
 
         //Web Client
         var webClientId = configurationSection["Bamboo_Web:ClientId"];
@@ -261,7 +264,44 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
             );
         }
 
+        // React Client
+        //var reactConfig = configurationSection.GetSection($"{sectionName}_React");
+        //var reactClientId = reactConfig.GetSection("ClientId").Get<string>();
+        var reactClientId = configurationSection[$"Bamboo_React:ClientId"];
+        if (!reactClientId.IsNullOrWhiteSpace())
+        {
+            //var reactClientRootUrl = reactConfig.GetSection("RootUrl").Get<string[]>();
+            var reactClientRootUrl = configurationSection[$"Bamboo_React:RootUrl"]?.TrimEnd('/');
+            var redirectUris = configurationSection.GetSection($"Bamboo_React:RedirectUris").Get<List<string>>();
+            var postLogoutRedirectUris = configurationSection.GetSection($"Bamboo_React:PostLogoutRedirectUris").Get<List<string>>();
+            try
+            {
+                await CreateApplicationAsync(
+                    name: reactClientId,
+                    type: OpenIddictConstants.ClientTypes.Public,
+                    consentType: OpenIddictConstants.ConsentTypes.Implicit,
+                    displayName: "React Application",
+                    secret: null,
+                    grantTypes: new List<string>
+                    {
+                        OpenIddictConstants.GrantTypes.AuthorizationCode,
+                        //OpenIddictConstants.GrantTypes.RefreshToken,
+                    },
+                    scopes: commonScopes,
+                    clientUri: reactClientRootUrl,
+                    redirectUri: $"{reactClientRootUrl}/auth/openiddict",
+                    redirectUris: redirectUris,
+                    postLogoutRedirectUri: $"{reactClientRootUrl}/auth/openiddict/logout-callback"
+                //    postLogoutRedirectUris: postLogoutRedirectUris
+                //redirectUris: reactClientRootUrl.Select(x => $"{x}/auth/openiddict").ToArray(),
+                //postLogoutRedirectUris: reactClientRootUrl
+                );
+            }
+            catch (Exception e)
+            {
 
+            }
+        }
         // Swagger Client
         var swaggerClientId = configurationSection["Bamboo_Swagger:ClientId"];
         if (!swaggerClientId.IsNullOrWhiteSpace())

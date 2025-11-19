@@ -6,7 +6,7 @@ using Volo.Abp.Identity;
 namespace Bamboo.Admin;
 
 [Table("AbpUsers")]
-public class UserBrand: IdentityUser
+public class UserBranch : IdentityUser
 {
-    public Guid? BrandId { get; set;}
+    //public Guid? BranchId { get; set; }
 }
