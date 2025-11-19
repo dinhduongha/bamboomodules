@@ -21,10 +21,10 @@ DEST_DIR=bin
 #dotnet publish --sc --os linux -f net8.0 -o $DEST_DIR/$name.Web3 services/core/$name.Web3.sln
 #rm $DEST_DIR/$name.Web3/appsettings.secret*.*
 
-dotnet publish --sc --os linux -f net8.0 -o bin/Bamboo.Admin services/admin/Bamboo.Admin/Bamboo.Admin.sln
+dotnet publish --sc --os linux -f net10.0 -o bin/Bamboo.Admin services/admin/Bamboo.Admin.slnx
 rm -f bin/Bamboo.Admin/appsettings.secret*.*
-dotnet publish --sc --os linux -f net8.0 -o bin/Bamboo.Core services/core/Bamboo.Core.sln
-rm -f bin/Bamboo.Core/appsettings.secret*.*
+dotnet publish --sc --os linux -f net10.0 -o bin/Bamboo.Core services/core/Bamboo.Core.slnx
+#rm -f bin/Bamboo.Core/appsettings.secret*.*
 
 ############################
 #
@@ -42,3 +42,4 @@ rm -f bin/Bamboo.Core/appsettings.secret*.*
 # scp -r $DEST_DIR/$name.AuthServer/$name.* bamboo@127.0.0.1:/opt/bamboo/admin/dotnet/
 # scp -r $DEST_DIR/$name.Admin/$name.* bamboo@127.0.0.1:/opt/bamboo/admin/dotnet/
 # scp -r $DEST_DIR/$name.Bundle/$name.* bamboo@127.0.0.1:/opt/bamboo/admin/dotnet/
+# docker image rm bamboo-admin bamboo-app-core bamboo-auth-server
