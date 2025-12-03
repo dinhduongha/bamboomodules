@@ -133,12 +133,14 @@
 <form method="post" id="loginForm">
     @Html.AntiForgeryToken()
     <input type="hidden" name="SessionHandle" value="@Model.SessionHandle" />
-    
-    <input type="hidden" name="message" id="hMessage" />
+    <input type="hidden" name="siwxJson" id="hSiwxJson" />
     <input type="hidden" name="signature" id="hSignature" />
     <input type="hidden" name="address" id="hAddress" />
     <input type="hidden" name="network" id="hNetwork" />
     <input type="hidden" name="publicKey" id="hPublicKey" />
+
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+    <input type="hidden" name="ReturnUrlHash" value="@Model.ReturnUrlHash" />
 </form>
 
 @section Scripts {
@@ -169,10 +171,10 @@
             document.getElementById("clientStatus").innerHTML = `<div class="alert alert-info">${msg}</div>`;
         }
 
-        function submitLogin(net, addr, msg, sig, pubKey = "") {
+        function submitLogin(net, addr, messageObj, sig, pubKey = "") {
             document.getElementById("hNetwork").value = net;
             document.getElementById("hAddress").value = addr;
-            document.getElementById("hMessage").value = msg;
+            document.getElementById("hSiwxJson").value = JSON.stringify(messageObj);;
             document.getElementById("hSignature").value = sig;
             document.getElementById("hPublicKey").value = pubKey;
             document.getElementById("loginForm").submit();
@@ -241,20 +243,19 @@
                     });
                 } catch (e) { console.warn("Chain switch ignored:", e); }
 
-                const siweMsg = new SiweMessage({
+                const siwxMsg = new SiweMessage({
                     domain: domain,
                     address: addr,
-                    statement: "Sign in with Wallet to the app.",
+                    statement: "Sign in with Wallet.",
                     uri: origin,
                     version: "1",
                     chainId: chainId,
                     nonce: nonce,
                     issuedAt: issuedAt
                 });
-                const msgText = siweMsg.prepareMessage();
+                const msgText = siwxMsg.prepareMessage();
                 const signature = await signer.signMessage(msgText);
-                //const sig = await window.ethereum.request({ method: 'personal_sign', params: [msgText, addr] });
-                submitLogin(net, addr, msgText, signature);
+                submitLogin(net, addr, siwxMsg, signature);
             } catch (e) { alert(e.message); }
         }
 

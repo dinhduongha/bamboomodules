@@ -2,6 +2,8 @@ using System;
 using System.Threading.Tasks;
 using System.Text;
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication;
@@ -10,18 +12,20 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Configuration;
 
 using Volo.Abp.Identity;
-using Volo.Abp.Guids;    // BouncyCastle cho Ed25519
+using Volo.Abp.Guids;
+using Volo.Abp.MultiTenancy;
+using Volo.Abp.Account;
+
+using Volo.Abp.Account.Web;
+using Volo.Abp.Account.Web.Pages.Account;
+
+using Bamboo.Abp.LoginUi.Services;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
-
-using Volo.Abp.Account.Web.Pages.Account;
-using Volo.Abp.Account;
-using Microsoft.Extensions.Options;
-using Volo.Abp.Account.Web;
-using Bamboo.Abp.LoginUi.Services;
-using Nethereum.Signer;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account.SiWX;
 
@@ -39,34 +43,48 @@ public class SiWXSignInModel : AccountPageModel
     public string SessionHandle { get; set; }
 
     // private SignInManager<IdentityUser> SignInManager { get; }
-    private UserManager<IdentityUser> UserManager { get; }
-    private ILogger<SiWXSignInModel> Logger { get; }
+    // private UserManager<IdentityUser> UserManager { get; }
+    // private ILogger<SiWXSignInModel> Logger { get; }
+
+    private readonly ICurrentTenant _currentTenant;
     protected IGuidGenerator _guidGenerator { get; }
     private readonly IWeb3AuthService _web3AuthService;
-
+    private readonly IConfiguration _configuration;
 
     public SiWXSignInModel(
-        IAccountAppService accountAppService,
-        IAuthenticationSchemeProvider schemeProvider,
-        IOptions<AbpAccountOptions> accountOptions,
-        IdentityDynamicClaimsPrincipalContributorCache identityDynamicClaimsPrincipalContributorCache,
+        IConfiguration configuration,
         IGuidGenerator guidGenerator,
-        SignInManager<IdentityUser> signInManager,
-        UserManager<IdentityUser> userManager,
-        IWeb3AuthService web3AuthService,
-        ILogger<SiWXSignInModel> logger) : base()
+        ICurrentTenant currentTenant,
+        //IAccountAppService accountAppService,
+        //IAuthenticationSchemeProvider schemeProvider,
+        //IOptions<AbpAccountOptions> accountOptions,
+        //IdentityDynamicClaimsPrincipalContributorCache identityDynamicClaimsPrincipalContributorCache,
+        //SignInManager<IdentityUser> signInManager,
+        //UserManager<IdentityUser> userManager,
+        //ILogger<SiWXSignInModel> logger,
+        IWeb3AuthService web3AuthService
+        ) : base()
     {
-        SignInManager = signInManager;
-        UserManager = userManager;
-        Logger = logger;
+        //SignInManager = signInManager;
+        //UserManager = userManager;
+        //Logger = logger;
+        _configuration = configuration;
+        _currentTenant = currentTenant;
         _guidGenerator = guidGenerator;
         _web3AuthService = web3AuthService;
     }
 
     public IActionResult OnGet()
     {
-        // var props = SignInManager.ConfigureExternalAuthenticationProperties("SIWX");
-        // if (props == null) return RedirectToPage("/Account/Login");
+
+        if (_currentTenant.IsAvailable)
+        {
+            return RedirectToPage("/Account/Login", new
+            {
+                ReturnUrl = ReturnUrl,
+                ReturnUrlHash = ReturnUrlHash
+            });
+        }
 
         // 1. Gọi Service tạo Nonce & Cache
         var result = _web3AuthService.GenerateAndCacheNonce();
@@ -77,11 +95,6 @@ public class SiWXSignInModel : AccountPageModel
         ViewData["IssuedAt"] = DateTimeOffset.UtcNow.ToString("o");
         var now = DateTimeOffset.UtcNow;
         var exp = now.AddMinutes(5);
-        // props.Items["siwx_nonce"] = nonce;
-        // props.Items["siwx_issued_at"] = now.ToString("o");
-        // props.Items["siwx_expiration"] = exp.ToString("o");
-
-        // SignInManager.StoreExternalAuthenticationProperties("SIWX", props);
 
         var cookieOptions = new CookieOptions
         {
@@ -101,196 +114,162 @@ public class SiWXSignInModel : AccountPageModel
         return Page();
     }
 
-    public async Task<IActionResult> OnPostCallbackAsync(string siwxMessage, string signature, string address, string network, string publicKey)
+    public async Task<IActionResult> OnPostAsync(string siwxJson, string signature, string address, string network, string publicKey)
     {
-        // var props = SignInManager.GetExternalAuthenticationProperties("SIWX");
-        // if (props?.Items["siwx_nonce"] is not string nonce)
-        //     return BadRequest("Invalid state");
 
-        var serverNonce = Request.Cookies["SIWX_NONCE"];
-        var msg = JsonSerializer.Deserialize<SiwxMessageDto>(siwxMessage)!;
+        SiwxMessageDto? dto = null;
+        try
+        {
+            // CaseInsensitive để map đúng camelCase từ JS
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            dto = JsonSerializer.Deserialize<SiwxMessageDto>(siwxJson, options);
+        }
+        catch
+        {
+            TempData["Error"] = "Invalid message format.";
+            return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
+        }
 
-        // Security checks
-        // if (msg.Nonce != serverNonce) return BadRequest("Wrong nonce");
-        // if (!msg.Domain.Equals(Request.Host.Value, StringComparison.OrdinalIgnoreCase)) return BadRequest("Domain mismatch");
-        // //if (msg.ExpirationTime.HasValue && DateTimeOffset.UtcNow > msg.ExpirationTime.Value) return BadRequest("Expired");
+        if (dto == null) return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
 
-        // var prepared = msg.ToSiweString();
+        string messageVerify = dto.ToSiweString();
 
-        // bool valid = VerifySignature(prepared, signature, msg.Address);
-        // if (!valid) return BadRequest("Invalid signature");
-        // 1. Gọi Service verify
-        var signingResult = await _web3AuthService.VerifyLoginAsync(SessionHandle, siwxMessage, signature, address, network, publicKey);
+        var signingResult = await _web3AuthService.VerifyLoginAsync(SessionHandle, messageVerify, signature, address, network, publicKey);
 
         if (!signingResult.Success)
         {
             // Thêm lỗi vào Model State để hiển thị ra UI
-            ModelState.AddModelError(string.Empty, signingResult.ErrorMessage);
-
             // Quan trọng: Refresh lại trang để sinh Nonce mới (vì Nonce cũ đã bị xóa)
-            OnGet();
-            return Page();
+
+            ModelState.AddModelError(string.Empty, signingResult.ErrorMessage);
+            TempData["Error"] = signingResult.ErrorMessage;
+            return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
         }
 
-        var props = new AuthenticationProperties
+        // 1. Chuẩn bị Properties cho Session (Lưu vào Cookie)
+        var propsAuth = new AuthenticationProperties
         {
             IsPersistent = true,
-            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(1)
-        };
-        var info = new ExternalLoginInfo(
-            principal: null!,
-            loginProvider: "SIWX",
-            providerKey: msg.Address,
-            displayName: network
-        )
-        {
-            AuthenticationProperties = props
+            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30)
         };
 
-        var result = await SignInManager.ExternalLoginSignInAsync("SIWX", msg.Address, isPersistent: false, bypassTwoFactor: true);
-        if (!result.Succeeded)
+        // Lưu token/claims vào properties nếu cần thiết (Optional)
+        // propsAuth.StoreTokens(new[] { new AuthenticationToken { Name = "siwx_sig", Value = signature } });
+
+        // 2. THỬ LOGIN BẰNG VÍ (Kiểm tra xem ví này đã link với user nào chưa)
+        // LoginProvider = "SIWX", ProviderKey = address
+        var result = await SignInManager.ExternalLoginSignInAsync(
+            loginProvider: "SIWX",
+            providerKey: address,
+            isPersistent: true,
+            bypassTwoFactor: true
+        );
+
+        if (result.Succeeded)
         {
-            var user = new IdentityUser(_guidGenerator.Create(), msg.Address.Truncate(16), $"{msg.Address.ToLower()}@siwx.local");
-            await UserManager.CreateAsync(user);
-            await UserManager.AddLoginAsync(user, info);
-            await SignInManager.SignInAsync(user, isPersistent: false);
+            Logger.LogInformation("SIWX: Ví {Address} đã tồn tại. Login thành công.", address);
+            return RedirectToReturnUrl(ReturnUrl);
         }
 
-        Logger.LogInformation("SIWX login success: {Address}", msg.Address);
+        // 3. NẾU CHƯA CÓ -> TẠO USER MỚI & LINK VÍ
+        if (result.IsLockedOut)
+        {
+            Logger.LogWarning("SIWX: Ví {Address} đang bị khóa.", address);
+            return RedirectToPage("./LockedOut");
+        }
+        else
+        {
+            bool autoWalletAccount = _configuration.GetValue<bool>("Blockchain:AutoWalletAccount");
+            if (!autoWalletAccount)
+            {
+                // === CASE A: REDIRECT TO REGISTER (Giống Google) ===
 
-        return Redirect("~/connect/authorize/callback" + Request.QueryString);
+                // Bước B1: Tạo danh tính tạm (Identity) cho Ví
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, address), // ID là ví
+                    new Claim(ClaimTypes.Name, address),           // Tên hiển thị là ví
+                    // Bạn có thể thêm Claim Network nếu muốn Register page biết
+                    new Claim("Network", network)
+                };
+                var identity = new ClaimsIdentity(claims, IdentityConstants.ExternalScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Bước B2: Đóng gói thông tin Provider vào Properties
+                // Đây là chuẩn của ASP.NET Core Identity để hàm GetExternalLoginInfoAsync đọc được
+                var props = new AuthenticationProperties();
+                props.RedirectUri = ReturnUrl;
+                props.Items["LoginProvider"] = "SIWX";  // Tên Provider
+                props.Items["ProviderKey"] = address;   // Khóa chính (Address)
+                props.Items["ProviderDisplayName"] = network;   // Tên hiển thị (Ethereum/Solana...)
+
+                // Bước B3: Đăng nhập vào Scheme TẠM (Identity.External)
+                // Lưu ý: Đây chưa phải là login vào App, chỉ là login tạm để chuyển dữ liệu
+                await HttpContext.SignInAsync(IdentityConstants.ExternalScheme, principal, props);
+
+                // Bước B4: Chuyển hướng sang trang Register
+                // Trang Register của ABP sẽ tự động check External Cookie và hiển thị form điền Email
+                return RedirectToPage("/Account/Register", new { ReturnUrl = ReturnUrl });
+            }
+            // B. Tự động tạo User mới
+            // Lưu ý: Email ví dụ, có thể custom theo logic dự án
+            var user = new IdentityUser(
+                id: _guidGenerator.Create(),
+                userName: address, // Username là địa chỉ ví
+                email: $"{address.ToLower()}@siwx.local",
+                tenantId: _currentTenant.Id // Quan trọng cho Multi-tenancy
+            );
+
+            // Mark email confirmed để tránh bị chặn đăng nhập nếu có setting bắt buộc
+            user.SetEmailConfirmed(true);
+
+            var createResult = await UserManager.CreateAsync(user);
+            if (!createResult.Succeeded)
+            {
+                // Xử lý lỗi tạo user (ví dụ trùng username...)
+                foreach (var error in createResult.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+                return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
+                //return Page();
+            }
+
+            // C. Link Ví vào User vừa tạo (AddLoginAsync)
+            // Dùng UserLoginInfo thay vì ExternalLoginInfo cho gọn
+            var loginInfo = new UserLoginInfo(loginProvider: "SIWX", providerKey: address, providerDisplayName: network);
+            var addLoginResult = await UserManager.AddLoginAsync(user, loginInfo);
+            if (!addLoginResult.Succeeded)
+            {
+                ModelState.AddModelError(string.Empty, "Không thể liên kết ví với tài khoản.");
+                return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
+                //return Page();
+            }
+
+            // D. Login ngay lập tức
+            await SignInManager.SignInAsync(user, propsAuth);
+
+            Logger.LogInformation("SIWX: Tạo mới user {Address} thành công.", address);
+
+            // 4. REDIRECT VỀ CLIENT (OAUTH FLOW)
+            return RedirectToReturnUrl(ReturnUrl);
+        }
+
     }
 
-
-
-}
-
-// DTO
-public class SiwxMessageDto
-{
-    public string Domain { get; set; } = "";
-    public string Address { get; set; } = "";
-    public string? Statement { get; set; }
-    public string Uri { get; set; } = "";
-    public string Version { get; set; } = "";
-    public object? ChainId { get; set; }
-    public string Nonce { get; set; } = "";
-    public string IssuedAt { get; set; } = "";
-    public string? ExpirationTime { get; set; }
-
-    public string ToSiweString()
+    // Hàm Helper xử lý Redirect an toàn
+    private IActionResult RedirectToReturnUrl(string returnUrl)
     {
-        var sb = new StringBuilder();
-        sb.AppendLine($"{Domain} wants you to sign in with your account:");
-        sb.AppendLine(Address);
-        if (!string.IsNullOrEmpty(Statement)) sb.AppendLine("\n" + Statement);
-        sb.AppendLine($"\nURI: {Uri}");
-        sb.AppendLine($"Version: {Version}");
-        if (ChainId != null) sb.AppendLine($"Chain ID: {ChainId}");
-        sb.AppendLine($"Nonce: {Nonce}");
-        sb.AppendLine($"Issued At: {IssuedAt}");
-        if (ExpirationTime != null) sb.AppendLine($"Expiration Time: {ExpirationTime}");
-        return sb.ToString().TrimEnd();
+        // Nếu ReturnUrl có giá trị (từ OpenIddict gửi sang), quay về đó
+        if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return LocalRedirect(returnUrl);
+        }
+
+        // Nếu không có, về trang chủ
+        return Redirect("~/");
     }
 }
-
-// using Microsoft.AspNetCore.Authentication;
-// using Microsoft.AspNetCore.Identity;
-// using Microsoft.AspNetCore.Mvc;
-// using Microsoft.AspNetCore.Mvc.RazorPages;
-// using Volo.Abp.Identity;
-
-// namespace YourApp.AuthServer.Pages.Account;
-
-// public class SiWXSignInModel : PageModel
-// {
-//     private readonly SignInManager<IdentityUser> _signInManager;
-//     private readonly UserManager<IdentityUser> _userManager;
-//     private readonly ILogger<SiWXSignInModel> _logger;
-
-//     public SiWXSignInModel(
-//         SignInManager<IdentityUser> signInManager,
-//         UserManager<IdentityUser> userManager,
-//         ILogger<SiWXSignInModel> logger)
-//     {
-//         _signInManager = signInManager;
-//         _userManager = userManager;
-//         _logger = logger;
-//     }
-
-//     // Sinh nonce NGAY TẠI ĐÂY khi người dùng vào trang
-//     public IActionResult OnGet(string? returnUrl = null)
-//     {
-//         // Lấy AuthenticationProperties từ flow OpenIddict
-//         var properties = _signInManager.GetExternalAuthenticationProperties("SIWX");
-//         if (properties == null)
-//             return RedirectToPage("/Account/Login");
-
-//         // SINH NONCE TẠI ĐÂY
-//         var nonce = Guid.NewGuid().ToString("N");
-//         var issuedAt = DateTimeOffset.UtcNow;
-//         var expiration = issuedAt.AddMinutes(5);
-
-//         properties.Items["siwx_nonce"] = nonce;
-//         properties.Items["siwx_issued_at"] = issuedAt.ToString("o");
-//         properties.Items["siwx_expiration"] = expiration.ToString("o");
-
-//         // Lưu lại properties (rất quan trọng!)
-//         _signInManager.StoreExternalAuthenticationProperties("SIWX", properties);
-
-//         ViewData["Nonce"] = nonce;
-//         ViewData["IssuedAt"] = issuedAt.ToString("o");
-//         ViewData["Expiration"] = expiration.ToString("o");
-
-//         return Page();
-//     }
-
-//     public async Task<IActionResult> OnPostCallbackAsync(
-//         [FromForm] string siwxMessage,
-//         [FromForm] string signature)
-//     {
-//         var properties = _signInManager.GetExternalAuthenticationProperties("SIWX");
-//         if (properties?.Items["siwx_nonce"] is not string storedNonce)
-//             return BadRequest("Invalid state");
-
-//         {
-//             return BadRequest("Invalid state");
-//         }
-
-//         // Parse message
-//         var msg = JsonSerializer.Deserialize<SiweMessageDto>(siwxMessage)!;
-
-//         // Kiểm tra nonce, domain, thời gian...
-//         if (msg.Nonce != storedNonce) return BadRequest("Invalid nonce");
-//         if (!msg.Domain.Equals(Request.Host.Value, StringComparison.OrdinalIgnoreCase)) return BadRequest("Domain mismatch");
-//         if (msg.ExpirationTime.HasValue && DateTimeOffset.UtcNow > msg.ExpirationTime.Value) return BadRequest("Expired");
-
-//         // Xác minh chữ ký (giữ nguyên hàm verify như trước)
-//         bool isValid = VerifySignature(msg, signature);
-//         if (!isValid) return BadRequest("Invalid signature");
-
-//         // Tạo external login info
-//         var info = new ExternalLoginInfo(
-//             principal: null!,
-//             loginProvider: "SIWX",
-//             providerKey: msg.Address,
-//             displayName: DetectChainName(msg.Address)
-//         );
-//         info.AuthenticationProperties = properties;
-
-//         // Đăng nhập hoặc tạo user
-//         var result = await _signInManager.ExternalLoginSignInAsync("SIWX", msg.Address, isPersistent: false, bypassTwoFactor: true);
-//         if (!result.Succeeded)
-//         {
-//             var user = new IdentityUser(Guid.NewGuid(), msg.Address.Truncate(16), $"{msg.Address.ToLower()}@siwx.local");
-//             await _userManager.CreateAsync(user);
-//             await _userManager.AddLoginAsync(user, info);
-//             await _signInManager.SignInAsync(user, isPersistent: false);
-//         }
-
-//         // Quan trọng: tiếp tục OpenIddict authorization flow
-//         return Redirect("~/connect/authorize/callback" + Request.QueryString);
-//     }
-
-//     // Các hàm VerifySignature, DetectChainName... giữ nguyên như file trước
-// }
