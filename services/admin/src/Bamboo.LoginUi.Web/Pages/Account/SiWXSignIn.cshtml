@@ -68,62 +68,67 @@
     <div id="clientStatus"></div>
 
     <div class="grid-container">
-        <div class="chain-card" onclick="evmLogin('ethereum', 1)">
+        <div class="chain-card" id="btn-eth">
             <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="chain-icon">
             <span class="chain-name">Ethereum</span>
         </div>
-        <div class="chain-card" onclick="evmLogin('bnb', 56)">
-            <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" class="chain-icon">
-            <span class="chain-name">BNB Chain</span>
+        <div class="chain-card" id="btn-ton">
+            <img src="https://cryptologos.cc/logos/toncoin-ton-logo.png" class="chain-icon">
+            <span class="chain-name">TON</span>
         </div>
-        <div class="chain-card" onclick="evmLogin('gnosis', 100)">
-            <img src="https://cryptologos.cc/logos/gnosis-gno-logo.png" class="chain-icon">
-            <span class="chain-name">Gnosis (xDai)</span>
-        </div>
-        <div class="chain-card" onclick="cosmosLogin()">
-            <img src="https://cryptologos.cc/logos/cosmos-atom-logo.png" class="chain-icon">
-            <span class="chain-name">Cosmos</span>
-        </div>
-
-        <div class="chain-card" onclick="stellarLogin('stellar')">
-            <img src="https://cryptologos.cc/logos/stellar-xlm-logo.png" class="chain-icon">
-            <span class="chain-name">Stellar</span>
-        </div>
-
-        <div class="chain-card" onclick="cellframeLogin()">
+        <div class="chain-card" id="btn-cellframe">
             <img src="https://wiki.cellframe.net/uploads/images/gallery/2021-08/scaled-1680-/2R9i6q4vj1g5p3m8-image-1628172827653.png" class="chain-icon" onerror="this.src='https://placehold.co/48?text=CF'">
             <span class="chain-name">CellFrame</span>
         </div>
 
-        <div class="chain-card" onclick="suiLogin()">
+        <div class="chain-card" id="btn-bnb">
+            <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" class="chain-icon">
+            <span class="chain-name">BNB Chain</span>
+        </div>
+
+        <div class="chain-card" id="btn-gnosis">
+            <img src="https://cryptologos.cc/logos/gnosis-gno-logo.png" class="chain-icon">
+            <span class="chain-name">Gnosis (xDai)</span>
+        </div>
+
+        <div class="chain-card" id="btn-polygon">
+            <img src="https://cryptologos.cc/logos/polygon-matic-logo.png" class="chain-icon">
+            <span class="chain-name">Polygon</span>
+        </div>
+
+        <div class="chain-card" id="btn-cosmos">
+            <img src="https://cryptologos.cc/logos/cosmos-atom-logo.png" class="chain-icon">
+            <span class="chain-name">Cosmos</span>
+        </div>
+
+        <div class="chain-card" id="btn-stellar">
+            <img src="https://cryptologos.cc/logos/stellar-xlm-logo.png" class="chain-icon">
+            <span class="chain-name">Stellar</span>
+        </div>
+
+
+        <div class="chain-card" id="btn-sui">
             <img src="https://cryptologos.cc/logos/sui-sui-logo.png" class="chain-icon">
             <span class="chain-name">Sui Network</span>
         </div>
 
-        <div class="chain-card" onclick="tonLogin()">
-            <img src="https://cryptologos.cc/logos/toncoin-ton-logo.png" class="chain-icon">
-            <span class="chain-name">TON</span>
-        </div>
-        <div class="chain-card" onclick="evmLogin('polygon', 137)">
-            <img src="https://cryptologos.cc/logos/polygon-matic-logo.png" class="chain-icon">
-            <span class="chain-name">Polygon</span>
-        </div>
-        <div class="chain-card" onclick="aptosLogin()">
+        <div class="chain-card" id="btn-aptos">
             <img src="https://cryptologos.cc/logos/aptos-apt-logo.png" class="chain-icon">
             <span class="chain-name">Aptos</span>
         </div>
 
-        <div class="chain-card" onclick="solanaLogin()">
+        <div class="chain-card" id="btn-solana">
             <img src="https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png" class="chain-icon">
             <span class="chain-name">Solana</span>
         </div>
-        <div class="chain-card" onclick="stellarLogin('pi-network')">
+
+        <div class="chain-card" id="btn-pi">
             <img src="https://seeklogo.com/images/P/pi-network-logo-5946808826-seeklogo.com.png" class="chain-icon">
             <span class="chain-name">Pi Network</span>
         </div>
-
     </div>
 </div>
+<div id="ton-connect-button" style="display:none;"></div>
 
 <form method="post" id="loginForm">
     @Html.AntiForgeryToken()
@@ -137,14 +142,28 @@
 </form>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/siwe@2.1.4/dist/siwe.umd.min.js"></script>
     <script src="https://unpkg.com/tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://unpkg.com/bs58@4.0.1/bundle.js"></script>
+    @* THÊM DẤU CHẤM THAN (!) VÀO NGAY TRƯỚC script *@
+    <!script type="importmap">
+    {
+        "imports": {
+            "ethers": "https://esm.sh/ethers@5.7.2",
+            "siwe": "https://esm.sh/siwe@2.1.4",
+            "tonconnect_ui": "https://esm.sh/@@tonconnect/ui@latest"
+        }
+    }
+    </!script>
 
-    <script>
+    <script type="module">
+        import { ethers } from 'ethers';
+        import { SiweMessage } from 'siwe';
+        import { TonConnectUI } from 'tonconnect_ui';
         const nonce = "@nonce";
         const domain = window.location.host;
         const origin = window.location.origin;
+        const issuedAt = new Date().toISOString();
+        let tonConnectUI;
 
         function setStatus(msg) {
             document.getElementById("clientStatus").innerHTML = `<div class="alert alert-info">${msg}</div>`;
@@ -159,24 +178,88 @@
             document.getElementById("loginForm").submit();
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Web3 Script Loaded & Ready");
+            try {
+                const buttonRoot = document.getElementById('ton-connect-button');
+                if (buttonRoot) {
+                    tonConnectUI = new TonConnectUI({
+                        manifestUrl: window.location.origin + '/tonconnect-manifest.json',
+                        buttonRootId: 'ton-connect-button'
+                    });
+                } else {
+                    console.warn("Missing div #ton-connect-button");
+                }
+            } catch (e) {
+                console.error("TON Init Error:", e);
+            }
+
+            // Hàm helper để gắn sự kiện cho gọn code
+            const attach = (id, callback) => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('click', callback);
+            };
+
+            // 1. EVM Group
+            attach('btn-eth',     () => evmLogin('ethereum', 1));
+            attach('btn-bnb',     () => evmLogin('bnb', 56));
+            attach('btn-gnosis',  () => evmLogin('gnosis', 100));
+            attach('btn-polygon', () => evmLogin('polygon', 137));
+
+            // 2. Solana
+            attach('btn-solana',  () => solanaLogin());
+
+            // 3. Stellar Family
+            attach('btn-stellar', () => stellarLogin('stellar'));
+            attach('btn-pi',      () => stellarLogin('pi-network'));
+
+            // 4. Move Language (Sui / Aptos)
+            attach('btn-sui',     () => suiLogin());
+            attach('btn-aptos',   () => aptosLogin());
+
+            // 5. Others
+            attach('btn-ton',       () => tonLogin());
+            attach('btn-cosmos',    () => cosmosLogin());
+            attach('btn-cellframe', () => cellframeLogin());
+        });
+    
         // --- 1. EVM ---
-        async function evmLogin(net, chainId) {
+        window.evmLogin = async function evmLogin(net, chainId) {
             if (!window.ethereum) return alert("Install MetaMask");
             try {
                 setStatus(`Connecting ${net}...`);
-                const acts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                const addr = acts[0];
-                const siweMsg = new siwe.SiweMessage({
-                    domain, address: addr, statement: "Login Web3", uri: origin, version: "1", chainId, nonce
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []); // Xin quyền
+                const signer = provider.getSigner();
+                const addr = await signer.getAddress();
+
+                // Switch Chain (Optional but recommended)
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: "0x" + chainId.toString(16) }],
+                    });
+                } catch (e) { console.warn("Chain switch ignored:", e); }
+
+                const siweMsg = new SiweMessage({
+                    domain: domain,
+                    address: addr,
+                    statement: "Sign in with Wallet to the app.",
+                    uri: origin,
+                    version: "1",
+                    chainId: chainId,
+                    nonce: nonce,
+                    issuedAt: issuedAt
                 });
                 const msgText = siweMsg.prepareMessage();
-                const sig = await window.ethereum.request({ method: 'personal_sign', params: [msgText, addr] });
-                submitLogin(net, addr, msgText, sig);
+                const signature = await signer.signMessage(msgText);
+                //const sig = await window.ethereum.request({ method: 'personal_sign', params: [msgText, addr] });
+                submitLogin(net, addr, msgText, signature);
             } catch (e) { alert(e.message); }
         }
 
         // --- 2. SOLANA ---
-        async function solanaLogin() {
+        window.solanaLogin = async function solanaLogin() {
             const provider = window.solana || window.backpack;
             if (!provider) return alert("Install Phantom");
             try {
@@ -192,7 +275,7 @@
         }
 
         // --- 3. CELLFRAME (NEW) ---
-        async function cellframeLogin() {
+        window.cellframeLogin = async function cellframeLogin() {
             // CellFrame thường chạy dashboard extension hoặc local node
             // Giả lập logic kết nối vì CellFrame chưa có chuẩn window.cellframe phổ biến như Metamask
             // Nếu bạn có JS SDK riêng của CellFrame, hãy thay vào đây.
@@ -221,7 +304,7 @@
         }
 
         // --- 4. STELLAR / PI ---
-        async function stellarLogin(net) {
+        window.stellarLogin = async function stellarLogin(net) {
             if (!window.freighterApi?.isConnected) return alert("Install Freighter");
             try {
                 setStatus(`Connecting ${net}...`);
@@ -235,7 +318,7 @@
         }
 
         // --- 5. APTOS ---
-        async function aptosLogin() {
+        window.aptosLogin = async function aptosLogin() {
             if (!window.aptos) return alert("Install Petra");
             try {
                 setStatus("Connecting Aptos...");
@@ -247,7 +330,7 @@
         }
         
         // --- 6. COSMOS ---
-         async function cosmosLogin() {
+        window.cosmosLogin = async function cosmosLogin() {
             if (!window.keplr) return alert("Install Keplr");
             try {
                 const cid = "cosmoshub-4";
@@ -260,7 +343,7 @@
             } catch (e) { alert(e.message); }
         }
 
-        async function suiLogin() {
+        window.suiLogin = async function suiLogin() {
             // Check ví Sui (Sui Wallet, Ethos, Martian...)
             // Chuẩn mới là window.suiWallet hoặc standard wallet-standard
             const wallet = window.suiWallet;
@@ -307,13 +390,8 @@
                 // Bạn nên update code JS này dùng mysten/sui.js để lấy PubKey chuẩn từ ví.
             } catch (e) { alert("Sui Error: " + e.message); }
         }
-        // Khởi tạo TonConnectUI
-        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://your-app.com/tonconnect-manifest.json', // BẠN CẦN HOST FILE JSON NÀY
-            buttonRootId: 'ton-connect-button'
-        });
 
-        async function tonLogin() {
+        window.tonLogin = async function tonLogin() {
             try {
                 setStatus("Connecting TON...");
                 
