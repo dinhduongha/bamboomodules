@@ -45,6 +45,8 @@ using Volo.Abp.SettingManagement;
 
 using Bamboo.Abp.LoginUi.Web.Localization;
 using Bamboo.Abp.VerificationCode;
+using Microsoft.AspNetCore.Identity;
+using Bamboo.Abp.LoginUi.Services;
 
 
 namespace Bamboo.Abp.LoginUi.Web;
@@ -78,8 +80,10 @@ public class AbpLoginUiWebModule : AbpModule
         var configuration = context.Services.GetConfiguration();
         // https://www.npgsql.org/efcore/release-notes/6.0.html#opting-out-of-the-new-timestamp-mapping-logic
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
+        context.Services.AddMemoryCache();
         context.Services.AddHttpClient();
+
+        context.Services.AddTransient<IWeb3AuthService, Web3AuthService>();
         context.Services.TryAddTransient<IVerificationCodeGenerator, VerificationCodeGenerator>();
         context.Services.TryAddTransient<IVerificationCodeManager, VerificationCodeManager>();
         //ConfigureFirebase(context, configuration);
@@ -103,6 +107,11 @@ public class AbpLoginUiWebModule : AbpModule
             //Configure authorization.
         });
 
+        Configure<RazorPagesOptions>(options =>
+        {
+            // Cho phép truy cập ẩn danh vào trang cụ thể này
+            options.Conventions.AllowAnonymousToPage("/Account/SiWXSignIn");
+        });
         // context.Services.AddSameSiteCookiePolicy();
         ConfigureAuthentication(context, configuration);
         ConfigureTenantResolver(context, configuration);
@@ -146,7 +155,12 @@ public class AbpLoginUiWebModule : AbpModule
 
         context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
         // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/social/?view=aspnetcore-6.0&tabs=visual-studio
-        var builder = context.Services.AddAuthentication();
+        //var builder = context.Services.AddAuthentication();
+        var builder = context.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        });
         ConfigureDefaultSocialAuthentication(builder, configuration);
     }
 
@@ -158,7 +172,8 @@ public class AbpLoginUiWebModule : AbpModule
             options.TenantKey = configuration["App:TenantKey"] ?? "tenant";
         });
 
-        bool enabledTenantLogin = Convert.ToBoolean(configuration["App:EnableTenantLogin"]);
+        //bool enabledTenantLogin = Convert.ToBoolean(configuration["App:EnableTenantLogin"]);
+        bool enabledTenantLogin = configuration.GetValue("App:EnableTenantLogin", true);
         if (!enabledTenantLogin)
         {
             Configure<AbpTenantResolveOptions>(options =>

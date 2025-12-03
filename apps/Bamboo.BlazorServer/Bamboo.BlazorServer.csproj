@@ -24,22 +24,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme" Version="5.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Components.Server.LeptonXLiteTheme" Version="5.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="5.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.Identity.Blazor.Server" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.Server" Version="10.0.0-rc.2" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.Server" Version="10.0.0-rc.2" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Authentication.OpenIdConnect" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Identity.Blazor.Server" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.Server" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.Server" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

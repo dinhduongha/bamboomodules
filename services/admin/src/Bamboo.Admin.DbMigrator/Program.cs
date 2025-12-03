@@ -32,6 +32,14 @@ class Program
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                // Thêm appsettings.migrate.json
+                config.AddJsonFile("appsettings.migrate.json", optional: true, reloadOnChange: false);
+                // Các file mặc định (appsettings.json, appsettings.{env}.json, secrets, môi trường)
+                // đã được Host.CreateDefaultBuilder() tải, nhưng việc thêm vào đây 
+                // đảm bảo thứ tự tải chính xác nếu bạn muốn ghi đè.
+            })
             .AddAppSettingsSecretsJson()
             .ConfigureLogging((context, logging) => logging.ClearProviders())
             .ConfigureServices((hostContext, services) =>

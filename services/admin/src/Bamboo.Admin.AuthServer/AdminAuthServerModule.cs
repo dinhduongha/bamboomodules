@@ -13,6 +13,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Logging;
 
 using StackExchange.Redis;
 using OpenIddict.Server.AspNetCore;
@@ -46,6 +47,8 @@ using Bamboo.Abp.LoginUi.Web;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.Localization;
 using Bamboo.Admin.MultiTenancy;
+using OpenIddict.Server;
+using Bamboo.OpenIddictExtensions;
 
 namespace Bamboo.Admin;
 
@@ -87,7 +90,12 @@ public class AdminAuthServerModule : AbpModule
             {
                 builder.SetIssuer(new Uri(issuer));
             }
+
+            builder.AllowCustomFlow("switch_tenant");
+            builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
+                options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
         });
+
         PreConfigure<OpenIddictServerAspNetCoreBuilder>(configure =>
         {
             configure.DisableTransportSecurityRequirement();
@@ -115,9 +123,9 @@ public class AdminAuthServerModule : AbpModule
         var configuration = context.Services.GetConfiguration();
 
         Configure<OpenIddictServerAspNetCoreOptions>(options =>
-                {
-                    options.DisableTransportSecurityRequirement = true;
-                });
+        {
+            options.DisableTransportSecurityRequirement = true;
+        });
 
         Configure<AbpOpenIddictAspNetCoreOptions>(options =>
         {
@@ -229,6 +237,7 @@ public class AdminAuthServerModule : AbpModule
                             .Select(o => o.RemovePostFix("/"))
                             .ToArray() ?? Array.Empty<string>()
                     )
+                    //.SetIsOriginAllowed(_ => true)
                     .WithAbpExposedHeaders()
                     .SetIsOriginAllowedToAllowWildcardSubdomains()
                     .AllowAnyHeader()
@@ -322,11 +331,43 @@ public class AdminAuthServerModule : AbpModule
         var app = context.GetApplicationBuilder();
         var env = context.GetEnvironment();
         var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
+        var logHeaders = configuration.GetValue<bool>("Logging:RequestLogging:LogHeaders");
         var useSSL = configuration.GetValue("Auth:OpenIddict:UseSSL", true);
+        var useSubpath = configuration.GetValue("App:EnableSubpath", false);
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.All
         });
+        if (logHeaders)
+        {
+            // Lấy logger từ LoggerFactory (không phụ thuộc vào Program)
+            var loggerFactory = context.ServiceProvider.GetRequiredService<ILoggerFactory>();
+            var logger = loggerFactory.CreateLogger<AdminAuthServerModule>();
+
+            app.Use(async (ctx, next) =>
+            {
+                logger.LogInformation("===== Incoming Request ===== ");
+                logger.LogInformation("{Method} {Scheme}://{Host}{Path}{QueryString}",
+                    ctx.Request.Method,
+                    ctx.Request.Scheme,
+                    ctx.Request.Host,
+                    ctx.Request.Path,
+                    ctx.Request.QueryString);
+
+                foreach (var header in ctx.Request.Headers)
+                {
+                    logger.LogInformation("Header: {Key} = {Value}", header.Key, header.Value.ToString());
+                }
+
+                logger.LogInformation("============================");
+
+                await next();
+            });
+        }
+        if (useSubpath)
+        {
+            app.UsePathBase("/admin");
+        }
         ///// Always behind ssl proxy
         if (useSSL)
         {
@@ -337,6 +378,8 @@ public class AdminAuthServerModule : AbpModule
                 {
                     context.Request.Scheme = "https";
                 }
+                // force https
+                context.Request.Scheme = "https";
                 return next();
             });
         }

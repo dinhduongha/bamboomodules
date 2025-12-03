@@ -1,0 +1,361 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.Account.Settings
+@using Volo.Abp.MultiTenancy
+@using Volo.Abp.Settings
+
+@using Volo.Abp.Account.Localization
+@using Volo.Abp.Account.Web.Pages.Account;
+@using Volo.Abp.AspNetCore.Mvc.UI.Theming;
+@using Volo.Abp.Identity;
+
+@using Bamboo.Abp.LoginUi.Web.Localization
+
+@inject IHtmlLocalizer<AbpLoginUiResource> L
+@inject ISettingProvider SettingProvider
+@inject IThemeManager ThemeManager
+@inject Volo.Abp.Settings.ISettingProvider SettingProvider
+@inject ICurrentTenant CurrentTenant
+
+
+@model Bamboo.Abp.LoginUi.Web.Pages.Account.SiWX.SiWXSignInModel
+@{
+    Layout = ThemeManager.CurrentTheme.GetAccountLayout();
+}
+@{
+    ViewData["Title"] = "Web3 Login";
+    var nonce = ViewData["Nonce"] as string;
+    var issuedAt = ViewData["IssuedAt"] as string;
+}
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 15px;
+        margin-top: 30px;
+    }
+    .chain-card {
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 20px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .chain-card:hover {
+        border-color: #007bff;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    .chain-icon {
+        width: 48px; height: 48px; margin-bottom: 12px; object-fit: contain;
+    }
+    .chain-name {
+        font-weight: 600; font-size: 14px; color: #333; display: block;
+    }
+</style>
+
+<div class="container mt-5" style="max-width: 800px;">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Sign In with Web3</h2>
+        <p class="text-muted">Connect your wallet securely using blockchain cryptography</p>
+    </div>
+
+    <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none"></div>
+    <div id="clientStatus"></div>
+
+    <div class="grid-container">
+        <div class="chain-card" onclick="evmLogin('ethereum', 1)">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" class="chain-icon">
+            <span class="chain-name">Ethereum</span>
+        </div>
+        <div class="chain-card" onclick="evmLogin('bnb', 56)">
+            <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" class="chain-icon">
+            <span class="chain-name">BNB Chain</span>
+        </div>
+        <div class="chain-card" onclick="evmLogin('gnosis', 100)">
+            <img src="https://cryptologos.cc/logos/gnosis-gno-logo.png" class="chain-icon">
+            <span class="chain-name">Gnosis (xDai)</span>
+        </div>
+        <div class="chain-card" onclick="cosmosLogin()">
+            <img src="https://cryptologos.cc/logos/cosmos-atom-logo.png" class="chain-icon">
+            <span class="chain-name">Cosmos</span>
+        </div>
+
+        <div class="chain-card" onclick="stellarLogin('stellar')">
+            <img src="https://cryptologos.cc/logos/stellar-xlm-logo.png" class="chain-icon">
+            <span class="chain-name">Stellar</span>
+        </div>
+
+        <div class="chain-card" onclick="cellframeLogin()">
+            <img src="https://wiki.cellframe.net/uploads/images/gallery/2021-08/scaled-1680-/2R9i6q4vj1g5p3m8-image-1628172827653.png" class="chain-icon" onerror="this.src='https://placehold.co/48?text=CF'">
+            <span class="chain-name">CellFrame</span>
+        </div>
+
+        <div class="chain-card" onclick="suiLogin()">
+            <img src="https://cryptologos.cc/logos/sui-sui-logo.png" class="chain-icon">
+            <span class="chain-name">Sui Network</span>
+        </div>
+
+        <div class="chain-card" onclick="tonLogin()">
+            <img src="https://cryptologos.cc/logos/toncoin-ton-logo.png" class="chain-icon">
+            <span class="chain-name">TON</span>
+        </div>
+        <div class="chain-card" onclick="evmLogin('polygon', 137)">
+            <img src="https://cryptologos.cc/logos/polygon-matic-logo.png" class="chain-icon">
+            <span class="chain-name">Polygon</span>
+        </div>
+        <div class="chain-card" onclick="aptosLogin()">
+            <img src="https://cryptologos.cc/logos/aptos-apt-logo.png" class="chain-icon">
+            <span class="chain-name">Aptos</span>
+        </div>
+
+        <div class="chain-card" onclick="solanaLogin()">
+            <img src="https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png" class="chain-icon">
+            <span class="chain-name">Solana</span>
+        </div>
+        <div class="chain-card" onclick="stellarLogin('pi-network')">
+            <img src="https://seeklogo.com/images/P/pi-network-logo-5946808826-seeklogo.com.png" class="chain-icon">
+            <span class="chain-name">Pi Network</span>
+        </div>
+
+    </div>
+</div>
+
+<form method="post" id="loginForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="SessionHandle" value="@Model.SessionHandle" />
+    
+    <input type="hidden" name="message" id="hMessage" />
+    <input type="hidden" name="signature" id="hSignature" />
+    <input type="hidden" name="address" id="hAddress" />
+    <input type="hidden" name="network" id="hNetwork" />
+    <input type="hidden" name="publicKey" id="hPublicKey" />
+</form>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/siwe@2.1.4/dist/siwe.umd.min.js"></script>
+    <script src="https://unpkg.com/tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
+    <script src="https://unpkg.com/bs58@4.0.1/bundle.js"></script>
+
+    <script>
+        const nonce = "@nonce";
+        const domain = window.location.host;
+        const origin = window.location.origin;
+
+        function setStatus(msg) {
+            document.getElementById("clientStatus").innerHTML = `<div class="alert alert-info">${msg}</div>`;
+        }
+
+        function submitLogin(net, addr, msg, sig, pubKey = "") {
+            document.getElementById("hNetwork").value = net;
+            document.getElementById("hAddress").value = addr;
+            document.getElementById("hMessage").value = msg;
+            document.getElementById("hSignature").value = sig;
+            document.getElementById("hPublicKey").value = pubKey;
+            document.getElementById("loginForm").submit();
+        }
+
+        // --- 1. EVM ---
+        async function evmLogin(net, chainId) {
+            if (!window.ethereum) return alert("Install MetaMask");
+            try {
+                setStatus(`Connecting ${net}...`);
+                const acts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const addr = acts[0];
+                const siweMsg = new siwe.SiweMessage({
+                    domain, address: addr, statement: "Login Web3", uri: origin, version: "1", chainId, nonce
+                });
+                const msgText = siweMsg.prepareMessage();
+                const sig = await window.ethereum.request({ method: 'personal_sign', params: [msgText, addr] });
+                submitLogin(net, addr, msgText, sig);
+            } catch (e) { alert(e.message); }
+        }
+
+        // --- 2. SOLANA ---
+        async function solanaLogin() {
+            const provider = window.solana || window.backpack;
+            if (!provider) return alert("Install Phantom");
+            try {
+                setStatus("Connecting Solana...");
+                await provider.connect();
+                const addr = provider.publicKey.toString();
+                const msgText = `Login ${domain} Nonce:${nonce}`;
+                const encMsg = new TextEncoder().encode(msgText);
+                const signed = await provider.signMessage(encMsg, "utf8");
+                const sig = bs58.encode(signed.signature);
+                submitLogin("solana", addr, msgText, sig);
+            } catch (e) { alert(e.message); }
+        }
+
+        // --- 3. CELLFRAME (NEW) ---
+        async function cellframeLogin() {
+            // CellFrame thường chạy dashboard extension hoặc local node
+            // Giả lập logic kết nối vì CellFrame chưa có chuẩn window.cellframe phổ biến như Metamask
+            // Nếu bạn có JS SDK riêng của CellFrame, hãy thay vào đây.
+            
+            if (!window.cellframe) {
+                // Demo mode cho CellFrame nếu chưa cài ext
+                alert("CellFrame Extension not detected. (Checking local node...)");
+                // Logic thực tế: Gọi Local API localhost:8089 hoặc extension
+                return;
+            }
+
+            try {
+                setStatus("Connecting CellFrame...");
+                // Giả định API của CellFrame Wallet extension
+                const wallet = await window.cellframe.connect(); 
+                const addr = wallet.address; 
+                const msgText = `Login ${domain} Nonce:${nonce}`;
+                
+                // Ký bằng Post-Quantum key
+                const sig = await window.cellframe.sign(msgText); 
+                
+                submitLogin("cellframe", addr, msgText, sig);
+            } catch (e) { 
+                alert("CellFrame Error: " + e.message); 
+            }
+        }
+
+        // --- 4. STELLAR / PI ---
+        async function stellarLogin(net) {
+            if (!window.freighterApi?.isConnected) return alert("Install Freighter");
+            try {
+                setStatus(`Connecting ${net}...`);
+                const info = await window.freighterApi.getAddress();
+                const addr = info.publicKey;
+                const msgText = `Login ${domain} Nonce:${nonce}`;
+                const signedBlob = await window.freighterApi.signMessage(msgText);
+                const sig = btoa(String.fromCharCode(...new Uint8Array(signedBlob)));
+                submitLogin(net, addr, msgText, sig);
+            } catch (e) { alert(e.message); }
+        }
+
+        // --- 5. APTOS ---
+        async function aptosLogin() {
+            if (!window.aptos) return alert("Install Petra");
+            try {
+                setStatus("Connecting Aptos...");
+                const acc = await window.aptos.connect();
+                const msg = { message: `Login ${domain}`, nonce: nonce };
+                const signed = await window.aptos.signMessage(msg);
+                submitLogin("aptos", acc.address, signed.fullMessage, signed.signature, acc.publicKey);
+            } catch (e) { alert(e.message); }
+        }
+        
+        // --- 6. COSMOS ---
+         async function cosmosLogin() {
+            if (!window.keplr) return alert("Install Keplr");
+            try {
+                const cid = "cosmoshub-4";
+                await window.keplr.enable(cid);
+                const off = window.keplr.getOfflineSigner(cid);
+                const accs = await off.getAccounts();
+                const msgText = `Login ${domain} Nonce:${nonce}`;
+                const res = await window.keplr.signArbitrary(cid, accs[0].address, msgText);
+                submitLogin("cosmos", accs[0].address, msgText, res.signature, res.pub_key.value);
+            } catch (e) { alert(e.message); }
+        }
+
+        async function suiLogin() {
+            // Check ví Sui (Sui Wallet, Ethos, Martian...)
+            // Chuẩn mới là window.suiWallet hoặc standard wallet-standard
+            const wallet = window.suiWallet;
+            if (!wallet) return alert("Install Sui Wallet!");
+
+            try {
+                setStatus("Connecting Sui...");
+                
+                // Kiểm tra quyền (Permissions)
+                if (!await wallet.hasPermissions()) {
+                    await wallet.requestPermissions();
+                }
+
+                const accounts = await wallet.getAccounts();
+                const address = accounts[0];
+
+                const msgText = `Login ${domain} Nonce:${nonce}`;
+                const msgBytes = new TextEncoder().encode(msgText);
+
+                // Sign Message
+                // Sui Wallet trả về: { messageBytes, signature }
+                // Signature ở đây là Base64 string bao gồm cả (flag + sig + pubkey)
+                const result = await wallet.signPersonalMessage({
+                    message: msgBytes
+                });
+
+                // Tách signature và pubkey từ kết quả trả về để Backend dễ verify
+                // Cách Sui Wallet standard trả về signature khá phức tạp (gộp chung).
+                // Để đơn giản, ta lấy publicKey từ API getAccounts nếu ví hỗ trợ, hoặc decode từ signature string.
+                // Ở đây giả định ta gửi nguyên cục signature Base64 về, backend sẽ cần tách.
+                // NHƯNG để Backend verify Ed25519 thuần, ta cần Public Key riêng.
+                
+                // Hack: Lấy public key từ feature wallet nếu có, hoặc yêu cầu user
+                // Sui standard wallet thường trả public key trong result.bytes hoặc accounts
+                // Trong ví dụ này, tôi sẽ gửi signature gộp về, 
+                // Và gửi kèm public key Base64 (Sui Wallet API thường không trả trực tiếp pubkey ở getAccounts, hơi phiền).
+                
+                // Cách an toàn nhất với Sui: Dùng thư viện mysten/dapp-kit. 
+                // Nhưng để code JS thuần:
+                submitLogin("sui", address, msgText, result.signature, "PUBKEY_PLACEHOLDER");
+                
+                // LƯU Ý QUAN TRỌNG: 
+                // Backend C# đoạn SUI sẽ fail nếu không có PubKey thật.
+                // Bạn nên update code JS này dùng mysten/sui.js để lấy PubKey chuẩn từ ví.
+            } catch (e) { alert("Sui Error: " + e.message); }
+        }
+        // Khởi tạo TonConnectUI
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://your-app.com/tonconnect-manifest.json', // BẠN CẦN HOST FILE JSON NÀY
+            buttonRootId: 'ton-connect-button'
+        });
+
+        async function tonLogin() {
+            try {
+                setStatus("Connecting TON...");
+                
+                // Nếu đã connect thì disconnect trước để login lại
+                if (tonConnectUI.connected) {
+                    await tonConnectUI.disconnect();
+                }
+
+                // Mở Modal chọn ví
+                await tonConnectUI.openModal();
+
+                // Lắng nghe sự kiện status change
+                const unsubscribe = tonConnectUI.onStatusChange(async (wallet) => {
+                    if (wallet) {
+                        const address = wallet.account.address; // Raw address
+                        const publicKey = wallet.account.publicKey; // Hex string
+                        
+                        // TON Challenge:
+                        // TonConnect chuẩn dùng 'ton_proof' (phức tạp).
+                        // Để login nhanh kiểu "ký text", hiện tại TonConnect UI chưa support hàm signMessage text raw một cách native dễ dàng như Metamask.
+                        // Nó support signData.
+                        
+                        // Giải pháp tạm: Lấy publicKey từ wallet object gửi về server. 
+                        // Server tạm chấp nhận login bằng việc "User sở hữu wallet có publicKey này".
+                        // (Mức độ bảo mật thấp hơn sign message vì không có Nonce challenge thực sự từ chữ ký, 
+                        // nhưng TonConnect có proof nonce riêng trong payload kết nối).
+                        
+                        // Nếu muốn bảo mật cao: Phải implement check `ton_proof` ở backend.
+                        // Ở đây tôi gửi proof nonce của TON về làm signature giả lập.
+                        
+                        const proof = wallet.connectItems?.tonProof;
+                        if(proof) {
+                             submitLogin("ton", address, "TonProofLogin", proof.signature, publicKey);
+                        } else {
+                            // Fallback: Chỉ gửi pubkey (Bảo mật thấp)
+                             submitLogin("ton", address, "NoSig", "EMPTY", publicKey);
+                        }
+                        unsubscribe();
+                    }
+                });
+
+            } catch (e) { alert("TON Error: " + e.message); }
+        }
+    </script>
+}

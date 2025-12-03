@@ -1,6 +1,7 @@
 ﻿@page
 @using Microsoft.AspNetCore.Mvc.Localization
 @using Volo.Abp.Account.Settings
+@using Volo.Abp.MultiTenancy
 @using Volo.Abp.Settings
 
 @using Volo.Abp.Account.Localization
@@ -15,6 +16,7 @@
 @inject ISettingProvider SettingProvider
 @inject IThemeManager ThemeManager
 @inject Volo.Abp.Settings.ISettingProvider SettingProvider
+@inject ICurrentTenant CurrentTenant
 
 @model Bamboo.Abp.LoginUi.Web.Pages.Account.LoginUiLoginModel
 
@@ -66,28 +68,46 @@
                 </div>
             </form>
         }
-
-        @if (Model.VisibleExternalProviders.Any() || Model.EnableTelegram)
+        <a asp-page="./SiWXSignIn" 
+            asp-route-returnUrl="@Model.ReturnUrl" 
+            asp-route-returnUrlHash="@Model.ReturnUrlHash"
+            class="btn btn-primary btn-block">
+            <i class="fa fa-wallet"></i> @L["Sign in with Wallet"]
+        </a>        
+        @if (CurrentTenant.IsAvailable) 
         {
-            <div class="d-flex block-center mt-4" style="align-items: center;">
-                <div class="divider"></div>
-                @*<span class="divider-text text-caption mx-4">@L["OrLoginWith"]</span>*@
-                <div class="divider"></div>
+            <div class="alert alert-info">
+                Bạn đang ở Tenant: <strong>@CurrentTenant.Name</strong> (ID: @CurrentTenant.Id)
             </div>
-            <div class="container">
-                @if (Model.EnableTelegram)
-                {
-                    <div class="mt-3">
-                        @Html.Raw(Model.TelegramWidget)
-                    </div>
-                }
-                @if (Model.VisibleExternalProviders.Any())
-                {
-                    <div class="mt-3">
-                        @await Component.InvokeAsync("ExternalLoginWidget", new ExternalLoginWidgetModel(Model.VisibleExternalProviders, Model.ReturnUrl, Model.ReturnUrlHash))
-                    </div>
-                }
+        }
+        else
+        {
+            @* <div class="alert alert-warning">
+                Bạn đang ở chế độ <strong>HOST</strong> (Chưa chọn Tenant)
             </div>
+            *@
+            @if (Model.VisibleExternalProviders.Any() || Model.EnableTelegram)
+            {
+                <div class="d-flex block-center mt-4" style="align-items: center;">
+                    <div class="divider"></div>
+                    @*<span class="divider-text text-caption mx-4">@L["OrLoginWith"]</span>*@
+                    <div class="divider"></div>
+                </div>
+                <div class="container">
+                    @if (Model.EnableTelegram)
+                    {
+                        <div class="mt-3">
+                            @Html.Raw(Model.TelegramWidget)
+                        </div>
+                    }
+                    @if (Model.VisibleExternalProviders.Any())
+                    {
+                        <div class="mt-3">
+                            @await Component.InvokeAsync("ExternalLoginWidget", new ExternalLoginWidgetModel(Model.VisibleExternalProviders, Model.ReturnUrl, Model.ReturnUrlHash))
+                        </div>
+                    }
+                </div>
+            }
         }
         @{
             @*

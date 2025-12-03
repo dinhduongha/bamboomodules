@@ -13,6 +13,19 @@
   </PropertyGroup>
 
 <ItemGroup>	
+  <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+  <PackageReference Include="Nethereum.Web3" Version="5.0.0" />
+  <PackageReference Include="Nethereum.Siwe" Version="5.0.0"/>
+  <PackageReference Include="Nethereum.Signer" Version="5.0.0" />
+  <PackageReference Include="NaCl.Net" Version="0.1.13" />
+  <PackageReference Include="stellar-dotnet-sdk" Version="14.0.1" />
+  <PackageReference Include="Polkadot.NetApi" Version="0.1.9" />
+  <PackageReference Include="NBitcoin" Version="9.0.3" />
+  <PackageReference Include="TonSdk.Core" Version="0.3.9" />  
+  <PackageReference Include="MessagePack" Version="3.1.4" />
+  <PackageReference Include="Solnet.Wallet" Version="6.1.0" />
+  <PackageReference Include="Solnet.Rpc" Version="6.1.0" />
+  <PackageReference Include="SimpleBase" Version="5.6.0" />
 </ItemGroup>
 
   <ItemGroup>
@@ -39,15 +52,15 @@
     <PackageReference Include="AspNet.Security.OAuth.Zalo" Version="10.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.LinkedIn" Version="10.0.0" />
     <PackageReference Include="AspNet.Security.OAuth.Keycloak" Version="10.0.0" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.Sms" Version="10.0.0-rc.3" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0-rc.3" />
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Account.HttpApi" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Identity.Web" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.Sms" Version="10.0.0" />
+    <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>

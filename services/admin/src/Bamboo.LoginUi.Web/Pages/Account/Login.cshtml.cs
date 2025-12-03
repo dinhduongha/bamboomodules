@@ -49,6 +49,7 @@ using static Volo.Abp.UI.Navigation.DefaultMenuNames.Application;
 using Telegram.Bot.Extensions.LoginWidget;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authorization;
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account;
 
 public class LoginUiLoginModel : LoginModel
@@ -79,6 +80,20 @@ public class LoginUiLoginModel : LoginModel
             true,
             true);
         }
+    }
+
+    [AllowAnonymous]
+    [HttpGet("siwx")]
+    public IActionResult Siwx(string returnUrl = null)
+    {
+        // var redirectUrl = Url.Page("/Account/SiWXSignIn", new { returnUrl });
+        // var properties = SignInManager.ConfigureExternalAuthenticationProperties(
+        //     provider: "SIWX",
+        //     redirectUrl: redirectUrl
+        // );
+
+        // return new ChallengeResult("SIWX", properties);
+        return RedirectToPage("/Account/SiWXSignIn", new { returnUrl = returnUrl });
     }
 
     public override async Task<IActionResult> OnPostExternalLogin(string provider)

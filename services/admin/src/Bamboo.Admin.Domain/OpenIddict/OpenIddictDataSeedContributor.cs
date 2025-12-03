@@ -292,14 +292,14 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     redirectUri: $"{reactClientRootUrl}/auth/openiddict",
                     redirectUris: redirectUris,
                     postLogoutRedirectUri: $"{reactClientRootUrl}/auth/openiddict/logout-callback"
-                //    postLogoutRedirectUris: postLogoutRedirectUris
-                //redirectUris: reactClientRootUrl.Select(x => $"{x}/auth/openiddict").ToArray(),
-                //postLogoutRedirectUris: reactClientRootUrl
-                );
+                    //postLogoutRedirectUris: postLogoutRedirectUris
+                    //redirectUris: reactClientRootUrl.Select(x => $"{x}/auth/openiddict").ToArray(),
+                    //postLogoutRedirectUris: reactClientRootUrl
+                    );
             }
             catch (Exception e)
             {
-
+                throw;
             }
         }
         // Swagger Client

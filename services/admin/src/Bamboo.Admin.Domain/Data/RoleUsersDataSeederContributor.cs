@@ -45,10 +45,11 @@ namespace Bamboo.Admin.Data
         public async Task SeedAsync(DataSeedContext context)
         {
             var configurationSection = _configuration.GetSection("App");
+            var rolesSection = _configuration.GetSection("Roles");
             var domain = configurationSection["Domain"] ?? "bamboo.io";
             var rolesName = new List<string>();
-            rolesName = configurationSection.GetSection("StaticRoles").Get<List<string>>();
-            //var roleGroups = configurationSection.GetSection("GroupRoles").Get<List<RoleUsersDataSeederData>>();
+            rolesName = rolesSection.GetSection("StaticRoles").Get<List<string>>();
+            //var roleGroups = rolesSection.GetSection("GroupRoles").Get<List<RoleUsersDataSeederData>>();
             var rolesBase = new List<string>
             {
                 "group_user",
@@ -63,6 +64,7 @@ namespace Bamboo.Admin.Data
                 "group_portal",
                 "group_public",
                 "default_user_group",
+                "group_uom",
             };
 
             var rolesModules = new List<string>
@@ -79,7 +81,6 @@ namespace Bamboo.Admin.Data
                 "group_validate_bank_account",
                 "group_analytic_accounting",
                 "group_allow_doc",
-
                 "group_use_lead",
                 "group_use_recurring_revenues",
                 "group_event_registration_desk",
@@ -169,7 +170,7 @@ namespace Bamboo.Admin.Data
                 "group_lot_on_invoice",
                 "group_survey_user",
                 "group_survey_manager",
-                "group_uom",
+
                 "group_website_restricted_editor",
                 "group_website_designer",
                 "website_page_controller_expose",
