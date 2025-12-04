@@ -8,10 +8,102 @@
 <form asp-page="./Login" asp-page-handler="ExternalLogin" asp-route-returnUrl="@Model!.ReturnUrl" asp-route-returnUrlHash="@Model!.ReturnUrlHash" method="post">
     <div style="text-align: left">
         @foreach (var provider in Model!.VisibleExternalProviders)
+{
+    /* --- CASE 1: GOOGLE --- */
+    if (provider.AuthenticationScheme == "Google")
+    {
+        <button type="submit" 
+                class="btn btn-light w-100 border" 
+                style="margin-bottom: 8px; font-weight: 500; position: relative;"
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            <i class="fab fa-google" style="color: #DB4437; margin-right: 8px;"></i> 
+            <span>Login with Google</span>
+        </button>
+    }
+    /* --- CASE 2: MICROSOFT --- */
+    else if (provider.AuthenticationScheme == "Microsoft")
+    {
+        <button type="submit" 
+                class="btn btn-dark w-100" 
+                style="margin-bottom: 8px; font-weight: 500; background-color: #2F2F2F; border-color: #2F2F2F;"
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            <i class="fab fa-microsoft" style="color: white; margin-right: 8px;"></i> 
+            <span>Login with Microsoft</span>
+        </button>
+    }
+    /* --- CASE 3: ZALO --- */
+    else if (provider.AuthenticationScheme == "Zalo")
+    {
+        <button type="submit" 
+                class="btn btn-primary w-100" 
+                style="margin-bottom: 8px; font-weight: 500; background-color: #0068FF; border-color: #0068FF;"
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            <span style="font-weight: 900; font-family: sans-serif; margin-right: 8px; background: white; color: #0068FF; padding: 0 4px; border-radius: 4px; font-size: 12px;">Z</span>
+            <span>Login with Zalo</span>
+        </button>
+    }
+    /* --- CASE 4: APPLE --- */
+    else if (provider.AuthenticationScheme == "Apple")
+    {
+        <button type="submit" 
+                class="btn btn-dark w-100" 
+                style="margin-bottom: 8px; font-weight: 500; background-color: #000000; border-color: #000000;"
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            <i class="fab fa-apple" style="color: white; margin-right: 8px; font-size: 1.1em;"></i> 
+            <span>Login with Apple</span>
+        </button>
+    }
+    /* --- CASE 5: X (TWITTER) --- */
+    /* .NET thường vẫn lưu key là "Twitter", nhưng ta hiển thị giao diện X */
+    else if (provider.AuthenticationScheme == "Twitter" || provider.AuthenticationScheme == "X")
+    {
+        <button type="submit" 
+                class="btn btn-dark w-100" 
+                style="margin-bottom: 8px; font-weight: 500; background-color: #000000; border-color: #000000;"
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            <i class="fab fa-x-twitter" style="color: white; margin-right: 8px;"></i> 
+            <span>Login with X</span>
+        </button>
+    }
+    /* --- DEFAULT --- */
+    else
+    {
+        var buttonClasses = LoginProvidersUi.GetButtonClasses(provider.AuthenticationScheme);
+        var buttonText = L[provider.DisplayName]; // Mặc định luôn lấy tên hiển thị
+        
+        // KIỂM TRA: Nếu không có class style nào được định nghĩa
+        if (string.IsNullOrWhiteSpace(buttonClasses))
         {
-            var buttonClasses = LoginProvidersUi.GetButtonClasses(provider.AuthenticationScheme);
-            var buttonText = buttonClasses == LoginProvidersUi.DefaultButtonClasses ? L[provider.DisplayName] : null;
-            <button type="submit" class="@buttonClasses" style="color: #485585; caret-color: #485585; font-size: 24px; background-color: transparent; border-style: none;" name="provider" value="@provider.AuthenticationScheme" title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">@buttonText</button>
+            // Fallback: Gán class nút màu xám (secondary) hoặc xanh (info) của Bootstrap
+            buttonClasses = "btn btn-secondary"; 
         }
+        else 
+        {
+            // Logic cũ: Kiểm tra xem có phải là class mặc định của hệ thống không để quyết định hiển thị text
+            // Nhưng để an toàn, nếu provider lạ, ta nên ưu tiên hiển thị tên (DisplayName)
+            var isDefault = buttonClasses == LoginProvidersUi.DefaultButtonClasses;
+            buttonText = isDefault ? L[provider.DisplayName] : buttonText; 
+        }
+
+        <button type="submit" 
+                class="@buttonClasses w-100" 
+                style="margin-bottom: 8px; font-weight: 500;" 
+                name="provider" 
+                value="@provider.AuthenticationScheme" 
+                title="@L["LogInUsingYourProviderAccount", provider.DisplayName]">
+            @buttonText
+        </button>
+    }
+}
     </div>
 </form>

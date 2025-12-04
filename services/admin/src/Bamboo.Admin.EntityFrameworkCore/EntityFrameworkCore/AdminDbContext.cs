@@ -18,7 +18,7 @@ namespace Bamboo.Admin.EntityFrameworkCore;
 [ReplaceDbContext(typeof(IIdentityDbContext))]
 [ReplaceDbContext(typeof(ITenantManagementDbContext))]
 [ConnectionStringName("Default")]
-public class AdminDbContext :
+public partial class AdminDbContext :
     AbpDbContext<AdminDbContext>,
     IIdentityDbContext,
     ITenantManagementDbContext
@@ -50,6 +50,9 @@ public class AdminDbContext :
     // Tenant Management
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
+
+    public DbSet<TenantMember> TenantMembers { get; set; }
+    public DbSet<TenantRegistration> TenantRegistrations { get; set; }
 
     public DbSet<TenantOwner> TenantOwners { get; set; }
     public DbSet<UserBranch> UserBrands { get; set; }

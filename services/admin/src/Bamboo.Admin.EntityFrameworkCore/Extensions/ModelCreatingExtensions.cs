@@ -9,6 +9,8 @@ using Volo.Abp.Domain.Entities;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 
 using Bamboo.Admin;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 public static class DbContextModelCreatingExtensions
 {
@@ -124,7 +126,49 @@ public static class DbContextModelCreatingExtensions
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+        builder.Entity<TenantMember>(b =>
+        {
+            b.HasIndex(b => b.Id).IsUnique(true);
+            b.HasIndex(b => b.TenantId);
+            b.HasIndex(b => b.UserId);
+            b.HasIndex(b => new { TenantId = b.TenantId, UserId = b.UserId }).IsUnique(true);
+            b.HasKey(e => e.Id);
+            b.Property(e => e.Id)
+                            .HasDefaultValueSql("uuidv7()")
+                            .HasColumnName("id");
 
+            b.Property(x => x.Roles)
+             .HasConversion(
+                 // Khi lưu vào DB: Convert List -> JSON String
+                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+
+                 // Khi đọc từ DB: Convert JSON String -> List
+                 v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null) ?? new List<string>()
+             );
+
+            // Để EF Core so sánh được sự thay đổi của List (Value Comparer)
+            // Phần này hơi nâng cao, cần thiết để EF biết khi nào bạn Add item vào list để update DB
+            // Nếu không có, EF có thể không nhận ra sự thay đổi.
+            var valueComparer = new ValueComparer<List<string>>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToList());
+
+            b.Property(x => x.Roles).Metadata.SetValueComparer(valueComparer);
+        });
+
+        builder.Entity<TenantRegistration>(b =>
+        {
+            b.HasIndex(b => b.Id).IsUnique(true);
+            b.HasIndex(b => b.UserId);
+            b.HasIndex(b => b.Name);
+            b.HasKey(e => e.Id);
+
+            b.Property(e => e.Id)
+                .HasDefaultValueSql("uuidv7()")
+                .HasColumnName("id");
+
+        });
         builder.UseIdentityColumns();
         builder.UseSerialColumns();
         builder.StringSize();

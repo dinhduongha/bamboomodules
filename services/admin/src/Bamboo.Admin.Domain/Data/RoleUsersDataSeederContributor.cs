@@ -52,10 +52,15 @@ namespace Bamboo.Admin.Data
             //var roleGroups = rolesSection.GetSection("GroupRoles").Get<List<RoleUsersDataSeederData>>();
             var rolesBase = new List<string>
             {
+                "group_system",
+            };
+
+            var rolesModules = new List<string>
+            {
                 "group_user",
                 "group_erp_manager",
                 "group_sanitize_override",
-                "group_system",
+                "group_uom",
                 "group_multi_company",
                 "group_multi_currency",
                 "group_no_one",
@@ -64,11 +69,7 @@ namespace Bamboo.Admin.Data
                 "group_portal",
                 "group_public",
                 "default_user_group",
-                "group_uom",
-            };
 
-            var rolesModules = new List<string>
-            {
                 "group_delivery_invoice_address",
                 "group_account_readonly",
                 "group_account_invoice",
@@ -239,22 +240,27 @@ namespace Bamboo.Admin.Data
                 rolesName.AddRange([
                     "superadmin",
                     "admin",
+                    //"owner",
                     "manager",
-                    "group_user",
-                    "group_erp_manager",
-                    "group_system",
-                    "group_multi_company",
-                    "group_multi_currency",
-                    "group_partner_manager",
-                    "group_portal",
-                    "group_public"
+                    "guess",
+                    "member",
+                    // "group_user",
+                    // "group_erp_manager",
+                    // "group_system",
+                    // "group_multi_company",
+                    // "group_multi_currency",
+                    // "group_partner_manager",
+                    // "group_portal",
+                    // "group_public"
                     ]);
+                rolesName.AddRange(rolesBase);
             }
             else
             {
                 rolesName.AddRange([
                     "admin",
-                    "owner"
+                    "owner",
+                    "user"
                 ]);
                 rolesName.AddRange(rolesModules);
             }

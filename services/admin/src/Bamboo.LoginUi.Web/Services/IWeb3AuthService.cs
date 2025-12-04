@@ -4,6 +4,8 @@ namespace Bamboo.Abp.LoginUi.Services
 {
     public interface IWeb3AuthService
     {
+        bool IsEvm(string network);
+
         /// <summary>
         /// Sinh Nonce ngẫu nhiên và lưu vào MemoryCache trong 5 phút.
         /// Trả về Handle (Key) để Client lưu giữ reference.

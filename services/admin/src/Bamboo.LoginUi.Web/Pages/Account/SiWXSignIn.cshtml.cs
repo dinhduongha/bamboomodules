@@ -26,6 +26,7 @@ using Volo.Abp.Account.Web.Pages.Account;
 using Bamboo.Abp.LoginUi.Services;
 
 using IdentityUser = Volo.Abp.Identity.IdentityUser;
+using System.Linq;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account.SiWX;
 
@@ -41,6 +42,12 @@ public class SiWXSignInModel : AccountPageModel
 
     [BindProperty]
     public string SessionHandle { get; set; }
+
+    public bool EnableEip6963 { get; set; }
+    public bool EnableWalletConnect { get; set; }
+    public string WalletConnectProjectId { get; set; }
+
+    public List<WalletConnectChainDto> WalletConnectChains { get; set; } = new();
 
     // private SignInManager<IdentityUser> SignInManager { get; }
     // private UserManager<IdentityUser> UserManager { get; }
@@ -86,9 +93,32 @@ public class SiWXSignInModel : AccountPageModel
             });
         }
 
+        EnableEip6963 = _configuration.GetValue<bool>("Blockchain:EnableEip6963");
+        EnableWalletConnect = _configuration.GetValue<bool>("Blockchain:EnableWalletConnect");
+        WalletConnectProjectId = _configuration["Blockchain:WalletConnectProjectId"];
+
+        var chains = _configuration.GetSection("Blockchain:WalletConnectChains")
+                                           .Get<List<WalletConnectChainDto>>();
+
+        if (chains != null && chains.Any())
+        {
+            WalletConnectChains = chains;
+        }
+        else
+        {
+            // Fallback: Nếu quên config thì mặc định là Mainnet để không lỗi JS
+            WalletConnectChains.Add(new WalletConnectChainDto
+            {
+                ChainId = 1,
+                Name = "Ethereum",
+                Currency = "ETH",
+                ExplorerUrl = "https://etherscan.io",
+                RpcUrl = "https://eth.llamarpc.com"
+            });
+        }
+
         // 1. Gọi Service tạo Nonce & Cache
         var result = _web3AuthService.GenerateAndCacheNonce();
-
         // 2. Đẩy dữ liệu ra View
         SessionHandle = result.Handle;
         ViewData["Nonce"] = result.Nonce;
@@ -117,6 +147,15 @@ public class SiWXSignInModel : AccountPageModel
     public async Task<IActionResult> OnPostAsync(string siwxJson, string signature, string address, string network, string publicKey)
     {
 
+        if (_currentTenant.IsAvailable)
+        {
+            return RedirectToPage("/Account/Login", new
+            {
+                ReturnUrl = ReturnUrl,
+                ReturnUrlHash = ReturnUrlHash
+            });
+        }
+
         SiwxMessageDto? dto = null;
         try
         {
@@ -135,7 +174,7 @@ public class SiWXSignInModel : AccountPageModel
 
         if (dto == null) return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
 
-        string messageVerify = dto.ToSiweString();
+        string messageVerify = dto.ToSiweString(_web3AuthService.IsEvm(network));
 
         var signingResult = await _web3AuthService.VerifyLoginAsync(SessionHandle, messageVerify, signature, address, network, publicKey);
 
@@ -272,4 +311,13 @@ public class SiWXSignInModel : AccountPageModel
         // Nếu không có, về trang chủ
         return Redirect("~/");
     }
+}
+
+public class WalletConnectChainDto
+{
+    public int ChainId { get; set; }
+    public string Name { get; set; }
+    public string Currency { get; set; }
+    public string ExplorerUrl { get; set; }
+    public string RpcUrl { get; set; }
 }

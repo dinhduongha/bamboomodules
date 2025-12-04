@@ -425,15 +425,6 @@ public class AbpLoginUiWebModule : AbpModule
                 options.ClientSecret = section["ClientSecret"];
             });
         }
-        section = configuration.GetSection("Authentication:Zalo");
-        if (section.Exists() && section.GetValue<bool>("Enable", false))
-        {
-            builder.AddZalo(options =>
-            {
-                options.ClientId = section["ClientId"];
-                options.ClientSecret = section["ClientSecret"];
-            });
-        }
         section = configuration.GetSection("Authentication:LinkedIn");
         if (section.Exists() && section.GetValue<bool>("Enable", false))
         {
@@ -453,6 +444,15 @@ public class AbpLoginUiWebModule : AbpModule
                 options.AuthorizationEndpoint = section["AuthorizationEndpoint"];
                 options.TokenEndpoint = section["TokenEndpoint"];
                 options.UserInformationEndpoint = section["UserInformationEndpoint"];
+            });
+        }
+        section = configuration.GetSection("Authentication:Zalo");
+        if (section.Exists() && section.GetValue<bool>("Enable", false))
+        {
+            builder.AddZalo(options =>
+            {
+                options.ClientId = section["ClientId"];
+                options.ClientSecret = section["ClientSecret"];
             });
         }
     }

@@ -15,7 +15,10 @@ using Solnet.Rpc;
 using StellarDotnetSdk.Accounts;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Crypto.Parameters;
-using SimpleBase; // Cần cài package SimpleBase
+using SimpleBase;
+using Substrate.NetApi; // Cần cài package SimpleBase
+using Substrate.NetApi.Model.Types; // Các kiểu dữ liệu Substrate
+using Substrate.NET.Schnorrkel.Keys;
 
 namespace Bamboo.Abp.LoginUi.Services
 {
@@ -107,6 +110,8 @@ namespace Bamboo.Abp.LoginUi.Services
                 var recovered = signer.EncodeUTF8AndEcRecover(msg, sig);
                 return recovered.Equals(addr, StringComparison.OrdinalIgnoreCase);
             }
+            // TODO: Check verify functions
+            return false;
             if (net == "sui")
             {
                 if (string.IsNullOrEmpty(pubKeyHex)) return false;
@@ -156,7 +161,7 @@ namespace Bamboo.Abp.LoginUi.Services
             // --- C. Stellar / Pi Network ---
             if (net == "stellar" || net == "pi-network")
             {
-                var kp = KeyPair.FromAccountId(addr);
+                var kp = StellarDotnetSdk.Accounts.KeyPair.FromAccountId(addr);
                 var sigBytes = Convert.FromBase64String(sig);
                 return kp.Verify(msgBytes, sigBytes);
             }
@@ -196,7 +201,65 @@ namespace Bamboo.Abp.LoginUi.Services
                 bool validSigLen = sig.Length > 100;
                 return validAddr && validSigLen;
             }
+            if (net == "polkadot")
+            {
+                try
+                {
+                    // 1. Parse Address (SS58 -> Public Key Bytes)
+                    // Utils.GetPublicKeyFrom là hàm của Substrate.NetApi để decode SS58
+                    var publicKeyBytes = Substrate.NetApi.Utils.GetPublicKeyFrom(addr);
 
+                    // 2. Parse Signature (Hex -> Bytes)
+                    var signatureBytes = Substrate.NetApi.Utils.HexToByteArray(sig);
+
+                    // 3. Chuẩn bị Message
+                    // Polkadot wallet thường bọc message trong tag <Bytes>...</Bytes> khi dùng signRaw
+                    // Tuy nhiên, việc verify Sr25519 thường verify trên payload gốc.
+                    // Thư viện Substrate.NetApi hỗ trợ Verify signature Sr25519.
+
+                    // Wrap Message (Bắt buộc với Polkadot JS signRaw)
+                    // Ví Polkadot JS Extension khi dùng signRaw sẽ tự động bọc message vào thẻ <Bytes>
+                    // Backend phải tự bọc lại y hệt thì mới khớp hash.
+                    string wrappedMsg = $"<Bytes>{msg}</Bytes>";
+                    var msgBytesPolkadot = Encoding.UTF8.GetBytes(wrappedMsg);
+
+                    //Xử lý Signature (Loại bỏ Prefix Type)
+                    // Chữ ký Polkadot (MultiSignature) thường có 1 byte prefix ở đầu (VD: 0x01 cho Sr25519).
+                    // Độ dài chuẩn Sr25519 là 64 bytes. Nếu dài hơn (65 hoặc 66 bytes), ta cắt bỏ đầu.
+                    if (signatureBytes.Length > 64)
+                    {
+                        // Bỏ các byte thừa ở đầu (thường là 1 byte type)
+                        signatureBytes = signatureBytes.Skip(signatureBytes.Length - 64).ToArray();
+                    }
+
+                    // Dùng Schnorrkel Verify
+                    // Lưu ý: Chữ ký Polkadot thường có prefix type (1 byte) ở đầu nếu là MultiSignature. 
+                    // Nhưng signRaw trả về signature thuần (64 bytes).
+                    // Nếu sig dài 66 bytes (0x...), HexToByteArray đã xử lý 0x.
+
+                    // 3. Verify bằng thư viện Schnorrkel
+                    try
+                    {
+                        // Kiểm tra độ dài Public Key (Phải là 32 bytes)
+                        if (publicKeyBytes.Length != 32) return false;
+
+                        // Khởi tạo Public Key từ bytes
+                        var pk = new PublicKey(publicKeyBytes);
+
+                        // Gọi hàm Verify của thư viện (Signature, Message)
+                        return pk.Verify(signatureBytes, msgBytesPolkadot);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Polkadot verify failed");
+                    return false;
+                }
+            }
             return false;
         }
 
@@ -211,7 +274,7 @@ namespace Bamboo.Abp.LoginUi.Services
             try
             {
                 // 1. EVM
-                if (IsEvm(network) || network == "gnosis" || network == "polygon")
+                if (IsEvm(network))
                 {
                     var web3 = new Web3(rpcUrl);
                     var txCount = await web3.Eth.Transactions.GetTransactionCount.SendRequestAsync(address);
@@ -281,6 +344,44 @@ namespace Bamboo.Abp.LoginUi.Services
                     // Check nếu totalBalance > 0
                     return !json.Contains("\"totalBalance\":\"0\"");
                 }
+                if (network == "polkadot")
+                {
+                    // Cách đơn giản nhất: Gọi API của Subscan hoặc Polkascan (REST API) 
+                    // vì gọi RPC trực tiếp của Polkadot khá phức tạp (cần decode scale codec).
+                    // Nhưng để dùng RPC thuần, ta check System Account Info.
+
+                    // Cách dùng HTTP JSON-RPC thô (Không cần thư viện nặng):
+                    var client = _httpClientFactory.CreateClient();
+
+                    // Payload lấy thông tin account
+                    // Polkadot lưu balance trong module System, storage Account.
+                    // Ta cần tính Storage Key (Hash của module + Hash của address).
+                    // Việc này quá phức tạp nếu code tay.
+
+                    // GIẢI PHÁP TỐI ƯU: Dùng Substrate.NetApi Client
+                    try
+                    {
+                        // Kết nối WebSocket hoặc HTTP
+                        // Substrate.NetApi chủ yếu hỗ trợ WebSocket. 
+                        // Nếu bạn chỉ muốn check nhanh qua HTTP, hãy dùng API của Subscan (Free tier).
+                        // Ví dụ: https://polkadot.api.subscan.io/api/scan/account/tokens
+
+                        // Ở đây tôi demo cách gọi RPC check balance đơn giản nhất nếu có hỗ trợ state_getStorage
+                        // Nhưng do tính phức tạp của SCALE Codec, tôi khuyên dùng API Indexer miễn phí.
+
+                        var url = $"https://polkadot.webapi.subscan.io/api/scan/search";
+                        var payload = new { key = address };
+                        var content = new StringContent(System.Text.Json.JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+
+                        var res = await client.PostAsync(url, content);
+                        if (!res.IsSuccessStatusCode) return false;
+
+                        var json = await res.Content.ReadAsStringAsync();
+                        // Check xem có account info không
+                        return json.Contains("\"account\":") && !json.Contains("\"account\":null");
+                    }
+                    catch { return false; }
+                }
             }
             catch (Exception ex)
             {
@@ -291,7 +392,7 @@ namespace Bamboo.Abp.LoginUi.Services
         }
 
         // --- Helpers ---
-        private bool IsEvm(string n) => new[] { "ethereum", "bnb", "gnosis", "polygon" }.Contains(n);
+        public bool IsEvm(string n) => new[] { "ethereum", "bnb", "gnosis", "polygon" }.Contains(n);
 
         private async Task<bool> HttpGetCheckAsync(string url, string requiredContent = null)
         {

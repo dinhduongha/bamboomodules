@@ -44,12 +44,19 @@ public class SiwxMessageDto
     /// <summary>
     /// Tái tạo chuỗi message chuẩn EIP-4361 (Bắt buộc dùng \n)
     /// </summary>
-    public string ToSiweString()
+    public string ToSiweString(bool eth = true)
     {
         var sb = new StringBuilder();
 
         // Header
-        sb.Append($"{Domain} wants you to sign in with your Ethereum account:\n");
+        if (eth)
+        {
+            sb.Append($"{Domain} wants you to sign in with your Ethereum account:\n");
+        }
+        else
+        {
+            sb.Append($"{Domain} wants you to sign in with your account:\n");
+        }
         sb.Append($"{Address}\n\n");
 
         // Statement (Nếu có)
@@ -92,4 +99,21 @@ public class SiwxMessageDto
 
         return sb.ToString();
     }
+}
+public class WalletConnectChainDto
+{
+    [JsonPropertyName("chainId")]
+    public int ChainId { get; set; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("currency")]
+    public string Currency { get; set; }
+
+    [JsonPropertyName("explorerUrl")]
+    public string ExplorerUrl { get; set; }
+
+    [JsonPropertyName("rpcUrl")]
+    public string RpcUrl { get; set; }
 }

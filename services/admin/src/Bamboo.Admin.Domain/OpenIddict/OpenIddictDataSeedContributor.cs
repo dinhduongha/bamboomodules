@@ -254,6 +254,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 grantTypes: new List<string>
                 {
                     OpenIddictConstants.GrantTypes.AuthorizationCode,
+                    OpenIddictConstants.GrantTypes.ClientCredentials,
+                    OpenIddictConstants.GrantTypes.Password,
                 },
                 scopes: commonScopes,
                 redirectUri: $"{blazorRootUrl}/authentication/login-callback",
@@ -285,7 +287,9 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                     grantTypes: new List<string>
                     {
                         OpenIddictConstants.GrantTypes.AuthorizationCode,
-                        //OpenIddictConstants.GrantTypes.RefreshToken,
+                        OpenIddictConstants.GrantTypes.Password,
+                        OpenIddictConstants.GrantTypes.ClientCredentials,
+                        OpenIddictConstants.GrantTypes.RefreshToken,
                     },
                     scopes: commonScopes,
                     clientUri: reactClientRootUrl,
@@ -391,8 +395,9 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 OpenIddictConstants.GrantTypes.AuthorizationCode,
                 OpenIddictConstants.GrantTypes.ClientCredentials,
                 OpenIddictConstants.GrantTypes.DeviceCode,
-                OpenIddictConstants.GrantTypes.RefreshToken
-            };
+                OpenIddictConstants.GrantTypes.RefreshToken,
+                "gt:switch_tenant"
+        };
 
         foreach (var grantType in grantTypes)
         {

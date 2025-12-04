@@ -9,4 +9,5 @@ namespace Bamboo.Admin;
 public class UserBranch : IdentityUser
 {
     //public Guid? BranchId { get; set; }
+
 }

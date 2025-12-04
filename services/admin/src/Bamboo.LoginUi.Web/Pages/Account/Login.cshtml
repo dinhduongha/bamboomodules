@@ -67,21 +67,41 @@
                     }
                 </div>
             </form>
-        }
-        <a asp-page="./SiWXSignIn" 
-            asp-route-returnUrl="@Model.ReturnUrl" 
-            asp-route-returnUrlHash="@Model.ReturnUrlHash"
-            class="btn btn-primary btn-block">
-            <i class="fa fa-wallet"></i> @L["Sign in with Wallet"]
-        </a>        
+            <div class="position-relative mt-4 mb-4 text-center">
+                <hr class="text-secondary opacity-25">
+                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small text-uppercase" style="font-weight: 500;">
+                    @L["Or"] </span>
+            </div>
+            <div class="d-grid gap-2 mb-3">
+                <a asp-page="./SiWXSignIn" 
+                asp-route-returnUrl="@Model.ReturnUrl" 
+                asp-route-returnUrlHash="@Model.ReturnUrlHash"
+                class="btn btn-outline-primary btn-lg fw-bold"
+                style="border-width: 2px;">
+                    <i class="fa fa-wallet me-2"></i> @L["Sign in with Wallet"]
+                </a>
+            </div>
+        } else {
+            <a asp-page="./SiWXSignIn" 
+                asp-route-returnUrl="@Model.ReturnUrl" 
+                asp-route-returnUrlHash="@Model.ReturnUrlHash"
+                class="btn btn-primary btn-block">
+                <i class="fa fa-wallet"></i> @L["Sign in with Wallet"]
+            </a>    
+        }    
         @if (CurrentTenant.IsAvailable) 
         {
             <div class="alert alert-info">
-                Bạn đang ở Tenant: <strong>@CurrentTenant.Name</strong> (ID: @CurrentTenant.Id)
+                Tenant: <strong>@CurrentTenant.Name</strong> (ID: @CurrentTenant.Id)
             </div>
         }
         else
         {
+            <div class="position-relative mt-4 mb-4 text-center">
+                <hr class="text-secondary opacity-25">
+                <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small text-uppercase" style="font-weight: 500;">
+                    @L["Or"] </span>
+            </div>
             @* <div class="alert alert-warning">
                 Bạn đang ở chế độ <strong>HOST</strong> (Chưa chọn Tenant)
             </div>

@@ -99,10 +99,10 @@ public static class SocialLoginProviders
         { "Yahoo", new LoginProviderUiInfoModel { ButtonClasses = "fab fa-yahoo" } },
         { "Yammer", new LoginProviderUiInfoModel { ButtonClasses = "fab fa-yammer" } },
         { "Yandex", new LoginProviderUiInfoModel { ButtonClasses = "fab fa-yandex" } },
-        // { "Zalo", new LoginProviderUiInfoModel { ButtonClasses = "???" } },
+        { "Zalo", new LoginProviderUiInfoModel { ButtonClasses = "fab fa-yandex" } },
         // { "Zendesk", new LoginProviderUiInfoModel { ButtonClasses = "???" } },
     };
-    
+
     public static string GetButtonClasses(string authenticationScheme)
     {
         return Providers.ContainsKey(authenticationScheme)

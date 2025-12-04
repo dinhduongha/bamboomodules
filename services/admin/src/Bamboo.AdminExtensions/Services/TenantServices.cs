@@ -123,7 +123,7 @@ public class TenantService : ApplicationService
     {
         if (CurrentUser.TenantId != null)
         {
-            throw new UserFriendlyException("Only host user can reade tenant");
+            throw new UserFriendlyException("Only host user can read tenant");
         }
         var queryable = (await _tenantRepository.GetQueryableAsync()).WhereIf(
                     true,

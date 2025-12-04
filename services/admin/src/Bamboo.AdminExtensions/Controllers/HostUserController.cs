@@ -31,18 +31,18 @@ using Bamboo.AdminExtensions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 //[Area(IntegrateRemoteServiceConsts.ModuleName)]
 //[RemoteService(Name = IntegrateRemoteServiceConsts.RemoteServiceName)]
-[Route("api/admin/tenants/")]
+[Route("api/host-user/")]
 [Produces("application/json")]
 //[Authorize]
 //[AllowAnonymous]
-public class TenantExtraController : AbpController
+public class HostUserController : AbpController
 {
     protected readonly AdminResetPasswordAppService _adminResetPasswordService;
     protected readonly TenantService _tenantService;
     protected readonly IHttpClientFactory _httpClientFactory;
     protected readonly IConfiguration _configuration;
 
-    public TenantExtraController(TenantService tenantService,
+    public HostUserController(TenantService tenantService,
                             AdminResetPasswordAppService adminResetPasswordService,
                             IConfiguration configuration,
                             ILookupNormalizer lookupNormalizer,
@@ -54,7 +54,7 @@ public class TenantExtraController : AbpController
         _tenantService = tenantService;
         _adminResetPasswordService = adminResetPasswordService;
 
-    }    
+    }
 
     [HttpGet]
     [Route("{id}")]
@@ -75,45 +75,45 @@ public class TenantExtraController : AbpController
         return await _tenantService.CreateAsync(name);
     }
 
-    [HttpPost]
-    [Route("migrate")]
-    public async Task<TenantDto> CreateWithIdAsync(TenantMigrateDto data)
-    {
-        return await _tenantService.MigrateAsync(data);
-    }
+    // [HttpPost]
+    // [Route("migrate")]
+    // public async Task<TenantDto> CreateWithIdAsync(TenantMigrateDto data)
+    // {
+    //     return await _tenantService.MigrateAsync(data);
+    // }
 
-    [HttpGet]
-    [Route("roles")]
-    public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
-    {
-        return await _tenantService.GetRoleAsync();
-    }
+    // [HttpGet]
+    // [Route("roles")]
+    // public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
+    // {
+    //     return await _tenantService.GetRoleAsync();
+    // }
 
-    [HttpGet]
-    [Route("roles/{tenant}")]
-    public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleByTenantAsync(Guid? tenant)
-    {
-        return await _tenantService.GetRoleByTenantAsync(tenant);
-    }
+    // [HttpGet]
+    // [Route("roles/{tenant}")]
+    // public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleByTenantAsync(Guid? tenant)
+    // {
+    //     return await _tenantService.GetRoleByTenantAsync(tenant);
+    // }
 
-    [HttpPost]
-    [Route("user-roles-add/{tenant}")]
-    public async Task<bool> TenantRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
-    {
-        return await _tenantService.TenantUserRoleAddAsync(tenant, dto);
-    }
+    // [HttpPost]
+    // [Route("user-roles-add/{tenant}")]
+    // public async Task<bool> TenantRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
+    // {
+    //     return await _tenantService.TenantUserRoleAddAsync(tenant, dto);
+    // }
 
-    [HttpDelete]
-    [Route("user-roles-remove/{tenant}/{user}")]
-    public async Task<bool> TenantRoleRemoveAsync(Guid tenant, Guid user)
-    {
-        return await _tenantService.TenantUserRoleRemoveAsync(tenant, user);
-    }
+    // [HttpDelete]
+    // [Route("user-roles-remove/{tenant}/{user}")]
+    // public async Task<bool> TenantRoleRemoveAsync(Guid tenant, Guid user)
+    // {
+    //     return await _tenantService.TenantUserRoleRemoveAsync(tenant, user);
+    // }
 
-    [HttpPost]
-    [Route("users/reset-user-password")]
-    public async Task AdminResetPassword([FromBody] ResetUserPasswordDto input)
-    {
-        await _adminResetPasswordService.AdminResetPasswordAsync(input);
-    }
+    // [HttpPost]
+    // [Route("users/reset-user-password")]
+    // public async Task AdminResetPassword([FromBody] ResetUserPasswordDto input)
+    // {
+    //     await _adminResetPasswordService.AdminResetPasswordAsync(input);
+    // }
 }

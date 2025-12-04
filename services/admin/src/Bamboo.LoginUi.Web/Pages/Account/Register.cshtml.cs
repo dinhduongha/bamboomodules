@@ -16,6 +16,7 @@ using Volo.Abp.Account.Web;
 using Volo.Abp.Account.Web.Pages.Account;
 using Volo.Abp.Auditing;
 using Volo.Abp.Identity;
+using Volo.Abp.MultiTenancy;
 using Volo.Abp.Security.Claims;
 using Volo.Abp.Settings;
 using Volo.Abp.Validation;
@@ -25,17 +26,28 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Account;
 public class LoginUiRegisterModel : RegisterModel
 {
     private const string SiwxProviderName = "SIWX";
+    private readonly ICurrentTenant _currentTenant;
     public LoginUiRegisterModel(
+        ICurrentTenant currentTenant,
         IAccountAppService accountAppService,
         IAuthenticationSchemeProvider schemeProvider,
         IOptions<AbpAccountOptions> accountOptions,
         IdentityDynamicClaimsPrincipalContributorCache identityDynamicClaimsPrincipalContributorCache)
         : base(accountAppService, schemeProvider, accountOptions, identityDynamicClaimsPrincipalContributorCache)
     {
+        _currentTenant = currentTenant;
     }
 
     public override async Task<IActionResult> OnGetAsync()
     {
+        if (_currentTenant.IsAvailable)
+        {
+            return RedirectToPage("/Account/Login", new
+            {
+                ReturnUrl = ReturnUrl,
+                ReturnUrlHash = ReturnUrlHash
+            });
+        }
         // --- BƯỚC 1: KIỂM TRA SIWX TRƯỚC (ƯU TIÊN SỐ 1) ---
         // Check cookie xem có phải user đang redirect từ trang ký ví sang không
         var authResult = await HttpContext.AuthenticateAsync(IdentityConstants.ExternalScheme);
@@ -106,6 +118,14 @@ public class LoginUiRegisterModel : RegisterModel
 
     public override async Task<IActionResult> OnPostAsync()
     {
+        if (_currentTenant.IsAvailable)
+        {
+            return RedirectToPage("/Account/Login", new
+            {
+                ReturnUrl = ReturnUrl,
+                ReturnUrlHash = ReturnUrlHash
+            });
+        }
         // === LOGIC TẠO USER CHO SIWX ===
         try
         {

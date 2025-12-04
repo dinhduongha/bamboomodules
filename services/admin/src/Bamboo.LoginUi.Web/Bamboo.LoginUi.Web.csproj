@@ -20,6 +20,7 @@
   <PackageReference Include="NaCl.Net" Version="0.1.13" />
   <PackageReference Include="stellar-dotnet-sdk" Version="14.0.1" />
   <PackageReference Include="Polkadot.NetApi" Version="0.1.9" />
+  <PackageReference Include="Substrate.NET.Schnorrkel" Version="1.2.2" />
   <PackageReference Include="NBitcoin" Version="9.0.3" />
   <PackageReference Include="TonSdk.Core" Version="0.3.9" />  
   <PackageReference Include="MessagePack" Version="3.1.4" />

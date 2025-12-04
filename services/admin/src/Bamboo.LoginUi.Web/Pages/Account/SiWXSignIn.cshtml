@@ -57,7 +57,6 @@
         font-weight: 600; font-size: 14px; color: #333; display: block;
     }
 </style>
-
 <div class="container mt-5" style="max-width: 800px;">
     <div class="text-center mb-5">
         <h2 class="fw-bold">Sign In with Web3</h2>
@@ -116,17 +115,25 @@
             <img src="https://cryptologos.cc/logos/aptos-apt-logo.png" class="chain-icon">
             <span class="chain-name">Aptos</span>
         </div>
-
+        <div class="chain-card" id="btn-polkadot">
+            <img src="https://cryptologos.cc/logos/polkadot-new-dot-logo.png" class="chain-icon">
+            <span class="chain-name">Polkadot</span>
+        </div>
         <div class="chain-card" id="btn-solana">
             <img src="https://upload.wikimedia.org/wikipedia/en/b/b9/Solana_logo.png" class="chain-icon">
             <span class="chain-name">Solana</span>
         </div>
 
-        <div class="chain-card" id="btn-pi">
+        @* <div class="chain-card" id="btn-pi">
             <img src="https://seeklogo.com/images/P/pi-network-logo-5946808826-seeklogo.com.png" class="chain-icon">
             <span class="chain-name">Pi Network</span>
-        </div>
+        </div> *@
     </div>
+    <div class="chain-card" id="btn-walletconnect">
+    <img src="https://avatars.githubusercontent.com/u/37784886" class="chain-icon">
+    <span class="chain-name">WalletConnect</span>
+</div>
+
 </div>
 <div id="ton-connect-button" style="display:none;"></div>
 
@@ -143,6 +150,24 @@
     <input type="hidden" name="ReturnUrlHash" value="@Model.ReturnUrlHash" />
 </form>
 
+<div id="wallet-selector-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:20px; border-radius:12px; width:300px; max-width:90%;">
+        <h5 class="mb-3 text-center">Select your Wallet</h5>
+        <div id="wallet-list" class="d-flex flex-column gap-2">
+            </div>
+        <button class="btn btn-secondary w-100 mt-3" onclick="closeWalletModal()">Cancel</button>
+    </div>
+</div>
+
+<style>
+    .provider-btn {
+        display: flex; align-items: center; padding: 10px;
+        border: 1px solid #eee; border-radius: 8px; cursor: pointer;
+        transition: 0.2s;
+    }
+    .provider-btn:hover { background: #f8f9fa; border-color: #007bff; }
+    .provider-btn img { width: 24px; height: 24px; margin-right: 10px; }
+</style>
 @section Scripts {
     <script src="https://unpkg.com/tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://unpkg.com/bs58@4.0.1/bundle.js"></script>
@@ -152,7 +177,11 @@
         "imports": {
             "ethers": "https://esm.sh/ethers@5.7.2",
             "siwe": "https://esm.sh/siwe@2.1.4",
-            "tonconnect_ui": "https://esm.sh/@@tonconnect/ui@latest"
+            "tonconnect_ui": "https://esm.sh/@@tonconnect/ui@latest",
+            "@@web3modal/ethers5": "https://esm.sh/@@web3modal/ethers5@4.0.0",
+            "@@polkadot/extension-dapp": "https://esm.sh/@@polkadot/extension-dapp@0.46.6",
+            "@@polkadot/util": "https://esm.sh/@@polkadot/util@12.6.2",
+            "@@polkadot/util-crypto": "https://esm.sh/@@polkadot/util-crypto@12.6.2"
         }
     }
     </!script>
@@ -161,14 +190,175 @@
         import { ethers } from 'ethers';
         import { SiweMessage } from 'siwe';
         import { TonConnectUI } from 'tonconnect_ui';
+        import { web3Accounts, web3Enable, web3FromSource } from '@@polkadot/extension-dapp';
+        import { stringToHex } from '@@polkadot/util';
+        // Import Web3Modal
+        import { createWeb3Modal, defaultConfig } from '@@web3modal/ethers5';
+
         const nonce = "@nonce";
         const domain = window.location.host;
         const origin = window.location.origin;
         const issuedAt = new Date().toISOString();
+        const useEip6963 = @Json.Serialize(Model.EnableEip6963);
+        const useWalletConnect = @Json.Serialize(Model.EnableWalletConnect);
+        const wcProjectId = "@Model.WalletConnectProjectId";
+
+        // --- EIP-6963 STORE ---
+        let eip6963Providers = []; // Danh sách ví EIP-6963 tìm thấy
         let tonConnectUI;
+        let wcModal;
+        const wcChains = @Json.Serialize(Model.WalletConnectChains);
+
+        // --- HELPER TẠO SIWX TEXT (Chuẩn EIP-4361 cho mọi Chain) ---
+        function createSiwxText(params) {
+            const { domain, address, statement, uri, version, chainId, nonce, issuedAt } = params;
+            
+            let msg = `${domain} wants you to sign in with your account:\n`;
+            msg += `${address}\n\n`;
+            
+            if (statement) {
+                msg += `${statement}\n\n`;
+            }
+            
+            msg += `URI: ${uri}\n`;
+            msg += `Version: ${version}\n`;
+            msg += `Chain ID: ${chainId}\n`;
+            msg += `Nonce: ${nonce}\n`;
+            msg += `Issued At: ${issuedAt}`;
+            
+            return msg;
+        }
+
+        function createSiwxDto(address, chainId, msgText) {
+            return {
+                domain, 
+                address, 
+                statement: "Sign in to Web3", 
+                uri: origin, 
+                version: "1", 
+                chainId: chainId.toString(), 
+                nonce, 
+                issuedAt
+                // msgText dùng để ký ở client, còn object này để server validate
+            };
+        }
+
+        // --- 1. KHỞI TẠO WALLET CONNECT ---
+        if (useWalletConnect && wcProjectId) {
+            const metadata = {
+                name: 'Web3 App',
+                description: 'Web3 Login',
+                url: window.location.origin,
+                icons: ['https://avatars.githubusercontent.com/u/37784886']
+            }
+            try {
+            // KHỞI TẠO VỚI DANH SÁCH ĐỘNG
+            wcModal = createWeb3Modal({
+                ethersConfig: defaultConfig({ metadata }),
+                
+                // Thay vì hardcode [mainnet], ta dùng biến wcChains
+                chains: wcChains, 
+                
+                projectId: wcProjectId,
+                enableAnalytics: true
+            });
+            } catch (e) { 
+                console.error(e); 
+                alert("WalletConnect Error: " + e.message); 
+                document.getElementById('btn-walletconnect').style.display = 'none';
+            }
+        }
+
+        // --- 2. EIP-6963 ---
+        if (useEip6963) {
+            window.addEventListener("eip6963:announceProvider", (event) => {
+                const p = event.detail;
+                if (!eip6963Providers.some(x => x.info.uuid === p.info.uuid)) {
+                    eip6963Providers.push(p);
+                }
+            });
+            window.dispatchEvent(new Event("eip6963:requestProvider"));
+        }
 
         function setStatus(msg) {
             document.getElementById("clientStatus").innerHTML = `<div class="alert alert-info">${msg}</div>`;
+        }
+
+        // ==========================================
+        // HÀM LOGIN WALLETCONNECT
+        // ==========================================
+        // --- B. WALLET CONNECT LOGIN ---
+        async function wcLogin() {
+            if (!wcModal) return alert("WalletConnect disabled.");
+            try {
+                await wcModal.open();
+                const unsubscribe = wcModal.subscribeProvider(async ({ provider, address, chainId }) => {
+                    if (provider && address) {
+                        unsubscribe();
+                        wcModal.close();
+                        
+                        const ethersProvider = new ethers.providers.Web3Provider(provider);
+                        const signer = ethersProvider.getSigner();
+                        const message = new SiweMessage({
+                            domain, address, statement: "WC Login", uri: origin, version: "1", chainId: chainId || 1, nonce, issuedAt
+                        });
+                        const msgText = message.prepareMessage();
+                        const signature = await signer.signMessage(msgText);
+                        
+                        submitLogin("walletconnect", address, message, signature);
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function walletConnectLogin() {
+            if (!wcModal) return alert("WalletConnect is disabled or missing Project ID.");
+
+            try {
+                // 1. Mở Modal để user quét QR hoặc chọn ví
+                await wcModal.open();
+
+                // 2. Lắng nghe trạng thái kết nối
+                // Web3Modal v4 Ethers5 không trả về promise khi connect xong ngay lập tức ở hàm open().
+                // Ta phải theo dõi Provider của nó.
+                
+                const unsubscribe = wcModal.subscribeProvider(async ({ provider, address, chainId }) => {
+                    if (provider && address) {
+                        // KẾT NỐI THÀNH CÔNG -> TIẾN HÀNH KÝ
+                        
+                        // Ngắt lắng nghe để tránh gọi lại nhiều lần
+                        unsubscribe(); 
+                        wcModal.close(); // Đóng modal
+
+                        try {
+                            console.log("WalletConnect connected:", address);
+                            
+                            // Tạo Web3Provider từ Provider của WalletConnect
+                            const ethersProvider = new ethers.providers.Web3Provider(provider);
+                            const signer = ethersProvider.getSigner();
+                            
+                            // Tạo Message SIWE
+                            const message = new SiweMessage({
+                                domain, address, 
+                                statement: "Login via WalletConnect", 
+                                uri: origin, version: "1", chainId: chainId || 1, nonce, issuedAt
+                            });
+                            
+                            const messageText = message.prepareMessage();
+                            const signature = await signer.signMessage(messageText);
+
+                            submitLogin("walletconnect", address, messageText, signature);
+                            
+                        } catch (err) {
+                            console.error(err);
+                            alert("Sign Error: " + err.message);
+                            // Nếu ký lỗi, nên disconnect để lần sau làm lại từ đầu
+                            await wcModal.disconnect();
+                        }
+                    }
+                });
+
+            } catch (e) { console.error(e); }
         }
 
         function submitLogin(net, addr, messageObj, sig, pubKey = "") {
@@ -178,6 +368,51 @@
             document.getElementById("hSignature").value = sig;
             document.getElementById("hPublicKey").value = pubKey;
             document.getElementById("loginForm").submit();
+        }
+        
+        
+        // --- HELPER MODAL ---
+        window.closeWalletModal = () => {
+            document.getElementById('wallet-selector-modal').style.display = 'none';
+        };
+
+
+        @* function showWalletSelector(net, chainId, callback) {
+            const list = document.getElementById('wallet-list');
+            list.innerHTML = ''; // Clear cũ
+
+            discoveredProviders.forEach(p => {
+                const btn = document.createElement('div');
+                btn.className = 'provider-btn';
+                btn.innerHTML = `<img src="${p.info.icon}" alt="${p.info.name}"> <span>${p.info.name}</span>`;
+                btn.onclick = () => {
+                    closeWalletModal();
+                    callback(p.provider); // Gọi callback với provider được chọn
+                };
+                list.appendChild(btn);
+            });
+
+            document.getElementById('wallet-selector-modal').style.display = 'flex';
+        } *@
+
+        // Modal Selector cho EIP-6963
+        function showWalletModal(callback) {
+            const modal = document.getElementById('wallet-selector-modal');
+            const list = document.getElementById('wallet-list');
+            list.innerHTML = '';
+
+            eip6963Providers.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'provider-btn';
+                item.innerHTML = `<img src="${p.info.icon}" alt="${p.info.name}"/> <span>${p.info.name}</span>`;
+                item.onclick = () => {
+                    modal.style.display = 'none';
+                    callback(p.provider);
+                };
+                list.appendChild(item);
+            });
+
+            modal.style.display = 'flex';
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -189,7 +424,8 @@
                         manifestUrl: window.location.origin + '/tonconnect-manifest.json',
                         buttonRootId: 'ton-connect-button'
                     });
-                } else {
+                } else {EnableEip6963 = _configuration.GetValue<bool>("Blockchain:EnableEip6963");
+
                     console.warn("Missing div #ton-connect-button");
                 }
             } catch (e) {
@@ -223,55 +459,79 @@
             attach('btn-ton',       () => tonLogin());
             attach('btn-cosmos',    () => cosmosLogin());
             attach('btn-cellframe', () => cellframeLogin());
+            attach('btn-polkadot', () => polkadotLogin());
+            attach('btn-walletconnect', () => wcLogin());
+            //attach('btn-walletconnect', () => walletConnectLogin());
         });
     
         // --- 1. EVM ---
         window.evmLogin = async function evmLogin(net, chainId) {
-            if (!window.ethereum) return alert("Install MetaMask");
-            try {
-                setStatus(`Connecting ${net}...`);
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                await provider.send("eth_requestAccounts", []); // Xin quyền
-                const signer = provider.getSigner();
-                const addr = await signer.getAddress();
-
-                // Switch Chain (Optional but recommended)
+            const connectAndSign = async (providerObj) => {
                 try {
-                    await window.ethereum.request({
-                        method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: "0x" + chainId.toString(16) }],
-                    });
-                } catch (e) { console.warn("Chain switch ignored:", e); }
+                    setStatus(`Connecting ${net}...`);
+                    // Web3Provider của Ethers v5 nhận bất kỳ EIP-1193 Provider nào
+                    const provider = new ethers.providers.Web3Provider(providerObj);
+                    
+                    await provider.send("eth_requestAccounts", []);
+                    const signer = provider.getSigner();
+                    const address = await signer.getAddress();
 
-                const siwxMsg = new SiweMessage({
-                    domain: domain,
-                    address: addr,
-                    statement: "Sign in with Wallet.",
-                    uri: origin,
-                    version: "1",
-                    chainId: chainId,
-                    nonce: nonce,
-                    issuedAt: issuedAt
-                });
-                const msgText = siwxMsg.prepareMessage();
-                const signature = await signer.signMessage(msgText);
-                submitLogin(net, addr, siwxMsg, signature);
-            } catch (e) { alert(e.message); }
+                    try {
+                        await provider.send('wallet_switchEthereumChain', [{ chainId: ethers.utils.hexValue(chainId) }]);
+                    } catch {}
+
+                    const message = new SiweMessage({
+                        domain, address, statement: "Login Web3", uri: origin, version: "1", chainId: chainId, nonce, issuedAt
+                    });
+                    const msgText = message.prepareMessage();
+                    const signature = await signer.signMessage(msgText);
+                    console.log("Message:", msgText);
+                    console.log("Signature:", signature);
+                    submitLogin(net, address, message, signature);
+                } catch (e) {
+                    alert("Error: " + (e.reason || e.message));
+                }
+            };
+
+            // Logic chọn ví
+            if (useEip6963 && eip6963Providers.length > 1) {
+                // Nhiều ví -> Hiện modal chọn
+                showWalletModal((selectedProvider) => connectAndSign(selectedProvider));
+            } else if (useEip6963 && eip6963Providers.length === 1) {
+                // 1 ví -> Dùng luôn
+                connectAndSign(eip6963Providers[0].provider);
+            } else if (window.ethereum) {
+                // Fallback cũ
+                connectAndSign(window.ethereum);
+            } else {
+                alert("Please install MetaMask!");
+            }
         }
 
         // --- 2. SOLANA ---
         window.solanaLogin = async function solanaLogin() {
             const provider = window.solana || window.backpack;
-            if (!provider) return alert("Install Phantom");
+            if (!provider) return alert("Install Phantom Wallet!");
             try {
                 setStatus("Connecting Solana...");
                 await provider.connect();
                 const addr = provider.publicKey.toString();
-                const msgText = `Login ${domain} Nonce:${nonce}`;
+
+                // 1. Tạo nội dung chuẩn SIWE
+                const siwxParams = {
+                    domain, address: addr, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "solana", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+
+                // 2. Ký Message (Encode UTF8)
                 const encMsg = new TextEncoder().encode(msgText);
                 const signed = await provider.signMessage(encMsg, "utf8");
                 const sig = bs58.encode(signed.signature);
-                submitLogin("solana", addr, msgText, sig);
+
+                // 3. Submit (Gửi kèm Object DTO)
+                submitLogin("solana", addr, siwxParams, sig);
+
             } catch (e) { alert(e.message); }
         }
 
@@ -306,27 +566,48 @@
 
         // --- 4. STELLAR / PI ---
         window.stellarLogin = async function stellarLogin(net) {
-            if (!window.freighterApi?.isConnected) return alert("Install Freighter");
+            if (!window.freighterApi?.isConnected) return alert("Install Freighter!");
             try {
                 setStatus(`Connecting ${net}...`);
                 const info = await window.freighterApi.getAddress();
                 const addr = info.publicKey;
-                const msgText = `Login ${domain} Nonce:${nonce}`;
+
+                // ChainID của Stellar Mainnet là 'Public Global...' nhưng để ngắn gọn ta dùng 'stellar'
+                // hoặc dùng Network Passphrase thật nếu muốn chặt chẽ.
+                const siwxParams = {
+                    domain, address: addr, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "stellar-mainnet", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+
                 const signedBlob = await window.freighterApi.signMessage(msgText);
                 const sig = btoa(String.fromCharCode(...new Uint8Array(signedBlob)));
-                submitLogin(net, addr, msgText, sig);
+                
+                submitLogin(net, addr, siwxParams, sig);
             } catch (e) { alert(e.message); }
         }
 
         // --- 5. APTOS ---
-        window.aptosLogin = async function aptosLogin() {
-            if (!window.aptos) return alert("Install Petra");
-            try {
+        async function aptosLogin() {
+             if (!window.aptos) return alert("Install Petra Wallet!");
+             try {
                 setStatus("Connecting Aptos...");
                 const acc = await window.aptos.connect();
-                const msg = { message: `Login ${domain}`, nonce: nonce };
-                const signed = await window.aptos.signMessage(msg);
-                submitLogin("aptos", acc.address, signed.fullMessage, signed.signature, acc.publicKey);
+                
+                const siwxParams = {
+                    domain, address: acc.address, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "aptos:1", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+
+                // Aptos signMessage nhận object
+                const msgPayload = { 
+                    message: msgText, 
+                    nonce: nonce // Aptos SDK có trường nonce riêng, nhưng ta cứ đưa text full vào message
+                };
+                
+                const signed = await window.aptos.signMessage(msgPayload);
+                submitLogin("aptos", acc.address, siwxParams, signed.signature, acc.publicKey);
             } catch (e) { alert(e.message); }
         }
         
@@ -338,58 +619,40 @@
                 await window.keplr.enable(cid);
                 const off = window.keplr.getOfflineSigner(cid);
                 const accs = await off.getAccounts();
-                const msgText = `Login ${domain} Nonce:${nonce}`;
+                
+                //const msgText = `Login ${domain} Nonce:${nonce}`;
+                const siwxParams = {
+                    domain, address: acc.address, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "aptos:1", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+                
                 const res = await window.keplr.signArbitrary(cid, accs[0].address, msgText);
                 submitLogin("cosmos", accs[0].address, msgText, res.signature, res.pub_key.value);
             } catch (e) { alert(e.message); }
         }
 
         window.suiLogin = async function suiLogin() {
-            // Check ví Sui (Sui Wallet, Ethos, Martian...)
-            // Chuẩn mới là window.suiWallet hoặc standard wallet-standard
             const wallet = window.suiWallet;
             if (!wallet) return alert("Install Sui Wallet!");
-
             try {
                 setStatus("Connecting Sui...");
-                
-                // Kiểm tra quyền (Permissions)
-                if (!await wallet.hasPermissions()) {
-                    await wallet.requestPermissions();
-                }
-
+                if (!await wallet.hasPermissions()) await wallet.requestPermissions();
                 const accounts = await wallet.getAccounts();
-                const address = accounts[0];
+                const addr = accounts[0].address;
 
-                const msgText = `Login ${domain} Nonce:${nonce}`;
-                const msgBytes = new TextEncoder().encode(msgText);
+                const siwxParams = {
+                    domain, address: addr, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "sui:mainnet", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+                const msgBytes = new TextEncoder().encode(msgText); // Sui cần bytes
 
-                // Sign Message
-                // Sui Wallet trả về: { messageBytes, signature }
-                // Signature ở đây là Base64 string bao gồm cả (flag + sig + pubkey)
-                const result = await wallet.signPersonalMessage({
-                    message: msgBytes
-                });
-
-                // Tách signature và pubkey từ kết quả trả về để Backend dễ verify
-                // Cách Sui Wallet standard trả về signature khá phức tạp (gộp chung).
-                // Để đơn giản, ta lấy publicKey từ API getAccounts nếu ví hỗ trợ, hoặc decode từ signature string.
-                // Ở đây giả định ta gửi nguyên cục signature Base64 về, backend sẽ cần tách.
-                // NHƯNG để Backend verify Ed25519 thuần, ta cần Public Key riêng.
+                const result = await wallet.signPersonalMessage({ message: msgBytes });
                 
-                // Hack: Lấy public key từ feature wallet nếu có, hoặc yêu cầu user
-                // Sui standard wallet thường trả public key trong result.bytes hoặc accounts
-                // Trong ví dụ này, tôi sẽ gửi signature gộp về, 
-                // Và gửi kèm public key Base64 (Sui Wallet API thường không trả trực tiếp pubkey ở getAccounts, hơi phiền).
-                
-                // Cách an toàn nhất với Sui: Dùng thư viện mysten/dapp-kit. 
-                // Nhưng để code JS thuần:
-                submitLogin("sui", address, msgText, result.signature, "PUBKEY_PLACEHOLDER");
-                
-                // LƯU Ý QUAN TRỌNG: 
-                // Backend C# đoạn SUI sẽ fail nếu không có PubKey thật.
-                // Bạn nên update code JS này dùng mysten/sui.js để lấy PubKey chuẩn từ ví.
-            } catch (e) { alert("Sui Error: " + e.message); }
+                // Lưu ý: Sui trả về signature gộp, cần backend xử lý tách như bài trước
+                submitLogin("sui", addr, siwxParams, result.signature, ""); 
+            } catch (e) { alert(e.message); }
         }
 
         window.tonLogin = async function tonLogin() {
@@ -435,6 +698,57 @@
                 });
 
             } catch (e) { alert("TON Error: " + e.message); }
+        }
+        // ==========================================
+        // POLKADOT LOGIN
+        // ==========================================
+        async function polkadotLogin() {
+            try {
+                setStatus("Connecting Polkadot...");
+
+                // 1. Kích hoạt Extension (Talisman, SubWallet, Polkadot.js...)
+                const extensions = await web3Enable('My Web3 App');
+                if (extensions.length === 0) {
+                    return alert("Please install Polkadot.js, Talisman or SubWallet extension!");
+                }
+
+                // 2. Lấy danh sách tài khoản
+                const allAccounts = await web3Accounts();
+                if (allAccounts.length === 0) {
+                    return alert("No accounts found in wallet.");
+                }
+
+                // Mặc định lấy tài khoản đầu tiên (hoặc bạn có thể làm Modal chọn như EIP-6963)
+                const account = allAccounts[0];
+                const address = account.address;
+                const injector = await web3FromSource(account.meta.source);
+
+                // 3. Tạo Message chuẩn SIWX
+                const siwxParams = {
+                    domain, address: address, statement: "Sign in to Web3", 
+                    uri: origin, version: "1", chainId: "polkadot", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+
+                // 4. Ký Message (Sign Raw)
+                // Lưu ý: Polkadot signRaw yêu cầu message dạng Hex hoặc Bytes, và nó sẽ bọc trong <Bytes>...</Bytes>
+                const signRaw = injector.signer.signRaw;
+                
+                if (!signRaw) return alert("Wallet does not support signRaw");
+
+                const { signature } = await signRaw({
+                    address: address,
+                    data: stringToHex(msgText), // Chuyển text sang Hex để ký
+                    type: 'bytes'
+                });
+
+                // Gửi về server
+                submitLogin("polkadot", address, siwxParams, signature);
+
+            } catch (e) {
+                console.error(e);
+                alert("Polkadot Error: " + e.message);
+            }
         }
     </script>
 }
