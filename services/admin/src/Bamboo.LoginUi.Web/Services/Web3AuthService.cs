@@ -1,24 +1,33 @@
+extern alias BouncyCastleV2;
+
 using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Text.Json;
+
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 // Các thư viện Crypto
+using SimpleBase;
+using NBitcoin; // Import thư viện
+using NBitcoin.DataEncoders;
 using Nethereum.Signer;
 using Nethereum.Web3;
 using Solnet.Wallet;
 using Solnet.Rpc;
 using StellarDotnetSdk.Accounts;
-using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Crypto.Parameters;
-using SimpleBase;
+using BC = BouncyCastleV2::Org.BouncyCastle.Crypto.Signers; // Alias cho BouncyCastle v2 Signers
+using BCParams = BouncyCastleV2::Org.BouncyCastle.Crypto.Parameters; // Alias cho BouncyCastle v2 Parameters
 using Substrate.NetApi; // Cần cài package SimpleBase
 using Substrate.NetApi.Model.Types; // Các kiểu dữ liệu Substrate
 using Substrate.NET.Schnorrkel.Keys;
+using NaCl = Chaos.NaCl; // Tạo alias để tránh xung đột với NBitcoin
 
 namespace Bamboo.Abp.LoginUi.Services
 {
@@ -72,7 +81,7 @@ namespace Bamboo.Abp.LoginUi.Services
             // 2. CHECK CHỮ KÝ (Offline Verify)
             try
             {
-                if (!VerifySignatureOffline(message, signature, address, network, publicKey))
+                if (!VerifySignatureOffline(message, signature, address, network, publicKey, cachedNonce))
                 {
                     return new Web3AuthResult { Success = false, ErrorMessage = $"Chữ ký không hợp lệ cho mạng {network}." };
                 }
@@ -99,7 +108,7 @@ namespace Bamboo.Abp.LoginUi.Services
         // ============================================
         // LOGIC 1: VERIFY SIGNATURE (OFFLINE/CRYPTO)
         // ============================================
-        private bool VerifySignatureOffline(string msg, string sig, string addr, string net, string pubKeyHex)
+        private bool VerifySignatureOffline(string msg, string sig, string addr, string net, string pubKeyHex, string cachedNonce)
         {
             var msgBytes = Encoding.UTF8.GetBytes(msg);
 
@@ -108,10 +117,89 @@ namespace Bamboo.Abp.LoginUi.Services
             {
                 var signer = new EthereumMessageSigner();
                 var recovered = signer.EncodeUTF8AndEcRecover(msg, sig);
+                //if (dto.Nonce != cachedNonce) return false;
                 return recovered.Equals(addr, StringComparison.OrdinalIgnoreCase);
             }
             // TODO: Check verify functions
-            return false;
+            // --- BITCOIN (UniSat / Xverse) ---
+            if (net == "bitcoin")
+            {
+                try
+                {
+                    // 1. Tạo Address object từ chuỗi địa chỉ
+                    // NBitcoin tự động detect mạng (Mainnet) và loại địa chỉ (Segwit/Taproot/Legacy)
+                    var bitcoinAddress = BitcoinAddress.Create(addr, Network.Main);
+
+                    // 2. Verify Message
+                    // Thư viện NBitcoin có sẵn hàm VerifyMessage cho địa chỉ
+                    // msg: Chuỗi text gốc (đã replace \r\n thành \n)
+                    // sig: Chữ ký Base64
+
+                    // LƯU Ý QUAN TRỌNG: 
+                    // Các ví hiện đại (UniSat) thường ký theo chuẩn ECDSA (giống Legacy) kể cả cho địa chỉ Segwit/Taproot
+                    // hoặc dùng chuẩn BIP-322 (phức tạp hơn).
+                    // Tuy nhiên, hàm VerifyMessage của NBitcoin hoạt động tốt với chuẩn ký thông dụng nhất (Electrum style).
+
+                    return bitcoinAddress.VerifyBIP322(msg, sig);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Bitcoin verify fail: {ex.Message}");
+                    return false;
+                }
+            }
+
+            if (net == "ton")
+            {
+                // msg lúc này là JSON object ta gửi từ frontend (biến tonPayload)
+                // Ta cần deserialize nó ra để lấy các tham số proof
+                try
+                {
+                    var data = System.Text.Json.JsonSerializer.Deserialize<TonProofData>(msg);
+
+                    // 1. Kiểm tra cơ bản
+                    // Payload nhận được phải khớp với Nonce trong Cache (được truyền vào biến sig hoặc check logic ngoài)
+                    // Ở đây giả sử logic check nonce bên ngoài đã xong, ta check signature.
+                    string receivedPayloadString = data.Proof.Payload; // '{"nonce":"...","intent":"..."}'
+                    var payloadObj = JsonSerializer.Deserialize<JsonElement>(receivedPayloadString);
+                    if (payloadObj.TryGetProperty("nonce", out var nonceElement))
+                    {
+                        var nonceValue = nonceElement.GetString();
+
+                        if (nonceValue != cachedNonce)
+                        {
+                            _logger.LogError($"TON Verify Error: Nonce mismatch. Received: {nonceValue}, Expected: {cachedNonce}");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogError("TON Verify Error: Payload missing 'nonce' field");
+                        return false;
+                    }
+                    // 2. Tái tạo Message (Byte Packing)
+                    // Cấu trúc: "ton-proof-item-v2/" ++ Workchain ++ Address ++ DomainLen ++ Domain ++ Timestamp ++ Payload
+
+                    var messageBytes = CreateTonProofMessage(data);
+
+                    // 3. Verify Ed25519
+                    // Signature của TON là kết quả ký vào SHA256(messageBytes)
+                    // Note: Tonkeeper ký vào Hash chứ không ký vào Raw bytes.
+                    var hash = SHA256.HashData(messageBytes);
+
+                    // Signature từ frontend là Base64
+                    var signatureBytes = Convert.FromBase64String(data.Proof.Signature);
+                    var publicKeyBytes = Convert.FromHexString(data.PublicKey); // Pubkey từ frontend là Hex
+
+                    // Dùng thư viện BouncyCastle hoặc Chaos.NaCl để verify
+                    return BouncyCastleVerifyEd25519(hash, signatureBytes, publicKeyBytes);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "TON Verify Error");
+                    return false;
+                }
+            }
             if (net == "sui")
             {
                 if (string.IsNullOrEmpty(pubKeyHex)) return false;
@@ -132,20 +220,8 @@ namespace Bamboo.Abp.LoginUi.Services
                 // Trong thực tế, message cần được wrap theo chuẩn Sui. 
                 // Nếu verify thuần thất bại, hãy xem lại cách Frontend ký (dùng signMessage thay vì signPersonalMessage để lấy raw).
                 // Ở đây tôi giả định Frontend gửi raw bytes đã wrap hoặc ký raw.
-                return VerifyEd25519(msgBytes, sigBytes, pubKeyBytes);
+                return BouncyCastleVerifyEd25519(msgBytes, sigBytes, pubKeyBytes);
             }
-            if (net == "ton")
-            {
-                if (string.IsNullOrEmpty(pubKeyHex)) return false;
-
-                byte[] pubKeyBytes = Convert.FromHexString(pubKeyHex);
-                byte[] sigBytes = Convert.FromBase64String(sig);
-
-                // TON Connect ký vào Cell Hash, không phải text thuần.
-                // Nhưng để Login đơn giản, Frontend có thể yêu cầu ký text raw.
-                return VerifyEd25519(msgBytes, sigBytes, pubKeyBytes);
-            }
-
             // --- B. Solana ---
             if (net == "solana")
             {
@@ -175,7 +251,7 @@ namespace Bamboo.Abp.LoginUi.Services
                     ? Convert.FromHexString(sig.Replace("0x", ""))
                     : Convert.FromBase64String(sig);
 
-                return VerifyEd25519(msgBytes, sigBytes, pubKeyBytes);
+                return BouncyCastleVerifyEd25519(msgBytes, sigBytes, pubKeyBytes);
             }
 
             // --- E. Cosmos ---
@@ -382,6 +458,30 @@ namespace Bamboo.Abp.LoginUi.Services
                     }
                     catch { return false; }
                 }
+                if (network == "bitcoin")
+                {
+                    try
+                    {
+                        var client = _httpClientFactory.CreateClient();
+                        // API Mempool.space: GET /address/:address
+                        var url = $"{_config["Blockchain:RpcUrls:bitcoin"]}/address/{address}";
+
+                        var res = await client.GetAsync(url);
+                        if (!res.IsSuccessStatusCode) return false;
+
+                        var json = await res.Content.ReadAsStringAsync();
+
+                        // Logic: Kiểm tra chain_stats.tx_count > 0 hoặc funded_txo_sum > 0
+                        // JSON trả về: { "address": "...", "chain_stats": { "funded_txo_count": 1, ... } }
+
+                        using var doc = System.Text.Json.JsonDocument.Parse(json);
+                        var stats = doc.RootElement.GetProperty("chain_stats");
+                        var txCount = stats.GetProperty("tx_count").GetInt32();
+
+                        return txCount > 0;
+                    }
+                    catch { return false; }
+                }
             }
             catch (Exception ex)
             {
@@ -408,16 +508,147 @@ namespace Bamboo.Abp.LoginUi.Services
             return true;
         }
 
-        private bool VerifyEd25519(byte[] m, byte[] s, byte[] p)
+        // private bool VerifyEd25519(byte[] m, byte[] s, byte[] p)
+        // {
+        //     return false;
+        //     // var v = new Ed25519Signer();
+        //     // v.Init(false, new Ed25519PublicKeyParameters(p, 0));
+        //     // v.BlockUpdate(m, 0, m.Length);
+        //     // return v.VerifySignature(s);
+        // }
+
+        private bool BouncyCastleVerifyEd25519(byte[] message, byte[] signature, byte[] publicKey)
         {
-            return false;
-            // var v = new Ed25519Signer();
-            // v.Init(false, new Ed25519PublicKeyParameters(p, 0));
-            // v.BlockUpdate(m, 0, m.Length);
-            // return v.VerifySignature(s);
+            // 1. Kiểm tra độ dài chuẩn của Ed25519
+            // Public Key bắt buộc 32 bytes
+            if (publicKey == null || publicKey.Length != 32)
+            {
+                // Log: Public key length invalid
+                return false;
+            }
+
+            // Signature bắt buộc 64 bytes
+            if (signature == null || signature.Length != 64)
+            {
+                // Log: Signature length invalid
+                return false;
+            }
+
+            try
+            {
+                var validator = new BC.Ed25519Signer();
+
+                // Init: false = verify mode (true = sign mode)
+                validator.Init(false, new BCParams.Ed25519PublicKeyParameters(publicKey, 0));
+
+                // Đưa message vào bộ đệm
+                validator.BlockUpdate(message, 0, message.Length);
+
+                // Kiểm tra chữ ký
+                return validator.VerifySignature(signature);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
+        // private bool NaClVerifyEd25519(byte[] message, byte[] signature, byte[] publicKey)
+        // {
+        //     if (publicKey?.Length != 32 || signature?.Length != 64) return false;
 
+        //     try
+        //     {
+        //         // Hàm static verify ngay lập tức
+        //         return NaCl.Ed25519.Verify(signature, message, publicKey);
+        //     }
+        //     catch
+        //     {
+        //         return false;
+        //     }
+        // }
+
+        // --- HELPER CLASS & FUNCTION CHO TON ---
+
+        public class TonProofData
+        {
+            public string Address { get; set; }     // Raw address: 0:xxxx...
+            public string PublicKey { get; set; }
+            public TonProofDetail Proof { get; set; }
+        }
+
+        public class TonProofDetail
+        {
+            public long Timestamp { get; set; }
+            public string Domain { get; set; }      // VD: localhost:44301
+            public string Signature { get; set; }   // Base64
+            public string Payload { get; set; }     // Nonce
+        }
+
+        private byte[] CreateTonProofMessage(TonProofData data)
+        {
+            // 1. Parse Address (0:hex...)
+            var parts = data.Address.Split(':');
+            int workchain = int.Parse(parts[0]);
+            byte[] addrHash = Convert.FromHexString(parts[1]);
+
+            // 2. Prefix "ton-proof-item-v2/" encoded utf8
+            byte[] prefix = Encoding.UTF8.GetBytes("ton-proof-item-v2/");
+
+            // 3. Domain Length & Domain
+            var domainBytes = Encoding.UTF8.GetBytes(data.Proof.Domain);
+            var domainLen = BitConverter.GetBytes(domainBytes.Length);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(domainLen); // TON dùng Little Endian
+
+            // 4. Workchain (32-bit LE)
+            var wcBytes = BitConverter.GetBytes(workchain);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(wcBytes);
+
+            // 5. Timestamp (64-bit LE)
+            var tsBytes = BitConverter.GetBytes(data.Proof.Timestamp);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(tsBytes);
+
+            // 6. Payload (Nonce string -> utf8)
+            // Lưu ý: Payload trong TON Connect được xử lý như chuỗi string thông thường
+            var payloadBytes = Encoding.UTF8.GetBytes(data.Proof.Payload);
+
+            // --- GHÉP CHUỖI ---
+            // Total = Prefix + Workchain(4) + Addr(32) + DomainLen(4) + Domain + Timestamp(8) + Payload
+            var list = new List<byte>();
+            list.AddRange(prefix);
+            list.AddRange(wcBytes);
+            list.AddRange(addrHash);
+            list.AddRange(domainLen);
+            list.AddRange(domainBytes);
+            list.AddRange(tsBytes);
+            list.AddRange(payloadBytes);
+
+            // Message thực sự được ký là: 0xffff ++ "ton-connect" ++ message_hash
+            // Nhưng TON Connect 2.0 quy định ví ký vào: SHA256( Prefix + ... ) 
+            // Tuy nhiên, có một lớp bọc ngoài cùng của TON (Signature Prefix).
+            // Logic chuẩn:
+            // Signature = Sign(0xffff ++ "ton-connect" ++ SHA256(ton_proof_item))
+
+            // ĐỂ ĐƠN GIẢN: Hầu hết các thư viện backend verify TON (như ton-connect-php) 
+            // chỉ verify hash của phần `ton-proof-item-v2`.
+            // Nếu bạn dùng ví Tonkeeper, nó sẽ thêm prefix 0xffff...
+
+            // **FIX LOGIC CHUẨN:**
+            // Ta phải tạo Signature Message đầy đủ:
+            // 1. itemHash = SHA256(list.ToArray())
+            // 2. fullMsg = 0xffff + "ton-connect" + itemHash
+            // 3. dataToVerify = SHA256(fullMsg)
+
+            var itemHash = SHA256.HashData(list.ToArray());
+
+            var prefixSignature = new List<byte>();
+            prefixSignature.Add(0xff);
+            prefixSignature.Add(0xff);
+            prefixSignature.AddRange(Encoding.UTF8.GetBytes("ton-connect"));
+            prefixSignature.AddRange(itemHash);
+
+            return prefixSignature.ToArray();
+        }
         // private string DetectChain(string addr)
         // {
         //     // 1. Ethereum / EVM

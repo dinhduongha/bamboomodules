@@ -187,7 +187,11 @@ public class SiWXSignInModel : AccountPageModel
             TempData["Error"] = signingResult.ErrorMessage;
             return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
         }
-
+        if (User.Identity.IsAuthenticated)
+        {
+            // === CASE A: ĐANG LOGIN (LINK VÍ) ===
+            return await LinkWalletToCurrentUserAsync(address, network);
+        }
         // 1. Chuẩn bị Properties cho Session (Lưu vào Cookie)
         var propsAuth = new AuthenticationProperties
         {
@@ -310,6 +314,51 @@ public class SiWXSignInModel : AccountPageModel
 
         // Nếu không có, về trang chủ
         return Redirect("~/");
+    }
+    // --- HÀM XỬ LÝ LINK VÍ (MỚI) ---
+    private async Task<IActionResult> LinkWalletToCurrentUserAsync(string address, string network)
+    {
+        // 1. Lấy User hiện tại (Đang login bằng Google)
+        var currentUser = await UserManager.GetUserAsync(User);
+        if (currentUser == null) return RedirectToPage("/Account/Login");
+
+        // 2. Kiểm tra xem Ví này đã gắn vào tài khoản KHÁC chưa?
+        // Nguyên tắc: 1 Ví chỉ thuộc về 1 User.
+        var ownerOfWallet = await UserManager.FindByLoginAsync("SIWX", address);
+
+        if (ownerOfWallet != null && ownerOfWallet.Id != currentUser.Id)
+        {
+            TempData["Error"] = "Ví này đã được liên kết với một tài khoản khác!";
+            return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
+        }
+
+        if (ownerOfWallet != null && ownerOfWallet.Id == currentUser.Id)
+        {
+            TempData["Success"] = "Ví này đã được liên kết với bạn rồi.";
+            return Redirect(ReturnUrl ?? "/Account/Manage");
+        }
+
+        // 3. THỰC HIỆN LINK (AddLogin)
+        var loginInfo = new UserLoginInfo("SIWX", address, network);
+        var result = await UserManager.AddLoginAsync(currentUser, loginInfo);
+
+        if (result.Succeeded)
+        {
+            // (Tùy chọn) Refresh lại Cookie để cập nhật Claims mới nếu cần
+            await SignInManager.RefreshSignInAsync(currentUser);
+
+            TempData["Success"] = "Liên kết ví thành công!";
+            // Redirect về trang quản lý tài khoản hoặc ReturnUrl
+            return Redirect(ReturnUrl ?? "/Account/Manage");
+        }
+        else
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return RedirectToPage(new { ReturnUrl, ReturnUrlHash });
+        }
     }
 }
 

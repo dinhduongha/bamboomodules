@@ -13,7 +13,7 @@
   </PropertyGroup>
 
 <ItemGroup>	
-  <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
+  <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" Aliases="BouncyCastleV2" />
   <PackageReference Include="Nethereum.Web3" Version="5.0.0" />
   <PackageReference Include="Nethereum.Siwe" Version="5.0.0"/>
   <PackageReference Include="Nethereum.Signer" Version="5.0.0" />

@@ -23,7 +23,8 @@
     Layout = ThemeManager.CurrentTheme.GetAccountLayout();
 }
 @{
-    ViewData["Title"] = "Web3 Login";
+    bool isLinking = User.Identity.IsAuthenticated;
+    ViewData["Title"] = isLinking ? "Link Account" : "Web3 Login";
     var nonce = ViewData["Nonce"] as string;
     var issuedAt = ViewData["IssuedAt"] as string;
 }
@@ -58,10 +59,34 @@
     }
 </style>
 <div class="container mt-5" style="max-width: 800px;">
-    <div class="text-center mb-5">
-        <h2 class="fw-bold">Sign In with Web3</h2>
-        <p class="text-muted">Connect your wallet securely using blockchain cryptography</p>
-    </div>
+    @if (isLinking)
+    {
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Link Wallet</h2>
+            <p class="text-muted">Connect a wallet to your existing account.</p>
+        </div>
+    }
+    else
+    {
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Sign In with Web3</h2>
+            <p class="text-muted">Connect your wallet securely using blockchain cryptography.</p>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success text-center" role="alert">
+            @TempData["Success"]
+        </div>
+    } else {
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger text-center" role="alert">
+                @TempData["Error"]
+            </div>
+        }
+    }
 
     <div asp-validation-summary="All" class="alert alert-danger" role="alert" style="display:none"></div>
     <div id="clientStatus"></div>
@@ -75,11 +100,11 @@
             <img src="https://cryptologos.cc/logos/toncoin-ton-logo.png" class="chain-icon">
             <span class="chain-name">TON</span>
         </div>
-        <div class="chain-card" id="btn-cellframe">
-            <img src="https://wiki.cellframe.net/uploads/images/gallery/2021-08/scaled-1680-/2R9i6q4vj1g5p3m8-image-1628172827653.png" class="chain-icon" onerror="this.src='https://placehold.co/48?text=CF'">
-            <span class="chain-name">CellFrame</span>
+        <div class="chain-card" id="btn-unisat">
+            <img src="https://unisat.io/img/favicon.ico" class="chain-icon">
+            <span class="chain-name">Bitcoin (UniSat)</span>
         </div>
-
+        
         <div class="chain-card" id="btn-bnb">
             <img src="https://cryptologos.cc/logos/bnb-bnb-logo.png" class="chain-icon">
             <span class="chain-name">BNB Chain</span>
@@ -124,7 +149,13 @@
             <span class="chain-name">Solana</span>
         </div>
 
-        @* <div class="chain-card" id="btn-pi">
+        @*
+        <div class="chain-card" id="btn-cellframe">
+            <img src="https://wiki.cellframe.net/uploads/images/gallery/2021-08/scaled-1680-/2R9i6q4vj1g5p3m8-image-1628172827653.png" class="chain-icon" onerror="this.src='https://placehold.co/48?text=CF'">
+            <span class="chain-name">CellFrame</span>
+        </div>
+ 
+        <div class="chain-card" id="btn-pi">
             <img src="https://seeklogo.com/images/P/pi-network-logo-5946808826-seeklogo.com.png" class="chain-icon">
             <span class="chain-name">Pi Network</span>
         </div> *@
@@ -424,6 +455,19 @@
                         manifestUrl: window.location.origin + '/tonconnect-manifest.json',
                         buttonRootId: 'ton-connect-button'
                     });
+                    const nonce = "@Html.Raw(ViewData["Nonce"])";
+                    const issuedAt = "@Html.Raw(ViewData["IssuedAt"])";
+                    const tonPayloadObj = {
+                        nonce: "@Html.Raw(ViewData["Nonce"])",
+                    };
+                    const payloadString = JSON.stringify(tonPayloadObj);
+                    tonConnectUI.setConnectRequestParameters({
+                        state: 'ready',
+                        value: {
+                            tonProof: payloadString // Gửi Nonce này cho ví
+                        }
+                    });
+
                 } else {EnableEip6963 = _configuration.GetValue<bool>("Blockchain:EnableEip6963");
 
                     console.warn("Missing div #ton-connect-button");
@@ -668,35 +712,31 @@
                 await tonConnectUI.openModal();
 
                 // Lắng nghe sự kiện status change
-                const unsubscribe = tonConnectUI.onStatusChange(async (wallet) => {
-                    if (wallet) {
-                        const address = wallet.account.address; // Raw address
-                        const publicKey = wallet.account.publicKey; // Hex string
-                        
-                        // TON Challenge:
-                        // TonConnect chuẩn dùng 'ton_proof' (phức tạp).
-                        // Để login nhanh kiểu "ký text", hiện tại TonConnect UI chưa support hàm signMessage text raw một cách native dễ dàng như Metamask.
-                        // Nó support signData.
-                        
-                        // Giải pháp tạm: Lấy publicKey từ wallet object gửi về server. 
-                        // Server tạm chấp nhận login bằng việc "User sở hữu wallet có publicKey này".
-                        // (Mức độ bảo mật thấp hơn sign message vì không có Nonce challenge thực sự từ chữ ký, 
-                        // nhưng TonConnect có proof nonce riêng trong payload kết nối).
-                        
-                        // Nếu muốn bảo mật cao: Phải implement check `ton_proof` ở backend.
-                        // Ở đây tôi gửi proof nonce của TON về làm signature giả lập.
-                        
-                        const proof = wallet.connectItems?.tonProof;
-                        if(proof) {
-                             submitLogin("ton", address, "TonProofLogin", proof.signature, publicKey);
-                        } else {
-                            // Fallback: Chỉ gửi pubkey (Bảo mật thấp)
-                             submitLogin("ton", address, "NoSig", "EMPTY", publicKey);
+                const unsubscribe = tonConnectUI.onStatusChange((wallet) => {
+                    if (wallet && wallet.connectItems?.tonProof && wallet.account) {
+                        const account = wallet.account;
+                        const proof = wallet.connectItems.tonProof;
+
+                        if ('proof' in proof) {
+                            // Cấu trúc dữ liệu chuẩn của TON Connect gửi về
+                            const tonPayload = {
+                                address: account.address,
+                                network: account.chain,
+                                public_key: account.publicKey,
+                                proof: {
+                                    timestamp: proof.proof.timestamp,
+                                    domain: proof.proof.domain.value,
+                                    signature: proof.proof.signature,
+                                    payload: proof.proof.payload // Chính là cái nonce
+                                }
+                            };
+
+                            // Gửi JSON này về server
+                            submitLogin("ton", account.address, tonPayload, "PROOF_CHECK", account.publicKey);
+                            unsubscribe();
                         }
-                        unsubscribe();
                     }
                 });
-
             } catch (e) { alert("TON Error: " + e.message); }
         }
         // ==========================================
@@ -748,6 +788,41 @@
             } catch (e) {
                 console.error(e);
                 alert("Polkadot Error: " + e.message);
+            }
+        }
+        // ==========================================
+        // BITCOIN - UNISAT LOGIN
+        // ==========================================
+        async function unisatLogin() {
+            if (typeof window.unisat === 'undefined') {
+                return alert('Please install UniSat Wallet!');
+            }
+            try {
+                setStatus("Connecting UniSat...");
+                
+                // 1. Request Accounts
+                const accounts = await window.unisat.requestAccounts();
+                const address = accounts[0];
+
+                // 2. Tạo Message SIWE
+                const siwxParams = {
+                    domain, address, statement: "Login Bitcoin", 
+                    uri: origin, version: "1", chainId: "bitcoin", nonce, issuedAt
+                };
+                const msgText = createSiwxText(siwxParams);
+
+                // 3. Ký Message
+                // UniSat trả về Signature dạng Base64
+                const signature = await window.unisat.signMessage(msgText);
+
+                // 4. Submit
+                // Gửi kèm PublicKey (UniSat có hàm getPublicKey) để backend verify chặt chẽ hơn nếu cần
+                const pubKey = await window.unisat.getPublicKey();
+                
+                submitLogin("bitcoin", address, siwxParams, signature, pubKey);
+
+            } catch (e) {
+                alert("UniSat Error: " + e.message);
             }
         }
     </script>
