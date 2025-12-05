@@ -311,8 +311,13 @@
             window.dispatchEvent(new Event("eip6963:requestProvider"));
         }
 
-        function setStatus(msg) {
-            document.getElementById("clientStatus").innerHTML = `<div class="alert alert-info">${msg}</div>`;
+        function setStatus(msg, isError = false) {
+            const statusDiv = document.getElementById("clientStatus");
+            const alertClass = isError ? 'alert-danger' : 'alert-info';
+            statusDiv.innerHTML = msg ? `<div class="alert ${alertClass}">${msg}</div>` : '';
+            if (isError) {
+                setTimeout(() => statusDiv.innerHTML = '', 5000); // Tự động xóa lỗi sau 5s
+            }
         }
 
         // ==========================================
@@ -321,6 +326,7 @@
         // --- B. WALLET CONNECT LOGIN ---
         async function wcLogin() {
             if (!wcModal) return alert("WalletConnect disabled.");
+            setStatus("Connecting WalletConnect...");
             try {
                 await wcModal.open();
                 const unsubscribe = wcModal.subscribeProvider(async ({ provider, address, chainId }) => {
@@ -339,7 +345,14 @@
                         submitLogin("walletconnect", address, message, signature);
                     }
                 });
-            } catch (e) { console.error(e); }
+                // Xử lý khi người dùng đóng modal
+                const unsubModal = wcModal.subscribeEvents(e => {
+                    if (e.data.event === 'MODAL_CLOSE') {
+                        setStatus('', true); // Xóa trạng thái
+                        unsubModal(); // Hủy lắng nghe
+                    }
+                });
+            } catch (e) { console.error(e); setStatus("WalletConnect Error: " + e.message, true); }
         }
 
         async function walletConnectLogin() {
@@ -405,6 +418,7 @@
         // --- HELPER MODAL ---
         window.closeWalletModal = () => {
             document.getElementById('wallet-selector-modal').style.display = 'none';
+            setStatus('', true); // Xóa trạng thái khi đóng modal
         };
 
 
@@ -505,6 +519,7 @@
             attach('btn-cellframe', () => cellframeLogin());
             attach('btn-polkadot', () => polkadotLogin());
             attach('btn-walletconnect', () => wcLogin());
+            attach('btn-unisat', () => unisatLogin());
             //attach('btn-walletconnect', () => walletConnectLogin());
         });
     
@@ -533,7 +548,7 @@
                     console.log("Signature:", signature);
                     submitLogin(net, address, message, signature);
                 } catch (e) {
-                    alert("Error: " + (e.reason || e.message));
+                    setStatus("Error: " + (e.reason || e.message), true);
                 }
             };
 
@@ -576,7 +591,10 @@
                 // 3. Submit (Gửi kèm Object DTO)
                 submitLogin("solana", addr, siwxParams, sig);
 
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("Solana Error: " + e.message, true);
+            }
         }
 
         // --- 3. CELLFRAME (NEW) ---
@@ -604,7 +622,7 @@
                 
                 submitLogin("cellframe", addr, msgText, sig);
             } catch (e) { 
-                alert("CellFrame Error: " + e.message); 
+                setStatus("CellFrame Error: " + e.message, true);
             }
         }
 
@@ -628,7 +646,10 @@
                 const sig = btoa(String.fromCharCode(...new Uint8Array(signedBlob)));
                 
                 submitLogin(net, addr, siwxParams, sig);
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("Stellar/Freighter Error: " + e.message, true);
+            }
         }
 
         // --- 5. APTOS ---
@@ -652,7 +673,10 @@
                 
                 const signed = await window.aptos.signMessage(msgPayload);
                 submitLogin("aptos", acc.address, siwxParams, signed.signature, acc.publicKey);
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("Aptos Error: " + e.message, true);
+            }
         }
         
         // --- 6. COSMOS ---
@@ -660,6 +684,7 @@
             if (!window.keplr) return alert("Install Keplr");
             try {
                 const cid = "cosmoshub-4";
+                setStatus("Connecting Cosmos (Keplr)...");
                 await window.keplr.enable(cid);
                 const off = window.keplr.getOfflineSigner(cid);
                 const accs = await off.getAccounts();
@@ -673,7 +698,10 @@
                 
                 const res = await window.keplr.signArbitrary(cid, accs[0].address, msgText);
                 submitLogin("cosmos", accs[0].address, msgText, res.signature, res.pub_key.value);
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("Cosmos/Keplr Error: " + e.message, true);
+            }
         }
 
         window.suiLogin = async function suiLogin() {
@@ -696,7 +724,10 @@
                 
                 // Lưu ý: Sui trả về signature gộp, cần backend xử lý tách như bài trước
                 submitLogin("sui", addr, siwxParams, result.signature, ""); 
-            } catch (e) { alert(e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("Sui Error: " + e.message, true);
+            }
         }
 
         window.tonLogin = async function tonLogin() {
@@ -737,7 +768,10 @@
                         }
                     }
                 });
-            } catch (e) { alert("TON Error: " + e.message); }
+            } catch (e) {
+                console.error(e);
+                setStatus("TON Error: " + e.message, true);
+            }
         }
         // ==========================================
         // POLKADOT LOGIN
@@ -787,7 +821,7 @@
 
             } catch (e) {
                 console.error(e);
-                alert("Polkadot Error: " + e.message);
+                setStatus("Polkadot Error: " + e.message, true);
             }
         }
         // ==========================================
@@ -795,7 +829,8 @@
         // ==========================================
         async function unisatLogin() {
             if (typeof window.unisat === 'undefined') {
-                return alert('Please install UniSat Wallet!');
+                setStatus('Please install UniSat Wallet!', true);
+                return;
             }
             try {
                 setStatus("Connecting UniSat...");
@@ -822,7 +857,8 @@
                 submitLogin("bitcoin", address, siwxParams, signature, pubKey);
 
             } catch (e) {
-                alert("UniSat Error: " + e.message);
+                console.error(e);
+                setStatus("UniSat Error: " + e.message, true);
             }
         }
     </script>
