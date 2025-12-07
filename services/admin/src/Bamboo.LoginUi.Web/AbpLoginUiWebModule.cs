@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
 
 
 using OpenIddict.Validation.AspNetCore;
@@ -25,6 +26,7 @@ using StackExchange.Redis;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Twilio;
+using OpenIddict.Server;
 
 using Volo.Abp;
 using Volo.Abp.Caching;
@@ -42,23 +44,33 @@ using Volo.Abp.Account.Web;
 using Volo.Abp.Account.Settings;
 using Volo.Abp.Identity.Settings;
 using Volo.Abp.SettingManagement;
+using Volo.Abp.TenantManagement;
+using Volo.Abp.Account.Web.ProfileManagement;
+
 
 using Bamboo.Abp.LoginUi.Web.Localization;
 using Bamboo.Abp.VerificationCode;
-using Microsoft.AspNetCore.Identity;
 using Bamboo.Abp.LoginUi.Services;
-
+using Bamboo.OpenIddictExtensions;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.UI.Navigation;
+using Bamboo.Abp.LoginUi.Web.Menus;
+using Bamboo.Abp.LoginUi.Web.ProfileManagement;
 
 namespace Bamboo.Abp.LoginUi.Web;
 
 [DependsOn(
     typeof(AbpAccountWebModule),
+    typeof(AbpTenantManagementApplicationModule),
     typeof(AbpAspNetCoreMvcUiThemeSharedModule)
 )]
 public class AbpLoginUiWebModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
+        var hostingEnvironment = context.Services.GetHostingEnvironment();
+        var configuration = context.Services.GetConfiguration();
+
         context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
         {
             options.AddAssemblyResource(typeof(AbpLoginUiResource), typeof(AbpLoginUiWebModule).Assembly);
@@ -73,6 +85,36 @@ public class AbpLoginUiWebModule : AbpModule
         {
             builder.UseAspNetCore().DisableTransportSecurityRequirement();
         });
+        PreConfigure<OpenIddictServerBuilder>(builder =>
+        {
+            builder.SetAuthorizationCodeLifetime(TimeSpan.FromHours(1));
+            builder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
+            var issuer = configuration["AuthServer:Authority"];
+            if (!string.IsNullOrWhiteSpace(issuer))
+            {
+                builder.SetIssuer(new Uri(issuer));
+            }
+
+            builder.AllowCustomFlow("switch_tenant");
+            builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
+                options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
+        });
+        // PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
+        // {
+        //     options.AddDevelopmentEncryptionAndSigningCertificate = false;
+        // });
+        // PreConfigure<OpenIddictServerAspNetCoreBuilder>(configure =>
+        // {
+        //     configure.DisableTransportSecurityRequirement();
+        // });
+        // PreConfigure<OpenIddictServerBuilder>(serverBuilder =>
+        // {
+        //     // Optional: Use custome openiddict.pfx
+        //     string pfxKey = configuration["AuthServer:PfxKey"] ?? "9d763224-f649-47fc-a509-c5ab6aef4008";
+        //     serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", pfxKey);
+        //     //serverBuilder.AddProductionEncryptionAndSigningCertificate("openiddict.pfx", "9d763224-f649-47fc-a509-c5ab6aef4008");
+        // });
+
     }
 
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -88,6 +130,11 @@ public class AbpLoginUiWebModule : AbpModule
         context.Services.TryAddTransient<IVerificationCodeManager, VerificationCodeManager>();
         //ConfigureFirebase(context, configuration);
         //ConfigureTwilio(context, configuration);
+
+        Configure<AbpAspNetCoreMvcOptions>(options =>
+        {
+            options.ConventionalControllers.Create(typeof(AbpLoginUiWebModule).Assembly);
+        });
 
         Configure<AbpVirtualFileSystemOptions>(options =>
         {
@@ -122,6 +169,15 @@ public class AbpLoginUiWebModule : AbpModule
         ConfigureForwardProxy(context, configuration);
         //services.AddHostedService<TelegramBotHostedService>();
 
+        // Configure<AbpAutoMapperOptions>(options =>
+        //         {
+        //             options.AddMaps<AdminWebModule>();
+        //         });
+
+        Configure<AbpNavigationOptions>(options =>
+        {
+            options.MenuContributors.Add(new AdminWebMenuContributor());
+        });
     }
 
     private void ConfigureFirebase(ServiceConfigurationContext context, IConfiguration configuration)

@@ -1,0 +1,28 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.MultiTenancy
+@using Bamboo.Admin.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@model Bamboo.Abp.LoginUi.Web.Pages.Admin.Members.InviteMemberModalModel
+@inject IHtmlLocalizer<AdminResource> L
+@inject ICurrentTenant CurrentTenant
+@{
+    Layout = null;
+}
+<abp-modal>
+    <abp-modal-header title="@L["InviteMember"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <abp-form id="inviteMemberForm">
+            @if (!CurrentTenant.IsAvailable)
+            {
+                <abp-select asp-for="Member.TenantId" 
+                            asp-items="Model.Tenants" 
+                            label="@L["Tenant"].Value"/>
+            }
+            <abp-input asp-for="Member.Email" />
+            <abp-select asp-for="Member.Roles" asp-items="Model.Roles" label="@L["Roles"].Value" multiple="true"/>
+        </abp-form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+<script src="/Pages/Members/inviteMemberModal.js"></script>

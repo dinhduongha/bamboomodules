@@ -4,16 +4,18 @@ using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.OpenIddict.Scopes;
 
-using Bamboo.AdminExtensions.Dtos;
 using Volo.Abp.TenantManagement;
 using Volo.Abp;
+using Bamboo.Admin.HttpApi.Filters;
+using Bamboo.AdminExtensions.Dtos;
 
 namespace Bamboo.AdminExtensions;
 
 [NonController]
 [Route("api/admin/scope-management")]
 [Produces("application/json")]
-[Authorize(Roles = "admin")]
+[Authorize(Roles = "superadmin,admin")]
+[HostOnly]
 public class HostScopeController : AbpController
 {
     private readonly IRepository<OpenIddictScope, Guid> _openIddictScopeRepository;

@@ -14,6 +14,7 @@ using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Medallion.Threading.FileSystem;
 using StackExchange.Redis;
+using OpenIddict.Server;
 
 using Volo.Abp;
 using Volo.Abp.Autofac;
@@ -27,24 +28,36 @@ using Volo.Abp.Account.Settings;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.Settings;
 using Volo.Abp.EventBus.Rebus;
+
 using Rebus.PostgreSql;
 using Rebus.Config;
 using Rebus.Persistence.FileSystem;
 using Rebus.Transport.InMem;
 using Rebus.Persistence.InMem;
 
+using Volo.Abp.OpenIddict;
+using Volo.Abp.Identity.AspNetCore;
+using Volo.Abp.AspNetCore.Mvc;
+
 namespace Bamboo.AdminExtensions;
 
 [DependsOn(
     typeof(AbpAutofacModule),
     typeof(AbpCachingModule),
+    typeof(AbpIdentityDomainModule),
+    typeof(AbpIdentityApplicationModule),
     typeof(AbpIdentityHttpApiModule),
     typeof(AbpAccountHttpApiModule),
+    typeof(AbpAccountApplicationModule),
+    typeof(AbpIdentityAspNetCoreModule), // For SignInManager
+    typeof(AbpOpenIddictAspNetCoreModule),
     typeof(AbpSmsModule))]
 public class AbpAdminExtensionsModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
+        var hostingEnvironment = context.Services.GetHostingEnvironment();
+        var configuration = context.Services.GetConfiguration();
     }
 
     public override void ConfigureServices(ServiceConfigurationContext context)
@@ -58,6 +71,26 @@ public class AbpAdminExtensionsModule : AbpModule
         {
             options.TenantKey = configuration["App:TenantKey"] ?? "tenant";
         });
+        Configure<AbpAspNetCoreMvcOptions>(options =>
+        {
+            options.ConventionalControllers.Create(typeof(AbpAdminExtensionsModule).Assembly);
+        });
+        // Configure<AbpAuthorizationOptions>(options =>
+        // {
+        //     options.AddPolicy("HostAdmin", policy =>
+        //     {
+        //         policy.RequireRole("admin");
+        //         policy.RequireAssertion(ctx =>
+        //         {
+        //             var tenant = ctx.User.FindTenantId();
+        //             return tenant == null; // Host = no tenant
+        //         });
+        //     });
+        // });
+        // [Authorize(Policy = "HostAdmin")]
+        // public class HostScopeController : AbpController
+        // {
+        // }
 
         ConfigureCache(context, configuration);
         ConfigureRedis(context, configuration);

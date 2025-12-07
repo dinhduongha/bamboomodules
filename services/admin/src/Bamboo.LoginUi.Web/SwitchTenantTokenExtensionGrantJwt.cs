@@ -19,7 +19,10 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.Domain.Repositories;
 using System.IdentityModel.Tokens.Jwt; // Cần để đọc JWT
 
-using Bamboo.Admin; // Namespace chứa TenantMember
+using Bamboo.Admin;
+using Volo.Abp.Linq;
+using Bamboo.Admin.Domain.Shared.Enums;
+using IdentityRole = Volo.Abp.Identity.IdentityRole; // Namespace chứa TenantMember
 
 namespace Bamboo.OpenIddictExtensions
 {
@@ -29,23 +32,29 @@ namespace Bamboo.OpenIddictExtensions
         private readonly SignInManager<Volo.Abp.Identity.IdentityUser> _signInManager;
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
         private readonly IRepository<TenantMember, Guid> _tenantMemberRepo;
 
         // Inject CurrentTenant để switch context
         private readonly ICurrentTenant _currentTenant;
+        private readonly IAsyncQueryableExecuter _asyncExecuter;
 
         public SwitchTenantTokenExtensionGrantJwt(
             IdentityUserManager userManager,
             SignInManager<Volo.Abp.Identity.IdentityUser> signInManager,
             IUnitOfWorkManager unitOfWorkManager,
             ITenantRepository tenantRepository,
+            IReadOnlyRepository<IdentityRole, Guid> roleRepository,
             IRepository<TenantMember, Guid> tenantMemberRepo,
+            IAsyncQueryableExecuter asyncExecuter,
             ICurrentTenant currentTenant) // Inject vào đây
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _unitOfWorkManager = unitOfWorkManager;
             _tenantRepository = tenantRepository;
+            _roleRepository = roleRepository;
+            _asyncExecuter = asyncExecuter;
             _tenantMemberRepo = tenantMemberRepo;
             _currentTenant = currentTenant;
         }
@@ -92,22 +101,31 @@ namespace Bamboo.OpenIddictExtensions
                 return;
             }
 
-            // --- SỬA LỖI 2: SWITCH TENANT ---
-            string[]? memberRoles = Array.Empty<string>();
+            List<string> memberRoles = [];
+            TenantMember? member = null;
 
             // Dùng CurrentTenant.Change thay vì UnitOfWork
             using (_currentTenant.Change(targetTenantId))
             {
                 // Lúc này mọi query xuống Repo sẽ tự động filter theo targetTenantId
-                var member = await _tenantMemberRepo.FirstOrDefaultAsync(x => x.UserId == userId);
-
-                if (member == null) // || check active status
+                var memberQueryable = await _tenantMemberRepo.WithDetailsAsync(m => m.Roles);
+                memberQueryable = memberQueryable.Where(m => m.UserId == userId && m.Status == TenantMemberStatus.Active);
+                var memberEntry = await _asyncExecuter.FirstOrDefaultAsync(memberQueryable);
+                if (memberEntry == null)
                 {
                     context.Reject(OpenIddictConstants.Errors.AccessDenied, "User is not a member of this tenant.");
                     return;
                 }
+                member = memberEntry;
 
-                memberRoles = member.Roles?.ToArray();
+                var RoleIds = memberEntry.Roles.Select(r => r.RoleId).ToList();
+                if (RoleIds.Count > 0)
+                {
+                    var roleQueryable = await _roleRepository.GetQueryableAsync();
+                    var query = roleQueryable.Where(role => RoleIds.Contains(role.Id));
+
+                    memberRoles = await _asyncExecuter.ToListAsync(query.Select(r => r.Name));
+                }
             }
 
             // --- PHẦN TẠO PRINCIPAL (GIỮ NGUYÊN) ---
@@ -131,6 +149,10 @@ namespace Bamboo.OpenIddictExtensions
             var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
             foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
 
+            if (!string.IsNullOrWhiteSpace(member.Role))
+            {
+                identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
+            }
             foreach (var roleName in memberRoles)
             {
                 identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));

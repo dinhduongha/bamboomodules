@@ -1,0 +1,88 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Bamboo.Abp.LoginUi.Web.Localization
+@using Bamboo.Admin.Domain.Shared.Enums
+@using Volo.Abp.AspNetCore.Mvc.UI.Theming
+@using Volo.Abp.Authorization
+
+@model Bamboo.Abp.LoginUi.Web.Pages.Account.Workspaces.IndexModel
+@inject IThemeManager ThemeManager
+@inject IHtmlLocalizer<AbpLoginUiResource> L
+@inject IPageLayout PageLayout
+@{
+    Layout = ThemeManager.CurrentTheme.GetApplicationLayout();
+}
+@{
+    PageLayout.Content.Title = L["Workspaces"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Workspaces"].Value);
+
+    string GetStatusClass(TenantMemberStatus status)
+    {
+        return status switch
+        {
+            TenantMemberStatus.Pending => "warning",
+            TenantMemberStatus.Active => "success",
+            TenantMemberStatus.Rejected => "danger",
+            _ => "secondary"
+        };
+    }
+
+    string GetStatusText(TenantMemberStatus status)
+    {
+        return status switch
+        {
+            TenantMemberStatus.Pending => L["Enum:TenantMemberStatus.Pending"].Value,
+            TenantMemberStatus.Active => L["Enum:TenantMemberStatus.Active"].Value,
+            TenantMemberStatus.Rejected => L["Enum:TenantMemberStatus.Rejected"].Value,
+            _ => status.ToString()
+        };
+    }
+}
+
+<abp-card>
+    <abp-card-body>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>@L["Workspace"]</th>
+                    <th>@L["Roles"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["JoinedDate"]</th>
+                    <th class="text-center">@L["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var workspace in Model.Workspaces)
+                {
+                    <tr>
+                        <td><strong>@workspace.TenantName</strong></td>
+                        <td>
+                            @foreach(var role in workspace.Roles)
+                            {
+                                <span class="badge bg-secondary">@role</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge bg-@GetStatusClass(workspace.Status)">
+                                @GetStatusText(workspace.Status)
+                            </span>
+                        </td>
+                        <td>@workspace.JoinedDate?.ToString("d")</td>
+                        <td class="text-center">
+                            @if (workspace.InviteStatus == InvitationStatus.Pending)
+                            {
+                                <form method="post" style="display: inline-block;">
+                                    <button asp-page-handler="Accept" asp-route-invitationId="@workspace.Id" class="btn btn-success btn-sm">@L["Accept"]</button>
+                                </form>
+                                <form method="post" style="display: inline-block;">
+                                    <button asp-page-handler="Reject" asp-route-invitationId="@workspace.Id" class="btn btn-danger btn-sm">@L["Reject"]</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </abp-card-body>
+</abp-card>

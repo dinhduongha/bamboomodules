@@ -199,11 +199,12 @@
     .provider-btn:hover { background: #f8f9fa; border-color: #007bff; }
     .provider-btn img { width: 24px; height: 24px; margin-right: 10px; }
 </style>
+
 @section Scripts {
     <script src="https://unpkg.com/tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <script src="https://unpkg.com/bs58@4.0.1/bundle.js"></script>
     @* THÊM DẤU CHẤM THAN (!) VÀO NGAY TRƯỚC script *@
-    <!script type="importmap">
+    @* <!script type="importmap">
     {
         "imports": {
             "ethers": "https://esm.sh/ethers@5.7.2",
@@ -216,7 +217,7 @@
         }
     }
     </!script>
-
+    *@
     <script type="module">
         import { ethers } from 'ethers';
         import { SiweMessage } from 'siwe';

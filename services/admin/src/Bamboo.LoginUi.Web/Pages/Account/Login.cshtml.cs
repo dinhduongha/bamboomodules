@@ -82,7 +82,6 @@ public class LoginUiLoginModel : LoginModel
         }
     }
 
-    [AllowAnonymous]
     [HttpGet("siwx")]
     public IActionResult Siwx(string returnUrl = null)
     {

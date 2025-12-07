@@ -28,13 +28,15 @@ using IdentityUser = Volo.Abp.Identity.IdentityUser;
 
 using Bamboo.AdminExtensions.Dtos;
 using Bamboo.AdminExtensions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using Bamboo.Admin.HttpApi.Filters;
+
 //[Area(IntegrateRemoteServiceConsts.ModuleName)]
 //[RemoteService(Name = IntegrateRemoteServiceConsts.RemoteServiceName)]
 [Route("api/hosst-admin/")]
 [Produces("application/json")]
 //[Authorize]
 //[AllowAnonymous]
+[HostOnly]
 public class HostAdminController : AbpController
 {
     protected readonly AdminResetPasswordAppService _adminResetPasswordService;

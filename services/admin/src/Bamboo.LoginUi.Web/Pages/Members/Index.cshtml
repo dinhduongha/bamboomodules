@@ -1,0 +1,135 @@
+﻿
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using Bamboo.Admin.Localization
+@using Bamboo.Admin.Domain.Shared.Enums
+@using Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
+@model Bamboo.Abp.LoginUi.Web.Pages.Admin.Members.IndexModel
+@using Volo.Abp.MultiTenancy
+@inject IHtmlLocalizer<AdminResource> L
+@inject IPageLayout PageLayout
+@inject ICurrentTenant CurrentTenant
+@{
+    PageLayout.Content.Title = L["Members"].Value;
+    PageLayout.Content.BreadCrumb.Add(L["Members"].Value);
+
+    string GetStatusClass(TenantMemberStatus status) => status switch
+    {
+        TenantMemberStatus.Pending => "warning",
+        TenantMemberStatus.Active => "success",
+        TenantMemberStatus.Rejected => "danger",
+        _ => "secondary"
+    };
+
+    string GetStatusText(TenantMemberStatus status) => status switch
+    {
+        TenantMemberStatus.Pending => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        TenantMemberStatus.Active => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        TenantMemberStatus.Rejected => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        _ => status.ToString()
+    };
+}
+
+<abp-card>
+    <abp-card-header>
+        <abp-row>
+            <abp-column size-md="_6">
+                <h2>@L["Members"]</h2>
+            </abp-column>
+            <abp-column size-md="_6" class="text-end">
+                @if (!CurrentTenant.IsAvailable)
+                {
+                    <abp-button id="CreateTenantButton"
+                                text="Create Tenant"
+                                icon="building"
+                                button-type="Info" />
+
+                    <abp-button id="CreateUserButton"
+                                text="Create User"
+                                icon="user-plus"
+                                button-type="Secondary" />
+                }
+                <abp-button id="InviteMemberButton"
+                            text="@L["InviteMember"].Value"
+                            icon="plus"
+                            button-type="Primary" />
+                <abp-button id="CreateMemberButton"
+                            text="@L["CreateMember"].Value"
+                            icon="user-check"
+                            button-type="Success" />
+            </abp-column>
+        </abp-row>
+    </abp-card-header>
+    <abp-card-body>
+        <form method="get">
+            <div class="input-group mb-3">
+                @if (!CurrentTenant.IsAvailable)
+                {
+                    <abp-lookup-input 
+                        name="TenantId" 
+                        value="@Model.TenantId?.ToString()" 
+                        display-value="@(Model.Members.Items.FirstOrDefault()?.TenantName)"
+                        lookup-url="/api/abp/multi-tenancy/tenants"
+                        style="max-width: 250px;"
+                        placeholder="@L["FilterByTenant"]"/>
+                }
+                <input type="text" name="Filter" class="form-control" value="@Model.Filter" placeholder="@L["SearchPlaceholder"]" />
+                <button type="submit" class="btn btn-primary">@L["Search"]</button>
+            </div>
+        </form>
+
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    @if (!CurrentTenant.IsAvailable) { <th>@L["Tenant"]</th> }
+                    <th>@L["UserName"]</th>
+                    <th>@L["EmailAddress"]</th>
+                    <th>@L["Roles"]</th>
+                    <th>@L["Status"]</th>
+                    <th>@L["JoinedDate"]</th>
+                    <th class="text-center">@L["Actions"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in Model.Members.Items)
+                {
+                    <tr>
+                        @if (CurrentTenant.IsAvailable) { <td>@member.TenantName</td> }
+                        <td>@member.UserName</td>
+                        <td>@member.Email</td>
+                        <td>
+                            @foreach (var role in member.Roles)
+                            {
+                                <span class="badge bg-secondary me-1">@role</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge bg-@GetStatusClass(member.Status)">
+                                @GetStatusText(member.Status)
+                            </span>
+                        </td>
+                        <td>@member.JoinedDate?.ToString("d")</td>
+                        <td class="text-center">
+                            <abp-button button-type="Primary" size="Small" class="edit-member-button"
+                                        data-id="@member.Id" text="@L["Edit"].Value"
+                                        icon="edit" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        
+        <abp-pagination-bar 
+            page-result="@Model.Members" 
+            page-url="/Members" 
+            router-type="QueryString">
+        </abp-pagination-bar>
+
+    </abp-card-body>
+</abp-card>
+
+@section scripts {
+    <abp-script src="/Pages/Members/index.js" />
+    @* <abp-script src="./index.js" /> *@
+}

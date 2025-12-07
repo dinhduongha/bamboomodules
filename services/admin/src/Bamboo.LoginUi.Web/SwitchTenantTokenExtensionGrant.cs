@@ -15,10 +15,14 @@ using Volo.Abp.Identity;
 using Volo.Abp.MultiTenancy;
 using Volo.Abp.Uow;
 
+using Volo.Abp.Linq;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Domain.Repositories;
 
 using Bamboo.Admin;
+using IdentityRole = Volo.Abp.Identity.IdentityRole;
+using System.Collections.Generic;
+using Bamboo.Admin.Domain.Shared.Enums;
 
 namespace Bamboo.OpenIddictExtensions
 {
@@ -27,8 +31,10 @@ namespace Bamboo.OpenIddictExtensions
         private readonly IdentityUserManager _userManager;
         private readonly SignInManager<Volo.Abp.Identity.IdentityUser> _signInManager;
         private readonly ITenantRepository _tenantRepository;
+        private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
         private readonly IRepository<TenantMember, Guid> _tenantMemberRepo;
         private readonly ICurrentTenant _currentTenant;
+        private readonly IAsyncQueryableExecuter _asyncExecuter;
 
         // SỬA: Dùng Validation Service để check Signature
         private readonly OpenIddictValidationService _validationService;
@@ -37,15 +43,19 @@ namespace Bamboo.OpenIddictExtensions
             IdentityUserManager userManager,
             SignInManager<Volo.Abp.Identity.IdentityUser> signInManager,
             ITenantRepository tenantRepository,
+            IReadOnlyRepository<IdentityRole, Guid> roleRepository,
             IRepository<TenantMember, Guid> tenantMemberRepo,
             ICurrentTenant currentTenant,
+            IAsyncQueryableExecuter asyncExecuter,
             OpenIddictValidationService validationService) // Inject
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tenantRepository = tenantRepository;
+            _roleRepository = roleRepository;
             _tenantMemberRepo = tenantMemberRepo;
             _currentTenant = currentTenant;
+            _asyncExecuter = asyncExecuter;
             _validationService = validationService;
         }
 
@@ -87,11 +97,6 @@ namespace Bamboo.OpenIddictExtensions
                 context.Reject(OpenIddictConstants.Errors.InvalidGrant, "Token does not contain User Id.");
                 return;
             }
-            if (userId == null)
-            {
-                context.Reject(OpenIddictConstants.Errors.InvalidGrant, "Token does not contain user identifier.");
-                return;
-            }
 
             if (!Guid.TryParse(targetTenantIdStr, out var targetTenantId))
             {
@@ -100,17 +105,33 @@ namespace Bamboo.OpenIddictExtensions
             }
 
             // --- BƯỚC 2: CHECK QUYỀN THÀNH VIÊN ---
-            string[] memberRoles = Array.Empty<string>();
+            List<string> memberRoles = [];
+            TenantMember? member;
 
             using (_currentTenant.Change(targetTenantId))
             {
-                var member = await _tenantMemberRepo.FirstOrDefaultAsync(x => x.UserId == userId.Value);
-                if (member == null) // || check status
+                // Dùng WithDetails() để tải navigation property 'Roles'.
+                var memberQueryable = await _tenantMemberRepo.WithDetailsAsync(m => m.Roles);
+                memberQueryable = memberQueryable.Where(m => m.UserId == userId.Value && m.Status == TenantMemberStatus.Active);
+                var memberEntry = await _asyncExecuter.FirstOrDefaultAsync(memberQueryable);
+                if (memberEntry == null)
                 {
                     context.Reject(OpenIddictConstants.Errors.AccessDenied, "User is not a member of this tenant.");
                     return;
                 }
-                memberRoles = member.Roles?.ToArray();
+                member = memberEntry;
+
+                var RoleIds = memberEntry.Roles.Select(r => r.RoleId).ToList();
+                if (RoleIds.Count > 0)
+                {
+                    var roleQueryable = await _roleRepository.GetQueryableAsync();
+                    var query = roleQueryable.Where(role => RoleIds.Contains(role.Id));
+                    // var query = from memberRole in memberEntry?.Roles ?? Enumerable.Empty<TenantMemberRole>()
+                    //             join role in roleQueryable on memberRole.RoleId equals role.Id
+                    //             select role.Name;
+
+                    memberRoles = await _asyncExecuter.ToListAsync(query.Select(r => r.Name));
+                }
             }
 
             // --- BƯỚC 3: TẠO TOKEN MỚI ---
@@ -133,6 +154,10 @@ namespace Bamboo.OpenIddictExtensions
             var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
             foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
 
+            if (!string.IsNullOrWhiteSpace(member.Role))
+            {
+                identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
+            }
             foreach (var roleName in memberRoles)
             {
                 identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));

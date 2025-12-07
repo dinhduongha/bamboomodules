@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0" /> 
     <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+    <PackageReference Include="Rebus.ServiceProvider" Version="10.7.0" />
     <PackageReference Include="Rebus.PostgreSql" Version="9.1.1" />
   </ItemGroup>
   <ItemGroup>
@@ -38,10 +39,17 @@
     <PackageReference Include="Volo.Abp.TenantManagement.HttpApi" Version="10.0.0" />
     <PackageReference Include="Volo.Abp.EventBus.Rebus" Version="10.0.0" />
     <ProjectReference Include="..\Bamboo.Admin.Domain\Bamboo.Admin.Domain.csproj" />
-    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
   </ItemGroup>
+
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  </ItemGroup> -->
+
   <ItemGroup>
-    <None Remove="Filters\" />
+    <ProjectReference Include="..\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>  <None Remove="Filters\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Filters\" />

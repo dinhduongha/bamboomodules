@@ -5,13 +5,14 @@ using Microsoft.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc;
 using Bamboo.AdminExtensions.Dtos;
 using Volo.Abp;
+using Bamboo.Admin.HttpApi.Filters;
 
 namespace Bamboo.AdminExtensions;
 
-[NonController]
 [Produces("application/json")]
 [Route("api/admin/client-app")]
-[Authorize(Roles = "admin")]
+[Authorize(Roles = "superadmin,admin")]
+[HostOnly]
 public class HostClientAppController : AbpController
 {
     private readonly ClientAppService _clientAppService;

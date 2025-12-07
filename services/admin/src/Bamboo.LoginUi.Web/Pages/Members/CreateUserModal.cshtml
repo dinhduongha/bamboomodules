@@ -1,0 +1,23 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using Bamboo.Admin.Localization
+@model Bamboo.Abp.LoginUi.Web.Pages.Admin.Members.CreateUserModalModel
+@inject IHtmlLocalizer<AdminResource> L
+@{
+    Layout = null;
+}
+<abp-modal>
+    <abp-modal-header title="@L["CreateUser"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <abp-form id="createUserForm">
+            <abp-select asp-for="User.TenantId" asp-items="Model.Tenants" label="@L["Tenant"].Value" />
+            <abp-input asp-for="User.UserName" />
+            <abp-input asp-for="User.Email" />
+            <abp-select asp-for="User.RoleName" asp-items="Model.Roles" label="@L["Role"].Value"/>
+            <abp-input asp-for="User.Password" type="password" />
+        </abp-form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+<script src="/Pages/Members/createUserModal.js"></script>

@@ -10,5 +10,6 @@ namespace Bamboo.Admin;
 [Table("AbpUserLogins")]
 public class UserLoginExtra : IdentityUserLogin
 {
+    public virtual bool? IsActive { get; set; } = true;
     public virtual string? ProviderName { get; protected set; }
 }

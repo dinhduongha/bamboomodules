@@ -1,0 +1,23 @@
+@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using Bamboo.Admin.Localization
+@inject IHtmlLocalizer<AdminResource> L
+@model Bamboo.Abp.LoginUi.Web.Pages.Admin.Members.CreateTenantModalModel
+
+@{
+    Layout = null;
+}
+<abp-modal>
+    <abp-modal-header title="@L["CreateTenant"].Value"></abp-modal-header>
+    <abp-modal-body>
+        <abp-form id="createTenantForm">
+            <abp-input asp-for="Tenant.Name" />
+            <abp-input asp-for="Tenant.AdminEmailAddress" />
+            <abp-input asp-for="Tenant.AdminPassword" type="password" />
+        </abp-form>
+    </abp-modal-body>
+    <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+</abp-modal>
+
+<script src="/Pages/Members/createTenantModal.js"></script>
