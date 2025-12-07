@@ -43,15 +43,24 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
         public async Task OnGetAsync()
         {
             User = new CreateUserViewModel();
-            using (_dataFilter.Disable<IMultiTenant>())
+            if (CurrentTenant.IsAvailable)
             {
-                var tenants = await _tenantRepository.GetListAsync();
-                Tenants = tenants.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
-                Tenants.Insert(0, new SelectListItem("Host", null)); // Add Host option
+                // Nếu là admin của tenant, tải sẵn danh sách vai trò
+                var roles = await _roleRepository.GetListAsync();
+                Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+            }
+            else
+            {
+                using (_dataFilter.Disable<IMultiTenant>())
+                {
+                    var tenants = await _tenantRepository.GetListAsync();
+                    Tenants = tenants.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
+                    Tenants.Insert(0, new SelectListItem("Host", null)); // Add Host option
 
-                // Tải tất cả các vai trò của tất cả các tenant
-                var allRoles = await _roleRepository.GetListAsync();
-                Roles = allRoles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+                    // Tải tất cả các vai trò của tất cả các tenant
+                    var allRoles = await _roleRepository.GetListAsync();
+                    Roles = allRoles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+                }
             }
         }
 

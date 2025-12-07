@@ -54,6 +54,7 @@ public class CreateMemberModalModel : AbpPageModel
         }
         else
         {
+
             Roles = new List<SelectListItem>();
             using (_dataFilter.Disable<IMultiTenant>())
             {

@@ -2,17 +2,6 @@
 abp.log.debug("Debug mode ON for modal");
 $(function () {
   // --- MODAL MANAGERS ---
-  var inviteModal = new abp.ModalManager({
-    viewUrl: abp.appPath + "Members/InviteMemberModal",
-    scriptUrl: abp.appPath + "Members/inviteMemberModal.js", // Đường dẫn tương đối
-    formId: "inviteMemberForm",
-  });
-
-  var createMemberModal = new abp.ModalManager({
-    viewUrl: abp.appPath + "Members/CreateMemberModal",
-    formId: "createMemberForm",
-  });
-
   var createTenantModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/CreateTenantModal",
     formId: "createTenantForm",
@@ -21,6 +10,16 @@ $(function () {
   var createUserModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/CreateUserModal",
     formId: "createUserForm",
+  });
+
+  var inviteModal = new abp.ModalManager({
+    viewUrl: abp.appPath + "Members/InviteMemberModal",
+    formId: "inviteMemberForm",
+  });
+
+  var createMemberModal = new abp.ModalManager({
+    viewUrl: abp.appPath + "Members/CreateMemberModal",
+    formId: "createMemberForm",
   });
 
   var editModal = new abp.ModalManager({

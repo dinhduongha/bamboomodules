@@ -3,7 +3,7 @@
     console.log("Modal initialized");
 
     $("#createTenantForm").on("submit", function (e) {
-      console.log("Submit fired");
+      console.log("createTenantForm Submit fired");
     });
   });
 })();
