@@ -47,7 +47,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
             {
                 // Nếu là admin của tenant, tải sẵn danh sách vai trò
                 var roles = await _roleRepository.GetListAsync();
-                Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+                Roles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
             }
             else
             {
@@ -66,13 +66,18 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
 
         public async Task<IActionResult> OnPostAsync()
         {
+            // Nếu là admin của tenant, TenantId sẽ là null, ta gán nó bằng tenant hiện tại
+            var tenantId = CurrentTenant.Id ?? User.TenantId;
+
             var userDto = ObjectMapper.Map<CreateUserViewModel, IdentityUserCreateDto>(User);
             if (User.RoleName != null)
             {
                 userDto.RoleNames = new[] { User.RoleName };
             }
 
-            using (CurrentTenant.Change(User.TenantId))
+            // Sử dụng CurrentTenant.Change để đảm bảo user được tạo trong đúng tenant
+            // (kể cả khi Host tạo cho tenant khác, hoặc admin tenant tự tạo)
+            using (CurrentTenant.Change(tenantId))
             {
                 await _userAppService.CreateAsync(userDto);
             }

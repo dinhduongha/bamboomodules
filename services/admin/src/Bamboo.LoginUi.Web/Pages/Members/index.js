@@ -6,6 +6,15 @@ $(function () {
     viewUrl: abp.appPath + "Members/CreateTenantModal",
     formId: "createTenantForm",
   });
+  $("#CreateTenantButton").on("click", function (e) {
+    e.preventDefault();
+    abp.log.debug("Debug CreateTenantModal click");
+    createTenantModal.open();
+  });
+  createTenantModal.onResult(function () {
+    abp.log.debug("Debug CreateTenantModal onResult");
+    location.reload();
+  });
 
   var createUserModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/CreateUserModal",
@@ -22,7 +31,7 @@ $(function () {
     formId: "createMemberForm",
   });
 
-  var editModal = new abp.ModalManager({
+  var editMember = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/EditMemberModal",
     formId: "editMemberForm",
   });
@@ -38,11 +47,6 @@ $(function () {
     createMemberModal.open();
   });
 
-  $("#CreateTenantButton").on("click", function (e) {
-    e.preventDefault();
-    createTenantModal.open();
-  });
-
   $("#CreateUserButton").on("click", function (e) {
     e.preventDefault();
     createUserModal.open();
@@ -51,7 +55,7 @@ $(function () {
   $(document).on("click", ".edit-member-button", function (e) {
     e.preventDefault();
     var id = $(this).data("id");
-    editModal.open({ id: id });
+    editMember.open({ id: id });
   });
 
   // --- ON RESULT (RELOAD PAGE) ---
@@ -63,15 +67,11 @@ $(function () {
     location.reload();
   });
 
-  createTenantModal.onResult(function () {
-    location.reload();
-  });
-
   createUserModal.onResult(function () {
     location.reload();
   });
 
-  editModal.onResult(function () {
+  editMember.onResult(function () {
     location.reload();
   });
 });

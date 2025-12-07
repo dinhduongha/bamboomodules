@@ -1,9 +1,24 @@
-(function () {
-  $(document).on("abp.modal.init", ".create-tenant-modal", function () {
-    console.log("Modal initialized");
+var abp = abp || {};
 
-    $("#createTenantForm").on("submit", function (e) {
-      console.log("createTenantForm Submit fired");
-    });
-  });
-})();
+abp.modals.createTenantModal = function () {
+  var initModal = function (publicApi, args) {
+    console.log("CreateTenantModal initialized");
+  };
+
+  var saveModal = function (publicApi) {
+    console.log("CreateTenantModal save triggered");
+    var form = $("#createTenantForm");
+
+    if (!form.valid()) {
+      // nếu dùng jquery.validate
+      return false; // chặn submit
+    }
+
+    return true; // ABP tự submit AJAX
+  };
+
+  return {
+    initModal: initModal,
+    saveModal: saveModal,
+  };
+};

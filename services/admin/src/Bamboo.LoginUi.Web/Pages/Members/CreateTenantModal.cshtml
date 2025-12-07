@@ -8,16 +8,17 @@
 @{
     Layout = null;
 }
-<abp-modal>
-    <abp-modal-header title="@L["CreateTenant"].Value"></abp-modal-header>
-    <abp-modal-body>
-        <abp-form id="createTenantForm">
-            <abp-input asp-for="Tenant.Name" />
-            <abp-input asp-for="Tenant.AdminEmailAddress" />
-            <abp-input asp-for="Tenant.AdminPassword" type="password" />
-        </abp-form>
-    </abp-modal-body>
-    <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
-</abp-modal>
-
+<form method="post" action="@Url.Page("./CreateTenantModal")">
+    <abp-modal>
+        <abp-modal-header title="@L["CreateTenant"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form id="createTenantForm">
+                <abp-input asp-for="Tenant.Name" />
+                <abp-input asp-for="Tenant.AdminEmailAddress" />
+                <abp-input asp-for="Tenant.AdminPassword" type="password" />
+            </abp-form>
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>
 <script src="/Pages/Members/createTenantModal.js"></script>

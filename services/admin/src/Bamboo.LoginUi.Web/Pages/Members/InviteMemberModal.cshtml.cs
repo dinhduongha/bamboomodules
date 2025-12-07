@@ -46,6 +46,7 @@ public class InviteMemberModalModel : AbpPageModel
 
     public async Task OnGetAsync()
     {
+        Member = new InviteMemberViewModel();
         if (CurrentTenant.IsAvailable)
         {
             // Nếu là admin của tenant, tải sẵn danh sách vai trò
@@ -54,7 +55,7 @@ public class InviteMemberModalModel : AbpPageModel
         }
         else
         {
-            // Nếu là host, danh sách vai trò sẽ được tải bằng AJAX sau khi chọn tenant
+            // Host: Tải danh sách tenant, vai trò sẽ được tải sau
             Roles = new List<SelectListItem>();
 
             // Tải danh sách tenants cho Host

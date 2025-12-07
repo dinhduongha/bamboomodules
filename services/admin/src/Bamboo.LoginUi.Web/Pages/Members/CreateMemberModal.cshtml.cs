@@ -49,12 +49,13 @@ public class CreateMemberModalModel : AbpPageModel
         Member = new CreateMemberViewModel();
         if (CurrentTenant.IsAvailable)
         {
+            // Tenant admin: Tải vai trò của tenant hiện tại
             var roles = await _roleRepository.GetListAsync();
             Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
         }
         else
         {
-
+            // Host: Tải danh sách tenant, vai trò sẽ được tải sau
             Roles = new List<SelectListItem>();
             using (_dataFilter.Disable<IMultiTenant>())
             {
