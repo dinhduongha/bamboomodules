@@ -10,9 +10,6 @@
 @{
     Layout = null;
 }
-<script>
-console.log(" Script Run at begin of createUserModal.cshtml");
-</script>
 <abp-modal data-modal-name="createUserModal">
     <abp-modal-header title="@L["CreateUser"].Value"></abp-modal-header>
     <abp-modal-body>
@@ -28,6 +25,3 @@ console.log(" Script Run at begin of createUserModal.cshtml");
     <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
 </abp-modal>
 <script src="/Pages/Members/createUserModal.v2.js"></script>
-<script>
-console.log(" Script Run at end of createUserModal.cshtml");
-</script>

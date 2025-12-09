@@ -114,10 +114,13 @@ public class InviteMemberModalModel : AbpPageModel
 
 public class InviteMemberViewModel
 {
-    [Required]
+    public Guid? UserId { get; set; }
+
     [EmailAddress]
     [Display(Name = "EmailAddress")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
+
+    public string? RoleName { get; set; }
 
     public Guid? TenantId { get; set; }
     public List<string> Roles { get; set; } = new();

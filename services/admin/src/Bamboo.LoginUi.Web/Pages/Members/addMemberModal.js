@@ -1,8 +1,8 @@
 var abp = abp || {};
 
-abp.modals.createMemberModal = function () {
+abp.modals.addMemberModal = function () {
   var initModal = function (publicApi, args) {
-    console.log("createMemberModal initialized");
+    console.log("addMemberModal initialized");
     var $tenantIdSelect = $("#Member_TenantId");
     var $rolesSelect = $("#Member_Roles");
 
@@ -10,10 +10,10 @@ abp.modals.createMemberModal = function () {
       var selectedTenantId = $(this).val();
       $rolesSelect.empty(); // Xóa các vai trò cũ
 
-      // Gọi handler OnGetRolesAsync ở backend (cần thêm vào CreateMemberModal.cshtml.cs)
+      // Gọi handler OnGetRolesAsync ở backend (cần thêm vào AddMemberModal.cshtml.cs)
       abp.ajax({
         url:
-          publicApi.url.replace("CreateMemberModal", "CreateUserModal") +
+          publicApi.url.replace("AddMemberModal", "CreateUserModal") +
           "Roles?tenantId=" +
           (selectedTenantId || ""),
         type: "GET",

@@ -45,17 +45,17 @@
                                 icon="building"
                                 button-type="Info" />
 
-                    <abp-button id="CreateUserButton"
+                    @* <abp-button id="CreateUserButton"
                                 text="Create User"
                                 icon="user-plus"
-                                button-type="Secondary" />
+                                button-type="Secondary" /> *@
                 }
                 <abp-button id="InviteMemberButton"
                             text="@L["InviteMember"].Value"
                             icon="plus"
                             button-type="Primary" />
-                <abp-button id="CreateMemberButton"
-                            text="@L["CreateMember"].Value"
+                <abp-button id="AddMemberButton"
+                            text="@L["AddMember"].Value"
                             icon="user-check"
                             button-type="Success" />
             </abp-column>
@@ -133,6 +133,4 @@
 
 @section scripts {
     <abp-script src="/Pages/Members/index.js" />
-    <abp-script src="/Pages/Members/createUserModal.js" />
-    <abp-script src="/Pages/Members/createMemberModal.js" />
 }

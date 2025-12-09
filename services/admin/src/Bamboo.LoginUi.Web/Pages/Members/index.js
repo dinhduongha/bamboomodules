@@ -39,9 +39,9 @@ $(function () {
     formId: "inviteMemberForm",
   });
 
-  var createMemberModal = new abp.ModalManager({
-    viewUrl: abp.appPath + "Members/CreateMemberModal",
-    formId: "createMemberForm",
+  var addMemberModal = new abp.ModalManager({
+    viewUrl: abp.appPath + "Members/AddMemberModal",
+    formId: "addMemberForm",
   });
 
   var editMemberModal = new abp.ModalManager({
@@ -55,9 +55,9 @@ $(function () {
     inviteMemberModal.open();
   });
 
-  $("#CreateMemberButton").on("click", function (e) {
+  $("#AddMemberButton").on("click", function (e) {
     e.preventDefault();
-    createMemberModal.open();
+    addMemberModal.open();
   });
 
   $(document).on("click", ".edit-member-button", function (e) {
@@ -71,7 +71,7 @@ $(function () {
     location.reload();
   });
 
-  createMemberModal.onResult(function () {
+  addMemberModal.onResult(function () {
     location.reload();
   });
 

@@ -9,7 +9,8 @@
 @{
     Layout = null;
 }
-<abp-modal>
+<form method="post" action="@Url.Page("./InviteMemberModal")">
+<abp-modal data-modal-name="inviteMemberModal">
     <abp-modal-header title="@L["InviteMember"].Value"></abp-modal-header>
     <abp-modal-body>
         <abp-form id="inviteMemberForm">
@@ -19,10 +20,14 @@
                             asp-items="Model.Tenants" 
                             label="@L["Tenant"].Value"/>
             }
+            <abp-input asp-for="Member.UserId" />
             <abp-input asp-for="Member.Email" />
-            <abp-select asp-for="Member.Roles" asp-items="Model.Roles" label="@L["Roles"].Value" multiple="true"/>
+            <abp-select asp-for="Member.RoleName" asp-items="Model.Roles" label="@L["Roles"].Value"/>
+
+            @* <abp-select asp-for="Member.Roles" asp-items="Model.Roles" label="@L["Roles"].Value" multiple="true"/> *@
         </abp-form>
     </abp-modal-body>
     <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
 </abp-modal>
-<script src="/Pages/Members/inviteMemberModal.js"></script>
+</form>
+<script src="/Pages/Members/inviteMemberModal.v2.js"></script>

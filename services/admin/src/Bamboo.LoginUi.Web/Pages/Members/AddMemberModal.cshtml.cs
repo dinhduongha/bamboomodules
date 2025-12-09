@@ -16,10 +16,10 @@ using Volo.Abp.TenantManagement;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 
-public class CreateMemberModalModel : AbpPageModel
+public class AddMemberModalModel : AbpPageModel
 {
     [BindProperty]
-    public CreateMemberViewModel Member { get; set; }
+    public AddMemberViewModel Member { get; set; }
 
     public List<SelectListItem> Roles { get; set; }
     public List<SelectListItem> Tenants { get; set; }
@@ -30,7 +30,7 @@ public class CreateMemberModalModel : AbpPageModel
     private readonly IDataFilter _dataFilter;
     public ICurrentTenant CurrentTenant { get; }
 
-    public CreateMemberModalModel(
+    public AddMemberModalModel(
         IRepository<TenantMember, Guid> tenantMemberRepository,
         IReadOnlyRepository<IdentityRole, Guid> roleRepository,
         IReadOnlyRepository<Tenant, Guid> tenantRepository,
@@ -46,7 +46,7 @@ public class CreateMemberModalModel : AbpPageModel
 
     public async Task OnGetAsync()
     {
-        Member = new CreateMemberViewModel();
+        Member = new AddMemberViewModel();
         if (CurrentTenant.IsAvailable)
         {
             // Tenant admin: Tải vai trò của tenant hiện tại
@@ -78,7 +78,7 @@ public class CreateMemberModalModel : AbpPageModel
             throw new Volo.Abp.UserFriendlyException(L["UserIsAlreadyAMember"]);
         }
 
-        var newMember = new TenantMember(GuidGenerator.Create(), tenantId.Value, Member.UserId, TenantMemberStatus.Active);
+        var newMember = new TenantMember(GuidGenerator.Create(), tenantId.Value, (Guid)Member.UserId, TenantMemberStatus.Active);
 
         using (_dataFilter.Disable<IMultiTenant>())
         {
@@ -94,14 +94,16 @@ public class CreateMemberModalModel : AbpPageModel
     }
 }
 
-public class CreateMemberViewModel
+public class AddMemberViewModel
 {
-    [Required] public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
     public Guid? TenantId { get; set; }
     public List<string> Roles { get; set; } = new();
-    [Required]
+
     [EmailAddress]
     [Display(Name = "EmailAddress")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
+
+    public string? RoleName { get; set; }
 
 }
