@@ -3,8 +3,13 @@
   "texts": {
     "Menu:Home": "Home",
     "Welcome": "Welcome",
-    "CreateUser": "Create User",
     "CreateTenant": "Create Tenant",
+    "CreateUser": "Create User",
+    "AddMember": "Add Member",
+    "InviteMember": "Invite Member",
+    "EditMember": "Edit Member",
+    "Search": "Search",
+    "SearchPlaceholder": "Search by name or email...",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io."
   }
 }

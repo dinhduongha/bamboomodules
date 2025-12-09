@@ -52,6 +52,7 @@ public class InviteMemberModalModel : AbpPageModel
             // Nếu là admin của tenant, tải sẵn danh sách vai trò
             var roles = await _roleRepository.GetListAsync();
             Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+            Member.RoleName = "group_user";
         }
         else
         {
@@ -110,11 +111,25 @@ public class InviteMemberModalModel : AbpPageModel
 
         return NoContent();
     }
+
+    public async Task<JsonResult> OnGetRolesAsync(Guid? tenantId)
+    {
+        // Tắt bộ lọc đa tenant để có thể truy vấn vai trò của tenant bất kỳ (hoặc host)
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            // Lấy các vai trò có TenantId khớp, hoặc là null (cho Host)
+            var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId);
+            // Trả về Name làm value để khớp với asp-for="Member.RoleName"
+            return new JsonResult(roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList());
+        }
+    }
 }
 
 public class InviteMemberViewModel
 {
     public Guid? UserId { get; set; }
+
+    public Guid? RoleId { get; set; }
 
     [EmailAddress]
     [Display(Name = "EmailAddress")]

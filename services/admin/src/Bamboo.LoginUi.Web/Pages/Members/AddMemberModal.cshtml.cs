@@ -51,7 +51,10 @@ public class AddMemberModalModel : AbpPageModel
         {
             // Tenant admin: Tải vai trò của tenant hiện tại
             var roles = await _roleRepository.GetListAsync();
-            Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+            Roles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
+            // Tìm Id của vai trò 'group_user' và đặt làm giá trị mặc định
+            var defaultRole = roles.FirstOrDefault(r => r.Name == "group_user");
+            if (defaultRole != null) { Member.RoleId = defaultRole.Id; }
         }
         else
         {
@@ -104,6 +107,8 @@ public class AddMemberViewModel
     [Display(Name = "EmailAddress")]
     public string? Email { get; set; }
 
-    public string? RoleName { get; set; }
+    public string? RoleName { get; set; } = "group_user";
+
+    public Guid? RoleId { get; set; }
 
 }

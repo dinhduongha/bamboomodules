@@ -19,9 +19,13 @@
                 {
                     <abp-select asp-for="Member.TenantId" asp-items="Model.Tenants" label="@L["Tenant"].Value"/>
                 }
-                <abp-input asp-for="Member.UserId" />
+                @* Đặt autofocus vào trường UserId để tránh lỗi setSelectionRange trên input type="email" *@
+                <abp-input asp-for="Member.UserId" autofocus="true" />
                 <abp-input asp-for="Member.Email" />
-                <abp-select asp-for="Member.RoleName" asp-items="Model.Roles" label="@L["Roles"].Value"/>
+                <abp-select asp-for="Member.RoleId" 
+                            asp-items="Model.Roles" 
+                            label="@L["Roles"].Value"
+                            data-allow-clear="true" data-placeholder="@L["SelectRole"].Value" />
 
                 @* <abp-lookup-input asp-for="Member.UserId" lookup-url="/api/identity/users/lookup" label="@L["User"].Value"/>
                 <abp-select asp-for="Member.Roles" asp-items="Model.Roles" label="@L["Roles"].Value" multiple="true"/> *@
