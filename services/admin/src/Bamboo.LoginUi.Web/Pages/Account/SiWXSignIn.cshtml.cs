@@ -262,9 +262,10 @@ public class SiWXSignInModel : AccountPageModel
             var user = new IdentityUser(
                 id: _guidGenerator.Create(),
                 userName: address, // Username là địa chỉ ví
-                email: $"{address.ToLower()}@siwx.local",
+                email: $"{address.ToLower()}@dad.local",
                 tenantId: _currentTenant.Id // Quan trọng cho Multi-tenancy
             );
+            user.IsExternal = true;
 
             // Mark email confirmed để tránh bị chặn đăng nhập nếu có setting bắt buộc
             user.SetEmailConfirmed(true);
