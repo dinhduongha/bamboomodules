@@ -14,7 +14,6 @@ using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Medallion.Threading.FileSystem;
 using StackExchange.Redis;
-using OpenIddict.Server;
 
 using Volo.Abp;
 using Volo.Abp.Autofac;
@@ -50,7 +49,6 @@ namespace Bamboo.AdminExtensions;
     typeof(AbpAccountHttpApiModule),
     typeof(AbpAccountApplicationModule),
     typeof(AbpIdentityAspNetCoreModule), // For SignInManager
-    typeof(AbpOpenIddictAspNetCoreModule),
     typeof(AbpSmsModule))]
 public class AbpAdminExtensionsModule : AbpModule
 {
@@ -73,8 +71,10 @@ public class AbpAdminExtensionsModule : AbpModule
         });
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
-            options.ConventionalControllers.Create(typeof(AbpAdminExtensionsModule).Assembly);
+            //options.ConventionalControllers.Create(typeof(AbpAdminExtensionsModule).Assembly);
+            //options.ConventionalControllers.CreateControllersForAppServices = false;
         });
+
         // Configure<AbpAuthorizationOptions>(options =>
         // {
         //     options.AddPolicy("HostAdmin", policy =>

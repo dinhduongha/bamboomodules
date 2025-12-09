@@ -1,7 +1,8 @@
 var abp = abp || {};
 
-abp.modals.editMember = function () {
+abp.modals.editMemberModal = function () {
   var initModal = function (publicApi, args) {
+    console.log("editMemberModal initialized");
     // Initialize something if needed
   };
 

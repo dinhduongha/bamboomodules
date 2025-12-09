@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Security.Cryptography.X509Certificates;
+using System.IdentityModel.Tokens.Jwt;
+
 using Medallion.Threading;
 using Medallion.Threading.Redis;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +18,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+
 
 using StackExchange.Redis;
 
@@ -37,14 +45,10 @@ using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.MultiTenancy;
 using Bamboo.AdminExtensions;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
-using OpenIddict.Validation.AspNetCore;
-using Microsoft.Extensions.Logging;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
-using OpenIddict.Validation;
+
+// using OpenIddict.Validation;
+// using OpenIddict.Validation.AspNetCore;
+
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -93,10 +97,10 @@ public class AdminHttpApiHostModule : AbpModule
         });
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
-            options.ConventionalControllers.Create(typeof(AdminHttpApiHostModule).Assembly, opts =>
-            {
-                opts.RootPath = "admin";
-            });
+            // options.ConventionalControllers.Create(typeof(AdminHttpApiHostModule).Assembly, opts =>
+            // {
+            //     opts.RootPath = "admin";
+            // });
         });
 
         ConfigureConventionalControllers();
@@ -143,7 +147,7 @@ public class AdminHttpApiHostModule : AbpModule
     {
         Configure<AbpAspNetCoreMvcOptions>(options =>
         {
-            options.ConventionalControllers.Create(typeof(AdminApplicationModule).Assembly);
+            //options.ConventionalControllers.Create(typeof(AdminApplicationModule).Assembly);
         });
     }
 
@@ -280,11 +284,13 @@ public class AdminHttpApiHostModule : AbpModule
         // })
         // ;
         //context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
-        context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
+        //context.Services.ForwardIdentityAuthenticationForBearer(OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme);
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
-            options.IsDynamicClaimsEnabled = true;
+            // Tắt tính năng tự động check user ở DB mỗi request.
+            // Nếu user thuộc host, và work trên tenant data,
+            options.IsDynamicClaimsEnabled = false;
         });
     }
 

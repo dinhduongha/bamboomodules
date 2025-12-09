@@ -16,6 +16,7 @@ using Bamboo.Admin;
 using Bamboo.Admin.Application.Dtos;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Volo.Abp.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account.Workspaces;
 
@@ -30,10 +31,20 @@ public class WorkspaceDto
     public DateTimeOffset? JoinedDate { get; set; }
 }
 
+[Authorize]
 public class IndexModel : AbpPageModel
 {
     [BindProperty]
     public List<WorkspaceDto> Workspaces { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string ReturnUrl { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string ReturnUrlHash { get; set; }
+
+    [BindProperty]
+    public string SessionHandle { get; set; }
 
     private readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
     private readonly IReadOnlyRepository<Tenant, Guid> _tenantRepository;
@@ -55,6 +66,11 @@ public class IndexModel : AbpPageModel
 
     public async Task OnGetAsync()
     {
+        if (!CurrentUser.Id.HasValue)
+        {
+            RedirectToPage("/Account/Login", new { returnUrl = ReturnUrl });
+        }
+
         // Tắt bộ lọc MultiTenancy để có thể truy vấn dữ liệu từ các tenant khác.
         using (_dataFilter.Disable<IMultiTenant>())
         {
@@ -92,6 +108,10 @@ public class IndexModel : AbpPageModel
 
     public async Task<IActionResult> OnPostAcceptAsync(Guid invitationId)
     {
+        if (!CurrentUser.Id.HasValue)
+        {
+            RedirectToPage("/Account/Login", new { returnUrl = ReturnUrl });
+        }
         using (_dataFilter.Disable<IMultiTenant>())
         {
             var invitation = await _tenantMemberRepository.GetAsync(invitationId);
@@ -100,6 +120,8 @@ public class IndexModel : AbpPageModel
                 return Forbid();
             }
             invitation.AcceptInvitation();
+            invitation.IsActive = true;
+            invitation.Status = TenantMemberStatus.Active;
             await _tenantMemberRepository.UpdateAsync(invitation);
         }
         return RedirectToPage();
@@ -115,7 +137,7 @@ public class IndexModel : AbpPageModel
                 return Forbid();
             }
             invitation.RejectInvitation();
-            invitation.Status = TenantMemberStatus.Rejected;
+            invitation.Status = TenantMemberStatus.Leaved;
             await _tenantMemberRepository.UpdateAsync(invitation);
         }
         return RedirectToPage();

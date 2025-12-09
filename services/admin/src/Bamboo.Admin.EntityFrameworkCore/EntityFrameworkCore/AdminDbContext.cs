@@ -52,6 +52,8 @@ public partial class AdminDbContext :
     public DbSet<TenantConnectionString> TenantConnectionStrings { get; set; }
 
     public DbSet<TenantMember> TenantMembers { get; set; }
+    public DbSet<TenantMemberOrganizationUnit> TenantMemberOrganizationUnits { get; set; }
+
     public DbSet<TenantRegistration> TenantRegistrations { get; set; }
 
     public DbSet<TenantOwner> TenantOwners { get; set; }

@@ -17,11 +17,24 @@ $(function () {
   });
 
   var createUserModal = new abp.ModalManager({
-    viewUrl: abp.appPath + "Members/CreateUserModal",
+    viewUrl: "/Members/CreateUserModal",
     formId: "createUserForm",
   });
 
-  var inviteModal = new abp.ModalManager({
+  // Mở modal khi click button
+  $("#CreateUserButton").on("click", function (e) {
+    e.preventDefault();
+    abp.log.debug("Open CreateUserModal");
+    createUserModal.open(); // tự gọi initModal
+  });
+
+  // Khi modal submit thành công
+  createUserModal.onResult(function () {
+    abp.log.debug("CreateUserModal submitted successfully");
+    location.reload(); // hoặc cập nhật DOM mà không reload
+  });
+
+  var inviteMemberModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/InviteMemberModal",
     formId: "inviteMemberForm",
   });
@@ -31,7 +44,7 @@ $(function () {
     formId: "createMemberForm",
   });
 
-  var editMember = new abp.ModalManager({
+  var editMemberModal = new abp.ModalManager({
     viewUrl: abp.appPath + "Members/EditMemberModal",
     formId: "editMemberForm",
   });
@@ -39,7 +52,7 @@ $(function () {
   // --- CLICK HANDLERS ---
   $("#InviteMemberButton").on("click", function (e) {
     e.preventDefault();
-    inviteModal.open();
+    inviteMemberModal.open();
   });
 
   $("#CreateMemberButton").on("click", function (e) {
@@ -47,19 +60,14 @@ $(function () {
     createMemberModal.open();
   });
 
-  $("#CreateUserButton").on("click", function (e) {
-    e.preventDefault();
-    createUserModal.open();
-  });
-
   $(document).on("click", ".edit-member-button", function (e) {
     e.preventDefault();
     var id = $(this).data("id");
-    editMember.open({ id: id });
+    editMemberModal.open({ id: id });
   });
 
   // --- ON RESULT (RELOAD PAGE) ---
-  inviteModal.onResult(function () {
+  inviteMemberModal.onResult(function () {
     location.reload();
   });
 
@@ -67,11 +75,7 @@ $(function () {
     location.reload();
   });
 
-  createUserModal.onResult(function () {
-    location.reload();
-  });
-
-  editMember.onResult(function () {
+  editMemberModal.onResult(function () {
     location.reload();
   });
 });

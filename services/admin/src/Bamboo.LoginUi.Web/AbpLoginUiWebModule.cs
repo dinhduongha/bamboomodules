@@ -46,14 +46,14 @@ using Volo.Abp.Identity.Settings;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Account.Web.ProfileManagement;
+using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.UI.Navigation;
 
 
 using Bamboo.Abp.LoginUi.Web.Localization;
 using Bamboo.Abp.VerificationCode;
 using Bamboo.Abp.LoginUi.Services;
 using Bamboo.OpenIddictExtensions;
-using Volo.Abp.AspNetCore.Mvc;
-using Volo.Abp.UI.Navigation;
 using Bamboo.Abp.LoginUi.Web.Menus;
 using Bamboo.Abp.LoginUi.Web.ProfileManagement;
 
@@ -96,8 +96,8 @@ public class AbpLoginUiWebModule : AbpModule
             }
 
             builder.AllowCustomFlow("switch_tenant");
-            builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
-                options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
+            //builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
+            //    options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
         });
         // PreConfigure<AbpOpenIddictAspNetCoreOptions>(options =>
         // {
@@ -131,10 +131,10 @@ public class AbpLoginUiWebModule : AbpModule
         //ConfigureFirebase(context, configuration);
         //ConfigureTwilio(context, configuration);
 
-        Configure<AbpAspNetCoreMvcOptions>(options =>
-        {
-            options.ConventionalControllers.Create(typeof(AbpLoginUiWebModule).Assembly);
-        });
+        // Configure<AbpAspNetCoreMvcOptions>(options =>
+        // {
+        //     options.ConventionalControllers.Create(typeof(AbpLoginUiWebModule).Assembly);
+        // });
 
         Configure<AbpVirtualFileSystemOptions>(options =>
         {

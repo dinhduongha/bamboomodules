@@ -32,10 +32,9 @@ using Bamboo.Admin.HttpApi.Filters;
 
 //[Area(IntegrateRemoteServiceConsts.ModuleName)]
 //[RemoteService(Name = IntegrateRemoteServiceConsts.RemoteServiceName)]
-[Route("api/hosst-admin/")]
+[Route("api/host-admin/")]
 [Produces("application/json")]
-//[Authorize]
-//[AllowAnonymous]
+[Authorize(Roles = "superadmin,admin")]
 [HostOnly]
 public class HostAdminController : AbpController
 {

@@ -20,7 +20,6 @@ using Volo.Abp.TenantManagement;
 
 namespace Bamboo.Admin.Application.Services;
 
-[Authorize(Roles = "superadmin,admin")]
 public class TenantMemberAppService :
     CrudAppService<
         TenantMember,
@@ -181,7 +180,7 @@ public class TenantMemberAppService :
         return ObjectMapper.Map<TenantMember, TenantMemberDto>(invitation);
     }
 
-    public async Task<ListResultDto<TenantMemberDto>> GetMyInvitationsAsync()
+    public async Task<PagedResultDto<TenantMemberDto>> GetMyInvitationsAsync()
     {
         using (_dataFilter.Disable<IMultiTenant>())
         {
@@ -200,7 +199,7 @@ public class TenantMemberAppService :
                 dto.TenantName = x.tenant.Name;
                 return dto;
             }).ToList();
-            return new ListResultDto<TenantMemberDto>(dtos);
+            return new PagedResultDto<TenantMemberDto>(dtos.Count, dtos);
         }
     }
 
@@ -225,7 +224,6 @@ public class TenantMemberAppService :
             throw new UserFriendlyException("You are not authorized to accept this invitation.");
         }
         invitation.RejectInvitation();
-        invitation.Status = TenantMemberStatus.Rejected;
         await Repository.UpdateAsync(invitation);
     }
 }

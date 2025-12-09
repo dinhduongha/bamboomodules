@@ -14,9 +14,11 @@ using Volo.Abp.TenantManagement;
 using Bamboo.Admin;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Volo.Abp.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 
+[Authorize(Roles = "superadmin,admin")]
 public class IndexModel : AbpPageModel
 {
     [BindProperty(SupportsGet = true)]
@@ -24,6 +26,15 @@ public class IndexModel : AbpPageModel
 
     [BindProperty(SupportsGet = true)]
     public Guid? TenantId { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string ReturnUrl { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string ReturnUrlHash { get; set; }
+
+    [BindProperty]
+    public string SessionHandle { get; set; }
 
     public PagedResultDto<MemberDto> Members { get; set; }
 
@@ -54,13 +65,17 @@ public class IndexModel : AbpPageModel
         Members = new PagedResultDto<MemberDto>();
     }
 
-    public async Task OnGetAsync(int currentPage = 1, int pageSize = 10)
+    public async Task OnGetAsync(int currentPage = 0, int pageSize = 10)
     {
+        if (!CurrentUser.Id.HasValue)
+        {
+            RedirectToPage("/Account/Login", new { returnUrl = ReturnUrl });
+        }
         var tenantId = _currentTenant.Id ?? TenantId;
 
         using (_currentTenant.IsAvailable ? null : _dataFilter.Disable<IMultiTenant>())
         {
-            var memberQueryable = await _tenantMemberRepository.GetQueryableAsync();
+            var memberQueryable = await _tenantMemberRepository.WithDetailsAsync(x => x.Roles, x => x.OrganizationUnits);
             var userQueryable = await _userRepository.GetQueryableAsync();
             var tenantQueryable = await _tenantRepository.GetQueryableAsync();
             var roleQueryable = await _roleRepository.GetQueryableAsync();
@@ -95,10 +110,13 @@ public class IndexModel : AbpPageModel
                 {
                     Id = x.Member.Id,
                     UserId = x.User.Id,
+                    TenantId = x.Member.TenantId,
                     UserName = x.User.UserName,
                     Email = x.User.Email,
                     Status = x.Member.Status,
+                    InviteStatus = x.Member.InviteStatus,
                     TenantName = x.Tenant.Name,
+                    Role = x.Member.Role,
                     JoinedDate = x.Member.AcceptedAt ?? x.Member.CreationTime,
                     Roles = roles
                 };
@@ -112,11 +130,14 @@ public class IndexModel : AbpPageModel
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
+        public Guid? TenantId { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
         public string TenantName { get; set; }
+        public string Role { get; set; }
         public List<string> Roles { get; set; } = new();
         public TenantMemberStatus Status { get; set; }
+        public InvitationStatus InviteStatus { get; set; }
         public DateTimeOffset? JoinedDate { get; set; }
     }
 }

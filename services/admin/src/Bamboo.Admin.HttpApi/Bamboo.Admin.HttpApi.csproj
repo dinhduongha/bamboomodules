@@ -17,8 +17,12 @@
     <PackageReference Include="Volo.Abp.SettingManagement.HttpApi" Version="10.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

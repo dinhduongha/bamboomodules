@@ -11,6 +11,7 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Bamboo.Admin;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Volo.Abp.Identity;
 
 public static class DbContextModelCreatingExtensions
 {
@@ -128,33 +129,77 @@ public static class DbContextModelCreatingExtensions
         //});
         builder.Entity<TenantMember>(b =>
         {
+            b.ConfigureByConvention();
             b.HasIndex(b => b.Id).IsUnique(true);
             b.HasIndex(b => b.TenantId);
             b.HasIndex(b => b.UserId);
             b.HasIndex(b => new { TenantId = b.TenantId, UserId = b.UserId }).IsUnique(true);
+
             b.HasKey(e => e.Id);
+
             b.Property(e => e.Id)
-                            .HasDefaultValueSql("uuidv7()")
-                            .HasColumnName("id");
+                .HasDefaultValueSql("uuidv7()");
+            // b.Property(x => x.Roles)
+            //  .HasConversion(
+            //      // Khi lưu vào DB: Convert List -> JSON String
+            //      v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
 
-            b.Property(x => x.Roles)
-             .HasConversion(
-                 // Khi lưu vào DB: Convert List -> JSON String
-                 v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+            //      // Khi đọc từ DB: Convert JSON String -> List
+            //      v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null) ?? new List<string>()
+            //  );
 
-                 // Khi đọc từ DB: Convert JSON String -> List
-                 v => JsonSerializer.Deserialize<List<string>>(v, (JsonSerializerOptions)null) ?? new List<string>()
-             );
+            // // Để EF Core so sánh được sự thay đổi của List (Value Comparer)
+            // // Phần này hơi nâng cao, cần thiết để EF biết khi nào bạn Add item vào list để update DB
+            // // Nếu không có, EF có thể không nhận ra sự thay đổi.
+            // var valueComparer = new ValueComparer<List<string>>(
+            //     (c1, c2) => c1.SequenceEqual(c2),
+            //     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            //     c => c.ToList());
 
-            // Để EF Core so sánh được sự thay đổi của List (Value Comparer)
-            // Phần này hơi nâng cao, cần thiết để EF biết khi nào bạn Add item vào list để update DB
-            // Nếu không có, EF có thể không nhận ra sự thay đổi.
-            var valueComparer = new ValueComparer<List<string>>(
-                (c1, c2) => c1.SequenceEqual(c2),
-                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToList());
+            // b.Property(x => x.Roles).Metadata.SetValueComparer(valueComparer);                            
+        });
 
-            b.Property(x => x.Roles).Metadata.SetValueComparer(valueComparer);
+        builder.Entity<TenantMemberRole>(b =>
+        {
+
+            b.ConfigureByConvention();
+
+            b.HasKey(ur => ur.Id);
+
+            b.HasIndex(b => b.TenantId);
+            b.HasIndex(b => b.TenantMemberId);
+            b.HasIndex(b => b.RoleId);
+
+            b.Property(e => e.Id)
+                .HasDefaultValueSql("uuidv7()");
+
+            b.HasOne<Volo.Abp.Identity.IdentityRole>(x => x.Role).WithMany().HasForeignKey(ur => ur.RoleId).IsRequired();
+            b.HasOne<TenantMember>().WithMany(u => u.Roles).HasForeignKey(ur => ur.TenantMemberId).IsRequired();
+
+            b.HasIndex(ur => new { ur.TenantMemberId, ur.RoleId }).IsUnique();
+
+            b.ApplyObjectExtensionMappings();
+        });
+
+        builder.Entity<TenantMemberOrganizationUnit>(b =>
+        {
+
+            b.ConfigureByConvention();
+
+            b.HasKey(ur => ur.Id);
+
+            b.HasIndex(b => b.TenantId);
+            b.HasIndex(b => b.TenantMemberId);
+            b.HasIndex(b => b.OrganizationUnitId);
+            b.HasIndex(ur => new { ur.TenantMemberId, ur.OrganizationUnitId }).IsUnique();
+
+            b.Property(e => e.Id)
+                .HasDefaultValueSql("uuidv7()");
+
+            b.HasOne<Volo.Abp.Identity.OrganizationUnit>(x => x.OrganizationUnit).WithMany().HasForeignKey(ur => ur.OrganizationUnitId).IsRequired();
+            b.HasOne<TenantMember>().WithMany(u => u.OrganizationUnits).HasForeignKey(ur => ur.TenantMemberId).IsRequired();
+
+            b.ApplyObjectExtensionMappings();
         });
 
         builder.Entity<TenantRegistration>(b =>
@@ -165,15 +210,14 @@ public static class DbContextModelCreatingExtensions
             b.HasKey(e => e.Id);
 
             b.Property(e => e.Id)
-                .HasDefaultValueSql("uuidv7()")
-                .HasColumnName("id");
+                .HasDefaultValueSql("uuidv7()");
 
         });
         builder.UseIdentityColumns();
         builder.UseSerialColumns();
         builder.StringSize();
         builder.PostgreSQLDataType();
-        //builder.SnakeCase();
+        // builder.SnakeCase();
         // Change to lower case:
         // https://github.com/abpframework/abp/issues/2131
     }

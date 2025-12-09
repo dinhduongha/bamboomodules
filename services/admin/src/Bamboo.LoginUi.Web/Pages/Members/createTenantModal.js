@@ -2,7 +2,7 @@ var abp = abp || {};
 
 abp.modals.createTenantModal = function () {
   var initModal = function (publicApi, args) {
-    console.log("CreateTenantModal initialized");
+    console.log("createTenantModal initialized");
   };
 
   var saveModal = function (publicApi) {

@@ -290,6 +290,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                         OpenIddictConstants.GrantTypes.Password,
                         OpenIddictConstants.GrantTypes.ClientCredentials,
                         OpenIddictConstants.GrantTypes.RefreshToken,
+                        "switch_tenant",
+                        "siwx"
                     },
                     scopes: commonScopes,
                     clientUri: reactClientRootUrl,
@@ -321,6 +323,8 @@ public class OpenIddictDataSeedContributor : IDataSeedContributor, ITransientDep
                 grantTypes: new List<string>
                 {
                     OpenIddictConstants.GrantTypes.AuthorizationCode,
+                    "switch_tenant",
+                    "siwx"
                 },
                 scopes: commonScopes,
                 redirectUri: $"{swaggerRootUrl}/swagger/oauth2-redirect.html",

@@ -6,36 +6,36 @@ using Volo.Abp.MultiTenancy;
 
 namespace Bamboo.Admin;
 
-[Table("tenant_member_roles")]
-public class TenantMemberRole : AuditedEntity<Guid>, IMultiTenant
+[Table("tenant_member_organization_units")]
+public class TenantMemberOrganizationUnit : AuditedEntity<Guid>, IMultiTenant
 {
     public virtual Guid? TenantId { get; set; }
 
     /// <summary>
     /// Gets or sets the primary key of the tenant member that is linked to a role.
     /// </summary>
-    public virtual Guid TenantMemberId { get; protected set; }
+    public virtual Guid TenantMemberId { get; set; }
 
     /// <summary>
     /// Gets or sets the primary key of the role that is linked to the user.
     /// </summary>
-    public virtual Guid RoleId { get; protected set; }
+    public virtual Guid? OrganizationUnitId { get; set; }
 
     /// <summary>
     /// Navigation property for the role.
     /// </summary>
-    public virtual Volo.Abp.Identity.IdentityRole? Role { get; set; }
+    public virtual Volo.Abp.Identity.OrganizationUnit? OrganizationUnit { get; set; }
 
-    protected TenantMemberRole()
+    protected TenantMemberOrganizationUnit()
     {
 
     }
 
-    public TenantMemberRole(Guid id, Guid tenantMemberId, Guid roleId, Guid? tenantId)
+    public TenantMemberOrganizationUnit(Guid id, Guid tenantMemberId, Guid ouId, Guid? tenantId = null)
         : base(id)
     {
         TenantMemberId = tenantMemberId;
-        RoleId = roleId;
         TenantId = tenantId;
+        OrganizationUnitId = ouId;
     }
 }

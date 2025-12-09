@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Volo.Abp.AspNetCore.Mvc;
 
+using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.Account;
 
 namespace Bamboo.Abp.LoginUi.Web;
 
+[NonController]
 [Route("api/phone/")]
 [Produces("application/json")]
 public class PhoneController : AbpControllerBase
@@ -22,7 +23,7 @@ public class PhoneController : AbpControllerBase
     [HttpPost]
     [Route("admin-reset-password")]
     [Authorize]
-    public async Task ResetPassword([FromBody] ResetPasswordDto input)
+    public async Task ResetPasswordAsync([FromBody] ResetPasswordDto input)
     {
         await _phoneService.ResetPasswordAsync(input);
     }
@@ -37,7 +38,7 @@ public class PhoneController : AbpControllerBase
     [Route("register")]
     [AllowAnonymous]
     [IgnoreAntiforgeryToken]
-    public async Task<string> Register([FromBody] ExternalRegisterOrUpdateDto account, string provider = "" )
+    public async Task<string> RegisterAsync([FromBody] ExternalRegisterOrUpdateDto account, string provider = "")
     {
         var user = await _phoneService.Register(account, provider);
         await Task.CompletedTask;
@@ -48,7 +49,7 @@ public class PhoneController : AbpControllerBase
     [Route("change-password")]
     [AllowAnonymous]
     [IgnoreAntiforgeryToken]
-    public async Task<string> ChangePassword([FromBody] ExternalRegisterOrUpdateDto account, string provider = "")
+    public async Task<string> ChangePasswordAsync([FromBody] ExternalRegisterOrUpdateDto account, string provider = "")
     {
         var user = await _phoneService.ChangePassword(account, provider);
         await Task.CompletedTask;
@@ -64,12 +65,12 @@ public class PhoneController : AbpControllerBase
     [Route("smsToken")]
     [AllowAnonymous]
     [IgnoreAntiforgeryToken]
-    public async Task<string> Token(string phone)
+    public async Task<string> TokenAsync(string phone)
     {
         var token = await _phoneService.smsToken(phone);
         return phone;
     }
-    
+
     /// <summary>
     /// Generate code, let user send the code to SMS Provider for verification. Sms provider must call webhook to own server
     /// </summary>

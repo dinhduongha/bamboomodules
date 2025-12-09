@@ -23,7 +23,7 @@
         {
             TenantMemberStatus.Pending => "warning",
             TenantMemberStatus.Active => "success",
-            TenantMemberStatus.Rejected => "danger",
+            TenantMemberStatus.Disabled => "danger",
             _ => "secondary"
         };
     }
@@ -34,7 +34,7 @@
         {
             TenantMemberStatus.Pending => L["Enum:TenantMemberStatus.Pending"].Value,
             TenantMemberStatus.Active => L["Enum:TenantMemberStatus.Active"].Value,
-            TenantMemberStatus.Rejected => L["Enum:TenantMemberStatus.Rejected"].Value,
+            TenantMemberStatus.Disabled => L["Enum:TenantMemberStatus.Rejected"].Value,
             _ => status.ToString()
         };
     }

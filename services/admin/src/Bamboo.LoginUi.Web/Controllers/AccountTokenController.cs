@@ -11,10 +11,13 @@ using IdentityUser = Volo.Abp.Identity.IdentityUser;
 using Volo.Abp.OpenIddict.Controllers;
 using OpenIddict.Server.AspNetCore;
 using Volo.Abp.OpenIddict.Tokens;
+using System.Threading.Tasks;
+using System;
 
-namespace MyProject.Controllers;
+namespace Bamboo.Admin.Controllers;
 
-[Route("api/account")]
+[NonController]
+[Route("/connect/account")]
 [ApiController]
 public class CustomLoginController : AbpOpenIdDictControllerBase
 {
@@ -101,51 +104,53 @@ public class CustomLoginController : AbpOpenIdDictControllerBase
         // var request = await GetOpenIddictServerRequestAsync(HttpContext);
         // await OpenIddictClaimsPrincipalManager.HandleAsync(request, principal);
         return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+        /*
+                // Tạo Access Token
+                var accessDescriptor = new OpenIddictTokenDescriptor
+                {
+                    Principal = principal,
+                    Type = TokenTypes.Bearer,
+                    AuthorizationId = authorizationId,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    ExpirationDate = DateTimeOffset.UtcNow.AddHours(1)
+                };
+                var accessToken = await TokenManager.CreateAsync(accessDescriptor);
 
-        // Tạo Access Token
-        var accessDescriptor = new OpenIddictTokenDescriptor
-        {
-            Principal = principal,
-            Type = TokenTypes.Bearer,
-            AuthorizationId = authorizationId,
-            CreationDate = DateTimeOffset.UtcNow,
-            ExpirationDate = DateTimeOffset.UtcNow.AddHours(1)
-        };
-        var accessToken = await TokenManager.CreateAsync(accessDescriptor);
-
-        // Tạo Refresh Token
-        var refreshDescriptor = new OpenIddictTokenDescriptor
-        {
-            Principal = principal,
-            Type = TokenTypes.Bearer,
-            AuthorizationId = authorizationId,
-            CreationDate = DateTimeOffset.UtcNow,
-            ExpirationDate = DateTimeOffset.UtcNow.AddDays(30)
-        };
-        var refreshToken = await TokenManager.CreateAsync(refreshDescriptor);
+                // Tạo Refresh Token
+                var refreshDescriptor = new OpenIddictTokenDescriptor
+                {
+                    Principal = principal,
+                    Type = TokenTypes.Bearer,
+                    AuthorizationId = authorizationId,
+                    CreationDate = DateTimeOffset.UtcNow,
+                    ExpirationDate = DateTimeOffset.UtcNow.AddDays(30)
+                };
+                var refreshToken = await TokenManager.CreateAsync(refreshDescriptor);
 
 
-        // Trả về DTO
-        var dto = new LoginResultDto
-        {
-            //AccessToken = await TokenManager.GetIdAsync(accessToken),
-            //RefreshToken = await TokenManager.GetIdAsync(refreshToken),
-            AccessToken = await TokenManager.GetPayloadAsync(accessToken),
-            RefreshToken = await TokenManager.GetPayloadAsync(refreshToken),
+                // Trả về DTO
+                var dto = new LoginResultDto
+                {
+                    //AccessToken = await TokenManager.GetIdAsync(accessToken),
+                    //RefreshToken = await TokenManager.GetIdAsync(refreshToken),
+                    AccessToken = await TokenManager.GetPayloadAsync(accessToken),
+                    RefreshToken = await TokenManager.GetPayloadAsync(refreshToken),
 
-            ExpiresIn = 3600,
-            TenantId = tenantId,
-            TenantName = tenantName,
-            Roles = roles.ToArray(),
-            Profile = new
-            {
-                fullName = user.Name,
-                email = user.Email
-            }
-        };
+                    ExpiresIn = 3600,
+                    TenantId = tenantId,
+                    TenantName = tenantName,
+                    Roles = roles.ToArray(),
+                    Profile = new
+                    {
+                        fullName = user.Name,
+                        email = user.Email
+                    }
+                };
 
-        return Ok(dto);
+                return Ok(dto);
+                */
     }
+
 }
 
 public class LoginDto

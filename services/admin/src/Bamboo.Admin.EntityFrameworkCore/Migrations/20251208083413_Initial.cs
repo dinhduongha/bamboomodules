@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -426,7 +427,6 @@ namespace Bamboo.Admin.Migrations
                     LastPasswordChangeTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     BranchId = table.Column<Guid>(type: "uuid", nullable: true),
                     Discriminator = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
-                    PublicId = table.Column<Guid>(type: "uuid", nullable: true),
                     ExtraProperties = table.Column<string>(type: "text", nullable: true),
                     ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamptz", nullable: false),
@@ -464,6 +464,7 @@ namespace Bamboo.Admin.Migrations
                     FrontChannelLogoutUri = table.Column<string>(type: "text", nullable: true),
                     ClientUri = table.Column<string>(type: "text", nullable: true),
                     LogoUri = table.Column<string>(type: "text", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
                     ExtraProperties = table.Column<string>(type: "text", nullable: false),
                     ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
@@ -504,6 +505,88 @@ namespace Bamboo.Admin.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tenant_members",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuidv7()"),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TenantName = table.Column<string>(type: "text", nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
+                    Role = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    InviteStatus = table.Column<int>(type: "integer", nullable: false),
+                    InvitedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    AcceptedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    RejectedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    LeavedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    SuspendedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    IsOwner = table.Column<bool>(type: "boolean", nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    Info = table.Column<JsonElement>(type: "jsonb", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tenant_members", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tenant_registrations",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuidv7()"),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreateLinkId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Name = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    TaxCode = table.Column<string>(type: "text", nullable: true),
+                    DunCode = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Phone = table.Column<string>(type: "text", nullable: true),
+                    Contact = table.Column<string>(type: "text", nullable: true),
+                    CountryCode = table.Column<string>(type: "text", nullable: true),
+                    CurrencyCode = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
+                    IsApproved = table.Column<bool>(type: "boolean", nullable: true),
+                    IsCreated = table.Column<bool>(type: "boolean", nullable: true),
+                    IsDisabled = table.Column<bool>(type: "boolean", nullable: true),
+                    RegistrationAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ApprovedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    ApprovedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    RejectedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    RejectedBy = table.Column<Guid>(type: "uuid", nullable: true),
+                    RejectedReason = table.Column<string>(type: "text", nullable: true),
+                    DisableAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    Info = table.Column<JsonElement>(type: "jsonb", nullable: true),
+                    ExtraProperties = table.Column<string>(type: "text", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
+                    DeletionTime = table.Column<DateTime>(type: "timestamptz", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tenant_registrations", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -654,6 +737,7 @@ namespace Bamboo.Admin.Migrations
                     ProviderKey = table.Column<string>(type: "character varying(196)", maxLength: 196, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
                     Discriminator = table.Column<string>(type: "character varying(21)", maxLength: 21, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
                     ProviderName = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -763,6 +847,66 @@ namespace Bamboo.Admin.Migrations
                         column: x => x.ApplicationId,
                         principalTable: "OpenIddictApplications",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tenant_member_organization_units",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuidv7()"),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TenantMemberId = table.Column<Guid>(type: "uuid", nullable: false),
+                    OrganizationUnitId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tenant_member_organization_units", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tenant_member_organization_units_AbpOrganizationUnits_Organ~",
+                        column: x => x.OrganizationUnitId,
+                        principalTable: "AbpOrganizationUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tenant_member_organization_units_tenant_members_TenantMembe~",
+                        column: x => x.TenantMemberId,
+                        principalTable: "tenant_members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tenant_member_roles",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false, defaultValueSql: "uuidv7()"),
+                    TenantId = table.Column<Guid>(type: "uuid", nullable: true),
+                    TenantMemberId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamptz", nullable: false),
+                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
+                    LastModificationTime = table.Column<DateTime>(type: "timestamptz", nullable: true),
+                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tenant_member_roles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_tenant_member_roles_AbpRoles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "AbpRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tenant_member_roles_tenant_members_TenantMemberId",
+                        column: x => x.TenantMemberId,
+                        principalTable: "tenant_members",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -1065,6 +1209,86 @@ namespace Bamboo.Admin.Migrations
                 name: "IX_OpenIddictTokens_ReferenceId",
                 table: "OpenIddictTokens",
                 column: "ReferenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_organization_units_OrganizationUnitId",
+                table: "tenant_member_organization_units",
+                column: "OrganizationUnitId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_organization_units_TenantId",
+                table: "tenant_member_organization_units",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_organization_units_TenantMemberId",
+                table: "tenant_member_organization_units",
+                column: "TenantMemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_organization_units_TenantMemberId_Organizatio~",
+                table: "tenant_member_organization_units",
+                columns: new[] { "TenantMemberId", "OrganizationUnitId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_roles_RoleId",
+                table: "tenant_member_roles",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_roles_TenantId",
+                table: "tenant_member_roles",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_roles_TenantMemberId",
+                table: "tenant_member_roles",
+                column: "TenantMemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_member_roles_TenantMemberId_RoleId",
+                table: "tenant_member_roles",
+                columns: new[] { "TenantMemberId", "RoleId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_members_Id",
+                table: "tenant_members",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_members_TenantId",
+                table: "tenant_members",
+                column: "TenantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_members_TenantId_UserId",
+                table: "tenant_members",
+                columns: new[] { "TenantId", "UserId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_members_UserId",
+                table: "tenant_members",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_registrations_Id",
+                table: "tenant_registrations",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_registrations_Name",
+                table: "tenant_registrations",
+                column: "Name");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tenant_registrations_UserId",
+                table: "tenant_registrations",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -1152,10 +1376,25 @@ namespace Bamboo.Admin.Migrations
                 name: "OpenIddictTokens");
 
             migrationBuilder.DropTable(
+                name: "tenant_member_organization_units");
+
+            migrationBuilder.DropTable(
+                name: "tenant_member_roles");
+
+            migrationBuilder.DropTable(
+                name: "tenant_registrations");
+
+            migrationBuilder.DropTable(
                 name: "AbpEntityChanges");
 
             migrationBuilder.DropTable(
                 name: "AbpTenants");
+
+            migrationBuilder.DropTable(
+                name: "AbpUsers");
+
+            migrationBuilder.DropTable(
+                name: "OpenIddictAuthorizations");
 
             migrationBuilder.DropTable(
                 name: "AbpOrganizationUnits");
@@ -1164,10 +1403,7 @@ namespace Bamboo.Admin.Migrations
                 name: "AbpRoles");
 
             migrationBuilder.DropTable(
-                name: "AbpUsers");
-
-            migrationBuilder.DropTable(
-                name: "OpenIddictAuthorizations");
+                name: "tenant_members");
 
             migrationBuilder.DropTable(
                 name: "AbpAuditLogs");

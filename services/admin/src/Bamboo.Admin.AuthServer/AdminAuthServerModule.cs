@@ -48,7 +48,8 @@ using Bamboo.Admin.EntityFrameworkCore;
 using Bamboo.Admin.Localization;
 using Bamboo.Admin.MultiTenancy;
 using OpenIddict.Server;
-using Bamboo.OpenIddictExtensions;
+using Nethereum.Web3;
+using Volo.Abp.AspNetCore.Mvc;
 
 namespace Bamboo.Admin;
 
@@ -75,26 +76,26 @@ public class AdminAuthServerModule : AbpModule
         {
             builder.AddValidation(options =>
             {
-                options.AddAudiences("Bamboo");
+                options.AddAudiences("Bamboo", "Admin", "Core", "Web3");
                 options.UseLocalServer();
                 options.UseAspNetCore();
             });
         });
 
-        PreConfigure<OpenIddictServerBuilder>(builder =>
-        {
-            builder.SetAuthorizationCodeLifetime(TimeSpan.FromHours(1));
-            builder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
-            var issuer = configuration["AuthServer:Authority"];
-            if (!string.IsNullOrWhiteSpace(issuer))
-            {
-                builder.SetIssuer(new Uri(issuer));
-            }
+        // PreConfigure<OpenIddictServerBuilder>(builder =>
+        // {
+        //     builder.SetAuthorizationCodeLifetime(TimeSpan.FromHours(1));
+        //     builder.SetAccessTokenLifetime(TimeSpan.FromDays(30));
+        //     var issuer = configuration["AuthServer:Authority"];
+        //     if (!string.IsNullOrWhiteSpace(issuer))
+        //     {
+        //         builder.SetIssuer(new Uri(issuer));
+        //     }
 
-            builder.AllowCustomFlow("switch_tenant");
-            builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
-                options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
-        });
+        //     builder.AllowCustomFlow("switch_tenant");
+        //     builder.AddEventHandler<OpenIddictServerEvents.HandleTokenRequestContext>(options =>
+        //         options.UseScopedHandler<SwitchTenantTokenExtensionGrant>());
+        // });
 
         PreConfigure<OpenIddictServerAspNetCoreBuilder>(configure =>
         {
@@ -121,6 +122,11 @@ public class AdminAuthServerModule : AbpModule
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
         var configuration = context.Services.GetConfiguration();
+
+        Configure<AbpAspNetCoreMvcOptions>(options =>
+        {
+            options.ConventionalControllers.Create(typeof(AdminAuthServerModule).Assembly);
+        });
 
         Configure<OpenIddictServerAspNetCoreOptions>(options =>
         {
@@ -248,6 +254,7 @@ public class AdminAuthServerModule : AbpModule
 
         context.Services.Configure<AbpClaimsPrincipalFactoryOptions>(options =>
         {
+            // Tắt tính năng tự động check DB mỗi request
             options.IsDynamicClaimsEnabled = true;
         });
     }
@@ -333,7 +340,7 @@ public class AdminAuthServerModule : AbpModule
         var configuration = context.ServiceProvider.GetRequiredService<IConfiguration>();
         var logHeaders = configuration.GetValue<bool>("Logging:RequestLogging:LogHeaders");
         var useSSL = configuration.GetValue("Auth:OpenIddict:UseSSL", true);
-        var useSubpath = configuration.GetValue("App:EnableSubpath", false);
+        var useSubpath = configuration.GetValue("App:EnableSubpath", true);
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.All

@@ -18,6 +18,7 @@ using Twilio.TwiML;
 
 namespace Bamboo.LoginUiWeb.Controllers;
 
+[NonController]
 [Route("api/twilio")]
 public class TwilioSmsController : TwilioController
 {
@@ -26,8 +27,8 @@ public class TwilioSmsController : TwilioController
     IHttpClientFactory _httpClientFactory;
 
     public TwilioSmsController(IHttpClientFactory httpFactory)
-    {        
-        _httpClientFactory = httpFactory;        
+    {
+        _httpClientFactory = httpFactory;
     }
 
     /// <summary>

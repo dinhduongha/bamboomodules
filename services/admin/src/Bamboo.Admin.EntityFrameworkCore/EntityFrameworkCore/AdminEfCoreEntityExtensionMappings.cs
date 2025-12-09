@@ -4,6 +4,7 @@ using Volo.Abp.Identity;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.OpenIddict.Applications;
 
 namespace Bamboo.Admin.EntityFrameworkCore;
 
@@ -41,8 +42,8 @@ public static class AdminEfCoreEntityExtensionMappings
              * See the documentation for more:
              * https://docs.abp.io/en/abp/latest/Customizing-Application-Modules-Extending-Entities
              */
-            ObjectExtensionManager.Instance
-                .MapEfCoreProperty<IdentityUser, Guid?>("PublicId");
+            // ObjectExtensionManager.Instance
+            //     .MapEfCoreProperty<IdentityUser, Guid?>("PublicId");
 
             ObjectExtensionManager.Instance
                 .MapEfCoreProperty<IdentityUser, Guid?>("BranchId");
@@ -50,6 +51,9 @@ public static class AdminEfCoreEntityExtensionMappings
             ObjectExtensionManager.Instance
                 .MapEfCoreProperty<Tenant, Guid?>("OwnerId")
                 .MapEfCoreProperty<Tenant, string?>("Description");
+
+            ObjectExtensionManager.Instance
+                .MapEfCoreProperty<OpenIddictApplication, Guid?>("TenantId");
 
             // ObjectExtensionManager.Instance
             //     .MapEfCoreProperty<IdentityUserLogin, string?>("ProviderUid");

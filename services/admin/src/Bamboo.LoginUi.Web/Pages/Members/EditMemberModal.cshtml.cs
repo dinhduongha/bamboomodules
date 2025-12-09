@@ -13,6 +13,7 @@ using Volo.Abp.MultiTenancy;
 
 using Bamboo.Admin;
 using Bamboo.Admin.Domain.Shared.Enums;
+using Volo.Abp.Linq;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 
@@ -24,27 +25,40 @@ public class EditMemberModalModel : AbpPageModel
     public List<SelectListItem> AllRoles { get; set; }
     public List<SelectListItem> AllStatuses { get; set; }
 
+    private readonly ICurrentTenant _currentTenant;
     private readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
     private readonly IReadOnlyRepository<IdentityUser, Guid> _userRepository;
     private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
     private readonly IDataFilter _dataFilter;
+    private readonly IAsyncQueryableExecuter _asyncExecuter;
 
     public EditMemberModalModel(
+        ICurrentTenant currentTenant,
         IRepository<TenantMember, Guid> tenantMemberRepository,
         IReadOnlyRepository<IdentityUser, Guid> userRepository,
         IReadOnlyRepository<IdentityRole, Guid> roleRepository,
+        IAsyncQueryableExecuter asyncExecuter,
         IDataFilter dataFilter)
     {
+        _currentTenant = currentTenant;
         _tenantMemberRepository = tenantMemberRepository;
         _userRepository = userRepository;
         _roleRepository = roleRepository;
+        _asyncExecuter = asyncExecuter;
         _dataFilter = dataFilter;
+        if (!currentTenant.IsAvailable)
+        {
+            _dataFilter.Disable<IMultiTenant>();
+        }
     }
 
     public async Task OnGetAsync(Guid id)
     {
-        var member = await _tenantMemberRepository.GetAsync(id, includeDetails: true);
-        var user = await _userRepository.GetAsync(member.UserId.Value);
+        var query = await _tenantMemberRepository.WithDetailsAsync(x => x.Roles, x => x.OrganizationUnits);
+        query = query.Where(x => x.Id == id);
+        var member = await _asyncExecuter.FirstOrDefaultAsync(query);
+
+        var user = await _userRepository.FindAsync(member.UserId.Value);
 
         Member = new EditMemberViewModel
         {

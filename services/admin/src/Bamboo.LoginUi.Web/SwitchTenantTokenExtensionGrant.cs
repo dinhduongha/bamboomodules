@@ -3,11 +3,18 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Security.Principal;
+using System.Security.Claims;
+using System.Collections.Generic;
+
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Authentication;
+
 using OpenIddict.Abstractions;
 using OpenIddict.Server;
 using OpenIddict.Validation; // <--- Namespace quan trọng
+using OpenIddict.Abstractions;
 
 using Volo.Abp.Security.Claims;
 using Volo.Abp.DependencyInjection;
@@ -20,14 +27,14 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.Domain.Repositories;
 
 using Bamboo.Admin;
-using IdentityRole = Volo.Abp.Identity.IdentityRole;
-using System.Collections.Generic;
 using Bamboo.Admin.Domain.Shared.Enums;
+using IdentityRole = Volo.Abp.Identity.IdentityRole;
 
 namespace Bamboo.OpenIddictExtensions
 {
     public class SwitchTenantTokenExtensionGrant : IOpenIddictServerHandler<OpenIddictServerEvents.HandleTokenRequestContext>, ITransientDependency
     {
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IdentityUserManager _userManager;
         private readonly SignInManager<Volo.Abp.Identity.IdentityUser> _signInManager;
         private readonly ITenantRepository _tenantRepository;
@@ -36,10 +43,11 @@ namespace Bamboo.OpenIddictExtensions
         private readonly ICurrentTenant _currentTenant;
         private readonly IAsyncQueryableExecuter _asyncExecuter;
 
-        // SỬA: Dùng Validation Service để check Signature
+        // Dùng Validation Service để check Signature
         private readonly OpenIddictValidationService _validationService;
 
         public SwitchTenantTokenExtensionGrant(
+            IUnitOfWorkManager unitOfWorkManager,
             IdentityUserManager userManager,
             SignInManager<Volo.Abp.Identity.IdentityUser> signInManager,
             ITenantRepository tenantRepository,
@@ -47,8 +55,9 @@ namespace Bamboo.OpenIddictExtensions
             IRepository<TenantMember, Guid> tenantMemberRepo,
             ICurrentTenant currentTenant,
             IAsyncQueryableExecuter asyncExecuter,
-            OpenIddictValidationService validationService) // Inject
+            OpenIddictValidationService validationService)
         {
+            _unitOfWorkManager = unitOfWorkManager;
             _userManager = userManager;
             _signInManager = signInManager;
             _tenantRepository = tenantRepository;
@@ -64,7 +73,37 @@ namespace Bamboo.OpenIddictExtensions
             if (context.Request.GrantType != "switch_tenant") return;
 
             var targetTenantIdStr = context.Request.GetParameter("tenant_id").ToString();
-            var accessToken = context.Request.AccessToken;
+            //var accessToken = context.Request.AccessToken;
+            var accessToken = context.Request.GetParameter("access_token").ToString();
+            // 1. Lấy HttpContext
+            // var transaction = context.Transaction.GetHttpRequest(); // Cần: using OpenIddict.Server.AspNetCore;
+            // var httpContext = transaction?.HttpContext;
+
+            // if (httpContext == null)
+            // {
+            //     context.Reject(
+            //         error: OpenIddictConstants.Errors.ServerError,
+            //         description: "Cannot resolve HttpContext.");
+            //     return;
+            // }
+
+            // 2. Authenticate Token từ Header
+            // Lưu ý: Scheme mặc định thường là "Bearer" hoặc OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme
+            // var authResult = await httpContext.AuthenticateAsync("Bearer");
+
+            // if (!authResult.Succeeded || authResult.Principal == null)
+            // {
+            //     context.Reject(
+            //         error: OpenIddictConstants.Errors.InvalidGrant,
+            //         description: "The access token is invalid or expired.");
+            //     return;
+            // }
+
+            // // 3. Lấy User Id từ Token cũ đã validate
+            // var currentUserId = authResult.Principal.GetClaim(OpenIddictConstants.Claims.Subject);
+            // var currentUserId = authResult.Principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // var currentTenantId = authResult.Principal.FindTenantId(); // Extension method của ABP hoặc OpenIddict
+
 
             if (string.IsNullOrEmpty(targetTenantIdStr) || string.IsNullOrEmpty(accessToken))
             {
@@ -80,7 +119,6 @@ namespace Bamboo.OpenIddictExtensions
             ClaimsPrincipal principalFromToken;
             try
             {
-                // SỬA: Hàm này trả về ClaimsPrincipal luôn, không cần chấm .Principal nữa
                 principalFromToken = await _validationService.ValidateAccessTokenAsync(accessToken);
             }
             catch (Exception)
@@ -89,7 +127,6 @@ namespace Bamboo.OpenIddictExtensions
                 return;
             }
 
-            // SỬA: FindUserId() trả về Guid?, cần check null
             var userId = principalFromToken.FindUserId();
 
             if (userId == null)
@@ -107,66 +144,68 @@ namespace Bamboo.OpenIddictExtensions
             // --- BƯỚC 2: CHECK QUYỀN THÀNH VIÊN ---
             List<string> memberRoles = [];
             TenantMember? member;
-
-            using (_currentTenant.Change(targetTenantId))
+            using (var uow = _unitOfWorkManager.Begin())
             {
-                // Dùng WithDetails() để tải navigation property 'Roles'.
-                var memberQueryable = await _tenantMemberRepo.WithDetailsAsync(m => m.Roles);
-                memberQueryable = memberQueryable.Where(m => m.UserId == userId.Value && m.Status == TenantMemberStatus.Active);
-                var memberEntry = await _asyncExecuter.FirstOrDefaultAsync(memberQueryable);
-                if (memberEntry == null)
+                using (_currentTenant.Change(targetTenantId))
                 {
-                    context.Reject(OpenIddictConstants.Errors.AccessDenied, "User is not a member of this tenant.");
-                    return;
-                }
-                member = memberEntry;
+                    // Dùng WithDetails() để tải navigation property 'Roles'.
+                    var memberQueryable = await _tenantMemberRepo.WithDetailsAsync(m => m.Roles);
+                    memberQueryable = memberQueryable.Where(m => m.UserId == userId.Value && m.Status == TenantMemberStatus.Active);
+                    var memberEntry = await _asyncExecuter.FirstOrDefaultAsync(memberQueryable);
+                    if (memberEntry == null)
+                    {
+                        context.Reject(OpenIddictConstants.Errors.AccessDenied, "User is not a member of this tenant.");
+                        return;
+                    }
+                    member = memberEntry;
 
-                var RoleIds = memberEntry.Roles.Select(r => r.RoleId).ToList();
-                if (RoleIds.Count > 0)
+                    var RoleIds = memberEntry.Roles.Select(r => r.RoleId).ToList();
+                    if (RoleIds.Count > 0)
+                    {
+                        var roleQueryable = await _roleRepository.GetQueryableAsync();
+                        var query = roleQueryable.Where(role => RoleIds.Contains(role.Id));
+                        // var query = from memberRole in memberEntry?.Roles ?? Enumerable.Empty<TenantMemberRole>()
+                        //             join role in roleQueryable on memberRole.RoleId equals role.Id
+                        //             select role.Name;
+
+                        memberRoles = await _asyncExecuter.ToListAsync(query.Select(r => r.Name));
+                    }
+                }
+
+                // --- BƯỚC 3: TẠO TOKEN MỚI ---
+                // Lưu ý: Tạo Principal mới từ User gốc để đảm bảo claims tươi mới nhất
+                Volo.Abp.Identity.IdentityUser user;
+                using (_currentTenant.Change(null))
                 {
-                    var roleQueryable = await _roleRepository.GetQueryableAsync();
-                    var query = roleQueryable.Where(role => RoleIds.Contains(role.Id));
-                    // var query = from memberRole in memberEntry?.Roles ?? Enumerable.Empty<TenantMemberRole>()
-                    //             join role in roleQueryable on memberRole.RoleId equals role.Id
-                    //             select role.Name;
-
-                    memberRoles = await _asyncExecuter.ToListAsync(query.Select(r => r.Name));
+                    user = await _userManager.GetByIdAsync(userId.Value);
                 }
+
+                var newPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+                var identity = (ClaimsIdentity)newPrincipal.Identity;
+
+                // Xóa Tenant cũ, Add Tenant mới
+                var oldTenantClaim = identity.FindFirst(AbpClaimTypes.TenantId);
+                if (oldTenantClaim != null) identity.RemoveClaim(oldTenantClaim);
+                identity.AddClaim(new Claim(AbpClaimTypes.TenantId, targetTenantIdStr));
+
+                // Reset Roles
+                var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
+                foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
+
+                if (!string.IsNullOrWhiteSpace(member.Role))
+                {
+                    identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
+                }
+                foreach (var roleName in memberRoles)
+                {
+                    identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));
+                }
+
+                // Copy Scopes từ request
+                newPrincipal.SetScopes(context.Request.GetScopes());
+
+                context.SignIn(newPrincipal);
             }
-
-            // --- BƯỚC 3: TẠO TOKEN MỚI ---
-            // Lưu ý: Tạo Principal mới từ User gốc để đảm bảo claims tươi mới nhất
-            Volo.Abp.Identity.IdentityUser user;
-            using (_currentTenant.Change(null))
-            {
-                user = await _userManager.GetByIdAsync(userId.Value);
-            }
-
-            var newPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
-            var identity = (ClaimsIdentity)newPrincipal.Identity;
-
-            // Xóa Tenant cũ, Add Tenant mới
-            var oldTenantClaim = identity.FindFirst(AbpClaimTypes.TenantId);
-            if (oldTenantClaim != null) identity.RemoveClaim(oldTenantClaim);
-            identity.AddClaim(new Claim(AbpClaimTypes.TenantId, targetTenantIdStr));
-
-            // Reset Roles
-            var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
-            foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
-
-            if (!string.IsNullOrWhiteSpace(member.Role))
-            {
-                identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
-            }
-            foreach (var roleName in memberRoles)
-            {
-                identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));
-            }
-
-            // Copy Scopes từ request
-            newPrincipal.SetScopes(context.Request.GetScopes());
-
-            context.SignIn(newPrincipal);
         }
     }
 }

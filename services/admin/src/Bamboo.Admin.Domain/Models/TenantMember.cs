@@ -16,60 +16,45 @@ using System.Linq;
 
 namespace Bamboo.Admin;
 
-[Table("TenantMember")]
+[Table("tenant_members")]
 public class TenantMember : FullAuditedAggregateRoot<Guid>, IMultiTenant
 {
     [Key]
-    [Column("id")]
     //public Guid Id { get => base.Id; set => base.Id = value; }
     public override Guid Id { get; protected set; }
 
-    [Column("tenant_id")]
     public Guid? TenantId { get; set; }
 
-    [Column("user_id")]
     public Guid? UserId { get; set; }
 
-    [Column("tenant_name")]
     public string? TenantName { get; set; }
 
-    [Column("is_active")]
     public bool? IsActive { get; set; }
 
-    [Column("role")]
     public string? Role { get; set; }
 
     // Trạng thái thành viên (Active, Pending Invite, Suspended)
-    [Column("status")]
     public virtual TenantMemberStatus Status { get; set; } = TenantMemberStatus.Active;
 
     // Trạng thái của quy trình mời
-    [Column("invite_status")]
     public InvitationStatus InviteStatus { get; protected set; } = InvitationStatus.Pending;
 
-    [Column("invited_at")]
     public DateTimeOffset? InvitedAt { get; set; }
 
-    [Column("accepted_at")]
     public DateTimeOffset? AcceptedAt { get; set; }
 
-    [Column("rejected_at")]
     public DateTimeOffset? RejectedAt { get; set; }
 
-    [Column("leaved_at")]
     public DateTimeOffset? LeavedAt { get; set; }
 
-    [Column("suspended_at")]
     public DateTimeOffset? SuspendedAt { get; set; }
 
     // Cờ đánh dấu chủ sở hữu (nếu cần logic đặc biệt cho owner)
-    [Column("is_owner")]
     public virtual bool IsOwner { get; set; }
 
-    [Column("description")]
     public string? Description { get; set; }
 
-    [Column("info", TypeName = "jsonb")]
+    [Column(TypeName = "jsonb")]
     public virtual JsonElement? Info { get; set; }
 
     /// <summary>
@@ -77,32 +62,45 @@ public class TenantMember : FullAuditedAggregateRoot<Guid>, IMultiTenant
     /// </summary>
     public virtual ICollection<TenantMemberRole> Roles { get; protected set; } = [];
 
+    /// <summary>
+    /// Navigation property for the roles this user belongs to.
+    /// </summary>
+    public virtual ICollection<TenantMemberOrganizationUnit> OrganizationUnits { get; protected set; } = [];
+
     protected TenantMember()
     {
 
     }
 
-    public TenantMember(Guid id, Guid tenantId, Guid userId, TenantMemberStatus status = TenantMemberStatus.Active,
-            bool isOwner = false) : base(id)
+    public TenantMember(Guid id, Guid tenantId, Guid userId, TenantMemberStatus status = TenantMemberStatus.Pending,
+            InvitationStatus invitationStatus = InvitationStatus.Pending, bool isOwner = false) : base(id)
     {
         TenantId = tenantId;
         UserId = userId;
         Roles = new List<TenantMemberRole>();
+        OrganizationUnits = new List<TenantMemberOrganizationUnit>();
         Status = status;
-        // Khi tạo trực tiếp, coi như lời mời đã được chấp nhận
-        InviteStatus = InvitationStatus.Accepted;
+        InviteStatus = invitationStatus;
         IsOwner = isOwner;
     }
 
-    public TenantMember(Guid id, Guid tenantId, Guid userId, List<string> roles, TenantMemberStatus status = TenantMemberStatus.Active,
-        bool isOwner = false) : base(id)
+    public TenantMember(Guid id, Guid tenantId, Guid userId, List<TenantMemberRole> roles, List<TenantMemberOrganizationUnit>? organizationUnits = null, TenantMemberStatus status = TenantMemberStatus.Active,
+        InvitationStatus invitationStatus = InvitationStatus.Pending, bool isOwner = false
+   ) : base(id)
     {
         TenantId = tenantId;
         UserId = userId;
-        Roles = new List<TenantMemberRole>();
+        Roles = [.. roles];
+
+        if (organizationUnits != null)
+        {
+            foreach (var ou in organizationUnits)
+            {
+                OrganizationUnits.Add(ou);
+            }
+        }
         Status = status;
-        // Khi tạo trực tiếp, coi như lời mời đã được chấp nhận
-        InviteStatus = InvitationStatus.Accepted;
+        InviteStatus = invitationStatus;
         IsOwner = isOwner;
     }
 
@@ -135,6 +133,44 @@ public class TenantMember : FullAuditedAggregateRoot<Guid>, IMultiTenant
         }
     }
 
+    public void AddOrganizationUnit(Guid ouId, IGuidGenerator guidGenerator)
+    {
+        Check.NotNull(guidGenerator, nameof(guidGenerator));
+
+        if (IsInOrganizationUnit(ouId))
+        {
+            return;
+        }
+        OrganizationUnits?.Add(new TenantMemberOrganizationUnit(guidGenerator.Create(), Id, ouId, TenantId));
+    }
+
+    public void RemoveOrganizationUnit(Guid ouId)
+    {
+        var ouIdToRemove = OrganizationUnits?.FirstOrDefault(r => r.OrganizationUnitId == ouId);
+        if (ouIdToRemove != null)
+        {
+            OrganizationUnits?.Remove(ouIdToRemove);
+        }
+    }
+
+    public void SetOrganizationUnit(IEnumerable<Guid> ouIds, IGuidGenerator guidGenerator)
+    {
+        OrganizationUnits?.Clear();
+        foreach (var ouId in ouIds)
+        {
+            AddOrganizationUnit(ouId, guidGenerator);
+        }
+    }
+
+    public bool IsInOrganizationUnit(Guid ouId)
+    {
+        return OrganizationUnits.Any(r => r.OrganizationUnitId == ouId);
+    }
+    public bool IsInRole(Guid roleId)
+    {
+        return Roles.Any(r => r.RoleId == roleId);
+    }
+
     public void AcceptInvitation()
     {
         if (InviteStatus != InvitationStatus.Pending)
@@ -142,6 +178,7 @@ public class TenantMember : FullAuditedAggregateRoot<Guid>, IMultiTenant
             // Hoặc throw exception
             return;
         }
+        IsActive = true;
         InviteStatus = InvitationStatus.Accepted; // Trạng thái lời mời
         Status = TenantMemberStatus.Active; // Kích hoạt thành viên
         AcceptedAt = DateTimeOffset.UtcNow;
@@ -150,19 +187,18 @@ public class TenantMember : FullAuditedAggregateRoot<Guid>, IMultiTenant
     public void RejectInvitation()
     {
         InviteStatus = InvitationStatus.Rejected;
-        Status = TenantMemberStatus.Rejected;
+        Status = TenantMemberStatus.Pending;
         RejectedAt = DateTimeOffset.UtcNow;
     }
 
-    public void UpdateInfo(bool isActive, TenantMemberStatus status, string description)
+    public void UpdateInfo(bool isActive, TenantMemberStatus? status, InvitationStatus? invitationStatus, string? description)
     {
         IsActive = isActive;
-        Status = status;
+        if (invitationStatus != null)
+            InviteStatus = (InvitationStatus)invitationStatus;
+        if (status != null)
+            Status = (TenantMemberStatus)status;
         Description = description;
     }
 
-    public bool IsInRole(Guid roleId)
-    {
-        return Roles.Any(r => r.RoleId == roleId);
-    }
 }

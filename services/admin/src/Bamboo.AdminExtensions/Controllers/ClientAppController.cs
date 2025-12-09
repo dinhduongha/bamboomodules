@@ -13,10 +13,10 @@ namespace Bamboo.AdminExtensions;
 [Route("api/admin/client-app")]
 [Authorize(Roles = "superadmin,admin")]
 [HostOnly]
-public class HostClientAppController : AbpController
+public class ClientAppController : AbpController
 {
     private readonly ClientAppService _clientAppService;
-    public HostClientAppController(ClientAppService clientAppService)
+    public ClientAppController(ClientAppService clientAppService)
     {
         this._clientAppService = clientAppService;
     }

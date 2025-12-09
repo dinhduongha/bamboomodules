@@ -28,11 +28,11 @@ using Telegram.Bot.Extensions.LoginWidget;
 
 namespace Bamboo.LoginUiWeb.Controllers;
 
-[Route("api/telegram")]
+[Route("connect/telegram")]
 public class TelegramLoginController : AbpControllerBase
 {
     // https://stackoverflow.com/questions/68157777/implementing-telegram-loginwidget-with-signinmanager
-    
+
     private readonly IConfiguration configuration;
     //private readonly SignInManager<ApplicationUser> _signInManager;
     //private readonly UserManager<ApplicationUser> _userManager;
@@ -44,20 +44,20 @@ public class TelegramLoginController : AbpControllerBase
     public IOptions<IdentityOptions> IdentityOptions { get; set; }
     public IdentityDynamicClaimsPrincipalContributorCache IdentityDynamicClaimsPrincipalContributorCache { get; set; }
 
-public TelegramLoginController(
-        IConfiguration config,
-        IAuthenticationSchemeProvider schemeProvider,
-        IOptions<AbpAccountOptions> accountOptions,
-        IOptions<IdentityOptions> identityOptions,
-        IdentityDynamicClaimsPrincipalContributorCache cache
-        )
+    public TelegramLoginController(
+            IConfiguration config,
+            IAuthenticationSchemeProvider schemeProvider,
+            IOptions<AbpAccountOptions> accountOptions,
+            IOptions<IdentityOptions> identityOptions,
+            IdentityDynamicClaimsPrincipalContributorCache cache
+            )
     {
         configuration = config;
     }
 
     [HttpGet]
     [Route("callback")]
-    public async Task<IActionResult> Tgcallback(
+    public async Task<IActionResult> TgcallbackAsync(
         string id,
         string first_name,
         string last_name,
@@ -108,7 +108,7 @@ public TelegramLoginController(
                 }
 
                 //return await RedirectSafelyAsync(returnUrl, returnUrlHash);
-                return (returnUrl != null)?Redirect(returnUrl): RedirectToPage("/Account/Manage");
+                return (returnUrl != null) ? Redirect(returnUrl) : RedirectToPage("/Account/Manage");
             }
 
             user = await UserManager.FindByLoginAsync(LoginProvider, ProviderKey);
@@ -121,7 +121,7 @@ public TelegramLoginController(
                 user.SetProperty("username", username);
                 user.SetProperty("photo_url", photo_url);
                 user.SetProperty("provider", LoginProvider);
-                user = await RegisterExternalUserAsync(loginInfo, user );
+                user = await RegisterExternalUserAsync(loginInfo, user);
             }
             //
             //if (user == null)
@@ -165,7 +165,7 @@ public TelegramLoginController(
     {
         await IdentityOptions.SetAsync();
 
-        
+
         (await UserManager.CreateAsync(user)).CheckErrors();
         (await UserManager.AddDefaultRolesAsync(user)).CheckErrors();
 
