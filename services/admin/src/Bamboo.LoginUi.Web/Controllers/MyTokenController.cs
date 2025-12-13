@@ -235,10 +235,10 @@ namespace Bamboo.Admin.Controllers
                 var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
                 foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
 
-                if (!string.IsNullOrWhiteSpace(member.Role))
-                {
-                    identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
-                }
+                // if (!string.IsNullOrWhiteSpace(member.Role))
+                // {
+                //     identity.AddClaim(new Claim(AbpClaimTypes.Role, member.Role));
+                // }
                 foreach (var roleName in memberRoles)
                 {
                     identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));

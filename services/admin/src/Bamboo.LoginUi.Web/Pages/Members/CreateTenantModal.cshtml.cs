@@ -91,7 +91,8 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
             };
             using (_dataFilter.Disable<IMultiTenant>())
             {
-                var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId && r.Name == "admin");
+                var roleNames = new string[] { "owner", "admin", "group_user" };
+                var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId && roleNames.Contains(r.Name));
                 foreach (var role in roles)
                 {
                     newMember.AddRole(role.Id, GuidGenerator);

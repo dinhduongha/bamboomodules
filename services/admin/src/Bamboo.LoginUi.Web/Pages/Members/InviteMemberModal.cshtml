@@ -26,7 +26,7 @@
             <abp-select asp-for="Member.RoleId" 
                         asp-items="Model.Roles" 
                         label="@L["Roles"].Value"
-                        data-allow-clear="true" data-placeholder="@L["SelectRole"].Value" />
+                        class="select2-roles" data-allow-clear="true" data-placeholder="@L["SelectRole"].Value" />
 
             @* <abp-select asp-for="Member.Roles" asp-items="Model.Roles" label="@L["Roles"].Value" multiple="true"/> *@
         </abp-form>

@@ -178,6 +178,26 @@ public class AbpLoginUiWebModule : AbpModule
         {
             options.MenuContributors.Add(new AdminWebMenuContributor());
         });
+        Configure<SecurityStampValidatorOptions>(options =>
+        {
+            // Để User Host sống "bất tử" trong Tenant mà không cần tạo bản ghi trong DB, 
+            // phải tắt tính năng validate Security Stamp cho trường hợp host user login vào tenant.
+            // CÁCH 1: Tắt validate định kỳ (User sẽ không bao giờ bị đá, nhưng đổi pass sẽ không tự logout các nơi khác)
+            // options.ValidationInterval = TimeSpan.Zero;
+
+            // CÁCH 2 (Xịn hơn): Override Logic Validator
+            options.OnRefreshingPrincipal = context =>
+            {
+                // Nếu phát hiện đây là User Host đang "vi hành" (có claim đặc biệt) thì bỏ qua check DB
+                var originalHostId = context.CurrentPrincipal.FindFirst("OriginalHostUserId");
+                if (originalHostId != null)
+                {
+                    // Báo cho hệ thống biết là Principal này vẫn ngon, không cần check DB
+                    context.NewPrincipal = context.CurrentPrincipal;
+                }
+                return Task.CompletedTask;
+            };
+        });
     }
 
     private void ConfigureFirebase(ServiceConfigurationContext context, IConfiguration configuration)

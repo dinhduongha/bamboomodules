@@ -29,19 +29,32 @@ public class WorkspaceDto
     public InvitationStatus InviteStatus { get; set; }
     public List<string> Roles { get; set; } = new();
     public DateTimeOffset? JoinedDate { get; set; }
+    public bool IsOwner { get; set; } = false;
+    public DateTime? TenantCreatorAt { get; set; }
+    public Guid? TenantCreatorId { get; set; }
 }
 
 [Authorize]
 public class IndexModel : AbpPageModel
 {
     [BindProperty]
-    public List<WorkspaceDto> Workspaces { get; set; }
+    public PagedResultDto<WorkspaceDto> Workspaces { get; set; }
+    public int TotalPages => (int)Math.Ceiling(decimal.Divide(Workspaces?.TotalCount ?? 0, PageSize));
 
     [BindProperty(SupportsGet = true)]
     public string ReturnUrl { get; set; }
 
     [BindProperty(SupportsGet = true)]
     public string ReturnUrlHash { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public string Filter { get; set; }
+
+    [BindProperty(SupportsGet = true)]
+    public int CurrentPage { get; set; } = 1;
+
+    [BindProperty(SupportsGet = true)]
+    public int PageSize { get; set; } = 10; // 10 dòng mỗi trang
 
     [BindProperty]
     public string SessionHandle { get; set; }
@@ -60,8 +73,8 @@ public class IndexModel : AbpPageModel
     {
         _tenantMemberRepository = tenantMemberRepository;
         _tenantRepository = tenantRepository;
-        _dataFilter = dataFilter;
         _roleRepository = roleRepository;
+        _dataFilter = dataFilter;
     }
 
     public async Task OnGetAsync()
@@ -82,15 +95,23 @@ public class IndexModel : AbpPageModel
                         select new
                         {
                             Member = member,
+                            Tenant = tenant,
                             TenantName = tenant.Name,
                             Roles = (from memberRole in member.Roles
                                      join role in roles on memberRole.RoleId equals role.Id
-                                     select role.Name).ToList()
+                                     select new { Name = role.Name, Id = role.Id }).ToList()
                         };
+            if (!Filter.IsNullOrWhiteSpace())
+            {
+                query = query.Where(x => x.Tenant.Name.Contains(Filter));
+            }
+            query = query.OrderByDescending(x => x.Member.AcceptedAt ?? x.Member.CreationTime);
 
+            var totalCount = await AsyncExecuter.CountAsync(query);
+            query = query.Skip(CurrentPage - 1).Take(PageSize);
             var result = await AsyncExecuter.ToListAsync(query);
 
-            Workspaces = result.Select(x =>
+            var items = result.Select(x =>
             {
                 return new WorkspaceDto
                 {
@@ -99,10 +120,14 @@ public class IndexModel : AbpPageModel
                     TenantName = x.TenantName,
                     Status = x.Member.Status,
                     InviteStatus = x.Member.InviteStatus,
-                    Roles = x.Roles,
+                    Roles = x.Roles.Select(r => r.Name).ToList(),
+                    IsOwner = x.Member.IsOwner,
+                    TenantCreatorAt = x.Tenant.CreationTime,
+                    TenantCreatorId = x.Tenant.CreatorId,
                     JoinedDate = x.Member.AcceptedAt ?? x.Member.CreationTime
                 };
             }).ToList();
+            Workspaces = new PagedResultDto<WorkspaceDto>(totalCount, items);
         }
     }
 
