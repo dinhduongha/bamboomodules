@@ -108,7 +108,7 @@ public class IndexModel : AbpPageModel
             query = query.OrderByDescending(x => x.Member.AcceptedAt ?? x.Member.CreationTime);
 
             var totalCount = await AsyncExecuter.CountAsync(query);
-            query = query.Skip(CurrentPage - 1).Take(PageSize);
+            query = query.Skip((CurrentPage - 1) * PageSize).Take(PageSize);
             var result = await AsyncExecuter.ToListAsync(query);
 
             var items = result.Select(x =>

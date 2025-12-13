@@ -18,7 +18,7 @@
     {
         TenantMemberStatus.Pending => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
         TenantMemberStatus.Active => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
-        TenantMemberStatus.Disabled => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        TenantMemberStatus.Disabled => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value, 
         _ => status.ToString()
     };
 }

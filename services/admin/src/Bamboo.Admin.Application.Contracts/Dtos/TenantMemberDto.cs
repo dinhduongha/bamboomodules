@@ -30,3 +30,17 @@ public class TenantMemberDto : FullAuditedEntityDto<Guid>
     public JsonElement? Info { get; set; }
 }
 
+public class MemberDto
+{
+    public Guid Id { get; set; }
+    public Guid UserId { get; set; }
+    public Guid? TenantId { get; set; }
+    public string UserName { get; set; }
+    public string Email { get; set; }
+    public string TenantName { get; set; }
+    public string Role { get; set; }
+    public List<string> Roles { get; set; } = new();
+    public TenantMemberStatus Status { get; set; }
+    public InvitationStatus InviteStatus { get; set; }
+    public DateTimeOffset? JoinedDate { get; set; }
+}

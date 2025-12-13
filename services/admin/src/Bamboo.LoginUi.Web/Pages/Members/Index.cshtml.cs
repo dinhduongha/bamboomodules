@@ -15,6 +15,8 @@ using Bamboo.Admin;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Volo.Abp.Data;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Pagination;
+using Bamboo.Admin.Application.Dtos;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 
@@ -22,10 +24,14 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 public class IndexModel : AbpPageModel
 {
     [BindProperty(SupportsGet = true)]
-    public string Filter { get; set; }
+    public GetMembersInput Input { get; set; }
+    public PagerModel PagerModel { get; set; }
 
-    [BindProperty(SupportsGet = true)]
-    public Guid? TenantId { get; set; }
+    // [BindProperty(SupportsGet = true)]
+    // public string Filter { get; set; }
+
+    // [BindProperty(SupportsGet = true)]
+    // public Guid? TenantId { get; set; }
 
     [BindProperty(SupportsGet = true)]
     public string ReturnUrl { get; set; }
@@ -36,7 +42,16 @@ public class IndexModel : AbpPageModel
     [BindProperty]
     public string SessionHandle { get; set; }
 
+    // public int SkipCount => (CurrentPage - 1) * MaxResultCount;
+
+    //[BindProperty(SupportsGet = true)]
+    //public int CurrentPage { get; set; } = 1;
+
+    // [BindProperty(SupportsGet = true)]
+    // public int MaxResultCount { get; set; } = 10;
+
     public PagedResultDto<MemberDto> Members { get; set; }
+    //public int TotalPages => (int)Math.Ceiling(decimal.Divide(Members?.TotalCount ?? 0, MaxResultCount));
 
     private readonly ICurrentTenant _currentTenant;
     private readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
@@ -65,13 +80,18 @@ public class IndexModel : AbpPageModel
         Members = new PagedResultDto<MemberDto>();
     }
 
-    public async Task OnGetAsync(int currentPage = 0, int pageSize = 10)
+    public async Task OnGetAsync()
     {
         if (!CurrentUser.Id.HasValue)
         {
             RedirectToPage("/Account/Login", new { returnUrl = ReturnUrl });
         }
-        var tenantId = _currentTenant.Id ?? TenantId;
+        if (Input.MaxResultCount < 1) Input.MaxResultCount = 10;
+        //if (CurrentPage < 1) CurrentPage = 1;
+        //Input.SkipCount = (Input.CurrentPage - 1) * Input.MaxResultCount;
+
+        if (Input.SkipCount < 0) Input.SkipCount = 0;
+        var tenantId = _currentTenant.Id ?? Input.TenantId;
 
         using (_currentTenant.IsAvailable ? null : _dataFilter.Disable<IMultiTenant>())
         {
@@ -86,15 +106,15 @@ public class IndexModel : AbpPageModel
                         where !tenantId.HasValue || member.TenantId == tenantId.Value
                         select new { Member = member, User = user, Tenant = tenant };
 
-            if (!Filter.IsNullOrWhiteSpace())
+            if (!Input.Filter.IsNullOrWhiteSpace())
             {
-                query = query.Where(x => x.User.UserName.Contains(Filter) || x.User.Email.Contains(Filter));
+                query = query.Where(x => x.Tenant.Name.Contains(Input.Filter) || x.User.UserName.Contains(Input.Filter) || x.User.Email.Contains(Input.Filter));
             }
 
             var totalCount = await _asyncExecuter.CountAsync(query);
 
             var pagedQuery = query.OrderByDescending(x => x.Member.CreationTime)
-                                    .PageBy(currentPage, pageSize);
+                                    .PageBy(Input.SkipCount, Input.MaxResultCount);
 
             var queryResult = await _asyncExecuter.ToListAsync(pagedQuery);
 
@@ -123,21 +143,16 @@ public class IndexModel : AbpPageModel
             }).ToList();
 
             Members = new PagedResultDto<MemberDto>(totalCount, memberDtos);
+            var currentPage = (Input.SkipCount / Input.MaxResultCount) + 1;
+            PagerModel = new PagerModel(
+                totalCount: Members.TotalCount,
+                shownItemsCount: Members.Items.Count,
+                currentPage: Input.CurrentPage,
+                pageSize: Input.MaxResultCount,
+                pageUrl: this.GetPagedUrl(Input) // Tự động giữ các tham số filter
+            );
         }
     }
 
-    public class MemberDto
-    {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public Guid? TenantId { get; set; }
-        public string UserName { get; set; }
-        public string Email { get; set; }
-        public string TenantName { get; set; }
-        public string Role { get; set; }
-        public List<string> Roles { get; set; } = new();
-        public TenantMemberStatus Status { get; set; }
-        public InvitationStatus InviteStatus { get; set; }
-        public DateTimeOffset? JoinedDate { get; set; }
-    }
+
 }

@@ -30,9 +30,9 @@
     // Helper hiển thị tên trạng thái
     string GetStatusText(TenantMemberStatus status) => status switch
     {
-        TenantMemberStatus.Pending => L["Enum:TenantMemberStatus.Pending"].Value,
-        TenantMemberStatus.Active => L["Enum:TenantMemberStatus.Active"].Value,
-        TenantMemberStatus.Disabled => L["Enum:TenantMemberStatus.Rejected"].Value, // Hoặc Disabled
+        TenantMemberStatus.Pending => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        TenantMemberStatus.Active => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        TenantMemberStatus.Disabled => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value, 
         _ => status.ToString()
     };
 }
