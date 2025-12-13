@@ -147,6 +147,15 @@ public class SiWXSignInModel : AccountPageModel
     public async Task<IActionResult> OnPostAsync(string siwxJson, string signature, string address, string network, string publicKey)
     {
 
+        var isAutoExternalAccountHostOnly = _configuration.GetValue("App:AutoExternalAccountHostOnly", true);
+        if (isAutoExternalAccountHostOnly && CurrentTenant.IsAvailable)
+        {
+            return RedirectToPage("/Account/Login", new
+            {
+                ReturnUrl = ReturnUrl,
+                ReturnUrlHash = ReturnUrlHash
+            });
+        }
         if (_currentTenant.IsAvailable)
         {
             return RedirectToPage("/Account/Login", new
