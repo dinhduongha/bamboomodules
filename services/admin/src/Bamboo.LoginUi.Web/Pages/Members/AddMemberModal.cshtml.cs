@@ -27,6 +27,8 @@ public class AddMemberModalModel : AbpPageModel
     private readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
     private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
     private readonly IReadOnlyRepository<Tenant, Guid> _tenantRepository;
+    private readonly IReadOnlyRepository<IdentityUser, Guid> _userRepository;
+
     private readonly IDataFilter _dataFilter;
     public ICurrentTenant CurrentTenant { get; }
 
@@ -34,12 +36,14 @@ public class AddMemberModalModel : AbpPageModel
         IRepository<TenantMember, Guid> tenantMemberRepository,
         IReadOnlyRepository<IdentityRole, Guid> roleRepository,
         IReadOnlyRepository<Tenant, Guid> tenantRepository,
+        IReadOnlyRepository<IdentityUser, Guid> userRepository,
         IDataFilter dataFilter,
         ICurrentTenant currentTenant)
     {
         _tenantMemberRepository = tenantMemberRepository;
         _roleRepository = roleRepository;
         _tenantRepository = tenantRepository;
+        _userRepository = userRepository;
         _dataFilter = dataFilter;
         CurrentTenant = currentTenant;
     }
@@ -75,13 +79,35 @@ public class AddMemberModalModel : AbpPageModel
         {
             throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
         }
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            //user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId);
+            var tenant = await _tenantRepository.FirstOrDefaultAsync(x => x.Id == tenantId.Value);
+            if (tenant == null)
+            {
+                throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
+            }
+        }
+        Volo.Abp.Identity.IdentityUser user;
+        using (CurrentTenant.Change(null))
+        {
+            user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId); ;
+        }
+        if (user == null)
+        {
+            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", Member.Email]);
+        }
 
         if (await _tenantMemberRepository.AnyAsync(x => x.TenantId == tenantId.Value && x.UserId == Member.UserId))
         {
             throw new Volo.Abp.UserFriendlyException(L["UserIsAlreadyAMember"]);
         }
 
-        var newMember = new TenantMember(GuidGenerator.Create(), tenantId.Value, (Guid)Member.UserId, TenantMemberStatus.Active);
+        var newMember = new TenantMember(GuidGenerator.Create(), tenantId.Value, (Guid)Member.UserId, TenantMemberStatus.Active, InvitationStatus.Accepted);
+        if (Member.RoleId != null)
+        {
+            newMember.AddRole((Guid)Member.RoleId, GuidGenerator);
+        }
 
         using (_dataFilter.Disable<IMultiTenant>())
         {

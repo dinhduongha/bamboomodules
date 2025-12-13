@@ -30,9 +30,9 @@
     // Helper hiển thị tên trạng thái
     string GetStatusText(TenantMemberStatus status) => status switch
     {
-        TenantMemberStatus.Pending => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
-        TenantMemberStatus.Active => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
-        TenantMemberStatus.Disabled => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value, 
+        //TenantMemberStatus.Pending => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        //TenantMemberStatus.Active => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value,
+        //TenantMemberStatus.Disabled => L[$"Enum:{typeof(TenantMemberStatus).Name}.{status}"].Value, 
         _ => status.ToString()
     };
 }
@@ -47,10 +47,11 @@
                 </form>
             </div>
             
-            <div class="col-md-6 text-end">
+            @* <div class="col-md-6 text-end">
                 @if (CurrentUser.TenantId != null)
                 {
-                    <form action="Workspaces/Switch" method="post" style="display:inline-block">
+                    <form action="/Account/Workspaces/Switch" method="post" style="display:inline-block">
+                        @Html.AntiForgeryToken()
                         <input type="hidden" name="targetTenantId" value="" /> <button type="submit" class="btn btn-warning">
                             <i class="fa fa-home"></i> @L["SwitchToHost"]
                         </button>
@@ -60,8 +61,8 @@
                 {
                     <span class="badge bg-info p-2">@L["YouAreInHost"]</span>
                 }
-                <span class="badge bg-info p-2">@L["CreateTenant"]</span>
-            </div>
+                <span class="badge bg-info p-2">@L["Create Tenant"]</span>
+            </div> *@
         </div>
     </abp-card-header>
 
@@ -141,12 +142,13 @@
                                         else
                                         {
                                             // Gọi Controller TenantSwitchController
-                                            <form action="Workspaces/Switch" method="post" class="d-inline-block">
+                                            @* <form action="/Account/Workspaces/Switch" method="post" class="d-inline-block">
+                                                @Html.AntiForgeryToken()
                                                 <input type="hidden" name="targetTenantId" value="@workspace.TenantId" />
                                                 <button type="submit" class="btn btn-primary btn-sm">
                                                     @L["Switch"] <i class="fa fa-arrow-right"></i>
                                                 </button>
-                                            </form>
+                                            </form> *@
                                         }
                                     }
                                     else

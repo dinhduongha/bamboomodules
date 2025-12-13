@@ -10,6 +10,14 @@
     "EditMember": "Edit Member",
     "Search": "Search",
     "SearchPlaceholder": "Search by name or email...",
+    "Enum:TenantMemberStatus.Pending": "Pending",
+    "Enum:TenantMemberStatus.Active": "Active",
+    "Enum:TenantMemberStatus.Leaved": "Leaved",
+    "Enum:TenantMemberStatus.Suspended": "Suspended",
+    "Enum:TenantMemberStatus.Disabled": "Disabled",
+    "Enum:InvitationStatus.Pending": "Pending",
+    "Enum:InvitationStatus.Accepted": "Accepted",
+    "Enum:InvitationStatus.Rejected": "Rejected",
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io."
   }
 }

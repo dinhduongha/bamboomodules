@@ -25,7 +25,7 @@ public class TenantMemberAppService :
         TenantMember,
         TenantMemberDto,
         Guid,
-        GetTenantMemberListInput,
+        GetTenantMembersInput,
         CreateTenantMemberDto,
         UpdateTenantMemberDto>,
     ITenantMemberAppService
@@ -104,7 +104,7 @@ public class TenantMemberAppService :
         return await MapToGetOutputDtoAsync(tenantMember);
     }
 
-    public override async Task<PagedResultDto<TenantMemberDto>> GetListAsync(GetTenantMemberListInput input)
+    public override async Task<PagedResultDto<TenantMemberDto>> GetListAsync(GetTenantMembersInput input)
     {
         // Chỉ lấy danh sách member của tenant hiện tại
         var tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);

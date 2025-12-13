@@ -164,6 +164,11 @@ public class LoginUiLoginModel : LoginModel
         }
 
         var isAutoExternalAccount = _configuration.GetValue("App:AutoExternalAccount", true);
+        var isAutoExternalAccountHostOnly = _configuration.GetValue("App:AutoExternalAccountHostOnly", true);
+        if (isAutoExternalAccountHostOnly && CurrentTenant.IsAvailable)
+        {
+            throw new UserFriendlyException("Cannot create tenant's account!");
+        }
         if (isAutoExternalAccount)
         {
             // A. TRÍCH XUẤT CLAIMS (User Data)

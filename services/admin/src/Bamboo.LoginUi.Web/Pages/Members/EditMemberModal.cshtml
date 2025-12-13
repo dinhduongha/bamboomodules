@@ -11,9 +11,9 @@
 @{
     Layout = null;
 }
-<abp-modal>
+<form method="post" action="@Url.Page("./EditMemberModal")">
+<abp-modal data-modal-name="editMemberModal">
     <abp-modal-header title="@L["EditMember"].Value"></abp-modal-header>
-    <form method="post">
         <abp-modal-body>
         <abp-form id="editMemberForm">
             <abp-input asp-for="Member.Id" />
@@ -24,7 +24,7 @@
             <abp-textarea asp-for="Member.Description" label="@L["Description"].Value" />
             </abp-form>
         </abp-modal-body>
-        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>
-    </form>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel | AbpModalButtons.Save)"></abp-modal-footer>    
 </abp-modal>
-<script src="/Pages/Members/editMemberModal.js"></script>
+</form>
+<script src="/Pages/Members/editMemberModal.v2.js"></script>

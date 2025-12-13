@@ -31,9 +31,10 @@
     "Description": "Mô tả",
     "UserIsAlreadyAMember": "Người dùng này đã là thành viên hoặc đã được mời.",
     "Enum:TenantMemberStatus.Pending": "Đang chờ",
-    "Enum:TenantMemberStatus.Accepted": "Đã chấp nhận",
     "Enum:TenantMemberStatus.Active": "Đang hoạt động",
-    "Enum:TenantMemberStatus.Rejected": "Đã từ chối",
+    "Enum:TenantMemberStatus.Leaved": "Đã rời đi",
+    "Enum:TenantMemberStatus.Suspended": "Tạm dừng",
+    "Enum:TenantMemberStatus.Disabled": "Ngưng hoạt động",
     "Enum:InvitationStatus.Pending": "Đang chờ",
     "Enum:InvitationStatus.Accepted": "Đã chấp nhận",
     "Enum:InvitationStatus.Rejected": "Đã từ chối"

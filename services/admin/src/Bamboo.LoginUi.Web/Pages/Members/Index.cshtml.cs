@@ -24,7 +24,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members;
 public class IndexModel : AbpPageModel
 {
     [BindProperty(SupportsGet = true)]
-    public GetMembersInput Input { get; set; }
+    public GetTenantMembersInput Input { get; set; }
     public PagerModel PagerModel { get; set; }
 
     // [BindProperty(SupportsGet = true)]
@@ -93,12 +93,19 @@ public class IndexModel : AbpPageModel
         if (Input.SkipCount < 0) Input.SkipCount = 0;
         var tenantId = _currentTenant.Id ?? Input.TenantId;
 
-        using (_currentTenant.IsAvailable ? null : _dataFilter.Disable<IMultiTenant>())
+        using (_dataFilter.Disable<IMultiTenant>())
         {
             var memberQueryable = await _tenantMemberRepository.WithDetailsAsync(x => x.Roles, x => x.OrganizationUnits);
             var userQueryable = await _userRepository.GetQueryableAsync();
             var tenantQueryable = await _tenantRepository.GetQueryableAsync();
             var roleQueryable = await _roleRepository.GetQueryableAsync();
+            if (_currentTenant.IsAvailable)
+            {
+                memberQueryable = memberQueryable.Where(x => x.TenantId == _currentTenant.Id);
+                tenantQueryable = tenantQueryable.Where(x => x.Id == _currentTenant.Id);
+                roleQueryable = roleQueryable.Where(x => x.TenantId == _currentTenant.Id);
+            }
+
 
             var query = from member in memberQueryable
                         join user in userQueryable on member.UserId equals user.Id
@@ -149,6 +156,7 @@ public class IndexModel : AbpPageModel
                 shownItemsCount: Members.Items.Count,
                 currentPage: Input.CurrentPage,
                 pageSize: Input.MaxResultCount,
+                //pageUrl: Url.Page(null, new { Input.Filter, Input.TenantId, Input.MaxResultCount })
                 pageUrl: this.GetPagedUrl(Input) // Tự động giữ các tham số filter
             );
         }

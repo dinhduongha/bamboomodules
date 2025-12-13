@@ -80,7 +80,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
 
             DateTimeOffset now = DateTimeOffset.UtcNow;
             // Tạo member cho current user
-            var newMember = new TenantMember(GuidGenerator.Create(), tenantId, CurrentUser.Id.Value, TenantMemberStatus.Active, InvitationStatus.Accepted)
+            var newMember = new TenantMember(GuidGenerator.Create(), tenantId, CurrentUser.Id.Value, TenantMemberStatus.Pending, InvitationStatus.Pending)
             {
                 IsOwner = true,
                 IsActive = true,

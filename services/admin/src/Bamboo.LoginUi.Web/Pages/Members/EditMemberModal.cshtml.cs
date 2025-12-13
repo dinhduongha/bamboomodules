@@ -58,21 +58,19 @@ public class EditMemberModalModel : AbpPageModel
         query = query.Where(x => x.Id == id);
         var member = await _asyncExecuter.FirstOrDefaultAsync(query);
 
-        var user = await _userRepository.FindAsync(member.UserId.Value);
-
-        Member = new EditMemberViewModel
-        {
-            Id = member.Id,
-            UserName = user.UserName,
-            Status = member.Status,
-            Description = member.Description,
-            SelectedRoles = member.Roles.Select(r => r.RoleId).ToList()
-        };
-
         using (_dataFilter.Disable<IMultiTenant>())
         {
+            var user = await _userRepository.FindAsync(member.UserId.Value);
             var roles = await _roleRepository.GetListAsync(r => r.TenantId == member.TenantId);
             AllRoles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
+            Member = new EditMemberViewModel
+            {
+                Id = member.Id,
+                UserName = user.UserName,
+                Status = member.Status,
+                Description = member.Description,
+                SelectedRoles = member.Roles.Select(r => r.RoleId).ToList()
+            };
         }
 
         AllStatuses = Enum.GetValues(typeof(TenantMemberStatus))
@@ -83,19 +81,45 @@ public class EditMemberModalModel : AbpPageModel
 
     public async Task<IActionResult> OnPostAsync()
     {
-        var member = await _tenantMemberRepository.GetAsync(Member.Id, includeDetails: true);
+        var tenantId = CurrentTenant.Id ?? null;
+        TenantMember member;
+        var query = await _tenantMemberRepository.WithDetailsAsync(x => x.Roles, x => x.OrganizationUnits);
+        query = query.Where(x => x.Id == Member.Id);
 
-        member.Status = Member.Status;
-        member.Description = Member.Description;
-
-        member.Roles.Clear();
-        foreach (var roleId in Member.SelectedRoles)
+        if (CurrentTenant.IsAvailable)
         {
-            member.AddRole(roleId, GuidGenerator);
+            member = await _asyncExecuter.FirstOrDefaultAsync(query);
+
         }
+        else
+        {
+            using (_dataFilter.Disable<IMultiTenant>())
+            {
+                member = await _asyncExecuter.FirstOrDefaultAsync(query);
+                tenantId = member.TenantId;
+            }
+        }
+        using (CurrentTenant.Change(tenantId))
+        {
+            member.Status = Member.Status;
+            member.Description = Member.Description;
 
-        await _tenantMemberRepository.UpdateAsync(member);
+            var currentRoleIds = member.Roles.Select(r => r.RoleId).ToList();
+            var selectedRoleIds = Member.SelectedRoles ?? new List<Guid>();
 
+            var rolesToRemove = member.Roles.Where(r => !selectedRoleIds.Contains(r.RoleId)).ToList();
+            foreach (var role in rolesToRemove)
+            {
+                member.Roles.Remove(role);
+            }
+
+            foreach (var roleId in selectedRoleIds.Where(id => !currentRoleIds.Contains(id)))
+            {
+                member.AddRole(roleId, GuidGenerator);
+            }
+
+            await _tenantMemberRepository.UpdateAsync(member);
+        }
         return NoContent();
     }
 }

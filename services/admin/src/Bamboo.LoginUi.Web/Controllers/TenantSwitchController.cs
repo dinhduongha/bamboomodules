@@ -153,7 +153,7 @@ namespace Bamboo.Admin.Controllers
 
             identity.AddClaim(new Claim(AbpClaimTypes.TenantId, targetTenantId.ToString()));
             identity.AddClaim(new Claim("tenant_name", tenantName));
-
+            identity.AddClaim(new Claim("OriginalHostUserId", hostUser.Id.ToString())); // <--- QUAN TRỌNG
             var claimsToRemove = new[]
             {
                     "AspNet.Identity.SecurityStamp",        // Security Stamp (thường rất dài)
@@ -175,12 +175,15 @@ namespace Bamboo.Admin.Controllers
                 identity.AddClaim(new Claim(OpenIddictConstants.Claims.FamilyName, hostUser.Surname));
             }
             // 4.2. Tráo Role (Xóa Role Host -> Add Role Tenant)
-            var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
+            //var oldRoleClaims = identity.FindAll(AbpClaimTypes.Role).ToList();
+            var oldRoleClaims = identity.FindAll(identity.RoleClaimType).ToList();
             foreach (var claim in oldRoleClaims) identity.RemoveClaim(claim);
 
             foreach (var roleName in memberRoles)
             {
                 identity.AddClaim(new Claim(AbpClaimTypes.Role, roleName));
+                identity.AddClaim(new Claim(identity.RoleClaimType, roleName));
+                identity.AddClaim(new Claim(ClaimTypes.Role, roleName));
             }
 
             // 4.3. Lưu vết ID gốc (Security)
@@ -194,7 +197,7 @@ namespace Bamboo.Admin.Controllers
                 new AuthenticationProperties { IsPersistent = true }
             );
 
-            return Redirect("/");
+            return Redirect("/Members");
         }
 
 

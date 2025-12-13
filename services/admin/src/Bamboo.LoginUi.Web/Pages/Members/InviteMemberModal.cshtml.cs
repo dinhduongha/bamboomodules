@@ -26,6 +26,7 @@ public class InviteMemberModalModel : AbpPageModel
 
     private readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
     private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
+    private readonly IReadOnlyRepository<IdentityUser, Guid> _userRepository;
     private readonly IReadOnlyRepository<Tenant, Guid> _tenantRepository;
     private readonly IDataFilter _dataFilter;
     public ICurrentTenant CurrentTenant { get; }
@@ -34,12 +35,14 @@ public class InviteMemberModalModel : AbpPageModel
         IRepository<TenantMember, Guid> tenantMemberRepository,
         IReadOnlyRepository<IdentityRole, Guid> roleRepository,
         IReadOnlyRepository<Tenant, Guid> tenantRepository,
+        IReadOnlyRepository<IdentityUser, Guid> userRepository,
         IDataFilter dataFilter,
         ICurrentTenant currentTenant)
     {
         _tenantMemberRepository = tenantMemberRepository;
         _roleRepository = roleRepository;
         _tenantRepository = tenantRepository;
+        _userRepository = userRepository;
         _dataFilter = dataFilter;
         CurrentTenant = currentTenant;
     }
@@ -51,7 +54,7 @@ public class InviteMemberModalModel : AbpPageModel
         {
             // Nếu là admin của tenant, tải sẵn danh sách vai trò
             var roles = await _roleRepository.GetListAsync();
-            Roles = roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList();
+            Roles = roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList();
             Member.RoleName = "group_user";
         }
         else
@@ -77,11 +80,26 @@ public class InviteMemberModalModel : AbpPageModel
             throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
         }
 
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            //user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId);
+            var tenant = await _tenantRepository.FirstOrDefaultAsync(x => x.Id == tenantId.Value);
+            if (tenant == null)
+            {
+                throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
+            }
+        }
+
         // Tìm người dùng bằng email
-        var user = await LazyServiceProvider.LazyGetRequiredService<IIdentityUserRepository>().FindByNormalizedEmailAsync(Member.Email.ToUpperInvariant());
+        // var user = await LazyServiceProvider.LazyGetRequiredService<IIdentityUserRepository>().FindByNormalizedEmailAsync(Member.Email.ToUpperInvariant());
+        Volo.Abp.Identity.IdentityUser user;
+        using (CurrentTenant.Change(null))
+        {
+            user = await _userRepository.FirstOrDefaultAsync(x => x.Id == Member.UserId); ;
+        }
         if (user == null)
         {
-            throw new Volo.Abp.UserFriendlyException(L["UserWithEmailNotFound", Member.Email]);
+            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", Member.Email]);
         }
 
         // Kiểm tra xem người dùng đã được mời hoặc đã là thành viên chưa
@@ -93,6 +111,10 @@ public class InviteMemberModalModel : AbpPageModel
         // Tạo một thực thể TenantMember mới với trạng thái mời là Pending
         var invitation = new TenantMember(GuidGenerator.Create(), tenantId.Value, user.Id, TenantMemberStatus.Pending);
 
+        if (Member.RoleId != null)
+        {
+            invitation.AddRole((Guid)Member.RoleId, GuidGenerator);
+        }
         // Gán vai trò cho lời mời
         // Cần tắt bộ lọc IMultiTenant để Host có thể query role của tenant khác
         using (_dataFilter.Disable<IMultiTenant>())
@@ -120,7 +142,7 @@ public class InviteMemberModalModel : AbpPageModel
             // Lấy các vai trò có TenantId khớp, hoặc là null (cho Host)
             var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId);
             // Trả về Name làm value để khớp với asp-for="Member.RoleName"
-            return new JsonResult(roles.Select(r => new SelectListItem(r.Name, r.Name)).ToList());
+            return new JsonResult(roles.Select(r => new SelectListItem(r.Name, r.Id.ToString())).ToList());
         }
     }
 }

@@ -28,7 +28,7 @@ public class TenantMemberWorkspaceController : AbpControllerBase
     }
 
     // [HttpGet]
-    // public Task<PagedResultDto<TenantMemberDto>> GetListAsync(GetTenantMemberListInput input) => _tenantMemberAppService.GetListAsync(input);
+    // public Task<PagedResultDto<TenantMemberDto>> GetListAsync(GetTenantMembersInput input) => _tenantMemberAppService.GetListAsync(input);
 
     // [HttpGet("{id}")]
     // public Task<TenantMemberDto> GetAsync(Guid id) => _tenantMemberAppService.GetAsync(id);

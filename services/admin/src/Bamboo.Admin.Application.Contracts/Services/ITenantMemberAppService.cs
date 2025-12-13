@@ -13,7 +13,7 @@ public interface ITenantMemberAppService :
     ICrudAppService<
         TenantMemberDto,
         Guid,
-        GetTenantMemberListInput,
+        GetTenantMembersInput,
         CreateTenantMemberDto,
         UpdateTenantMemberDto>
 {

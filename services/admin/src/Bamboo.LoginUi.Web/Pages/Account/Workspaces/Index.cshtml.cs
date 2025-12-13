@@ -17,6 +17,8 @@ using Bamboo.Admin.Application.Dtos;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Volo.Abp.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Volo.Abp.AspNetCore.MultiTenancy;
+using Microsoft.Extensions.Options;
 
 namespace Bamboo.Abp.LoginUi.Web.Pages.Account.Workspaces;
 
