@@ -9,7 +9,7 @@
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Bamboo.Blazor' " />
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0-rc.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="10.0.0.1" />
     <ProjectReference Include="..\Bamboo.Blazor.Client\Bamboo.Blazor.Client.csproj" />
   </ItemGroup>
 

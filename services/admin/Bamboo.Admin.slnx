@@ -1,10 +1,15 @@
 <Solution>
   <Folder Name="/shared/">
-    <Project Path="../../shared/admin/Bamboo.Admin.Application.Contracts/Bamboo.Admin.Application.Contracts.csproj" />
+    <!-- <Project Path="../../shared/admin/Bamboo.Admin.Application.Contracts/Bamboo.Admin.Application.Contracts.csproj" />
     <Project Path="../../shared/admin/Bamboo.Admin.Domain.Shared/Bamboo.Admin.Domain.Shared.csproj" />
-    <Project Path="../../shared/admin/Bamboo.Admin.HttpApi.Client/Bamboo.Admin.HttpApi.Client.csproj" />
+    <Project Path="../../shared/admin/Bamboo.Admin.HttpApi.Client/Bamboo.Admin.HttpApi.Client.csproj" /> -->
+
+    <Project Path="src/Bamboo.Admin.Application.Contracts/Bamboo.Admin.Application.Contracts.csproj" />
+    <Project Path="src/Bamboo.Admin.Domain.Shared/Bamboo.Admin.Domain.Shared.csproj" />
+    <Project Path="src/Bamboo.Admin.HttpApi.Client/Bamboo.Admin.HttpApi.Client.csproj" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/AspNet.Security.OAuth.Zalo/AspNet.Security.OAuth.Zalo.csproj" />
     <Project Path="src/Bamboo.Admin.Application/Bamboo.Admin.Application.csproj" />
     <Project Path="src/Bamboo.Admin.AuthServer/Bamboo.Admin.AuthServer.csproj" />
     <Project Path="src/Bamboo.Admin.DbMigrator/Bamboo.Admin.DbMigrator.csproj" />

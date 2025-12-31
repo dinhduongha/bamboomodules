@@ -8,9 +8,18 @@
     <RootNamespace>Bamboo.Admin</RootNamespace>
   </PropertyGroup>
 
+  <!-- <ItemGroup>
+    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  </ItemGroup> -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Bamboo.Admin.Domain.Shared\Bamboo.Admin.Domain.Shared.csproj" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Bamboo.Admin.Domain\Bamboo.Admin.Domain.csproj" />
-    <ProjectReference Include="..\..\..\..\shared\admin\Bamboo.Admin.Application.Contracts\Bamboo.Admin.Application.Contracts.csproj" />
   </ItemGroup>
 
   <ItemGroup>

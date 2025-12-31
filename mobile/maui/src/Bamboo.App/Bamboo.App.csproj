@@ -35,7 +35,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Volo.Abp.Autofac" Version="10.0.0" />
-	    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0-rc.1" />
+	    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.0.1" />
 	</ItemGroup>
 
 	<ItemGroup>
