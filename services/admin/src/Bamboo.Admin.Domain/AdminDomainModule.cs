@@ -14,6 +14,7 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.Features;
 
 namespace Bamboo.Admin;
 
@@ -32,6 +33,14 @@ namespace Bamboo.Admin;
 )]
 public class AdminDomainModule : AbpModule
 {
+    public override void PreConfigureServices(ServiceConfigurationContext context)
+    {
+        Configure<AbpFeatureOptions>(options =>
+        {
+            options.DefinitionProviders.Add<BambooFeatureDefinitionProvider>();
+        });
+    }
+
     public override void ConfigureServices(ServiceConfigurationContext context)
     {
         Configure<AbpLocalizationOptions>(options =>
@@ -54,13 +63,13 @@ public class AdminDomainModule : AbpModule
             options.Languages.Add(new LanguageInfo("zh-Hant", "zh-Hant", "繁體中文"));
             options.Languages.Add(new LanguageInfo("de-DE", "de-DE", "Deutsch"));
             options.Languages.Add(new LanguageInfo("es", "es", "Español"));
+            options.Languages.Add(new LanguageInfo("vi", "vi", "Tiếng Việt"));
         });
 
         Configure<AbpMultiTenancyOptions>(options =>
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
-
 #if DEBUG
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif

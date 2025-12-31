@@ -13,7 +13,8 @@
         <abp-modal-header title="@L["CreateTenant"].Value"></abp-modal-header>
         <abp-modal-body>
             <abp-form id="createTenantForm">
-                <abp-input asp-for="Tenant.Name" />
+                <abp-input asp-for="Tenant.Name" pattern="^[a-z0-9]+$" minlength="5" title="@L["TenantNameRequirements"]" />
+                <div class="form-text text-muted mb-3">@L["TenantNameRequirements"]</div>
                 <abp-input asp-for="Tenant.AdminEmailAddress" />
                 <abp-input asp-for="Tenant.AdminPassword" type="password" />
             </abp-form>

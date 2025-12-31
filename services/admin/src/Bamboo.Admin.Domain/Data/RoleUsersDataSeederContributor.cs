@@ -55,35 +55,105 @@ namespace Bamboo.Admin.Data
                 "group_system",
             };
 
+            // "group_portal", Khách hàng + vendor
+            // "group_public", User chưa đăng nhập
+
+            /// GLOBAL
+            /*
+            Core / System
+            "group_uom",
+            "group_multi_company",
+            "group_multi_currency",
+            "group_fiscal_year"
+            "group_product_variant",
+            "website_page_controller_expose"
+            "group_mail_template_editor"
+            "group_account_secured"
+            "group_stock_multi_locations"
+            "group_stock_multi_warehouses"
+            "group_tracking_lot"
+            "group_tracking_owner"
+            "group_production_lot"
+            "group_adv_location"
+            "group_mrp_routings"
+            "group_mrp_byproducts"
+            "group_mrp_workorder_dependencies"
+            "group_multi_website"
+            */
+            // "group_unlocked_by_default",
+
+            /// PER-TENANTS
+            // "group_allow_export",
+            // "group_allow_doc"
+
+            // "group_use_lead
+            // "group_use_recurring_revenues"
+            // "group_warning_sale"
+            // "group_stock_lot_print_gs1"
+            // "group_pos_preset"
+
+            /// Product / Sales
+            // "group_product_pricelist",
+            // "group_show_uom_price"
+            // "group_product_price_comparison"
+            // "group_discount_per_so_line"
+            // "group_proforma_sales"
+            // "group_sale_order_template"
+
+            /// Purchase
+            // "group_purchase_alternatives"
+            // "group_auto_done_setting"
+            // "group_send_reminder"
+            // "group_warning_purchase"
+
+            /// Inventory / Stock
+            // "group_expiry_date_on_delivery_slip"
+            // "group_lot_on_delivery_slip"
+            // "group_lot_on_invoice"
+            // "group_stock_sign_delivery"
+            // "group_reception_report"
+            // "group_warning_stock"
+
+            /// Manufacturing (MRP)
+            // "group_mrp_reception_report"
+
+
+            /// Accounting
+            // "group_cash_rounding"
+            // "group_partial_purchase_deductibility"
+            // "group_analytic_accounting"
+            // "group_validate_bank_account"
+
+            /// Project
+            // "group_project_stages"
+            // "group_project_milestone"
+            // "group_project_task_dependencies"
+            // "group_project_recurring_tasks"
+
+            /// Website
+            // "group_product_feed"
+
+            /// Marketing / Communication
+            // "group_mass_mailing_campaign"
+            // "group_mail_notification_type_inbox"
+            // "group_applicant_cv_display",
+            // "group_delivery_invoice_address",
+
+
             var rolesModules = new List<string>
             {
-                "group_user",
                 "group_erp_manager",
-                "group_sanitize_override",
-                "group_uom",
-                "group_multi_company",
-                "group_multi_currency",
-                "group_no_one",
-                "group_allow_export",
+                "group_user",
+                //"default_user_group",
+                //"group_sanitize_override",
+                //"group_no_one",
                 "group_partner_manager",
-                "group_portal",
-                "group_public",
-                "default_user_group",
 
-                "group_delivery_invoice_address",
                 "group_account_readonly",
                 "group_account_invoice",
                 "group_account_basic",
                 "group_account_user",
                 "group_account_manager",
-                "group_account_secured",
-                "group_cash_rounding",
-                "group_partial_purchase_deductibility",
-                "group_validate_bank_account",
-                "group_analytic_accounting",
-                "group_allow_doc",
-                "group_use_lead",
-                "group_use_recurring_revenues",
                 "group_event_registration_desk",
                 "group_event_user",
                 "group_event_manager",
@@ -104,7 +174,6 @@ namespace Bamboo.Admin.Data
                 "group_hr_recruitment_interviewer",
                 "group_hr_recruitment_user",
                 "group_hr_recruitment_manager",
-                "group_applicant_cv_display",
                 "group_hr_timesheet_user",
                 "group_hr_timesheet_approver",
                 "group_timesheet_manager",
@@ -114,71 +183,31 @@ namespace Bamboo.Admin.Data
                 "group_lunch_manager",
                 "group_mail_canned_response_admin",
                 "group_mail_template_editor",
-                "group_mail_notification_type_inbox",
                 "group_equipment_manager",
                 "marketing_card_group_user",
                 "marketing_card_group_manager",
                 "group_mass_mailing_user",
-                "group_mass_mailing_campaign",
                 "group_mrp_user",
                 "group_mrp_manager",
-                "group_mrp_routings",
-                "group_mrp_byproducts",
-                "group_unlocked_by_default",
-                "group_mrp_reception_report",
-                "group_mrp_workorder_dependencies",
-                "group_fiscal_year",
                 "group_pos_user",
                 "group_pos_manager",
-                "group_pos_preset",
-                "group_product_pricelist",
-                "group_product_variant",
+
                 "group_product_manager",
-                "group_expiry_date_on_delivery_slip",
                 "group_project_user",
                 "group_project_manager",
-                "group_project_stages",
-                "group_project_recurring_tasks",
-                "group_project_task_dependencies",
-                "group_project_milestone",
                 "group_purchase_user",
                 "group_purchase_manager",
-                "group_warning_purchase",
-                "group_send_reminder",
-                "group_purchase_alternatives",
-                "group_auto_done_setting",
-                "group_discount_per_so_line",
-                "group_warning_sale",
-                "group_proforma_sales",
-                "group_sale_order_template",
                 "group_sale_salesman",
                 "group_sale_salesman_all_leads",
                 "group_sale_manager",
                 "group_dashboard_manager",
                 "group_stock_user",
                 "group_stock_manager",
-                "group_stock_multi_locations",
-                "group_stock_multi_warehouses",
-                "group_production_lot",
-                "group_stock_lot_print_gs1",
-                "group_lot_on_delivery_slip",
-                "group_tracking_lot",
-                "group_adv_location",
-                "group_tracking_owner",
-                "group_warning_stock",
-                "group_stock_sign_delivery",
-                "group_reception_report",
-                "group_lot_on_invoice",
                 "group_survey_user",
                 "group_survey_manager",
 
                 "group_website_restricted_editor",
                 "group_website_designer",
-                "website_page_controller_expose",
-                "group_multi_website",
-                "group_show_uom_price",
-                "group_product_price_comparison",
-                "group_product_feed",
                 "group_website_slides_officer",
                 "group_website_slides_manager",
             };
@@ -247,8 +276,6 @@ namespace Bamboo.Admin.Data
                     // "group_user",
                     // "group_erp_manager",
                     // "group_system",
-                    // "group_multi_company",
-                    // "group_multi_currency",
                     // "group_partner_manager",
                     // "group_portal",
                     // "group_public"
@@ -260,12 +287,16 @@ namespace Bamboo.Admin.Data
                 rolesName.AddRange([
                     "admin",
                     "owner",
-                    "user"
+                    //"user"
                 ]);
                 rolesName.AddRange(rolesModules);
             }
             if (rolesName != null)
             {
+                var rolesDefault = new List<string>()
+                {
+                    "group_user"
+                };
                 foreach (var r in rolesName)
                 {
                     if (!r.IsNullOrEmpty())
@@ -273,8 +304,10 @@ namespace Bamboo.Admin.Data
                         IdentityRole role = await _identityRoleManager.FindByNameAsync(r);
                         if (role == null)
                         {
+
                             role = new IdentityRole(_guidGenerator.Create(), r, _currentTenant.Id)
                             {
+                                IsDefault = rolesDefault.Contains(r),
                                 IsStatic = true,
                                 IsPublic = true
                             };

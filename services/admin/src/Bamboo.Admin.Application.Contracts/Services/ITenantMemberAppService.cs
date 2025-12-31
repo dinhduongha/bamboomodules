@@ -18,7 +18,7 @@ public interface ITenantMemberAppService :
         UpdateTenantMemberDto>
 {
     Task<TenantMemberDto> InviteAsync(InviteMemberDto input); // Đổi từ CreateAsync
-    Task<PagedResultDto<TenantMemberDto>> GetMyInvitationsAsync();
+    Task<PagedResultDto<TenantMemberDto>> GetMyWorkspacesAsync();
     Task AcceptInvitationAsync(Guid invitationId);
     Task RejectInvitationAsync(Guid invitationId);
 }

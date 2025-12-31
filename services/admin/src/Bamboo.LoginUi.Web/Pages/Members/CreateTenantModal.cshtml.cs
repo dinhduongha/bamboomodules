@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Bamboo.Admin;
 using Bamboo.Admin.Domain.Shared.Enums;
@@ -20,6 +21,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
         [BindProperty]
         public TenantCreateDto Tenant { get; set; }
 
+        private readonly IdentityLinkUserManager _linkManager;
         private readonly ITenantAppService _tenantAppService;
         private readonly IDataSeeder _dataSeeder;
         private readonly ICurrentTenant _currentTenant;
@@ -33,6 +35,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
         public CreateTenantModalModel(
             ITenantAppService tenantAppService,
             IDataSeeder dataSeeder,
+            IdentityLinkUserManager linkManager,
             IRepository<TenantMember, Guid> tenantMemberRepository,
             IReadOnlyRepository<IdentityUser, Guid> userRepository,
             IReadOnlyRepository<Tenant, Guid> tenantRepository,
@@ -41,6 +44,7 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
             IDataFilter dataFilter,
             ICurrentTenant currentTenant)
         {
+            _linkManager = linkManager;
             _tenantAppService = tenantAppService;
             _dataSeeder = dataSeeder;
             _currentTenant = currentTenant;
@@ -64,19 +68,39 @@ namespace Bamboo.Abp.LoginUi.Web.Pages.Admin.Members
 
         public async Task<IActionResult> OnPostAsync()
         {
+            if (string.IsNullOrEmpty(Tenant.Name) || Tenant.Name.Length < 5 || !Regex.IsMatch(Tenant.Name, "^[a-z0-9]+$"))
+            {
+                throw new Volo.Abp.UserFriendlyException(L["TenantNameRequirements"]);
+            }
+
             // Gán username cho admin bằng tên tenant
             Tenant.SetProperty("AdminUserName", Tenant.Name);
             Tenant.SetProperty("Description", "");
             var tenantDto = await _tenantAppService.CreateAsync(Tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
             // Chuyển sang context của tenant mới để seed data
+            var tenantId = tenantDto.Id;
             using (_currentTenant.Change(tenantDto.Id))
             {
-                await _dataSeeder.SeedAsync(new DataSeedContext(tenantDto.Id));
-            }
-            await CurrentUnitOfWork.SaveChangesAsync();
+                var adminEmail = Tenant.AdminEmailAddress;
+                var adminPassword = Tenant.AdminPassword;
 
-            var tenantId = tenantDto.Id;
+                await _dataSeeder.SeedAsync(new DataSeedContext(tenantDto.Id)
+                    .WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, Tenant == null ? IdentityDataSeedContributor.AdminUserNameDefaultValue : Tenant.Name)
+                    .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, Tenant == null ? adminEmail : IdentityDataSeedContributor.AdminEmailDefaultValue)
+                    .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, Tenant == null ? adminPassword : IdentityDataSeedContributor.AdminPasswordDefaultValue)
+);
+                await CurrentUnitOfWork.SaveChangesAsync();
+
+                var user = new IdentityLinkUserInfo((Guid)CurrentUser.Id, CurrentTenant.Id);
+                string adminUserName = Tenant.Name;
+                var adminUser = await _userRepository.FirstOrDefaultAsync(x => x.UserName == adminUserName);
+                if (adminUser != null)
+                {
+                    var linkUser = new IdentityLinkUserInfo((Guid)adminUser.Id, tenantId);
+                    await _linkManager.LinkAsync(user, linkUser);
+                }
+            }
 
             DateTimeOffset now = DateTimeOffset.UtcNow;
             // Tạo member cho current user

@@ -37,6 +37,7 @@
     "Enum:TenantMemberStatus.Disabled": "Ngưng hoạt động",
     "Enum:InvitationStatus.Pending": "Đang chờ",
     "Enum:InvitationStatus.Accepted": "Đã chấp nhận",
-    "Enum:InvitationStatus.Rejected": "Đã từ chối"
+    "Enum:InvitationStatus.Rejected": "Đã từ chối",
+    "TenantNameRequirements": "Tên tenant phải là chữ thường (a-z) hoặc số (0-9) và ít nhất 5 ký tự."
   }
 }

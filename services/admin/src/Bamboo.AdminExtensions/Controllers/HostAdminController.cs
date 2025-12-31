@@ -70,19 +70,20 @@ public class HostAdminController : AbpController
     //     return await _tenantService.GetListAsync(input);
     // }
 
+    [NonAction]
     [HttpPost]
-    public async Task<TenantDto> CreateAsync(string name)
+    public async Task<TenantDto> CreateAsync(TenantCreateDto input)
     {
-        return await _tenantService.CreateAsync(name);
+        return await _tenantService.CreateAsync(input);
     }
 
     [HttpPost]
-    [Route("migrate")]
+    [Route("tenants/migrate")]
     public async Task<TenantDto> CreateWithIdAsync(TenantMigrateDto data)
     {
         return await _tenantService.MigrateAsync(data);
     }
-
+    [NonAction]
     [HttpGet]
     [Route("roles")]
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
@@ -90,6 +91,7 @@ public class HostAdminController : AbpController
         return await _tenantService.GetRoleAsync();
     }
 
+    [NonAction]
     [HttpGet]
     [Route("roles/{tenant}")]
     public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleByTenantAsync(Guid? tenant)
@@ -97,6 +99,7 @@ public class HostAdminController : AbpController
         return await _tenantService.GetRoleByTenantAsync(tenant);
     }
 
+    [NonAction]
     [HttpPost]
     [Route("user-roles-add/{tenant}")]
     public async Task<bool> TenantRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
@@ -104,6 +107,7 @@ public class HostAdminController : AbpController
         return await _tenantService.TenantUserRoleAddAsync(tenant, dto);
     }
 
+    [NonAction]
     [HttpDelete]
     [Route("user-roles-remove/{tenant}/{user}")]
     public async Task<bool> TenantRoleRemoveAsync(Guid tenant, Guid user)

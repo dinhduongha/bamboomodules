@@ -47,19 +47,4 @@ public class TenantMemberController : AbpControllerBase
     [HttpPost("invite")]
     public Task<TenantMemberDto> InviteAsync(InviteMemberDto input) => _tenantMemberAppService.InviteAsync(input);
 
-    // [Authorize]
-    // [HttpGet("my-invitations")]
-    // public Task<ListResultDto<TenantMemberDto>> GetMyInvitationsAsync() => _tenantMemberAppService.GetMyInvitationsAsync();
-
-    // [HttpPost("accept-invitation/{invitationId}")]
-    // public Task AcceptInvitationAsync(Guid invitationId) => _tenantMemberAppService.AcceptInvitationAsync(invitationId);
-
-    // [HttpPost("reject-invitation/{invitationId}")]
-    // public Task RejectInvitationAsync(Guid invitationId) => _tenantMemberAppService.RejectInvitationAsync(invitationId);
-
-    // [HttpGet("create-modal")] public IActionResult CreateModal() => PartialView("~/Pages/Members/CreateModal.cshtml");
-    // [HttpGet("edit-modal")] public async Task<IActionResult> EditModal(Guid id) => PartialView("~/Pages/Members/EditModal.cshtml", await _tenantMemberAppService.GetAsync(id));
-
-    //[HttpGet("create-modal")] public IActionResult CreateModal() => PartialView("~/Pages/Members/CreateModal.cshtml");
-    //[HttpGet("edit-modal")] public async Task<IActionResult> EditModal(Guid id) => PartialView("~/Pages/Members/EditModal.cshtml", await _tenantMemberAppService.GetAsync(id));
 }

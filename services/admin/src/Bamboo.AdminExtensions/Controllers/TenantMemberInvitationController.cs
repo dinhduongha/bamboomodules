@@ -17,7 +17,7 @@ namespace Bamboo.Admin.Controllers;
 
 [Authorize]
 [RemoteService]
-[Route("api/tenant-members/tenant-workspaces")]
+[Route("api/tenant-members/workspaces")]
 public class TenantMemberWorkspaceController : AbpControllerBase
 {
     private readonly ITenantMemberAppService _tenantMemberAppService;
@@ -47,7 +47,7 @@ public class TenantMemberWorkspaceController : AbpControllerBase
     // public Task<TenantMemberDto> InviteAsync(InviteMemberDto input) => _tenantMemberAppService.InviteAsync(input);
 
     [HttpGet]
-    public Task<PagedResultDto<TenantMemberDto>> GetMyInvitationsAsync() => _tenantMemberAppService.GetMyInvitationsAsync();
+    public Task<PagedResultDto<TenantMemberDto>> GetMyWorkspacesAsync() => _tenantMemberAppService.GetMyWorkspacesAsync();
 
     [HttpPost("accept-invitation/{invitationId}")]
     public Task AcceptInvitationAsync(Guid invitationId) => _tenantMemberAppService.AcceptInvitationAsync(invitationId);

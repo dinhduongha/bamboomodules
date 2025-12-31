@@ -10,7 +10,8 @@ public class AdminApplicationAutoMapperProfile : Profile
         /* You can configure your AutoMapper mapping configuration here.
          * Alternatively, you can split your mapping configurations
          * into multiple profile classes for a better organization. */
-        CreateMap<TenantMember, TenantMemberDto>();
+        CreateMap<TenantMember, TenantMemberDto>()
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
         CreateMap<CreateTenantMemberDto, TenantMember>()
             .ForMember(d => d.Id, o => o.Ignore())
             .ForMember(d => d.TenantId, o => o.Ignore()); // TenantId sẽ được gán trong AppService;

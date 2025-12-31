@@ -15,7 +15,7 @@
     <abp-modal-body>
         <abp-form id="createUserForm">
             <abp-select asp-for="User.TenantId" asp-items="Model.Tenants" label="@L["Tenant"].Value" />
-            <abp-input asp-for="User.UserName" />
+            <abp-input asp-for="User.UserName"  pattern="^[a-z0-9]+$" minlength="6" />
             <abp-input asp-for="User.Email" />
             <abp-select asp-for="User.RoleName" asp-items="Model.Roles" label="@L["Role"].Value"/>
             <abp-input asp-for="User.Password" type="password" />

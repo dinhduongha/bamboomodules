@@ -29,6 +29,8 @@ using IdentityUser = Volo.Abp.Identity.IdentityUser;
 using Bamboo.AdminExtensions.Dtos;
 using Bamboo.Admin.Domain.Shared;
 using static Volo.Abp.TenantManagement.TenantManagementPermissions;
+using Bamboo.Admin;
+using Bamboo.Admin.Domain.Shared.Enums;
 
 namespace Bamboo.AdminExtensions;
 
@@ -61,12 +63,14 @@ public class TenantService : ApplicationService
     //protected readonly IRepository<IdentityUser, Guid> _userRepository;
 
     //protected ITenantStore _tenantRepository { get; }
-    protected IIdentityRoleRepository _roleRepository { get; }
+    //protected IIdentityRoleRepository _roleRepository { get; }
+    private readonly IReadOnlyRepository<Volo.Abp.Identity.IdentityRole, Guid> _roleRepository;
     protected IIdentityUserRepository _userRepository { get; }
     protected IIdentityLinkUserRepository _identityLinkUserRepository { get; }
 
     // The below repository not exists
     //protected readonly IRepository<IdentityUserRole> _userRoleRepository;
+    protected readonly IRepository<TenantMember, Guid> _tenantMemberRepository;
 
     protected IHttpClientFactory _httpClientFactory;
     protected IDataSeeder _dataSeeder { get; }
@@ -86,7 +90,9 @@ public class TenantService : ApplicationService
                             IdentityUserManager userManager,
                             IdentityLinkUserManager linkManager,
                             IRepository<Tenant, Guid> tenantRepository,
-                            IIdentityRoleRepository roleRepository,
+                            IRepository<TenantMember, Guid> tenantMemberRepository,
+                            IReadOnlyRepository<Volo.Abp.Identity.IdentityRole, Guid> roleRepository,
+                            //IIdentityRoleRepository roleRepository,
                             IIdentityUserRepository userRepository,
                             IIdentityLinkUserRepository identityLinkUserRepository,
                             //AbpSignInManager signInManager,
@@ -106,6 +112,7 @@ public class TenantService : ApplicationService
         _tenantRepository = tenantRepository;
         _roleRepository = roleRepository;
         _userRepository = userRepository;
+        _tenantMemberRepository = tenantMemberRepository;
         _identityLinkUserRepository = identityLinkUserRepository;
         _abpUserClaimsPrincipalFactory = abpUserClaimsPrincipalFactory;
         _dbContextProvider = dbContextProvider;
@@ -156,19 +163,18 @@ public class TenantService : ApplicationService
         }
     }
 
-    public async Task<Tenant?> CreateAdminTenantUserAsync(Guid id, String password, Tenant? tenant = null)
+    public async Task<Tenant?> CreateAdminTenantUserAsync(IdentityUser creator, string password, Tenant tenant)
     {
         if (tenant == null)
         {
-            tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Id == id));
-        }
-        var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
-        if (tenant == null)
-        {
             return tenant;
+            //tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => (tenant.Id == id));
         }
+        var tenantId = tenant.Id;
+        var now = DateTime.Now;
+        var currentUser = creator; //await _userRepository.GetAsync((Guid)CurrentUser.Id);
 
-        var user = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
+        var linkUser = new IdentityLinkUserInfo((Guid)CurrentUser.Id, null);
         using (CurrentTenant.Change(null))
         {
         }
@@ -176,33 +182,38 @@ public class TenantService : ApplicationService
         using (CurrentTenant.Change(tenant.Id, tenant.Name))
         {
             await _dataSeeder.SeedAsync(new DataSeedContext(tenant.Id)
-                //.WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{input.AdminEmailAddress}")
-                //.WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{input.AdminPassword}")
+                .WithProperty(IdentityDataSeedContributor.AdminUserNamePropertyName, tenant.Name)
                 .WithProperty(IdentityDataSeedContributor.AdminEmailPropertyName, $"{tenant.Name}@{domain}")
                 .WithProperty(IdentityDataSeedContributor.AdminPasswordPropertyName, $"{password}")
                 );
+            await CurrentUnitOfWork.SaveChangesAsync();
             //"admin" user
-            const string adminUserName = "admin";
+            //const string adminUserName = "admin";
+            string adminUserName = tenant.Name;
             var adminUser = await _userRepository.FindByNormalizedUserNameAsync(
                 LookupNormalizer.NormalizeName(adminUserName)
             );
 
             if (adminUser != null)
             {
-                (await _userManager.SetUserNameAsync(adminUser, tenant.Name)).CheckErrors();
-                adminUser.Name = tenant.Name;
-                (await _userManager.UpdateAsync(adminUser)).CheckErrors();
-                await CurrentUnitOfWork.SaveChangesAsync();
+                // (await _userManager.SetUserNameAsync(adminUser, tenant.Name)).CheckErrors();
+                // adminUser.Name = tenant.Name;
+                // (await _userManager.UpdateAsync(adminUser)).CheckErrors();
+                // await CurrentUnitOfWork.SaveChangesAsync();
 
                 // Link current user to admin of new tenant
-                var linkUser = new IdentityLinkUserInfo((Guid)adminUser.Id, tenant.Id);
-                await _linkManager.LinkAsync(user, linkUser);
+                var linkedUser = new IdentityLinkUserInfo((Guid)adminUser.Id, tenant.Id);
+                await _linkManager.LinkAsync(linkUser, linkedUser);
             }
 
+            var roleNames = new string[] { "owner", "admin", "group_user", "group_erp_manager" };
+            var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId && roleNames.Contains(r.Name));
+            await _userManager.AddToRoleAsync(adminUser, "group_erp_manager");
+            /*
             // Create role for new tenant
             //"admin" role
             const string adminRoleName = "admin";
-            var adminRole = await _roleRepository.FindByNormalizedNameAsync(LookupNormalizer.NormalizeName(adminRoleName));
+            var adminRole = await _roleRepository.FirstOrDefaultAsync(role => role.NormalizedName == LookupNormalizer.NormalizeName(adminRoleName));
             try
             {
                 IdentityDbContext _ctx = await _dbContextProvider.GetDbContextAsync();
@@ -223,6 +234,28 @@ public class TenantService : ApplicationService
                 var str = e.ToString();
                 throw;
             }
+            */
+            // Tạo member cho current user
+            var newMember = new TenantMember(GuidGenerator.Create(), tenantId, CurrentUser.Id.Value, TenantMemberStatus.Pending, InvitationStatus.Pending)
+            {
+                IsOwner = true,
+                IsActive = true,
+                Role = "owner",
+                TenantName = tenant.Name,
+                AcceptedAt = now,
+                InvitedAt = now,
+            };
+            using (_dataFilter.Disable<IMultiTenant>())
+            {
+                //var roleNames = new string[] { "owner", "admin", "group_user", "group_erp_manager" };
+                //var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId && roleNames.Contains(r.Name));
+                foreach (var role in roles)
+                {
+                    newMember.AddRole(role.Id, GuidGenerator);
+                }
+            }
+            await _tenantMemberRepository.InsertAsync(newMember);
+            await CurrentUnitOfWork.SaveChangesAsync();
             //await _distributedEventBus.PublishAsync(
             //    new TenantCreatedEto
             //    {
@@ -255,14 +288,13 @@ public class TenantService : ApplicationService
         return tenant;
     }
 
-    public async Task<TenantDto> CreateAsync(string name)
+    //[Authorize(Roles = "members")]
+    public async Task<TenantDto> CreateAsync(TenantCreateDto input)
     {
-        TenantCreateDto input = new TenantCreateDto()
+        if (CurrentTenant.IsAvailable)
         {
-            Name = name,
-            AdminEmailAddress = CurrentUser.Email,
-            AdminPassword = GuidGenerator.Create().ToString(),
-        };
+            throw new UserFriendlyException("Only host user can register tenant");
+        }
         if (CurrentUser.TenantId != null)
         {
             throw new UserFriendlyException("Only host user can create tenant");
@@ -273,24 +305,20 @@ public class TenantService : ApplicationService
             throw new UserFriendlyException($"Name is invalid");
         }
 
-        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => tenant.Name == input.Name); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
+        var tenant = await _tenantRepository.FirstOrDefaultAsync(tenant => tenant.Name == input.Name
+                || tenant.NormalizedName == LookupNormalizer.NormalizeName(input.Name)); // .WhereIf(true, tenant => tenant.) .FindByNameAsync(input.Name);
         if (tenant != null)
         {
             if (tenant.CreatorId == CurrentUser.Id)
             {
-                //await _distributedEventBus.PublishAsync(
-                //new TenantCreatedEto
-                //{
-                //    Id = tenant.Id,
-                //    Name = tenant.Name,
-                //    //Properties = tenant.ExtraProperties.ToDictionary<string, string>(),
-                //});
                 return ObjectMapper.Map<Tenant, TenantDto>(tenant);
             }
             throw new UserFriendlyException("Name is exist");
         }
         var count = await _tenantRepository.CountAsync(x => x.CreatorId == CurrentUser.Id);
-        var maxTenant = _configuration.GetValue<int>("App:MaxTenantPerAccount", 2);
+        var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
+        var maxTenant = currentUser.GetProperty<int>("MaxTenant");
+        //var maxTenant = _configuration.GetValue("App:MaxTenantPerAccount", 1);
         if (count >= maxTenant)
         {
             throw new UserFriendlyException($"Too many items created");
@@ -305,7 +333,7 @@ public class TenantService : ApplicationService
             tenant.SetProperty("creator", CurrentUser.Id);
             tenant = await _tenantRepository.InsertAsync(tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
-            tenant = await CreateAdminTenantUserAsync(tenant.Id, input.AdminPassword, tenant);
+            tenant = await CreateAdminTenantUserAsync(currentUser, input.AdminPassword, tenant);
             await CurrentUnitOfWork.SaveChangesAsync();
         }
         catch (Exception e)
@@ -318,11 +346,15 @@ public class TenantService : ApplicationService
 
     public async Task<TenantDto> MigrateAsync(TenantMigrateDto data)
     {
+        if (CurrentTenant.IsAvailable)
+        {
+            throw new UserFriendlyException("Only host user can register tenant");
+        }
         if (CurrentUser.TenantId != null)
         {
             throw new UserFriendlyException("Only host user can migrate tenant");
         }
-
+        var currentUser = await _userRepository.GetAsync((Guid)CurrentUser.Id);
         var adminRandomPassword = _configuration.GetValue("App:AdminRandomPassword", false);
         string adminTenantPassword =
             adminRandomPassword ? GuidGenerator.Create().ToString()
@@ -374,7 +406,7 @@ public class TenantService : ApplicationService
             var _ctx = await _dbContextProvider.GetDbContextAsync();
             var sql = $"UPDATE public.\"AbpTenants\" SET \"Id\"='{newId}' WHERE \"Id\"='{tenant.Id}';";
             await _ctx.Database.ExecuteSqlRawAsync(sql);
-            tenant = await CreateAdminTenantUserAsync((Guid)newId, data.Password, null);
+            tenant = await CreateAdminTenantUserAsync(currentUser, data.Password, null);
         }
         catch
         {
@@ -460,7 +492,7 @@ public class TenantService : ApplicationService
 
         using (CurrentTenant.Change(tenantId, null))
         {
-            var userRole = await _roleRepository.FindByNormalizedNameAsync(LookupNormalizer.NormalizeName(dto.RoleName));
+            var userRole = await _roleRepository.FirstOrDefaultAsync(role => role.NormalizedName == LookupNormalizer.NormalizeName(dto.RoleName));
             if (userRole == null)
             {
                 throw new UserFriendlyException($"Role {dto.RoleName} not found");

@@ -35,7 +35,7 @@ public class AdminResetPasswordAppService : ApplicationService, ITransientDepend
         UserManager = userManager;
     }
 
-    [Authorize(Roles="admin,owner")]
+    [Authorize(Roles = "superadmin,admin")]
     public async Task AdminResetPasswordAsync(ResetUserPasswordDto input)
     {
         if (CurrentTenant.Id != null)

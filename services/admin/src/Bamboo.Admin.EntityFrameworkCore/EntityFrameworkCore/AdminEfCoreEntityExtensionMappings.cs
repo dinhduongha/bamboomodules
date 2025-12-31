@@ -47,9 +47,21 @@ public static class AdminEfCoreEntityExtensionMappings
 
             ObjectExtensionManager.Instance
                 .MapEfCoreProperty<IdentityUser, Guid?>("BranchId");
+            ObjectExtensionManager.Instance
+                .MapEfCoreProperty<IdentityUser, long>("MaxTenant", (entityBuilder, propertyBuilder) =>
+                {
+                    propertyBuilder.HasDefaultValue(1);
+                });
+            ObjectExtensionManager.Instance
+                .MapEfCoreProperty<IdentityUser, long>("Vip",
+                (entityBuilder, propertyBuilder) =>
+                {
+                    propertyBuilder.HasDefaultValue(0);
+                });
 
             ObjectExtensionManager.Instance
                 .MapEfCoreProperty<Tenant, Guid?>("OwnerId")
+                .MapEfCoreProperty<Tenant, string>("Host")
                 .MapEfCoreProperty<Tenant, string?>("Description");
 
             ObjectExtensionManager.Instance

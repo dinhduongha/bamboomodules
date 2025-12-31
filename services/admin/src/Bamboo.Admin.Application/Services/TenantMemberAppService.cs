@@ -17,6 +17,7 @@ using Volo.Abp.Users;
 using Bamboo.Admin.Domain.Shared.Enums;
 using Bamboo.Admin.Application.Dtos;
 using Volo.Abp.TenantManagement;
+using AutoMapper;
 
 namespace Bamboo.Admin.Application.Services;
 
@@ -35,11 +36,15 @@ public class TenantMemberAppService :
 
     private readonly IReadOnlyRepository<IdentityUser, Guid> _userRepository;
     private readonly IReadOnlyRepository<Tenant, Guid> _tenantRepository;
+    private readonly IReadOnlyRepository<IdentityRole, Guid> _roleRepository;
+    private readonly IMapper _mapper;
     public TenantMemberAppService(
         IDataFilter dataFilter,
-        IRepository<TenantMember, Guid> repository,
+        IMapper mapper,
         ICurrentTenant currentTenant,
+        IRepository<TenantMember, Guid> repository,
         IReadOnlyRepository<Tenant, Guid> tenantRepository,
+        IReadOnlyRepository<IdentityRole, Guid> roleRepository,
         IReadOnlyRepository<IdentityUser, Guid> userRepository)
         : base(repository)
     {
@@ -47,6 +52,8 @@ public class TenantMemberAppService :
         _userRepository = userRepository;
         _dataFilter = dataFilter;
         _tenantRepository = tenantRepository;
+        _roleRepository = roleRepository;
+        _mapper = mapper;
         if (!_currentTenant.IsAvailable)
         {
             _dataFilter.Disable<IMultiTenant>();
@@ -134,7 +141,7 @@ public class TenantMemberAppService :
 
         var dtos = queryResult.Select(x =>
         {
-            var dto = ObjectMapper.Map<TenantMember, TenantMemberDto>(x.tenantMember);
+            var dto = _mapper.Map<TenantMember, TenantMemberDto>(x.tenantMember);
             dto.UserName = x.user.UserName;
             return dto;
         }).ToList();
@@ -152,51 +159,97 @@ public class TenantMemberAppService :
 
     public async Task<TenantMemberDto> InviteAsync(InviteMemberDto input)
     {
-        var tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
-
-        // 1. Tìm user bằng email
-        var user = await _userRepository.GetAsync(input.UserId);
+        //var tenantId = _currentTenant.Id.HasValue ? _currentTenant.Id.Value : (input.TenantId.HasValue ? input.TenantId.Value : Guid.Empty);
+        var tenantId = CurrentTenant.Id ?? input.TenantId;
+        if (!tenantId.HasValue)
+        {
+            throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
+        }
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            var tenant = await _tenantRepository.FirstOrDefaultAsync(x => x.Id == tenantId.Value);
+            if (tenant == null)
+            {
+                throw new Volo.Abp.UserFriendlyException(L["TenantIsRequired"]);
+            }
+        }
+        Volo.Abp.Identity.IdentityUser? user;
+        using (CurrentTenant.Change(null))
+        {
+            user = await _userRepository.FirstOrDefaultAsync(x => x.Id == input.UserId); ;
+        }
         if (user == null)
         {
-            // Tùy chọn: Tự động tạo user mới hoặc báo lỗi
-            throw new UserFriendlyException($"User with email {input.UserId} not found.");
+            throw new Volo.Abp.UserFriendlyException(L["UserNotFound", input.UserId]);
         }
+        // 1. Tìm user 
+        // var user = await _userRepository.GetAsync(input.UserId);
+        // if (user == null)
+        // {
+        //     // Tùy chọn: Tự động tạo user mới hoặc báo lỗi
+        //     throw new UserFriendlyException($"User with email {input.UserId} not found.");
+        // }
 
         // 2. Kiểm tra xem đã mời chưa
-        if (await Repository.AnyAsync(x => x.TenantId == input.TenantId && x.UserId == user.Id))
+        if (await Repository.AnyAsync(x => x.TenantId == tenantId.Value && x.UserId == user.Id))
         {
             throw new UserFriendlyException("This user has already been invited or is a member.");
         }
 
         // 3. Tạo lời mời với trạng thái Pending
-        var invitation = new TenantMember(GuidGenerator.Create(), tenantId, user.Id);
-        //invitation.SetRoles(input.Roles);
+        var invitation = new TenantMember(GuidGenerator.Create(), tenantId.Value, user.Id, input.Status, input.InviteStatus);
+        invitation.InvitedAt = DateTimeOffset.Now;
+        invitation.Description = input.Description;
+        using (_dataFilter.Disable<IMultiTenant>())
+        {
+            if (input.Roles.Any())
+            {
+                var roles = await _roleRepository.GetListAsync(r => r.TenantId == tenantId.Value && input.Roles.Contains(r.Name));
+                foreach (var role in roles)
+                {
+                    invitation.AddRole(role.Id, GuidGenerator);
+                }
+            }
+        }
 
-        await Repository.InsertAsync(invitation);
-
+        invitation = await Repository.InsertAsync(invitation);
         // Tùy chọn: Gửi email thông báo cho người dùng
         // await _emailSender.SendAsync(...)
 
-        return ObjectMapper.Map<TenantMember, TenantMemberDto>(invitation);
+        return _mapper.Map<TenantMember, TenantMemberDto>(invitation);
     }
 
-    public async Task<PagedResultDto<TenantMemberDto>> GetMyInvitationsAsync()
+    public async Task<PagedResultDto<TenantMemberDto>> GetMyWorkspacesAsync()
     {
         using (_dataFilter.Disable<IMultiTenant>())
         {
             var userId = CurrentUser.GetId();
 
-            var query = from invitation in await Repository.GetQueryableAsync()
-                        join tenant in await _tenantRepository.GetQueryableAsync() on invitation.TenantId equals tenant.Id
-                        where invitation.UserId == userId
-                        select new { invitation, tenant };
+            var membersQueryable = await Repository.GetQueryableAsync();
+            var tenantsQueryable = await _tenantRepository.GetQueryableAsync();
+            var rolesQueryable = await _roleRepository.GetQueryableAsync();
+
+            var query = from member in membersQueryable
+                        join tenant in tenantsQueryable on member.TenantId equals tenant.Id
+                        where member.UserId == userId && member.IsActive != false
+                        select new
+                        {
+                            Member = member,
+                            Tenant = tenant,
+                            TenantName = tenant.Name,
+                            Roles = (from memberRole in member.Roles
+                                     join role in rolesQueryable on memberRole.RoleId equals role.Id
+                                     select role.Name).ToList()
+                        };
 
             var result = await AsyncExecuter.ToListAsync(query);
 
             var dtos = result.Select(x =>
             {
-                var dto = ObjectMapper.Map<TenantMember, TenantMemberDto>(x.invitation);
-                dto.TenantName = x.tenant.Name;
+                var dto = _mapper.Map<TenantMember, TenantMemberDto>(x.Member);
+                dto.TenantName = x.Tenant.Name;
+                dto.Roles = x.Roles;
+                dto.UserName = CurrentUser.UserName;
                 return dto;
             }).ToList();
             return new PagedResultDto<TenantMemberDto>(dtos.Count, dtos);
@@ -205,25 +258,37 @@ public class TenantMemberAppService :
 
     public async Task AcceptInvitationAsync(Guid invitationId)
     {
-        var invitation = await Repository.GetAsync(invitationId);
-        // Đảm bảo chỉ đúng người được mời mới có thể Accept
-        if (invitation.UserId != CurrentUser.GetId())
+        using (_dataFilter.Disable<IMultiTenant>())
         {
-            throw new UserFriendlyException("You are not authorized to accept this invitation.");
+            var invitation = await Repository.GetAsync(invitationId);
+            // Đảm bảo chỉ đúng người được mời mới có thể Accept
+            if (invitation.UserId != CurrentUser.GetId())
+            {
+                throw new UserFriendlyException("You are not authorized to accept this invitation.");
+            }
+            if (invitation.InviteStatus == InvitationStatus.Pending && invitation.IsActive != false)
+            {
+                invitation.AcceptInvitation();
+                await Repository.UpdateAsync(invitation);
+            }
         }
-        invitation.AcceptInvitation();
-        await Repository.UpdateAsync(invitation);
     }
 
     public async Task RejectInvitationAsync(Guid invitationId)
     {
-        var invitation = await Repository.GetAsync(invitationId);
-        // Đảm bảo chỉ đúng người được mời mới có thể Accept
-        if (invitation.UserId != CurrentUser.GetId())
+        using (_dataFilter.Disable<IMultiTenant>())
         {
-            throw new UserFriendlyException("You are not authorized to accept this invitation.");
+            var invitation = await Repository.GetAsync(invitationId);
+            // Đảm bảo chỉ đúng người được mời mới có thể Accept
+            if (invitation.UserId != CurrentUser.GetId())
+            {
+                throw new UserFriendlyException("You are not authorized to accept this invitation.");
+            }
+            if (invitation.InviteStatus == InvitationStatus.Pending && invitation.IsActive != false)
+            {
+                invitation.RejectInvitation();
+                await Repository.UpdateAsync(invitation);
+            }
         }
-        invitation.RejectInvitation();
-        await Repository.UpdateAsync(invitation);
     }
 }

@@ -33,7 +33,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 //[RemoteService(Name = IntegrateRemoteServiceConsts.RemoteServiceName)]
 [Route("api/host-user/")]
 [Produces("application/json")]
-//[Authorize]
+//[Authorize(Roles="members")]
 //[AllowAnonymous]
 public class HostUserController : AbpController
 {
@@ -57,63 +57,23 @@ public class HostUserController : AbpController
     }
 
     [HttpGet]
-    [Route("{id}")]
+    [Route("tenants/{id}")]
     public async Task<TenantDto> GetAsync(Guid id)
     {
         return await _tenantService.GetAsync(id);
     }
 
     [HttpGet]
+    [Route("tenants")]
     public async Task<PagedResultDto<TenantDto>> GetListAsync(GetTenantsInput input)
     {
         return await _tenantService.GetListAsync(input);
     }
 
     [HttpPost]
-    public async Task<TenantDto> CreateAsync(string name)
+    [Route("tenants/register")]
+    public async Task<TenantDto> CreateAsync(TenantCreateDto input)
     {
-        return await _tenantService.CreateAsync(name);
+        return await _tenantService.CreateAsync(input);
     }
-
-    // [HttpPost]
-    // [Route("migrate")]
-    // public async Task<TenantDto> CreateWithIdAsync(TenantMigrateDto data)
-    // {
-    //     return await _tenantService.MigrateAsync(data);
-    // }
-
-    // [HttpGet]
-    // [Route("roles")]
-    // public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleAsync()
-    // {
-    //     return await _tenantService.GetRoleAsync();
-    // }
-
-    // [HttpGet]
-    // [Route("roles/{tenant}")]
-    // public async Task<List<Volo.Abp.Identity.IdentityRole>> GetRoleByTenantAsync(Guid? tenant)
-    // {
-    //     return await _tenantService.GetRoleByTenantAsync(tenant);
-    // }
-
-    // [HttpPost]
-    // [Route("user-roles-add/{tenant}")]
-    // public async Task<bool> TenantRoleAddAsync(Guid tenant, TenantRoleCreateDto dto)
-    // {
-    //     return await _tenantService.TenantUserRoleAddAsync(tenant, dto);
-    // }
-
-    // [HttpDelete]
-    // [Route("user-roles-remove/{tenant}/{user}")]
-    // public async Task<bool> TenantRoleRemoveAsync(Guid tenant, Guid user)
-    // {
-    //     return await _tenantService.TenantUserRoleRemoveAsync(tenant, user);
-    // }
-
-    // [HttpPost]
-    // [Route("users/reset-user-password")]
-    // public async Task AdminResetPassword([FromBody] ResetUserPasswordDto input)
-    // {
-    //     await _adminResetPasswordService.AdminResetPasswordAsync(input);
-    // }
 }

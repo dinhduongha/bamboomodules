@@ -1245,6 +1245,11 @@ namespace Bamboo.Admin.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long>("MaxTenant")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(1L);
+
                     b.Property<string>("Name")
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)")
@@ -1307,6 +1312,11 @@ namespace Bamboo.Admin.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)")
                         .HasColumnName("UserName");
+
+                    b.Property<long>("Vip")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasDefaultValue(0L);
 
                     b.HasKey("Id");
 
@@ -2138,6 +2148,9 @@ namespace Bamboo.Admin.Migrations
                     b.Property<string>("ExtraProperties")
                         .HasColumnType("text")
                         .HasColumnName("ExtraProperties");
+
+                    b.Property<string>("Host")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
