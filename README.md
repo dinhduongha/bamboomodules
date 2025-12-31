@@ -4,10 +4,10 @@
 
 # Features
 
-- **ABP** version v8.3.4
+- **ABP** version v10.0
 - **Microservices**.
 - **Scripts and config to migrate data from odoo to bamboo**.
-- **Odoo 18 porting**:
+- **Odoo 18-19 porting**:
 
   - **Entities**: **> 500 entities** converted from Odoo database, with near full modules.
   - **Id** fields: Converted from **int** to **uui** PostgreSQL data type (all.)
