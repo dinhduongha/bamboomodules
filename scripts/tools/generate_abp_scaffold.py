@@ -500,14 +500,21 @@ def create_service_interface_content(project_base_name, module_name, model_name,
     content += "    }\n}"
     return format_csharp_code(content)
 
-def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map):
+def create_service_implementation_content(project_base_name, module_name, model_name, model_data, methods, dependencies, flat_model_dir, flat_service_ns, include_private, all_csharp_entity_names, is_mixin, inherited_mixins, final_exclude_set, module_namespace_map, module_category=""):
     pascal_model = to_pascal_case(model_name)
     pascal_module = module_namespace_map.get(module_name, to_pascal_case(module_name))
     is_auto = model_data.get('is_auto', True)
 
     service_name, interface_name = f"{pascal_model}AppService", f"I{pascal_model}AppService"
+    module_attr_parts = [f'"{module_name}"']
+    if module_category:
+        # Xử lý escape ký tự nếu cần (đơn giản hóa là lấy raw string)
+        module_attr_parts.append(f'Category = "{module_category}"')
     depends_list_str = ', '.join(f'\"{dep}\"' for dep in dependencies)
     depends_str = f"Depends = new[] {{ {depends_list_str} }}" if dependencies else ""
+    if dependencies:
+        module_attr_parts.append(f'Depends = new[] {{ {depends_list_str} }}')
+    module_attr_str = f"    [Module({', '.join(module_attr_parts)})]"
     contracts_namespace = f"{project_base_name}.Application.Contracts.Interfaces"
     dto_namespace = f"{project_base_name}.Application.Contracts.DTOs" + (f".{pascal_module}" if not flat_service_ns else "")
     interface_namespace = contracts_namespace + (".Mixins" if is_mixin else (f".{pascal_module}" if not flat_service_ns else ""))
@@ -563,7 +570,8 @@ def create_service_implementation_content(project_base_name, module_name, model_
     content_parts = [
         f"{'\n'.join(sorted(list(dict.fromkeys(using_statements)), reverse=True))}",
         f"\nnamespace {service_namespace}", f"{{",
-        f"    [Module(\"{module_name}\"{(', ' + depends_str) if depends_str else ''})]",
+        #f"    [Module(\"{module_name}\"{(', ' + depends_str) if depends_str else ''})]",
+        module_attr_str,
         f"    public class {service_name} : {base_class}, {interface_name}", f"    {{",
         '\n'.join([f"        {field}" for field in private_fields]),
         f"        public {service_name}({', '.join(constructor_params)}) {base_call}",
@@ -1583,6 +1591,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             public class ModuleAttribute : Attribute
             {
                 public string Name { get; }
+                public string Category { get; set; }
                 public string[] Depends { get; }
                 public ModuleAttribute(string name, params string[] depends)
                 {
@@ -1680,6 +1689,10 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
     
     for model_name, data in master_models.items():
         if model_name == 'models.Model' or 'base_module' not in data: continue
+        CATEGORY_REMAPPING = {
+                'Inventory': 'Supply Chain',
+                'Manufacturing': 'Supply Chain'
+            }
 
         is_auto = data.get('is_auto', True)
         if not is_auto:
@@ -1690,16 +1703,41 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         module_category = module_infos.get(base_module, {}).get('category', '')
         pascal_model = to_pascal_case(model_name)
         
+        final_category_for_attr = ""
         # --- LOGIC XÁC ĐỊNH THƯ MỤC CON ---
         if args.flat_by_cat:
-            category = module_infos.get(base_module, {}).get('category', 'Uncategorized')
-            grouping_key_raw = category.split('/')[0].strip() if '/' in category else category.strip()
-            if not grouping_key_raw or grouping_key_raw.lower() == 'hidden':
-                grouping_key_pascal = "Base"
+            category_raw = module_infos.get(base_module, {}).get('category', 'Uncategorized')
+            top_level_cat = category_raw.split('/')[0].strip() if '/' in category_raw else category_raw.strip()
+            if top_level_cat in CATEGORY_REMAPPING:
+                top_level_cat = CATEGORY_REMAPPING[top_level_cat]
+            if not top_level_cat or top_level_cat.lower() == 'hidden':
+                if base_module == 'base' or base_module == 'base_module' or base_module == 'bus' or base_module == 'onboarding' or base_module.startswith('base_')  or base_module.startswith('res_')  or base_module.startswith('auth') or base_module.startswith('web_tour'):
+                    grouping_key_pascal = "Base"
+                    final_category_for_attr = "Base"
+                elif base_module.startswith('payment'):
+                    grouping_key_pascal = "Sales"
+                    final_category_for_attr = "Sales"
+                elif base_module.startswith('web'):
+                    grouping_key_pascal = "Website"
+                    final_category_for_attr = "Website"
+                elif base_module.startswith('barcodes'):
+                    grouping_key_pascal = "SupplyChain"
+                    final_category_for_attr = "Supply Chain"
+                else:
+                    grouping_key_pascal = "Misc"
+                    final_category_for_attr = "Misc"
             else:
-                grouping_key_pascal = to_pascal_case(grouping_key_raw)
+                grouping_key_pascal = to_pascal_case(top_level_cat)
+                final_category_for_attr = to_pascal_case(top_level_cat)
+
+            #grouping_key_raw = category.split('/')[0].strip() if '/' in category else category.strip()
+            #if not grouping_key_raw or grouping_key_raw.lower() == 'hidden':
+            #    grouping_key_pascal = "Base"
+            #else:
+            #    grouping_key_pascal = to_pascal_case(grouping_key_raw)
         else:
             grouping_key_pascal = module_namespace_map.get(base_module, to_pascal_case(base_module))
+            final_category_for_attr = ""
 
         if model_name in final_exclude_set:
             logging.info(f"Generating dedicated service and interfaces for mixin model: '{model_name}'")
@@ -1708,7 +1746,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
             if data.get('fields'):
                 (data_interface_dir / f"I{pascal_model}Data.cs").write_text(create_mixin_data_interface_content(project_base_name, model_name, data, all_csharp_entity_names, flat_model_dir, module_namespace_map), encoding='utf-8')
             (mixin_contracts_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, base_module, model_name, data, all_methods, flat_model_dir, True, all_csharp_entity_names, module_namespace_map, is_mixin=True), encoding='utf-8')
-            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
+            (mixin_service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, base_module, model_name, data, all_methods, dependencies, flat_model_dir, True, args.include_private_methods, all_csharp_entity_names, is_mixin=True, inherited_mixins=None, final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr), encoding='utf-8')
             continue
 
         logging.info(f"Generating ABP structure for model '{model_name}' (base module: {base_module})")
@@ -1774,7 +1812,7 @@ def generate_csharp_files(args, master_models, module_infos, all_module_names, f
         if should_generate_service:
             logging.info(f"  -> Generating AppService for '{model_name}'.")
             (interface_dir / f"I{pascal_model}AppService.cs").write_text(create_service_interface_content(project_base_name, pascal_module_for_ns, model_name, data, public_methods, flat_model_ns, flat_service_ns, all_csharp_entity_names, module_namespace_map), encoding='utf-8')
-            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map), encoding='utf-8')
+            (service_dir / f"{pascal_model}AppService.cs").write_text(create_service_implementation_content(project_base_name, pascal_module_for_ns, model_name, data, all_methods, dependencies, flat_model_ns, flat_service_ns, args.include_private_methods, all_csharp_entity_names, is_mixin=False, inherited_mixins=data.get('inherited_mixins', set()), final_exclude_set=final_exclude_set, module_namespace_map=module_namespace_map, module_category=final_category_for_attr), encoding='utf-8')
         
         if should_generate_controller:
             logging.info(f"  -> Generating Controller for '{model_name}'.")
