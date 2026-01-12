@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("google_calendar", Depends = new[] { "google_account", "calendar" })]
+    [Module("google_calendar", Category = "Productivity", Depends = new[] { "google_account", "calendar" })]
     public class GoogleCalendarSyncAppService : ApplicationService, IGoogleCalendarSyncAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -344,22 +344,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CancelMicrosoftInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _cancel_microsoft(self):
-            // """
-            // Cancel an Microsoft event.
-            // There are 2 cases:
-            //   1) the organizer is an Odoo user: he's the only one able to delete the Odoo event. Attendees can just decline.
-            //   2) the organizer is NOT an Odoo user: any attendee should remove the Odoo event.
-            // """
-            // user = self.env.user
-            // records = self.filtered(lambda e: not e.user_id or e.user_id == user or user.partner_id in e.partner_ids)
-            // for event in records:
-            //     # remove the tracking data to avoid calling _track_template in the pre-commit phase
-            //     self.env.cr.precommit.data.pop(f'mail.tracking.create.{event._name}.{event.id}', None)
-            // super(Meeting, records)._cancel_microsoft()
-            // attendees = (self - records).attendee_ids.filtered(lambda a: a.partner_id == user.partner_id)
-            // attendees.do_decline()
+            // self.calendar_event_ids.with_context(dont_notify=True)._cancel_microsoft()
+            // super()._cancel_microsoft()
             */
             return default;
         }
@@ -1287,27 +1275,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> EnsureAttendeesHaveEmailInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _ensure_attendees_have_email(self):
-            // invalid_event_ids = self.env['calendar.event'].search_read(
-            //     domain=[('id', 'in', self.ids), ('attendee_ids.partner_id.email', '=', False)],
-            //     fields=['display_time', 'display_name'],
-            //     order='start',
-            // )
-            // if invalid_event_ids:
-            //     list_length_limit = 50
-            //     total_invalid_events = len(invalid_event_ids)
-            //     invalid_event_ids = invalid_event_ids[:list_length_limit]
-            //     invalid_events = ['\t- %s: %s' % (event['display_time'], event['display_name'])
-            //                       for event in invalid_event_ids]
-            //     invalid_events = '\n'.join(invalid_events)
-            //     details = "(%d/%d)" % (list_length_limit, total_invalid_events) if list_length_limit < total_invalid_events else "(%d)" % total_invalid_events
-            //     raise ValidationError(_("For a correct synchronization between Odoo and Outlook Calendar, "
-            //                             "all attendees must have an email address. However, some events do "
-            //                             "not respect this condition. As long as the events are incorrect, "
-            //                             "the calendars will not be synchronized."
-            //                             "\nEither update the events/attendees or archive these events %(details)s:"
-            //                             "\n%(invalid_events)s", details=details, invalid_events=invalid_events))
+            // self.calendar_event_ids.filtered(lambda e: e.active)._ensure_attendees_have_email()
             */
             return default;
         }
@@ -1721,17 +1691,13 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetEventUserMInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid user_id) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_event_user_m(self, user_id=None):
             // """ Get the user who will send the request to Microsoft (organizer if synchronized and current user otherwise). """
             // self.ensure_one()
-            // # Current user must have access to token in order to access event properties (non-public user).
-            // current_user_status = self.env.user._get_microsoft_calendar_token()
-            // if user_id != self.env.user and current_user_status:
-            //     if user_id is None:
-            //         user_id = self.user_id
-            //     if user_id and self.with_user(user_id).sudo()._check_microsoft_sync_status():
-            //         return user_id
+            // event = self._get_first_event()
+            // if event:
+            //     return event._get_event_user_m(user_id)
             // return self.env.user
             */
             return default;
@@ -1941,30 +1907,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetMicrosoftSyncDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_microsoft_sync_domain(self):
-            // # in case of full sync, limit to a range of 1y in past and 1y in the future by default
-            // ICP = self.env['ir.config_parameter'].sudo()
-            // day_range = int(ICP.get_param('microsoft_calendar.sync.range_days', default=365))
-            // lower_bound = fields.Datetime.subtract(fields.Datetime.now(), days=day_range)
-            // upper_bound = fields.Datetime.add(fields.Datetime.now(), days=day_range)
-            // 
-            // # Define 'custom_lower_bound_range' param for limiting old events updates in Odoo and avoid spam on Microsoft.
-            // custom_lower_bound_range = ICP.get_param('microsoft_calendar.sync.lower_bound_range')
-            // if custom_lower_bound_range:
-            //     lower_bound = fields.Datetime.subtract(fields.Datetime.now(), days=int(custom_lower_bound_range))
-            // domain = [
-            //     ('partner_ids.user_ids', 'in', [self.env.user.id]),
-            //     ('stop', '>', lower_bound),
-            //     ('start', '<', upper_bound),
-            //     '!', '&', '&', ('recurrency', '=', True), ('recurrence_id', '!=', False), ('follow_recurrence', '=', True)
-            // ]
-            // 
-            // # Synchronize events that were created after the first synchronization date, when applicable.
-            // first_synchronization_date = ICP.get_param('microsoft_calendar.sync.first_synchronization_date')
-            // if first_synchronization_date:
-            //     domain = expression.AND([domain, [('create_date', '>=', first_synchronization_date)]])
-            // 
+            // # Do not sync Odoo recurrences with Outlook Calendar anymore.
+            // domain = expression.FALSE_DOMAIN
             // return self._extend_microsoft_domain(domain)
             */
             return default;
@@ -1973,11 +1919,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetMicrosoftSyncedFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_microsoft_synced_fields(self):
-            // return {'name', 'description', 'allday', 'start', 'date_end', 'stop',
-            //         'user_id', 'privacy',
-            //         'attendee_ids', 'alarm_ids', 'location', 'show_as', 'active', 'videocall_location'}
+            // return {'rrule'} | self.env['calendar.event']._get_microsoft_synced_fields()
             */
             return default;
         }
@@ -2082,9 +2026,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> GetOrganizerInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _get_organizer(self):
-            // return self.user_id
+            // return self.base_event_id.user_id
             */
             return default;
         }
@@ -2958,22 +2902,22 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> IsEventOverInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_recurrence.py) ---
             // def _is_event_over(self):
-            // """Check if the event is over. This method is used to check if the event
-            // should trigger invitations with Google Calendar.
-            // :return: True if the event is over, False otherwise
+            // """Check if all events in this recurrence are in the past.
+            // :return: True if all events are over, False otherwise
             // """
             // self.ensure_one()
+            // if not self.calendar_event_ids:
+            //     return False
+            // 
             // now = fields.Datetime.now()
             // today = fields.Date.today()
             // 
-            // # For all-day events
-            // if self.allday:
-            //     return self.stop_date and self.stop_date < today
-            // 
-            // # For timed events
-            // return self.stop and self.stop < now
+            // return all(
+            //     (event.stop_date < today if event.allday else event.stop < now)
+            //     for event in self.calendar_event_ids
+            // )
             */
             return default;
         }
@@ -3028,11 +2972,12 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> IsMicrosoftInsertionBlockedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sender_user) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _is_microsoft_insertion_blocked(self, sender_user):
             // self.ensure_one()
-            // has_different_owner = self.user_id and self.user_id != sender_user
-            // return has_different_owner
+            // has_base_event = self.base_event_id
+            // has_different_owner = self.base_event_id.user_id and self.base_event_id.user_id != sender_user
+            // return has_base_event and has_different_owner
             */
             return default;
         }
@@ -3062,215 +3007,35 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        public async Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_recurrence, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
-            // def _microsoft_to_odoo_values(self, microsoft_event, default_reminders=(), default_values=None, with_ids=False):
-            // if microsoft_event.is_cancelled():
-            //     return {'active': False}
-            // 
-            // sensitivity_o2m = {
-            //     'normal': 'public',
-            //     'private': 'private',
-            //     'confidential': 'confidential',
-            // }
-            // 
-            // commands_attendee, commands_partner = self._odoo_attendee_commands_m(microsoft_event)
-            // timeZone_start = pytz.timezone(microsoft_event.start.get('timeZone'))
-            // timeZone_stop = pytz.timezone(microsoft_event.end.get('timeZone'))
-            // start = parse(microsoft_event.start.get('dateTime')).astimezone(timeZone_start).replace(tzinfo=None)
-            // if microsoft_event.isAllDay:
-            //     stop = parse(microsoft_event.end.get('dateTime')).astimezone(timeZone_stop).replace(tzinfo=None) - relativedelta(days=1)
-            // else:
-            //     stop = parse(microsoft_event.end.get('dateTime')).astimezone(timeZone_stop).replace(tzinfo=None)
-            // values = default_values or {}
-            // values.update({
-            //     'name': microsoft_event.subject or _("(No title)"),
-            //     'description': microsoft_event.body and microsoft_event.body['content'],
-            //     'location': microsoft_event.location and microsoft_event.location.get('displayName') or False,
-            //     'user_id': microsoft_event.owner_id(self.env),
-            //     'privacy': sensitivity_o2m.get(microsoft_event.sensitivity, False),
-            //     'attendee_ids': commands_attendee,
-            //     'allday': microsoft_event.isAllDay,
-            //     'start': start,
-            //     'stop': stop,
-            //     'show_as': 'free' if microsoft_event.showAs == 'free' else 'busy',
-            //     'recurrency': microsoft_event.is_recurrent()
-            // })
-            // if commands_partner:
-            //     # Add partner_commands only if set from Microsoft. The write method on calendar_events will
-            //     # override attendee commands if the partner_ids command is set but empty.
-            //     values['partner_ids'] = commands_partner
-            // 
-            // if microsoft_event.is_recurrent() and not microsoft_event.is_recurrence():
-            //     # Propagate the follow_recurrence according to the Outlook result
-            //     values['follow_recurrence'] = not microsoft_event.is_recurrence_outlier()
-            // 
-            // # if a videocall URL is provided with the Outlook event, use it
-            // if microsoft_event.isOnlineMeeting and microsoft_event.onlineMeeting.get("joinUrl"):
-            //     values['videocall_location'] = microsoft_event.onlineMeeting["joinUrl"]
-            // else:
-            //     # if a location is a URL matching a specific pattern (i.e a URL to access to a videocall),
-            //     # copy it in the 'videocall_location' instead
-            //     if values['location'] and any(re.match(p, values['location']) for p in VIDEOCALL_URL_PATTERNS):
-            //         values['videocall_location'] = values['location']
-            //         values['location'] = False
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
+            // def _microsoft_to_odoo_values(self, microsoft_recurrence, default_reminders=(), default_values=None, with_ids=False):
+            // recurrence = microsoft_recurrence.get_recurrence()
             // 
             // if with_ids:
-            //     values['microsoft_id'] = microsoft_event.id
-            //     values['ms_universal_event_id'] = microsoft_event.iCalUId
+            //     recurrence = {
+            //         **recurrence,
+            //         'microsoft_id': microsoft_recurrence.id,
+            //         'ms_universal_event_id': microsoft_recurrence.iCalUId,
+            //     }
             // 
-            // 
-            // if microsoft_event.is_recurrent():
-            //     values['microsoft_recurrence_master_id'] = microsoft_event.seriesMasterId
-            // 
-            // alarm_commands = self._odoo_reminders_commands_m(microsoft_event)
-            // if alarm_commands:
-            //     values['alarm_ids'] = alarm_commands
-            // 
-            // return values
+            // return recurrence
             */
             return default;
         }
 
-        public async Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        public async Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
-            // def _microsoft_values(self, fields_to_sync, initial_values={}):
-            // values = dict(initial_values)
-            // if not fields_to_sync:
-            //     return values
-            // 
-            // microsoft_guid = self.env['ir.config_parameter'].sudo().get_param('microsoft_calendar.microsoft_guid', False)
-            // 
-            // if self.microsoft_recurrence_master_id and 'type' not in values:
-            //     values['seriesMasterId'] = self.microsoft_recurrence_master_id
-            //     values['type'] = 'exception'
-            // 
-            // if 'name' in fields_to_sync:
-            //     values['subject'] = self.name or ''
-            // 
-            // if 'description' in fields_to_sync:
-            //     values['body'] = {
-            //         'content': self._get_customer_description(),
-            //         'contentType': "html",
-            //     }
-            // 
-            // if any(x in fields_to_sync for x in ['allday', 'start', 'date_end', 'stop']):
-            //     if self.allday:
-            //         start = {'dateTime': self.start_date.isoformat(), 'timeZone': 'Europe/London'}
-            //         end = {'dateTime': (self.stop_date + relativedelta(days=1)).isoformat(), 'timeZone': 'Europe/London'}
-            //     else:
-            //         start = {'dateTime': pytz.utc.localize(self.start).isoformat(), 'timeZone': 'Europe/London'}
-            //         end = {'dateTime': pytz.utc.localize(self.stop).isoformat(), 'timeZone': 'Europe/London'}
-            // 
-            //     values['start'] = start
-            //     values['end'] = end
-            //     values['isAllDay'] = self.allday
-            // 
-            // if 'location' in fields_to_sync:
-            //     values['location'] = {'displayName': self.location or ''}
-            // 
-            // if not self.location and 'videocall_location' in fields_to_sync and self._need_video_call():
-            //     values['isOnlineMeeting'] = True
-            //     values['onlineMeetingProvider'] = 'teamsForBusiness'
-            // else:
-            //     values['isOnlineMeeting'] = False
-            // 
-            // if 'alarm_ids' in fields_to_sync:
-            //     alarm_id = self.alarm_ids.filtered(lambda a: a.alarm_type == 'notification')[:1]
-            //     values['isReminderOn'] = bool(alarm_id)
-            //     values['reminderMinutesBeforeStart'] = alarm_id.duration_minutes
-            // 
-            // if 'user_id' in fields_to_sync:
-            //     values['organizer'] = {'emailAddress': {'address': self.user_id.email or '', 'name': self.user_id.display_name or ''}}
-            //     values['isOrganizer'] = self.user_id == self.env.user
-            // 
-            // if 'attendee_ids' in fields_to_sync:
-            //     attendees = self.attendee_ids.filtered(lambda att: att.partner_id not in self.user_id.partner_id)
-            //     values['attendees'] = [
-            //         {
-            //             'emailAddress': {'address': attendee.email or '', 'name': attendee.display_name or ''},
-            //             'status': {'response': self._get_attendee_status_o2m(attendee)}
-            //         } for attendee in attendees]
-            // 
-            // if 'privacy' in fields_to_sync or 'show_as' in fields_to_sync:
-            //     values['showAs'] = self.show_as
-            //     sensitivity_o2m = {
-            //         'public': 'normal',
-            //         'private': 'private',
-            //         'confidential': 'confidential',
-            //     }
-            //     # Set default privacy in event according to the organizer's calendar default privacy if defined.
-            //     if self.user_id:
-            //         sensitivity_o2m[False] = sensitivity_o2m.get(self.user_id.calendar_default_privacy)
-            //     else:
-            //         sensitivity_o2m[False] = 'normal'
-            //     values['sensitivity'] = sensitivity_o2m.get(self.privacy)
-            // 
-            // if 'active' in fields_to_sync and not self.active:
-            //     values['isCancelled'] = True
-            // 
-            // if values.get('type') == 'seriesMaster':
-            //     recurrence = self.recurrence_id
-            //     pattern = {
-            //         'interval': recurrence.interval
-            //     }
-            //     if recurrence.rrule_type in ['daily', 'weekly']:
-            //         pattern['type'] = recurrence.rrule_type
-            //     else:
-            //         prefix = 'absolute' if recurrence.month_by == 'date' else 'relative'
-            //         pattern['type'] = recurrence.rrule_type and prefix + recurrence.rrule_type.capitalize()
-            // 
-            //     if recurrence.month_by == 'date':
-            //         pattern['dayOfMonth'] = recurrence.day
-            // 
-            //     if recurrence.month_by == 'day' or recurrence.rrule_type == 'weekly':
-            //         pattern['daysOfWeek'] = [
-            //             weekday_name for weekday_name, weekday in {
-            //                 'monday': recurrence.mon,
-            //                 'tuesday': recurrence.tue,
-            //                 'wednesday': recurrence.wed,
-            //                 'thursday': recurrence.thu,
-            //                 'friday': recurrence.fri,
-            //                 'saturday': recurrence.sat,
-            //                 'sunday': recurrence.sun,
-            //             }.items() if weekday]
-            //         pattern['firstDayOfWeek'] = 'sunday'
-            // 
-            //     if recurrence.rrule_type == 'monthly' and recurrence.month_by == 'day':
-            //         byday_selection = {
-            //             '1': 'first',
-            //             '2': 'second',
-            //             '3': 'third',
-            //             '4': 'fourth',
-            //             '-1': 'last',
-            //         }
-            //         pattern['index'] = byday_selection[recurrence.byday]
-            // 
-            //     dtstart = recurrence.dtstart or fields.Datetime.now()
-            //     rule_range = {
-            //         'startDate': (dtstart.date()).isoformat()
-            //     }
-            // 
-            //     if recurrence.end_type == 'count':  # e.g. stop after X occurence
-            //         rule_range['numberOfOccurrences'] = min(recurrence.count, MAX_RECURRENT_EVENT)
-            //         rule_range['type'] = 'numbered'
-            //     elif recurrence.end_type == 'forever':
-            //         rule_range['numberOfOccurrences'] = MAX_RECURRENT_EVENT
-            //         rule_range['type'] = 'numbered'
-            //     elif recurrence.end_type == 'end_date':  # e.g. stop after 12/10/2020
-            //         rule_range['endDate'] = recurrence.until.isoformat()
-            //         rule_range['type'] = 'endDate'
-            // 
-            //     values['recurrence'] = {
-            //         'pattern': pattern,
-            //         'range': rule_range
-            //     }
-            // 
-            // return values
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
+            // def _microsoft_values(self, fields_to_sync):
+            // """
+            // Get values to update the whole Outlook event recurrence.
+            // (done through the first event of the Outlook recurrence).
+            // """
+            // return self.base_event_id._microsoft_values(fields_to_sync, initial_values={'type': 'seriesMaster'})
             */
             return default;
         }
@@ -3757,11 +3522,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> RestartMicrosoftSyncInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar.py) ---
+            --- ODOO METHOD SOURCE (MODULE: microsoft_calendar, FILE: calendar_recurrence_rule.py) ---
             // def _restart_microsoft_sync(self):
-            // domain = self._get_microsoft_sync_domain()
-            // 
-            // self.env['calendar.event'].with_context(dont_notify=True).search(domain).write({
+            // self.env['calendar.recurrence'].search(self._get_microsoft_sync_domain()).write({
             //     'need_sync_m': True,
             // })
             */
@@ -3961,31 +3724,40 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
+        public async Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object recurrence_update) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_event.py) ---
-            // def _setup_alarms(self):
-            // """ Schedule cron triggers for future events """
-            // cron = self.env.ref('calendar.ir_cron_scheduler_alarm').sudo()
-            // alarm_types = self._get_trigger_alarm_types()
-            // events_to_notify = self.env['calendar.event']
-            // triggers_by_events = {}
-            // for event in self:
-            //     existing_trigger = event.recurrence_id.trigger_id
-            //     for alarm in (alarm for alarm in event.alarm_ids if alarm.alarm_type in alarm_types):
-            //         at = event.start - timedelta(minutes=alarm.duration_minutes)
-            //         create_trigger = not existing_trigger or existing_trigger and existing_trigger.call_at != at
-            //         if create_trigger and (not cron.lastcall or at > cron.lastcall):
-            //             # Don't trigger for past alarms, they would be skipped by design
-            //             trigger = cron._trigger(at=at)
-            //             triggers_by_events[event.id] = trigger.id
-            //     if any(alarm.alarm_type == 'notification' for alarm in event.alarm_ids):
-            //         # filter events before notifying attendees through calendar_alarm_manager
-            //         events_to_notify |= event.filtered(lambda ev: ev.alarm_ids and ev.stop >= fields.Datetime.now())
-            // if events_to_notify:
-            //     self.env['calendar.alarm_manager']._notify_next_alarm(events_to_notify.partner_ids.ids)
-            // return triggers_by_events
+            --- ODOO METHOD SOURCE (MODULE: calendar, FILE: calendar_recurrence.py) ---
+            // def _setup_alarms(self, recurrence_update=False):
+            // """ Schedule cron triggers for future events
+            // Create one ir.cron.trigger per recurrence.
+            // :param recurrence_update: boolean: if true, update all recurrences in self, else only the recurrences
+            //        without trigger
+            // """
+            // now = self.env.context.get('date') or fields.Datetime.now()
+            // # get next events
+            // self.env['calendar.event'].flush_model(fnames=['recurrence_id', 'start'])
+            // if not self.calendar_event_ids.ids:
+            //     return
+            // 
+            // self.env.cr.execute("""
+            //     SELECT DISTINCT ON (recurrence_id) id event_id, recurrence_id
+            //             FROM calendar_event 
+            //            WHERE start > %s
+            //              AND id IN %s
+            //         ORDER BY recurrence_id,start ASC;
+            // """, (now, tuple(self.calendar_event_ids.ids)))
+            // result = self.env.cr.dictfetchall()
+            // if not result:
+            //     return
+            // events = self.env['calendar.event'].browse(value['event_id'] for value in result)
+            // triggers_by_events = events._setup_alarms()
+            // for vals in result:
+            //     trigger_id = triggers_by_events.get(vals['event_id'])
+            //     if not trigger_id:
+            //         continue
+            //     recurrence = self.env['calendar.recurrence'].browse(vals['recurrence_id'])
+            //     recurrence.trigger_id = trigger_id
             */
             return default;
         }

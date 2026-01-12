@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
@@ -105,7 +105,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> ChannelSetCustomNameAsync<TEntity>(IEnumerable<TEntity> entities, object name) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, string operation) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckActionIdInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
-        Task<object> CheckAsync(object db, object uid, object passwd);
+        Task<TEntity> CheckAsync<TEntity>(IEnumerable<TEntity> entities, object mode, object values) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckAttachmentsAccessInternalAsync<TEntity>(IEnumerable<TEntity> entities, object attachment_tokens) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckBarcodeUnicityInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> CheckCalendarCredentialsAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
@@ -470,7 +470,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> GetNeedactionCountInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> GetNextRankInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> GetNotifyValidParametersInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
-        Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable;
+        Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> GetParticipantInfoInternalAsync<TEntity>(IEnumerable<TEntity> entities, object edi_identification) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> GetPartnerFromTokenInternalAsync<TEntity>(IEnumerable<TEntity> entities, object token) where TEntity : IEntity<Guid>, IBusListenerMixinable;
         Task<TEntity> GetPartnerLocalisationFieldsRequiredToInvoiceAsync<TEntity>(IEnumerable<TEntity> entities, Guid country_id) where TEntity : IEntity<Guid>, IBusListenerMixinable;

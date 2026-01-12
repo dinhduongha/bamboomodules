@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
     public class WebsiteSearchableMixinAppService : ApplicationService, IWebsiteSearchableMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -5892,18 +5892,16 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> DefaultGetAsync<TEntity>(IEnumerable<TEntity> entities, object fields_list) where TEntity : IEntity<Guid>, IWebsiteSearchableMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_expense, FILE: product_template.py) ---
-            // def default_get(self, fields):
-            // result = super(ProductTemplate, self).default_get(fields)
-            // if self.env.context.get('default_can_be_expensed'):
-            //     result['supplier_taxes_id'] = False
-            // return result
-            --- ODOO METHOD SOURCE (MODULE: product, FILE: product_template.py) ---
+            --- ODOO METHOD SOURCE (MODULE: event, FILE: event_event.py) ---
             // def default_get(self, fields_list):
-            // res = super().default_get(fields_list)
-            // if 'uom_id' in fields_list and not res.get('uom_id') or self.env.context.get('default_uom_id') is False:
-            //     res['uom_id'] = self._get_default_uom_id().id
-            // return res
+            // result = super().default_get(fields_list)
+            // if 'date_begin' in fields_list and 'date_begin' not in result:
+            //     now = fields.Datetime.now()
+            //     # Round the datetime to the nearest half hour (e.g. 08:17 => 08:30 and 08:37 => 09:00)
+            //     result['date_begin'] = now.replace(second=0, microsecond=0) + timedelta(minutes=-now.minute % 30)
+            // if 'date_end' in fields_list and 'date_end' not in result and result.get('date_begin'):
+            //     result['date_end'] = result['date_begin'] + timedelta(days=1)
+            // return result
             */
             return default;
         }

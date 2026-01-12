@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("portal", Depends = new[] { "web", "web_editor", "http_routing", "mail", "auth_signup" })]
+    [Module("portal", Category = "Misc", Depends = new[] { "web", "web_editor", "http_routing", "mail", "auth_signup" })]
     public class PortalMixinAppService : ApplicationService, IPortalMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;

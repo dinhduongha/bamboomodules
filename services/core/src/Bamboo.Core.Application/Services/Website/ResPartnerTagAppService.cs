@@ -1,23 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Application.Contracts.DTOs;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Services.Commons;
+using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteCustomer", Depends = new[] { "website_crm_partner_assign", "website_partner", "website_google_map" })]
+    [Module("WebsiteCustomer", Category = "Website", Depends = new[] { "website_crm_partner_assign", "website_partner", "website_google_map" })]
     public class ResPartnerTagAppService : GenericApplicationService<ResPartnerTag>, IResPartnerTagAppService
     {
         private readonly IWebsitePublishedMixinAppService _websitePublishedMixinAppService;

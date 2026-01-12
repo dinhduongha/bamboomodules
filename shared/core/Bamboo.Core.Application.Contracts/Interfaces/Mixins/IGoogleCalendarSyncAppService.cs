@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
@@ -155,8 +155,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> IsMatchingTimeslotInternalAsync<TEntity>(IEnumerable<TEntity> entities, object start, object stop, object allday) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> IsMicrosoftInsertionBlockedInternalAsync<TEntity>(IEnumerable<TEntity> entities, object sender_user) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> MicrosoftToOdooRecurrenceValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> MicrosoftToOdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_recurrence, object default_reminders, object default_values, List<Guid> with_ids) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> MicrosoftValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object fields_to_sync) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> MicrosoftValuesOccurenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object initial_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> NeedVideoCallInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> OdooAttendeeCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
@@ -181,7 +181,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> SetDiscussVideocallLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SetDiscussVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SetVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
-        Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
+        Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object recurrence_update) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SkipSendMailStatusUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SplitFromInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object recurrence_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;
         Task<TEntity> SplitRecurrenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object time_values) where TEntity : IEntity<Guid>, IGoogleCalendarSyncable;

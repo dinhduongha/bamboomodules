@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("bus", Depends = new[] { "base", "web" })]
+    [Module("bus", Category = "Base", Depends = new[] { "base", "web" })]
     public class BusListenerMixinAppService : ApplicationService, IBusListenerMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -133,14 +133,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionGetAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def action_get(self):
-            // if self.env.user.employee_id:
-            //     return self.env['ir.actions.act_window']._for_xml_id('hr.res_users_action_my')
-            // return super(User, self).action_get()
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def action_get(self):
-            // return self.sudo().env.ref('base.action_res_users_my').read()[0]
+            // return self.env['ir.actions.act_window']._for_xml_id('base.action_attachment')
             */
             return default;
         }
@@ -208,23 +203,24 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ActionOpenEmployeesAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: hr, FILE: res_users.py) ---
             // def action_open_employees(self):
             // self.ensure_one()
-            // if self.employees_count > 1:
+            // employees = self.employee_ids
+            // model = 'hr.employee' if self.env.user.has_group('hr.group_hr_user') else 'hr.employee.public'
+            // if len(employees) > 1:
             //     return {
             //         'name': _('Related Employees'),
             //         'type': 'ir.actions.act_window',
-            //         'res_model': 'hr.employee',
-            //         'view_mode': 'kanban',
-            //         'domain': [('id', 'in', self.employee_ids.ids),
-            //                    ('company_id', 'in', self.env.companies.ids)],
+            //         'res_model': model,
+            //         'view_mode': 'kanban,list,form',
+            //         'domain': [('id', 'in', employees.ids)],
             //     }
             // return {
             //     'name': _('Employee'),
             //     'type': 'ir.actions.act_window',
-            //     'res_model': 'hr.employee',
-            //     'res_id': self.employee_ids.filtered(lambda e: e.company_id in self.env.companies).id,
+            //     'res_model': model,
+            //     'res_id': employees.id,
             //     'view_mode': 'form',
             // }
             */
@@ -2507,24 +2503,56 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<object> CheckAsync(object db, object uid, object passwd)
+        public async Task<TEntity> CheckAsync<TEntity>(IEnumerable<TEntity> entities, object mode, object values) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
-            // def check(cls, db, uid, passwd):
-            // """Verifies that the given (uid, password) is authorized for the database ``db`` and
-            //    raise an exception if it is not."""
-            // if not passwd:
-            //     # empty passwords disallowed for obvious security reasons
-            //     raise AccessDenied()
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
+            // def check(self, mode, values=None):
+            // """ Restricts the access to an ir.attachment, according to referred mode """
+            // if self.env.is_superuser():
+            //     return True
+            // # Always require an internal user (aka, employee) to access to a attachment
+            // if not (self.env.is_admin() or self.env.user._is_internal()):
+            //     raise AccessError(_("Sorry, you are not allowed to access this document."))
+            // # collect the records to check (by model)
+            // model_ids = defaultdict(set)            # {model_name: set(ids)}
+            // if self:
+            //     # DLE P173: `test_01_portal_attachment`
+            //     self.env['ir.attachment'].flush_model(['res_model', 'res_id', 'create_uid', 'public', 'res_field'])
+            //     self._cr.execute('SELECT res_model, res_id, create_uid, public, res_field FROM ir_attachment WHERE id IN %s', [tuple(self.ids)])
+            //     for res_model, res_id, create_uid, public, res_field in self._cr.fetchall():
+            //         if public and mode == 'read':
+            //             continue
+            //         if not self.env.is_system():
+            //             if not res_id and create_uid != self.env.uid:
+            //                 raise AccessError(_("Sorry, you are not allowed to access this document."))
+            //             if res_field:
+            //                 field = self.env[res_model]._fields[res_field]
+            //                 if not field.is_accessible(self.env):
+            //                     raise AccessError(_("Sorry, you are not allowed to access this document."))
+            //         if not (res_model and res_id):
+            //             continue
+            //         model_ids[res_model].add(res_id)
+            // if values and values.get('res_model') and values.get('res_id'):
+            //     model_ids[values['res_model']].add(values['res_id'])
             // 
-            // with contextlib.closing(cls.pool.cursor()) as cr:
-            //     self = api.Environment(cr, uid, {})[cls._name]
-            //     with self._assert_can_auth(user=uid):
-            //         if not self.env.user.active:
-            //             raise AccessDenied()
-            //         credential = {'login': self.env.user.login, 'password': passwd, 'type': 'password'}
-            //         self._check_credentials(credential, {'interactive': False})
+            // # check access rights on the records
+            // for res_model, res_ids in model_ids.items():
+            //     # ignore attachments that are not attached to a resource anymore
+            //     # when checking access rights (resource was deleted but attachment
+            //     # was not)
+            //     if res_model not in self.env:
+            //         continue
+            //     if res_model == 'res.users' and len(res_ids) == 1 and self.env.uid == list(res_ids)[0]:
+            //         # by default a user cannot write on itself, despite the list of writeable fields
+            //         # e.g. in the case of a user inserting an image into his image signature
+            //         # we need to bypass this check which would needlessly throw us away
+            //         continue
+            //     records = self.env[res_model].browse(res_ids).exists()
+            //     # For related models, check if we can write to the model, as unlinking
+            //     # and creating attachments can be seen as an update to the model
+            //     access_mode = 'write' if mode in ('create', 'unlink') else mode
+            //     records.check_access(access_mode)
             */
             return default;
         }
@@ -5989,10 +6017,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> ComputeTzOffsetInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def _compute_tz_offset(self):
-            // for partner in self:
-            //     partner.tz_offset = datetime.datetime.now(pytz.timezone(partner.tz or 'GMT')).strftime('%z')
+            // for user in self:
+            //     user.tz_offset = datetime.datetime.now(pytz.timezone(user.tz or 'GMT')).strftime('%z')
             */
             return default;
         }
@@ -6277,11 +6305,10 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: auth_signup, FILE: res_users.py) ---
+            --- ODOO METHOD SOURCE (MODULE: attachment_indexation, FILE: ir_attachment.py) ---
             // def copy(self, default=None):
-            // if not default or not default.get('email'):
-            //     # avoid sending email to the user we are duplicating
-            //     self = self.with_context(no_reset_password=True)
+            // for attachment in self:
+            //     index_content_cache[attachment.checksum] = attachment.index_content
             // return super().copy(default=default)
             */
             return default;
@@ -6290,13 +6317,15 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> CopyDataAsync<TEntity>(IEnumerable<TEntity> entities, object @default) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_attachment.py) ---
             // def copy_data(self, default=None):
             // default = dict(default or {})
             // vals_list = super().copy_data(default=default)
-            // if default.get('name'):
-            //     return vals_list
-            // return [dict(vals, name=self.env._("%s (copy)", partner.name)) for partner, vals in zip(self, vals_list)]
+            // for attachment, vals in zip(self, vals_list):
+            //     if not default.keys() & {'datas', 'db_datas', 'raw'}:
+            //         # ensure the content is kept and recomputes checksum/store_fname
+            //         vals['raw'] = attachment.raw
+            // return vals_list
             */
             return default;
         }
@@ -10545,12 +10574,21 @@ namespace Bamboo.Core.Application.Services.Mixins
             return default;
         }
 
-        public async Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
+        public async Task<TEntity> GetOnLeaveIdsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object partner) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_partner.py) ---
-            // def _get_on_leave_ids(self):
-            // return self.env['res.users']._get_on_leave_ids(partner=True)
+            --- ODOO METHOD SOURCE (MODULE: hr_holidays, FILE: res_users.py) ---
+            // def _get_on_leave_ids(self, partner=False):
+            // now = fields.Datetime.now()
+            // field = 'partner_id' if partner else 'id'
+            // self.flush_model(['active'])
+            // self.env['hr.leave'].flush_model(['user_id', 'state', 'date_from', 'date_to'])
+            // self.env.cr.execute('''SELECT res_users.%s FROM res_users
+            //                     JOIN hr_leave ON hr_leave.user_id = res_users.id
+            //                     AND hr_leave.state = 'validate'
+            //                     AND res_users.active = 't'
+            //                     AND hr_leave.date_from <= %%s AND hr_leave.date_to >= %%s''' % field, (now, now))
+            // return [r[0] for r in self.env.cr.fetchall()]
             */
             return default;
         }
@@ -12791,19 +12829,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataDomainInternalAsync<TEntity>(IEnumerable<TEntity> entities, object data) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
             // def _load_pos_data_domain(self, data):
-            // config_id = self.env['pos.config'].browse(data['pos.config']['data'][0]['id'])
-            // 
-            // # Collect partner IDs from loaded orders
-            // loaded_order_partner_ids = {order['partner_id'] for order in data['pos.order']['data']}
-            // 
-            // # Extract partner IDs from the tuples returned by get_limited_partners_loading
-            // limited_partner_ids = {partner[0] for partner in config_id.get_limited_partners_loading()}
-            // 
-            // limited_partner_ids.add(self.env.user.partner_id.id)  # Ensure current user is included
-            // partner_ids = limited_partner_ids.union(loaded_order_partner_ids)
-            // return [('id', 'in', list(partner_ids))]
+            // return [('id', '=', self.env.uid)]
             */
             return default;
         }
@@ -12811,13 +12839,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: res_users.py) ---
             // def _load_pos_data_fields(self, config_id):
-            // return [
-            //     'id', 'name', 'street', 'city', 'state_id', 'country_id', 'vat', 'lang', 'phone', 'zip', 'mobile', 'email',
-            //     'barcode', 'write_date', 'property_account_position_id', 'property_product_pricelist', 'parent_name', 'contact_address',
-            //     'company_type',
-            // ]
+            // return ['id', 'name', 'partner_id', 'groups_id']
             */
             return default;
         }
@@ -14084,30 +14108,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> OnchangeParentIdAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IBusListenerMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_partner.py) ---
+            --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---
             // def onchange_parent_id(self):
-            // # return values in result, as this method is used by _fields_sync()
-            // if not self.parent_id:
-            //     return
-            // result = {}
-            // partner = self._origin
-            // if partner.parent_id and partner.parent_id != self.parent_id:
-            //     result['warning'] = {
-            //         'title': _('Warning'),
-            //         'message': _('Changing the company of a contact should only be done if it '
-            //                      'was never correctly set. If an existing contact starts working for a new '
-            //                      'company then a new contact should be created under that new '
-            //                      'company. You can use the "Discard" button to abandon this change.')}
-            // if partner.type == 'contact' or self.type == 'contact':
-            //     # for contacts: copy the parent address, if set (aka, at least one
-            //     # value is set in the address: otherwise, keep the one from the
-            //     # contact)
-            //     address_fields = self._address_fields()
-            //     if any(self.parent_id[key] for key in address_fields):
-            //         def convert(value):
-            //             return value.id if isinstance(value, models.BaseModel) else value
-            //         result['value'] = {key: convert(self.parent_id[key]) for key in address_fields}
-            // return result
+            // return self.partner_id.onchange_parent_id()
             */
             return default;
         }

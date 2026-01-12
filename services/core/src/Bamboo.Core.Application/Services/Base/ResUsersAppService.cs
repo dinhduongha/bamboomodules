@@ -1,23 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
-using Bamboo.Core.Domain.Shared.Attributes;
-using Bamboo.Core.Application.Contracts.Interfaces;
-using Bamboo.Core.Application.Contracts.DTOs;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Services.Commons;
+using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
+using Bamboo.Core.Application.Contracts.DTOs;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("BaseModule")]
+    [Module("BaseModule", Category = "Base")]
     public class ResUsersAppService : GenericApplicationService<ResUsers>, IResUsersAppService
     {
         private readonly IBusListenerMixinAppService _busListenerMixinAppService;
@@ -3850,7 +3850,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        // TODO:
         public async Task<object> OnchangeAsync(Guid id, object values, object field_names, object fields_spec)
         {
             /*
@@ -4180,7 +4179,6 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        // TODO:
         public async Task<object> ReadAsync(Guid id, object fields, object load)
         {
             /*
@@ -4537,7 +4535,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> RevokeAllDevicesAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---
@@ -4547,7 +4545,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> ActionRevokeAllDevicesAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_users.py) ---

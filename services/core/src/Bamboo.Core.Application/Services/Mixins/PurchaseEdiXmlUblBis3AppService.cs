@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("purchase_edi_ubl_bis3", Depends = new[] { "purchase", "account_edi_ubl_cii" })]
+    [Module("purchase_edi_ubl_bis3", Category = "SupplyChain", Depends = new[] { "purchase", "account_edi_ubl_cii" })]
     public class PurchaseEdiXmlUblBis3AppService : ApplicationService, IPurchaseEdiXmlUblBis3AppService
     {
         private readonly IServiceProvider _serviceProvider;

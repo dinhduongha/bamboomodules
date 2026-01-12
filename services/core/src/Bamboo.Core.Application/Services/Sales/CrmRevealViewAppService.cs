@@ -1,22 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
+using Bamboo.Core.Models;
 using Bamboo.Core.Domain.Shared.Attributes;
+using Bamboo.Core.Application.Services.Commons;
 using Bamboo.Core.Application.Contracts.Interfaces;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Microsoft.Extensions.Caching.Memory;
-using Bamboo.Core.Application.Services.Commons;
-using Bamboo.Core.Models;
 
 namespace Bamboo.Core.Application.Services
 {
-    [Module("WebsiteCrmIapReveal", Depends = new[] { "iap_crm", "iap_mail", "crm_iap_mine", "website_crm" })]
+    [Module("WebsiteCrmIapReveal", Category = "Sales", Depends = new[] { "iap_crm", "iap_mail", "crm_iap_mine", "website_crm" })]
     public class CrmRevealViewAppService : GenericApplicationService<CrmRevealView>, ICrmRevealViewAppService
     {
 

@@ -1,21 +1,21 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.ObjectMapping;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Data;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using Bamboo.Core.Models;
+using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Domain.Shared.Attributes;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 using Bamboo.Core.Application.Contracts.DTOs;
-using Bamboo.Core.Models;
-using Bamboo.Core.Domain.Shared.Interfaces;
 
 namespace Bamboo.Core.Application.Services.Mixins
 {
-    [Module("website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
+    [Module("website", Category = "Website", Depends = new[] { "digest", "web", "web_editor", "html_editor", "http_routing", "portal", "social_media", "auth_signup", "mail", "google_recaptcha", "utm" })]
     public class WebsiteMultiMixinAppService : ApplicationService, IWebsiteMultiMixinAppService
     {
         private readonly IServiceProvider _serviceProvider;
@@ -1013,13 +1013,9 @@ namespace Bamboo.Core.Application.Services.Mixins
         public async Task<TEntity> LoadPosDataFieldsInternalAsync<TEntity>(IEnumerable<TEntity> entities, Guid config_id) where TEntity : IEntity<Guid>, IWebsiteMultiMixinable
         {
             /*
-            --- ODOO METHOD SOURCE (MODULE: pos_loyalty, FILE: loyalty_program.py) ---
+            --- ODOO METHOD SOURCE (MODULE: point_of_sale, FILE: product_tag.py) ---
             // def _load_pos_data_fields(self, config_id):
-            // return [
-            //     'name', 'trigger', 'applies_on', 'program_type', 'pricelist_ids', 'date_from',
-            //     'date_to', 'limit_usage', 'max_usage', 'total_order_count', 'is_nominative',
-            //     'portal_visible', 'portal_point_name', 'trigger_product_ids', 'rule_ids', 'reward_ids'
-            // ]
+            // return ['name']
             */
             return default;
         }

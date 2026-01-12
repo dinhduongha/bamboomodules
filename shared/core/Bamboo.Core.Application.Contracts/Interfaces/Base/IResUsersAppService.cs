@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Bamboo.Core.Models;
 using Bamboo.Core.Application.Contracts;
 using Bamboo.Core.Application.Contracts.DTOs;
@@ -53,7 +53,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> RestartGoogleSynchronizationAsync(Guid id);
         Task<ResUsers> RestartMicrosoftSynchronizationAsync(Guid id);
         Task<ResUsers> RevokeAllDevicesAsync(Guid id);
-        Task<ResUsers> ActionRevokeAllDevicesAsync(Guid id);
+        Task<ResUsers> RevokeAllDevicesAsync(Guid id);
         Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id);
         Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid id);
         Task<ResUsers> SendUnregisteredUserReminderAsync(Guid id);

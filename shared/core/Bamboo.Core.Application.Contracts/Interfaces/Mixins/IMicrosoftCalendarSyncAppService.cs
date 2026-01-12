@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Application.Services;
+using System;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 using Bamboo.Core.Domain.Shared.Interfaces;
 using Bamboo.Core.Application.Contracts.Interfaces.Mixins;
 namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
@@ -162,7 +162,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> OdooAttendeeCommandsMInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> OdooRemindersCommandsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> OdooRemindersCommandsMInternalAsync<TEntity>(IEnumerable<TEntity> entities, object microsoft_event) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
-        Task<TEntity> OdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_event, object default_reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
+        Task<TEntity> OdooValuesInternalAsync<TEntity>(IEnumerable<TEntity> entities, object google_recurrence, object default_reminders) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> OnchangeDateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> RangeCalculationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object duration) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> RangeInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
@@ -180,7 +180,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces.Mixins
         Task<TEntity> SetDiscussVideocallLocationAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> SetDiscussVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> SetVideocallLocationInternalAsync<TEntity>(IEnumerable<TEntity> entities, object vals_list) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
-        Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
+        Task<TEntity> SetupAlarmsInternalAsync<TEntity>(IEnumerable<TEntity> entities, object recurrence_update) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> SkipSendMailStatusUpdateInternalAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> SplitFromInternalAsync<TEntity>(IEnumerable<TEntity> entities, object @event, object recurrence_values) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
         Task<TEntity> SplitRecurrenceInternalAsync<TEntity>(IEnumerable<TEntity> entities, object time_values) where TEntity : IEntity<Guid>, IMicrosoftCalendarSyncable;
