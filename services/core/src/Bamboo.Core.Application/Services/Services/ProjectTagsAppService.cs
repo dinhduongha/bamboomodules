@@ -54,7 +54,7 @@ namespace Bamboo.Core.Application.Services
             //     domain = Domain.AND([domain, [('id', 'in', tag_ids)]])
             // return super().formatted_read_group(domain, groupby, aggregates, having=having, offset=offset, limit=limit, order=order)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<ProjectTags> GetDefaultColorInternalAsync()

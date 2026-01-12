@@ -769,7 +769,7 @@ namespace Bamboo.Core.Application.Services
             //     user_context["im_livechat_channel_id"] = self.id
             // return super().web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
     }
 }

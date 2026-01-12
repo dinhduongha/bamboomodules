@@ -3414,7 +3414,7 @@ namespace Bamboo.Core.Application.Services
             //     result = result and bool(request and request.session.debug)
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<bool> HasGroupInternalAsync(Guid group_ext_id)
@@ -3472,7 +3472,7 @@ namespace Bamboo.Core.Application.Services
             //     return True
             // return not positives
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<ResUsers> HasSetupCredentialsInternalAsync()
@@ -4805,7 +4805,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResUsers> RevokeAllDevicesAsync(Guid id)
+        public async Task<ResUsers> RevokeAllDevicesActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: auth_totp, FILE: res_users.py) ---

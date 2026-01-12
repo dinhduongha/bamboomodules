@@ -18,15 +18,15 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrActionsActWindowAppService : GenericApplicationService<IrActionsActWindow>, IIrActionsActWindowAppService
+    public class IrActionsActWindowAppService : GenericApplicationService<IrActWindow>, IIrActionsActWindowAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
-        public IrActionsActWindowAppService(IRepository<IrActionsActWindow, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public IrActionsActWindowAppService(IRepository<IrActWindow, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _irActionsActionsAppService = irActionsActionsAppService;
         }
 
-        protected async Task<IrActionsActWindow> CheckModelInternalAsync()
+        protected async Task<IrActWindow> CheckModelInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -40,7 +40,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsActWindow> CheckViewModeInternalAsync()
+        protected async Task<IrActWindow> CheckViewModeInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -55,7 +55,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsActWindow> ComputeEmbeddedActionsInternalAsync()
+        protected async Task<IrActWindow> ComputeEmbeddedActionsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -67,7 +67,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsActWindow> ComputeViewsInternalAsync()
+        protected async Task<IrActWindow> ComputeViewsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -95,7 +95,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsActWindow> ExistingInternalAsync()
+        protected async Task<IrActWindow> ExistingInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -106,7 +106,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsActWindow> ExistsAsync(Guid id)
+        public async Task<IrActWindow> ExistsAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -118,7 +118,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsActWindow> GetActionDictInternalAsync()
+        protected async Task<IrActWindow> GetActionDictInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -137,7 +137,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsActWindow> GetReadableFieldsInternalAsync()
+        protected async Task<IrActWindow> GetReadableFieldsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---

@@ -313,7 +313,7 @@ namespace Bamboo.Core.Application.Services
             // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // return tools.float_is_zero(value, precision_digits=digits)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<UomUom> LoadPosDataFieldsInternalAsync(object config)
@@ -378,7 +378,7 @@ namespace Bamboo.Core.Application.Services
             // digits = self.env['decimal.precision'].precision_get('Product Unit')
             // return tools.float_round(value, precision_digits=digits, rounding_method=rounding_method)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<UomUom> UnlinkExceptMasterDataInternalAsync()

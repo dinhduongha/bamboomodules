@@ -307,7 +307,7 @@ namespace Bamboo.Core.Application.Services
             //         group_line['running_balance'] = self.search(group_line['__extra_domain'] + domain, limit=1).running_balance or 0.0
             // return result
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<AccountBankStatementLine> GetAccountingAmountsAndCurrenciesInternalAsync()

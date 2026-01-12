@@ -275,7 +275,7 @@ namespace Bamboo.Core.Application.Services
             // 
             // return formatted
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         protected async Task<object> GetActiveByInternalAsync(string field)
@@ -414,7 +414,7 @@ namespace Bamboo.Core.Application.Services
             // """ Return installed languages' (code, name) pairs sorted by name. """
             // return [(code, data.name) for code, data in self._get_active_by('code').items()]
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
 
         public async Task<ResLang> GetLocalesForSpreadsheetAsync(Guid id)

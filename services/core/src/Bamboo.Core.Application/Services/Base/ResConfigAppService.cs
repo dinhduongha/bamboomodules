@@ -46,7 +46,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfig> CancelAsync(Guid id)
+        public async Task<ResConfig> CancelActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---
@@ -102,7 +102,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<ResConfig> NextAsync(Guid id)
+        public async Task<ResConfig> NextActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: res_config.py) ---

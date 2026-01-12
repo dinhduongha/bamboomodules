@@ -598,7 +598,7 @@ namespace Bamboo.Core.Application.Services
             //     self_context = self.with_context(analytic_plan_id=self.plan_id.id)
             // return super(AccountAnalyticAccount, self_context).web_read(specification)
             */
-            var entity = await Repository.GetAsync(id); return entity;
+            var entity = await Repository.GetAsync(id); return default;
         }
     }
 }

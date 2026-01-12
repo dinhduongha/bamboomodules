@@ -10,5 +10,8 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
 {
     public interface IDiscussChannelMemberAppService : IGenericApplicationService<DiscussChannelMember>
     {
+        // v18
+        //Task<DiscussChannelMember> InitAsync(Guid id);
+        //Task<DiscussChannelMember> SetCustomNotificationsAsync(Guid id, DiscussChannelMemberSetCustomNotificationsRequestDto input);
     }
 }

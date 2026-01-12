@@ -53,7 +53,7 @@ namespace Bamboo.Core.Application.Contracts.Interfaces
         Task<ResUsers> RestartGoogleSynchronizationAsync(Guid id);
         Task<ResUsers> RestartMicrosoftSynchronizationAsync(Guid id);
         Task<ResUsers> RevokeAllDevicesAsync(Guid id);
-        Task<ResUsers> RevokeAllDevicesAsync(Guid id);
+        Task<ResUsers> RevokeAllDevicesActionAsync(Guid id);
         Task<ResUsers> SELFREADABLEFIELDSAsync(Guid id);
         Task<ResUsers> SELFWRITEABLEFIELDSAsync(Guid id);
         Task<ResUsers> SendUnregisteredUserReminderAsync(Guid id);

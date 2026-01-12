@@ -18,19 +18,19 @@ using Bamboo.Core.Application.Contracts.DTOs;
 namespace Bamboo.Core.Application.Services
 {
     [Module("BaseModule", Category = "Base")]
-    public class IrActionsServerAppService : GenericApplicationService<IrActionsServer>, IIrActionsServerAppService
+    public class IrActionsServerAppService : GenericApplicationService<IrActServer>, IIrActionsServerAppService
     {
         private readonly IIrActionsActionsAppService _irActionsActionsAppService;
         private readonly IMailActivityMixinAppService _mailActivityMixinAppService;
         private readonly IMailThreadAppService _mailThreadAppService;
-        public IrActionsServerAppService(IRepository<IrActionsServer, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
+        public IrActionsServerAppService(IRepository<IrActServer, Guid> repository, IServiceProvider serviceProvider, IAuthorizationService authorizationService, IDomainParser domainParser, IModelTypeRegistry modelTypeRegistry, IDataFilter dataFilter, IObjectMapper objectMapper, IMemoryCache memoryCache, IIrActionsActionsAppService irActionsActionsAppService, IMailActivityMixinAppService mailActivityMixinAppService, IMailThreadAppService mailThreadAppService) : base(repository, serviceProvider, authorizationService, domainParser, modelTypeRegistry, dataFilter, objectMapper, memoryCache)
         {
             _irActionsActionsAppService = irActionsActionsAppService;
             _mailActivityMixinAppService = mailActivityMixinAppService;
             _mailThreadAppService = mailThreadAppService;
         }
 
-        protected async Task<IrActionsServer> CanExecuteActionOnRecordsInternalAsync(object records)
+        protected async Task<IrActServer> CanExecuteActionOnRecordsInternalAsync(object records)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -65,7 +65,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> CheckChildrenInternalAsync()
+        protected async Task<IrActServer> CheckChildrenInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -79,7 +79,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> CheckPythonCodeInternalAsync()
+        protected async Task<IrActServer> CheckPythonCodeInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -92,7 +92,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeActivityInfoInternalAsync()
+        protected async Task<IrActServer> ComputeActivityInfoInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -118,7 +118,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeActivityUserInfoInternalAsync()
+        protected async Task<IrActServer> ComputeActivityUserInfoInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -141,7 +141,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeAllowedStatesInternalAsync()
+        protected async Task<IrActServer> ComputeAllowedStatesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -151,7 +151,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeAvailableModelIdsInternalAsync()
+        protected async Task<IrActServer> ComputeAvailableModelIdsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -190,7 +190,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeCrudRelationsInternalAsync()
+        protected async Task<IrActServer> ComputeCrudRelationsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -230,7 +230,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeFollowersInfoInternalAsync()
+        protected async Task<IrActServer> ComputeFollowersInfoInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -253,7 +253,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeFollowersTypeInternalAsync()
+        protected async Task<IrActServer> ComputeFollowersTypeInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -266,7 +266,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeMailPostAutofollowInternalAsync()
+        protected async Task<IrActServer> ComputeMailPostAutofollowInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -281,7 +281,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeMailPostMethodInternalAsync()
+        protected async Task<IrActServer> ComputeMailPostMethodInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -296,7 +296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeNameInternalAsync()
+        protected async Task<IrActServer> ComputeNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -310,7 +310,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeShowCodeHistoryInternalAsync()
+        protected async Task<IrActServer> ComputeShowCodeHistoryInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -326,7 +326,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeSmsMethodInternalAsync()
+        protected async Task<IrActServer> ComputeSmsMethodInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: ir_actions_server.py) ---
@@ -341,7 +341,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeSmsTemplateIdInternalAsync()
+        protected async Task<IrActServer> ComputeSmsTemplateIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: ir_actions_server.py) ---
@@ -356,7 +356,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeTemplateIdInternalAsync()
+        protected async Task<IrActServer> ComputeTemplateIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -371,7 +371,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeValueFieldToShowInternalAsync()
+        protected async Task<IrActServer> ComputeValueFieldToShowInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -393,7 +393,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeWarningInternalAsync()
+        protected async Task<IrActServer> ComputeWarningInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -407,7 +407,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeWebhookSamplePayloadInternalAsync()
+        protected async Task<IrActServer> ComputeWebhookSamplePayloadInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -434,7 +434,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeWebsiteUrlInternalAsync(object website_path, Guid xml_id)
+        protected async Task<IrActServer> ComputeWebsiteUrlInternalAsync(object website_path, Guid xml_id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_actions_server.py) ---
@@ -449,7 +449,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> ComputeXmlIdInternalAsync()
+        protected async Task<IrActServer> ComputeXmlIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_actions_server.py) ---
@@ -461,7 +461,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsServer> CopyDataAsync(Guid id, IrActionsServerCopyDataRequestDto input)
+        public async Task<IrActServer> CopyDataAsync(Guid id, IrActionsServerCopyDataRequestDto input)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -476,7 +476,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrActionsServer> CreateActionAsync(Guid id)
+        public async Task<IrActServer> CreateActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -490,7 +490,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsServer> DefaultUpdatePathInternalAsync()
+        protected async Task<IrActServer> DefaultUpdatePathInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -508,7 +508,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> EvalValueInternalAsync(object eval_context)
+        protected async Task<IrActServer> EvalValueInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -550,7 +550,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GenerateActionNameInternalAsync()
+        protected async Task<IrActServer> GenerateActionNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -586,7 +586,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetChildrenDomainInternalAsync()
+        protected async Task<IrActServer> GetChildrenDomainInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -606,7 +606,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetEvalContextInternalAsync(object action)
+        protected async Task<IrActServer> GetEvalContextInternalAsync(object action)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -681,7 +681,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetReadableFieldsInternalAsync()
+        protected async Task<IrActServer> GetReadableFieldsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -693,7 +693,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetRelationChainInternalAsync(object searched_field_name)
+        protected async Task<IrActServer> GetRelationChainInternalAsync(object searched_field_name)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -728,7 +728,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetRunnerInternalAsync()
+        protected async Task<IrActServer> GetRunnerInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -744,7 +744,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetWarningMessagesInternalAsync()
+        protected async Task<IrActServer> GetWarningMessagesInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -862,7 +862,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> GetWebsiteUrlInternalAsync()
+        protected async Task<IrActServer> GetWebsiteUrlInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_actions_server.py) ---
@@ -876,7 +876,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsServer> HistoryWizardActionAsync(Guid id)
+        public async Task<IrActServer> HistoryWizardActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -894,7 +894,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsServer> IsRecomputeInternalAsync()
+        protected async Task<IrActServer> IsRecomputeInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -927,7 +927,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> NameDependsInternalAsync()
+        protected async Task<IrActServer> NameDependsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -947,7 +947,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> OnchangeNameInternalAsync()
+        protected async Task<IrActServer> OnchangeNameInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -959,7 +959,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsServer> OpenAutomationAsync(Guid id)
+        public async Task<IrActServer> OpenAutomationAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
@@ -975,7 +975,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrActionsServer> OpenParentActionAsync(Guid id)
+        public async Task<IrActServer> OpenParentActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -991,7 +991,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        public async Task<IrActionsServer> OpenScheduledActionAsync(Guid id)
+        public async Task<IrActServer> OpenScheduledActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1007,7 +1007,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsServer> RunActionCodeMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionCodeMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: website, FILE: ir_actions_server.py) ---
@@ -1028,7 +1028,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionFollowersMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionFollowersMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -1047,7 +1047,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionMailPostMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionMailPostMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -1090,7 +1090,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1103,7 +1103,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionNextActivityInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionNextActivityInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -1137,7 +1137,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionObjectCopyInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionObjectCopyInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1157,7 +1157,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionObjectCreateInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionObjectCreateInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1178,7 +1178,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionObjectWriteInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionObjectWriteInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1200,7 +1200,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionRemoveFollowersMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionRemoveFollowersMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: mail, FILE: ir_actions_server.py) ---
@@ -1219,7 +1219,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionSmsMultiInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionSmsMultiInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: sms, FILE: ir_actions_server.py) ---
@@ -1245,7 +1245,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> RunActionWebhookInternalAsync(object eval_context)
+        protected async Task<IrActServer> RunActionWebhookInternalAsync(object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1296,7 +1296,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsServer> RunAsync(Guid id)
+        public async Task<IrActServer> RunAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1334,7 +1334,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsServer> RunInternalAsync(object records, object eval_context)
+        protected async Task<IrActServer> RunInternalAsync(object records, object eval_context)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1374,7 +1374,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> SelectionTargetModelInternalAsync()
+        protected async Task<IrActServer> SelectionTargetModelInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1384,7 +1384,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> SetCrudModelIdInternalAsync()
+        protected async Task<IrActServer> SetCrudModelIdInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1399,7 +1399,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> SetResourceRefInternalAsync()
+        protected async Task<IrActServer> SetResourceRefInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1411,7 +1411,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> SetSelectionValueInternalAsync()
+        protected async Task<IrActServer> SetSelectionValueInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1423,7 +1423,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        protected async Task<IrActionsServer> TraversePathInternalAsync()
+        protected async Task<IrActServer> TraversePathInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1442,7 +1442,7 @@ namespace Bamboo.Core.Application.Services
             return default;
         }
 
-        public async Task<IrActionsServer> UnlinkActionAsync(Guid id)
+        public async Task<IrActServer> UnlinkActionAsync(Guid id)
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base, FILE: ir_actions.py) ---
@@ -1455,7 +1455,7 @@ namespace Bamboo.Core.Application.Services
             var entity = await Repository.GetAsync(id); return entity;
         }
 
-        protected async Task<IrActionsServer> WarningDependsInternalAsync()
+        protected async Task<IrActServer> WarningDependsInternalAsync()
         {
             /*
             --- ODOO METHOD SOURCE (MODULE: base_automation, FILE: ir_actions_server.py) ---
